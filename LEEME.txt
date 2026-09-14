@@ -1,0 +1,145 @@
+adricamente.com — archivos de la web
+=====================================
+
+QUÉ HAY AQUÍ
+-------------
+  index.html         Página principal
+  mapa/index.html    El recurso gratuito (el ejercicio)
+  privacidad.html    Política de privacidad
+  aviso-legal.html   Aviso legal
+  gracias.html       Adonde llega quien confirma el correo
+  cookies.html       Política de cookies
+  estilos.css        Los estilos de todas las páginas
+  fuentes/           Las tres tipografías (7 archivos .woff2)
+  favicon.ico        El icono de la pestaña
+  favicon-512.png    El icono en grande
+  apple-touch-icon.png  El icono al guardar la web en un iPhone
+  og.png             La imagen que sale al compartir el enlace
+
+  El mapa va dentro de una carpeta a propósito: así su
+  dirección es adricamente.com/mapa, que queda mucho mejor
+  en un mensaje que adricamente.com/mapa.html
+
+
+CÓMO SUBIRLO A HOSTINGER
+-------------------------
+  1. Haz copia de seguridad del WordPress actual y descárgala
+     (hPanel > Archivos > Copias de seguridad).
+
+  2. hPanel > Archivos > Administrador de archivos > public_html
+
+  3. Borra todo lo que haya DENTRO de public_html.
+     Dentro, no la carpeta public_html entera.
+
+  4. Sube TODO lo que hay en esta carpeta a public_html,
+     menos este LEEME.txt, que es para ti.
+
+     Los archivos sueltos van sueltos en public_html.
+     Las dos carpetas ("mapa" y "fuentes") se suben enteras.
+
+     OJO CON "fuentes": si no la subes, la web se ve con
+     tipografías del sistema y pierde la mitad de su cara.
+     Es la carpeta que más fácil se olvida.
+
+  5. Entra en https://adricamente.com y compruébalo.
+     Comprueba también https://adricamente.com/mapa
+
+  6. Activa el SSL: hPanel > Seguridad > SSL. Es gratis.
+     Y activa "forzar HTTPS".
+
+  7. Redirige adricamente.es a adricamente.com con una
+     redirección 301. hPanel > Avanzado > Redirecciones.
+
+
+LOS ENLACES QUE VAS A USAR
+---------------------------
+  Bio de Instagram y TikTok:
+     https://adricamente.com
+
+  Mensaje directo cuando alguien comente MAPA:
+     https://adricamente.com/mapa?utm_source=instagram&utm_medium=dm&utm_campaign=mapa
+
+  Lo que va detrás del "?" no cambia la página: sirve para que
+  luego sepas de dónde vino cada visita. Cambia "instagram"
+  por "tiktok" cuando lo mandes desde allí.
+
+
+LO QUE FALTA POR RELLENAR
+--------------------------
+  1. LA DIRECCIÓN POSTAL
+     No la he puesto porque es tu vivienda habitual y vas a ser
+     una cara pública. Cuando tengas el despacho de Albacete,
+     búscala en privacidad.html y aviso-legal.html: verás un
+     comentario que pone DOMICILIO indicando dónde va.
+
+  2. BREVO: YA ESTÁ CONECTADO
+     El formulario del mapa ya envía a tu lista "Mapa · evitación".
+     Solo tendrías que tocarlo si rehaces el formulario en Brevo:
+     entonces cambia la dirección y hay que pegar la nueva en
+     mapa/index.html, en el action="..." del formulario.
+
+  3. LOS ENLACES A TUS REDES
+     En index.html están puestos a adricamente en Instagram,
+     TikTok y YouTube. Comprueba que son exactos.
+
+  4. CUANDO TE COLEGIES
+     En aviso-legal.html, el apartado 2 tiene que pasar a decir
+     tu número de colegiado, el título y el colegio. La LSSI lo
+     exige para profesiones reguladas.
+
+
+SI AÑADES ANALÍTICA
+--------------------
+  Las seis páginas ya llevan una función llamada "medir" y los
+  cuatro momentos del embudo ya la llaman:
+
+     mapa_inicio    alguien empieza el ejercicio
+     mapa_fin       alguien llega al resultado
+     alta_correo    alguien deja el correo
+     clic_reserva   alguien pulsa para reservar
+
+  Hoy esa función no manda nada a ningún sitio. El día que
+  contrates un proveedor, pegas su script en el <head> de las
+  seis páginas, justo encima del bloque que dice "Medición", y
+  los cuatro eventos empiezan a contar solos.
+
+  IMPORTANTE, y por eso está montado así:
+  Plausible y Umami no usan cookies y no guardan datos
+  personales, así que NO necesitan banner de consentimiento y
+  no hay que tocar cookies.html.
+  Google Analytics y el píxel de Meta SÍ: con cualquiera de
+  esos dos necesitas banner de consentimiento PREVIO y hay que
+  reescribir cookies.html. Dímelo antes de ponerlos.
+
+
+SI CAMBIAS EL CSS Y NO SE VE EL CAMBIO
+--------------------------------------
+  No es que no se haya subido: es la caché. Hostinger guarda una
+  copia del archivo y la sigue sirviendo un rato.
+
+  Comprobarlo: abre adricamente.com/estilos.css?v=99 en el
+  navegador. Cualquier número vale. Si ahí SÍ ves el cambio, el
+  archivo está bien subido y solo es caché.
+
+  Arreglarlo: hPanel > Rendimiento > Caché > vaciar.
+
+  Y para que no vuelva a pasar: en las seis páginas, el enlace a
+  la hoja de estilos lleva ?v=2 al final. Cada vez que cambies
+  estilos.css, sube ese número (?v=3, ?v=4...) en las seis. Así
+  el navegador sabe que es un archivo nuevo y lo pide otra vez.
+
+
+CÓMO EDITARLO TÚ
+-----------------
+  En el Administrador de archivos, clic derecho sobre el
+  archivo > Editar. Se abre un editor en el navegador.
+  Antes de tocar nada, descárgate el archivo: si la lías,
+  lo vuelves a subir y como si nada.
+
+  Los comentarios en HTML van entre <!-- y -->, y en CSS
+  entre /* y */. No se ven en la página: están para que
+  entiendas qué hace cada parte.
+
+  Para cambiar un color no lo busques por las páginas: está
+  todo arriba del todo en estilos.css, en el bloque :root.
+  Cambias ahí un valor y cambia en las cinco a la vez.

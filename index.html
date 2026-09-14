@@ -1,0 +1,192 @@
+<!doctype html>
+<!-- ============================================================
+     adricamente.com — página principal
+     ------------------------------------------------------------
+     Una sola página, un solo objetivo: que quien llegue entre al
+     mapa o reserve. Nada más. Cuando el test de contenido diga
+     qué funciona, añadiremos lo que haga falta y no antes.
+     ============================================================ -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- El <title> es lo que sale en la pestaña y en Google.
+       Fórmula: quién eres + para quién + dónde. -->
+  <title>adricamente | Psicología para adultos jóvenes</title>
+
+  <!-- La descripción es el texto gris bajo el título en Google.
+       No influye en el posicionamiento, sí en que hagan clic. -->
+  <meta name="description" content="Psicología para adultos jóvenes que sienten que su vida no arranca. Contenido, herramientas y terapia online. Adrián Cuñat.">
+
+  <!-- Estas dos etiquetas son las que deciden cómo se ve el enlace
+       cuando alguien lo comparte por WhatsApp o Instagram. -->
+  <meta property="og:title" content="adricamente | Psicología para adultos jóvenes">
+  <meta property="og:description" content="Un ejercicio de diez minutos para ver qué estás evitando y qué te está costando.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adricamente.com/">
+
+  <link rel="canonical" href="https://adricamente.com/">
+
+  <!-- Icono y previsualización al compartir. Las rutas empiezan
+       por / para que valgan igual desde /mapa/ que desde la raíz. -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#F4EFE5">
+  <meta property="og:image" content="https://adricamente.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="adricamente">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Umami. Sin cookies y sin datos personales, así que no hace
+       falta banner de consentimiento ni tocar cookies.html. -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+
+  <!-- Medición. Hoy no sale nada de aquí: la función solo da nombre
+       a los cuatro momentos del embudo. El día que contrates un
+       proveedor sin cookies (Plausible o Umami), pegas su script
+       encima de esta línea y los cuatro eventos empiezan a contar
+       solos, sin tocar nada más. -->
+  <script>window.medir=function(e){try{
+    if(window.plausible)window.plausible(e);
+    if(window.umami&&window.umami.track)window.umami.track(e);
+  }catch(_){}};</script>
+
+  <link rel="stylesheet" href="estilos.css?v=2">
+</head>
+
+<body>
+<div class="contenedor" style="padding-block:32px 0">
+
+  <p class="marca">adricamente</p>
+
+  <!-- ===== 1. Lo primero que se lee =========================== -->
+  <h1>Psicología para quien siente que su vida no arranca</h1>
+
+  <p class="grande">
+    No es que te falte actitud. Es que llevas tiempo haciendo algo que
+    funciona a corto plazo y te está saliendo carísimo a largo.
+  </p>
+
+  <p>
+    Soy Adrián Cuñat, Graduado en Psicología, terminando el Máster en
+    Psicología General Sanitaria. Hago contenido sobre por qué nos
+    quedamos atascados, y atiendo online a personas de veintitantos y
+    treintaitantos que llevan demasiado tiempo esperando a estar listas.
+  </p>
+
+  <!-- ===== 2. La oferta principal: el mapa ==================== -->
+  <h2>Empieza por aquí</h2>
+
+  <div class="caja">
+    <h3>El mapa de lo que evitas</h3>
+    <p>
+      Seis preguntas para ver, en diez minutos, qué estás esquivando,
+      qué te alivia hacerlo y qué te está costando de verdad. Es el
+      mismo análisis que hago en consulta el primer día, hecho por ti.
+    </p>
+    <ul class="datos">
+      <li>6 preguntas</li>
+      <li>~10 minutos</li>
+      <li>Gratis</li>
+      <li>No sale de tu móvil</li>
+    </ul>
+    <p style="margin-bottom:0">
+      <a class="boton" onclick="window.medir&&window.medir(\'clic_mapa\')" href="mapa/">Hacer el mapa</a>
+    </p>
+  </div>
+
+  <!-- ===== 3. La segunda puerta: reservar ===================== -->
+  <h2 id="sesion">¿Prefieres que lo hablemos?</h2>
+
+  <p>
+    Tengo unas pocas sesiones informativas gratuitas al mes: veinte
+    minutos para que me cuentes qué te trae y yo te diga honestamente
+    si creo que puedo ayudarte. No es una sesión de terapia y no
+    tienes que decidir nada ese día.
+  </p>
+
+  <div class="caja">
+    <p>
+      Las sesiones se realizan en el centro sanitario
+      <strong>Neurococos</strong>, online y solo para residentes en España.
+    </p>
+    <p>
+      <strong>En la sesión estamos tú y yo, nadie más.</strong> La
+      supervisión ocurre entre sesiones: reviso el caso con un profesional
+      colegiado del centro, que por tanto conoce la información clínica y
+      está sujeto al mismo secreto profesional que yo. No es un trámite que
+      arrastro — es lo que hace que haya dos cabezas pensando en lo tuyo en
+      vez de una.
+    </p>
+    <p style="margin-bottom:0">
+      <!-- target="_blank" abre en pestaña nueva; rel="noopener" es
+           obligatorio por seguridad siempre que uses target blank. -->
+      <a class="boton"
+         onclick="window.medir&&window.medir(\'clic_reserva\')" href="https://cal.com/adricamente/sesion-informativa-gratuita"
+         target="_blank" rel="noopener">Reservar mi sesión</a>
+    </p>
+  </div>
+
+  <!-- ===== 4. Quién soy ====================================== -->
+  <h2>Quién te va a atender</h2>
+
+  <p>
+    Adrián Cuñat Andrés. Graduado en Psicología por la UNED y
+    estudiante del Máster en Psicología General Sanitaria en UNIR,
+    actualmente en prácticas supervisadas en el centro sanitario
+    Neurococos.
+  </p>
+
+  <p>
+    Trabajo desde terapias contextuales y cognitivo-conductuales: en
+    vez de intentar controlar lo que sientes, miramos qué haces con
+    ello y qué te está costando. Nada de frases motivadoras ni de
+    recetas. Un plan, y revisarlo.
+  </p>
+
+  <p class="apunte">
+    Hasta obtener el título de Máster y la correspondiente colegiación
+    no ejerzo por cuenta propia: la atención se presta dentro del
+    centro sanitario y con supervisión de un profesional colegiado.
+  </p>
+
+  <!-- ===== 5. Dónde encontrarme ============================== -->
+  <h2>Dónde publico</h2>
+  <p>
+    Subo un vídeo al día en
+    <a href="https://www.instagram.com/adricamente" target="_blank" rel="noopener">Instagram</a>,
+    <a href="https://www.tiktok.com/@adricamente" target="_blank" rel="noopener">TikTok</a> y
+    <a href="https://www.youtube.com/@adricamente" target="_blank" rel="noopener">YouTube</a>.
+  </p>
+
+  <!-- ===== 6. Pie ============================================ -->
+  <footer>
+    <nav>
+      <a href="aviso-legal.html">Aviso legal</a>
+      <a href="privacidad.html">Privacidad</a>
+      <a href="cookies.html">Cookies</a>
+      <a href="mailto:hola@adricamente.com">hola@adricamente.com</a>
+    </nav>
+    <p>
+      Los contenidos de esta web tienen finalidad divulgativa y
+      psicoeducativa. No constituyen diagnóstico ni tratamiento y no
+      sustituyen a la consulta con un profesional sanitario. Si estás
+      pasándolo mal, habla con tu médico de familia o con un
+      profesional de la psicología.
+    </p>
+    <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
+  </footer>
+
+</div>
+
+<script>
+  // El año del pie se actualiza solo. Una tontería, pero evita que
+  // en enero la web diga 2026 y parezca abandonada.
+  document.getElementById('anyo').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

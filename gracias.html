@@ -1,0 +1,114 @@
+<!doctype html>
+<!-- ============================================================
+     adricamente.com/gracias
+     ------------------------------------------------------------
+     Adonde llega la gente después de pulsar el enlace de
+     confirmación del correo. Sustituye a la página verde de
+     Brevo. Se configura en: Contactos > Formularios > Mapa >
+     Ajustes > "Página de confirmación después de hacer clic en
+     el enlace de confirmación del e-mail" > redirigir a una URL.
+     ============================================================ -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Confirmado | adricamente</title>
+  <meta name="robots" content="noindex, follow">
+  <!-- Icono y previsualización al compartir. Las rutas empiezan
+       por / para que valgan igual desde /mapa/ que desde la raíz. -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#F4EFE5">
+  <meta property="og:image" content="https://adricamente.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="adricamente">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Umami. Sin cookies y sin datos personales, así que no hace
+       falta banner de consentimiento ni tocar cookies.html. -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+
+  <!-- Medición. Hoy no sale nada de aquí: la función solo da nombre
+       a los cuatro momentos del embudo. El día que contrates un
+       proveedor sin cookies (Plausible o Umami), pegas su script
+       encima de esta línea y los cuatro eventos empiezan a contar
+       solos, sin tocar nada más. -->
+  <script>window.medir=function(e){try{
+    if(window.plausible)window.plausible(e);
+    if(window.umami&&window.umami.track)window.umami.track(e);
+  }catch(_){}};</script>
+
+  <link rel="stylesheet" href="estilos.css?v=2">
+</head>
+
+<body>
+<div class="contenedor" style="padding-block:48px 0">
+
+  <p class="marca"><a href="index.html">adricamente</a></p>
+
+  <h1>Confirmado</h1>
+
+  <p class="grande">
+    Ya está. Acabo de mandarte la guía con los tres pasos para
+    empezar a salir del círculo.
+  </p>
+
+  <p>
+    Debería llegarte en un par de minutos. Si no la ves, mira en
+    promociones o en spam — y si aparece ahí, márcala como «no es
+    spam», que así los siguientes te llegan donde toca.
+  </p>
+
+  <h2>Qué va a pasar a partir de ahora</h2>
+
+  <p>
+    Te escribiré de vez en cuando con cosas del mismo estilo: por
+    qué nos quedamos atascados y qué se hace al respecto. Ni todos
+    los días ni con ofertas raras. Cuando deje de aportarte, te das
+    de baja abajo del todo de cualquier correo y ya está.
+  </p>
+
+  <div class="caja">
+    <h3>¿Y si prefieres no hacerlo solo?</h3>
+    <p>
+      Tengo unas pocas sesiones informativas gratuitas al mes: veinte
+      minutos para que me cuentes qué te trae y yo te diga
+      honestamente si creo que puedo ayudarte. No es una sesión de
+      terapia y no tienes que decidir nada ese día.
+    </p>
+    <p class="apunte" style="margin-top:12px">
+      Las sesiones se realizan en el centro sanitario Neurococos,
+      online y solo para residentes en España. En la sesión estamos
+      tú y yo, nadie más: la supervisión ocurre entre sesiones, al
+      revisar el caso con un profesional colegiado del centro.
+    </p>
+    <p style="margin:18px 0 0">
+      <a class="boton"
+         onclick="window.medir&&window.medir(\'clic_reserva\')" href="https://cal.com/adricamente/sesion-informativa-gratuita"
+         target="_blank" rel="noopener">Reservar mi sesión</a>
+    </p>
+  </div>
+
+  <p class="apunte">
+    ¿No has guardado tu mapa? Puedes <a href="mapa/">volver a hacerlo</a>
+    con calma. Lleva unos diez minutos y no se guarda en ningún sitio,
+    así que esta vez cópialo antes de cerrar.
+  </p>
+
+  <footer>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="aviso-legal.html">Aviso legal</a>
+      <a href="privacidad.html">Privacidad</a>
+      <a href="cookies.html">Cookies</a>
+    </nav>
+    <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
+  </footer>
+
+</div>
+<script>document.getElementById('anyo').textContent = new Date().getFullYear();</script>
+</body>
+</html>

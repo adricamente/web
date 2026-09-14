@@ -1,0 +1,301 @@
+/* ============================================================
+   adricamente.com — hoja de estilos común a todas las páginas
+   ------------------------------------------------------------
+   Un solo archivo para todo el sitio. Si cambias un color aquí,
+   cambia en las cinco páginas a la vez. Por eso se hace así.
+   ============================================================ */
+
+/* --- 0. Las fuentes, alojadas aquí -----------------------------
+   Antes se pedían a Google Fonts. Eso mandaba la IP de cada
+   visitante a un servidor de Google antes de que la persona
+   hubiera consentido nada, y en una web de salud eso es un
+   problema de RGPD que no compensa. Ahora los archivos están en
+   /fuentes y no sale nada del servidor. Además carga más rápido.
+   font-display:swap = si la fuente tarda, el texto se ve igual
+   con la de reserva y luego cambia. Nunca una página en blanco.
+
+   Eran tres familias y ahora son dos. La monoespaciada en
+   versalitas muy separadas era lo que hacía que todo esto
+   pareciera un panel de control en vez de una consulta: es el
+   idioma visual del software, no el de la salud. Fuera. */
+
+@font-face{font-family:Archivo;src:url(fuentes/archivo-latin-700-normal.woff2) format('woff2');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:Archivo;src:url(fuentes/archivo-latin-800-normal.woff2) format('woff2');font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(fuentes/source-sans-3-latin-400-normal.woff2) format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(fuentes/source-sans-3-latin-600-normal.woff2) format('woff2');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(fuentes/source-sans-3-latin-700-normal.woff2) format('woff2');font-weight:700;font-style:normal;font-display:swap}
+
+/* --- 1. Variables de color -------------------------------------
+   Todo el color del sitio sale de aquí. Nunca escribas un color
+   suelto en el resto del archivo: usa var(--loquesea).
+   Esto permite tener tema claro y oscuro sin duplicar el CSS.
+
+   IMPORTANTE — los dos naranjas no son "el mismo más oscuro".
+   Tienen trabajos distintos y no son intercambiables:
+
+     --accent    display. Logotipo, titulares, barras, bordes.
+                 Cosas grandes o que no son texto.
+     --accent-2  interactivo. Enlaces, botones y etiquetas
+                 pequeñas. Es más oscuro porque el claro no
+                 llega al contraste mínimo de accesibilidad
+                 (4,5:1) cuando lleva texto pequeño encima.
+
+   Si pones el naranja de display en un enlace, la web deja de
+   cumplir accesibilidad. Se comprobó y fallaba: #D9430A sobre
+   el crema da 3,85:1. #B83708 da 5,11:1. */
+
+:root{
+  /* Paleta clara (la de por defecto) */
+  --bg:#F4EFE5;           /* fondo crema cálido */
+  --surface:#FCFAF5;      /* tarjetas y cajas */
+  --surface-2:#F8F3EA;    /* cajas secundarias */
+  --ink:#16211F;          /* texto principal, petróleo muy oscuro */
+  --ink-2:#41514E;        /* texto secundario */
+  --muted:#5E6D69;        /* texto terciario, notas al pie */
+  --line:#DFD6C7;         /* separadores suaves */
+  --line-strong:#C6BAA6;  /* bordes de campos */
+  --accent:#D9430A;       /* naranja de display */
+  --accent-2:#B83708;     /* naranja interactivo: enlaces y botones */
+  --accent-3:#9C2F06;     /* el interactivo al pasar el ratón */
+  --sobre-accent:#FFF7F2; /* el texto que va encima del naranja */
+  --accent-soft:#FAE3D7;  /* fondo suave del acento */
+  --shadow:0 1px 2px rgba(22,33,31,.05), 0 12px 32px -16px rgba(22,33,31,.28);
+}
+
+/* Tema oscuro cuando el sistema del visitante lo pide.
+   Aquí la lógica se invierte: sobre fondo oscuro el naranja
+   claro es el que se lee, y el texto de dentro del botón pasa
+   a ser oscuro. Con el texto claro daba 2,44:1, que es peor
+   que el problema que arreglamos en el tema claro. */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0F1A18;
+    --surface:#17231F;
+    --surface-2:#1D2B26;
+    --ink:#F3EEE4;
+    --ink-2:#C6D1CB;
+    --muted:#8B9A94;
+    --line:#2A3A34;
+    --line-strong:#3D5049;
+    --accent:#FF7A45;
+    --accent-2:#FF9468;
+    --accent-3:#FFB08C;
+    --sobre-accent:#16211F;
+    --accent-soft:#2E1C14;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+}
+
+/* --- 2. Reglas base --------------------------------------------
+   border-box hace que el padding no sume al ancho. Es la primera
+   línea de CSS que escribe todo el mundo y ahorra muchos dolores. */
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+img{max-width:100%;height:auto}
+
+/* .contenedor centra el contenido y le pone aire a los lados.
+   El padding lateral de 20px es lo que evita que en el móvil
+   el texto se pegue al borde de la pantalla. */
+.contenedor{
+  max-width:680px;
+  margin:0 auto;
+  padding-inline:20px;
+}
+.contenedor.ancho{max-width:820px}
+
+/* --- 3. Tipografía ---------------------------------------------
+   Dos familias y ninguna más: Archivo para títulos y rótulos,
+   Source Sans 3 para todo lo que se lee seguido.
+   Siempre con una familia de reserva por si la fuente no carga. */
+
+h1,h2,h3{
+  font-family:Archivo,"Helvetica Neue",sans-serif;
+  letter-spacing:-.025em;
+  text-wrap:balance;
+  margin:0 0 14px;
+}
+h1{font-weight:800;font-size:clamp(2rem,7vw,3rem);line-height:1.02}
+h2{font-weight:700;font-size:clamp(1.4rem,4.6vw,1.9rem);line-height:1.12;margin-top:40px}
+h3{font-weight:700;font-size:1.1rem;line-height:1.25;margin-bottom:8px}
+
+p{margin:0 0 15px;max-width:60ch;text-wrap:pretty}
+ul,ol{margin:0 0 15px;padding-left:22px;max-width:60ch}
+li{margin-bottom:7px}
+
+a{color:var(--accent-2);text-underline-offset:3px}
+a:hover{color:var(--accent-3)}
+
+.grande{font-size:1.15rem;color:var(--ink-2)}
+.apunte{color:var(--muted);font-size:15.5px}
+
+/* --- La marca ----------------------------------------------------
+   El logotipo es la palabra, no un símbolo: "adricamente" en
+   minúscula, en Archivo, con el espaciado apretado. Nunca en
+   mayúsculas y nunca con las letras separadas: eso es otro
+   recurso tipográfico distinto y está justo debajo. */
+.marca{
+  font-family:Archivo,"Helvetica Neue",sans-serif;
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-.035em;
+  color:var(--accent);
+  margin:0 0 26px;
+}
+.marca a{color:inherit;text-decoration:none}
+
+/* Rótulo pequeño para nombrar una sección o un paso.
+   Ojo: ya NO va en mayúsculas ni con las letras separadas. Ese
+   tratamiento es el que sonaba a producto de software. Ahora es
+   un antetítulo de revista: Archivo, tamaño pequeño, en el
+   naranja que trabaja. Se distingue de la marca por el tamaño y
+   el peso, no por las mayúsculas. */
+.etiqueta{
+  font-family:Archivo,"Helvetica Neue",sans-serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:-.005em;
+  color:var(--accent-2);
+  margin:0 0 26px;
+}
+
+/* --- 4. Botones -------------------------------------------------
+   Un <a> y un <button> deben poder parecer lo mismo. Por eso los
+   estilamos juntos: así puedes usar el que tenga sentido según
+   si navega (a) o si ejecuta algo (button). */
+
+.boton,button.boton{
+  display:inline-block;
+  font-family:Archivo,sans-serif;
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  text-align:center;
+  text-decoration:none;
+  cursor:pointer;
+  background:var(--accent-2);
+  color:var(--sobre-accent);
+  border:0;
+  border-radius:7px;
+  padding:15px 28px;
+  width:100%;
+  max-width:340px;
+}
+.boton:hover,button.boton:hover{background:var(--accent-3);color:var(--sobre-accent)}
+.boton[disabled]{opacity:.45;cursor:not-allowed}
+
+.boton-texto{
+  font-family:"Source Sans 3",sans-serif;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  background:none;
+  color:var(--muted);
+  border:0;
+  padding:10px 0;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.boton-texto:hover{color:var(--accent-2)}
+
+/* --- 5. Cajas ---------------------------------------------------- */
+
+.caja{
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:24px;
+  margin:0 0 20px;
+}
+.caja h3{margin-top:0}
+.caja p:last-child{margin-bottom:0}
+
+.datos{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:22px 0 26px;
+  padding:0;
+  list-style:none;
+}
+.datos li{
+  font-family:"Source Sans 3",sans-serif;
+  font-size:13.5px;
+  font-weight:600;
+  letter-spacing:0;
+  color:var(--ink-2);
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:6px 14px;
+}
+
+/* --- 6. Formularios ---------------------------------------------- */
+
+label.campo{
+  font-family:"Source Sans 3",sans-serif;
+  font-size:13.5px;
+  letter-spacing:0;
+  color:var(--ink-2);
+  font-weight:600;
+  display:block;
+  margin-bottom:6px;
+}
+input[type=text],input[type=email],textarea{
+  font-family:inherit;
+  font-size:16.5px;   /* por debajo de 16px, el iPhone hace zoom al enfocar */
+  color:var(--ink);
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:7px;
+  padding:12px 14px;
+  width:100%;
+}
+textarea{resize:vertical;min-height:56px;line-height:1.5}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.75}
+
+.acepto{
+  display:flex;
+  gap:11px;
+  align-items:flex-start;
+  margin:14px 0 16px;
+  font-size:14.5px;
+  color:var(--ink-2);
+  line-height:1.45;
+}
+.acepto input{margin:3px 0 0;accent-color:var(--accent-2);flex:0 0 auto}
+
+/* --- 7. Pie de página -------------------------------------------- */
+
+footer{
+  margin-top:56px;
+  padding:24px 0 40px;
+  border-top:1px solid var(--line);
+}
+footer p{font-size:13.5px;color:var(--muted);line-height:1.55;max-width:62ch}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:14px}
+footer nav a{font-size:14px;color:var(--muted);text-decoration:none}
+footer nav a:hover{color:var(--accent-2);text-decoration:underline}
+
+/* --- 8. Accesibilidad --------------------------------------------
+   Quien navega con teclado tiene que ver dónde está. Nunca quites
+   el outline sin poner otro en su lugar. */
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none !important;transition:none !important}
+}
