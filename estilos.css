@@ -171,6 +171,48 @@ a:hover{color:var(--accent-3)}
   margin:0 0 26px;
 }
 
+/* --- 3 bis. La cabecera ------------------------------------------
+   Aparece igual en todas las páginas. La marca a la izquierda
+   lleva siempre a la portada; los tres enlaces de la derecha son
+   las tres cosas que alguien puede querer: el ejercicio gratis,
+   la terapia y saber quién soy. Ni un enlace más: cada opción
+   añadida reparte la atención entre más sitios.
+
+   En el móvil la fila se parte sola (flex-wrap) y los enlaces
+   quedan debajo de la marca. No hace falta menú hamburguesa para
+   tres enlaces, y un menú que hay que abrir esconde el destino. */
+
+.cabecera{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:6px 22px;
+  padding:26px 0 30px;
+}
+.cabecera .marca{margin:0}
+.cabecera nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-left:auto}
+.cabecera nav a{
+  font-family:"Source Sans 3",sans-serif;
+  font-size:15.5px;
+  font-weight:600;
+  color:var(--ink-2);
+  text-decoration:none;
+}
+.cabecera nav a:hover{color:var(--accent-2);text-decoration:underline}
+/* aria-current="page" lo pone el HTML de cada página en su propio
+   enlace. Así el visitante ve dónde está sin que tengamos que
+   mantener una clase distinta en cada archivo. */
+.cabecera nav a[aria-current=page]{color:var(--accent-2)}
+
+/* Enlace para saltarse la cabecera con el teclado. Está fuera de
+   la pantalla hasta que recibe el foco. */
+.saltar{
+  position:absolute;left:-9999px;
+  background:var(--surface);color:var(--ink);
+  padding:12px 18px;border-radius:7px;z-index:9;
+}
+.saltar:focus{left:20px;top:12px}
+
 /* --- 4. Botones -------------------------------------------------
    Un <a> y un <button> deben poder parecer lo mismo. Por eso los
    estilamos juntos: así puedes usar el que tenga sentido según
@@ -241,6 +283,90 @@ a:hover{color:var(--accent-3)}
   border-radius:20px;
   padding:6px 14px;
 }
+
+/* Caja destacada: la misma caja pero sobre el papel claro y con
+   una banda de acento a la izquierda. Se usa una sola vez por
+   página, para lo que de verdad quieres que se mire. */
+.caja.destacada{
+  background:var(--surface);
+  border-left:4px solid var(--accent);
+  box-shadow:var(--shadow);
+}
+
+/* --- 5 bis. Piezas de contenido ----------------------------------- */
+
+/* Lista numerada grande, para procesos de tres o cuatro pasos.
+   Los números los pone el CSS con un contador, así que puedes
+   añadir o quitar pasos sin renumerar nada a mano. */
+.pasos{list-style:none;counter-reset:paso;padding:0;margin:26px 0;max-width:60ch}
+.pasos li{
+  counter-increment:paso;
+  position:relative;
+  padding-left:46px;
+  margin-bottom:22px;
+}
+.pasos li::before{
+  content:counter(paso);
+  position:absolute;left:0;top:1px;
+  width:30px;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Archivo,sans-serif;font-size:15px;font-weight:700;
+  color:var(--sobre-accent);background:var(--accent-2);
+  border-radius:50%;
+}
+.pasos strong{display:block;color:var(--ink)}
+
+/* Dos columnas que se apilan solas en el móvil. Sirve para
+   "esto sí / esto no", que es la pieza que más filtra. */
+.doble{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+@media (max-width:620px){.doble{grid-template-columns:1fr}}
+.doble ul{margin:0;padding-left:20px}
+.doble li{font-size:16px;color:var(--ink-2)}
+
+/* El precio. Un número grande no es presumir: es no hacer que
+   nadie tenga que buscarlo ni escribir para preguntarlo. */
+.precio{
+  font-family:Archivo,sans-serif;
+  font-size:clamp(2.2rem,8vw,2.8rem);
+  font-weight:800;
+  letter-spacing:-.03em;
+  line-height:1;
+  color:var(--accent);
+  margin:0 0 6px;
+}
+.precio span{font-size:1.05rem;font-weight:700;color:var(--ink-2);letter-spacing:-.01em}
+
+/* Preguntas frecuentes con <details>. Se abren sin una línea de
+   JavaScript y el buscador lee el contenido aunque estén cerradas. */
+.faq{border-top:1px solid var(--line);margin:26px 0 0}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{
+  font-family:Archivo,sans-serif;
+  font-size:1.02rem;font-weight:700;letter-spacing:-.015em;
+  color:var(--ink);
+  cursor:pointer;list-style:none;
+  padding:17px 34px 17px 0;position:relative;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:"+";position:absolute;right:4px;top:14px;
+  font-size:1.5rem;font-weight:400;color:var(--accent-2);line-height:1;
+}
+.faq details[open] summary::after{content:"–"}
+.faq details p{margin:0 0 15px;color:var(--ink-2)}
+.faq details p:first-of-type{margin-top:-2px}
+
+/* Cinta de cierre: el último empujón al final de cada página. */
+.cinta{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:30px 26px;
+  margin:48px 0 0;
+  box-shadow:var(--shadow);
+}
+.cinta h2{margin-top:0}
+.cinta p:last-of-type{margin-bottom:20px}
 
 /* --- 6. Formularios ---------------------------------------------- */
 

@@ -1,10 +1,16 @@
 <!doctype html>
 <!-- ============================================================
-     adricamente.com — página principal
+     adricamente.com — portada
      ------------------------------------------------------------
-     Una sola página, un solo objetivo: que quien llegue entre al
-     mapa o reserve. Nada más. Cuando el test de contenido diga
-     qué funciona, añadiremos lo que haga falta y no antes.
+     La portada tiene un trabajo y solo uno: que quien llega entre
+     al mapa o reserve la sesión. Todo lo demás (precios, quién
+     eres, condiciones) vive en /sesiones/ y /quien-soy/, para que
+     aquí no compita nada con esas dos puertas.
+
+     El orden no es casual: primero la frase que explica el
+     problema, después el mapa —que es gratis y no pide nada—, y
+     solo entonces la sesión. Pedir lo caro antes de haber dado
+     algo es lo que hace que la gente se vaya.
      ============================================================ -->
 <html lang="es">
 <head>
@@ -17,10 +23,10 @@
 
   <!-- La descripción es el texto gris bajo el título en Google.
        No influye en el posicionamiento, sí en que hagan clic. -->
-  <meta name="description" content="Psicología para adultos jóvenes que sienten que su vida no arranca. Contenido, herramientas y terapia online. Adrián Cuñat.">
+  <meta name="description" content="Psicología para adultos jóvenes que sienten que su vida no arranca. Terapia online de 60 minutos por 30 €, contenido y un ejercicio gratuito. Adrián Cuñat.">
 
-  <!-- Estas dos etiquetas son las que deciden cómo se ve el enlace
-       cuando alguien lo comparte por WhatsApp o Instagram. -->
+  <!-- Estas etiquetas deciden cómo se ve el enlace cuando alguien
+       lo comparte por WhatsApp o Instagram. -->
   <meta property="og:title" content="adricamente | Psicología para adultos jóvenes">
   <meta property="og:description" content="Un ejercicio de diez minutos para ver qué estás evitando y qué te está costando.">
   <meta property="og:type" content="website">
@@ -45,23 +51,32 @@
        falta banner de consentimiento ni tocar cookies.html. -->
   <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
 
-  <!-- Medición. Hoy no sale nada de aquí: la función solo da nombre
-       a los cuatro momentos del embudo. El día que contrates un
-       proveedor sin cookies (Plausible o Umami), pegas su script
-       encima de esta línea y los cuatro eventos empiezan a contar
-       solos, sin tocar nada más. -->
+  <!-- Medición. La función da nombre a los cinco momentos del
+       embudo: clic_mapa, mapa_inicio, mapa_fin, alta_correo y
+       clic_reserva. Si algún día cambias de proveedor, se toca
+       aquí y en ningún otro sitio. -->
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
-  <link rel="stylesheet" href="estilos.css?v=2">
+  <link rel="stylesheet" href="/estilos.css?v=3">
 </head>
 
 <body>
-<div class="contenedor" style="padding-block:32px 0">
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<div class="contenedor">
 
-  <p class="marca">adricamente</p>
+  <header class="cabecera">
+    <p class="marca"><a href="/">adricamente</a></p>
+    <nav>
+      <a href="/sesiones/">Sesiones</a>
+      <a href="/quien-soy/">Quién soy</a>
+      <a href="/mapa/">El mapa</a>
+    </nav>
+  </header>
+
+  <main id="principal">
 
   <!-- ===== 1. Lo primero que se lee =========================== -->
   <h1>Psicología para quien siente que su vida no arranca</h1>
@@ -81,7 +96,7 @@
   <!-- ===== 2. La oferta principal: el mapa ==================== -->
   <h2>Empieza por aquí</h2>
 
-  <div class="caja">
+  <div class="caja destacada">
     <h3>El mapa de lo que evitas</h3>
     <p>
       Seis preguntas para ver, en diez minutos, qué estás esquivando,
@@ -95,11 +110,42 @@
       <li>No sale de tu móvil</li>
     </ul>
     <p style="margin-bottom:0">
-      <a class="boton" onclick="window.medir&&window.medir(\'clic_mapa\')" href="mapa/">Hacer el mapa</a>
+      <a class="boton" onclick="window.medir&&window.medir('clic_mapa')" href="/mapa/">Hacer el mapa</a>
     </p>
   </div>
 
-  <!-- ===== 3. La segunda puerta: reservar ===================== -->
+  <!-- ===== 3. Qué suele estar pasando ========================
+       Tres mecanismos, no tres consejos. Es lo que diferencia
+       esta página de las mil que dicen «cuídate». Y es el mismo
+       material que hay en las cartas del correo, a propósito:
+       quien lo lee aquí y se reconoce, se apunta. -->
+  <h2>Qué suele estar pasando</h2>
+
+  <h3>Lo que te hunde funciona</h3>
+  <p>
+    Cancelas el plan y notas alivio antes de colgar. Dejas el correo
+    difícil para mañana y el nudo del estómago se afloja. Eso que haces
+    quita malestar de verdad, y muy rápido. Por eso se repite. No estás
+    fallando en algo fácil: estás perdiendo contra un mecanismo de
+    aprendizaje que aprendió antes que tú y que no se cansa.
+  </p>
+
+  <h3>La motivación llega después</h3>
+  <p>
+    Esperar a tener ganas parece prudencia y casi siempre es evitación
+    con buena presentación. Las ganas aparecen a los diez minutos de
+    haber empezado, no a los diez días de estar esperándolas.
+  </p>
+
+  <h3>El coste no se ve junto</h3>
+  <p>
+    Una tarde. Una conversación que no tuviste. Un mensaje sin responder.
+    Cada trozo es asumible por separado y ninguno pide explicaciones,
+    pero el total existe: se ve como una vida que se ha ido estrechando
+    sin poder señalar el día en que pasó.
+  </p>
+
+  <!-- ===== 4. La segunda puerta: reservar ===================== -->
   <h2 id="sesion">¿Prefieres que lo hablemos?</h2>
 
   <p>
@@ -113,6 +159,9 @@
     <p>
       Las sesiones se realizan en el centro sanitario
       <strong>Neurococos</strong>, online y solo para residentes en España.
+      La terapia son 60 minutos, 30&nbsp;€, semanal o quincenal según te
+      convenga. <a href="/sesiones/">Aquí está todo con detalle</a>: cómo
+      funciona, qué pasa el primer día y para quién no es.
     </p>
     <p>
       <strong>En la sesión estamos tú y yo, nadie más.</strong> La
@@ -126,12 +175,12 @@
       <!-- target="_blank" abre en pestaña nueva; rel="noopener" es
            obligatorio por seguridad siempre que uses target blank. -->
       <a class="boton"
-         onclick="window.medir&&window.medir(\'clic_reserva\')" href="https://cal.com/adricamente/sesion-informativa-gratuita"
+         onclick="window.medir&&window.medir('clic_reserva')" href="https://cal.com/adricamente/sesion-informativa-gratuita"
          target="_blank" rel="noopener">Reservar mi sesión</a>
     </p>
   </div>
 
-  <!-- ===== 4. Quién soy ====================================== -->
+  <!-- ===== 5. Quién soy ====================================== -->
   <h2>Quién te va a atender</h2>
 
   <p>
@@ -146,6 +195,7 @@
     vez de intentar controlar lo que sientes, miramos qué haces con
     ello y qué te está costando. Nada de frases motivadoras ni de
     recetas. Un plan, y revisarlo.
+    <a href="/quien-soy/">Lo demás está aquí</a>.
   </p>
 
   <p class="apunte">
@@ -154,7 +204,7 @@
     centro sanitario y con supervisión de un profesional colegiado.
   </p>
 
-  <!-- ===== 5. Dónde encontrarme ============================== -->
+  <!-- ===== 6. Dónde encontrarme ============================== -->
   <h2>Dónde publico</h2>
   <p>
     Subo un vídeo al día en
@@ -163,12 +213,17 @@
     <a href="https://www.youtube.com/@adricamente" target="_blank" rel="noopener">YouTube</a>.
   </p>
 
-  <!-- ===== 6. Pie ============================================ -->
+  </main>
+
+  <!-- ===== 7. Pie ============================================ -->
   <footer>
     <nav>
-      <a href="aviso-legal.html">Aviso legal</a>
-      <a href="privacidad.html">Privacidad</a>
-      <a href="cookies.html">Cookies</a>
+      <a href="/sesiones/">Sesiones</a>
+      <a href="/quien-soy/">Quién soy</a>
+      <a href="/mapa/">El mapa</a>
+      <a href="/aviso-legal.html">Aviso legal</a>
+      <a href="/privacidad.html">Privacidad</a>
+      <a href="/cookies.html">Cookies</a>
       <a href="mailto:hola@adricamente.com">hola@adricamente.com</a>
     </nav>
     <p>
