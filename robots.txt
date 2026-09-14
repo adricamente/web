@@ -1,0 +1,9 @@
+# adricamente.com
+# Todo el sitio es público y se puede indexar. Lo único que no
+# tiene sentido en un buscador es la página de gracias, porque
+# solo se llega a ella desde el correo de confirmación.
+User-agent: *
+Allow: /
+Disallow: /gracias.html
+
+Sitemap: https://adricamente.com/sitemap.xml

@@ -2,40 +2,31 @@
 <!-- ============================================================
      adricamente.com — portada
      ------------------------------------------------------------
-     La portada tiene un trabajo y solo uno: que quien llega entre
-     al mapa o reserve la sesión. Todo lo demás (precios, quién
-     eres, condiciones) vive en /sesiones/ y /quien-soy/, para que
-     aquí no compita nada con esas dos puertas.
+     El orden de las secciones no es de cosecha propia: es el que
+     repiten las webs de psicólogos con consulta online en España
+     (promesa y botón, credenciales, quién soy, en qué te ayudo,
+     cómo funciona, precio, prueba social, preguntas, artículos,
+     cierre). Se ha copiado a propósito. Quien entra en una web de
+     psicólogo ya sabe dónde mira, y pelearse con esa costumbre
+     solo consigue que no encuentre el botón.
 
-     El orden no es casual: primero la frase que explica el
-     problema, después el mapa —que es gratis y no pide nada—, y
-     solo entonces la sesión. Pedir lo caro antes de haber dado
-     algo es lo que hace que la gente se vaya.
+     Lo que sí es propio: el texto, el color y que en el sitio de
+     los testimonios haya una explicación de por qué no los hay.
      ============================================================ -->
 <html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- El <title> es lo que sale en la pestaña y en Google.
-       Fórmula: quién eres + para quién + dónde. -->
-  <title>adricamente | Psicología para adultos jóvenes</title>
+  <title>adricamente | Terapia psicológica online</title>
+  <meta name="description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita. Adrián Cuñat, Graduado en Psicología cursando el Máster en Psicología General Sanitaria.">
 
-  <!-- La descripción es el texto gris bajo el título en Google.
-       No influye en el posicionamiento, sí en que hagan clic. -->
-  <meta name="description" content="Psicología para adultos jóvenes que sienten que su vida no arranca. Terapia online de 60 minutos por 30 €, contenido y un ejercicio gratuito. Adrián Cuñat.">
-
-  <!-- Estas etiquetas deciden cómo se ve el enlace cuando alguien
-       lo comparte por WhatsApp o Instagram. -->
-  <meta property="og:title" content="adricamente | Psicología para adultos jóvenes">
-  <meta property="og:description" content="Un ejercicio de diez minutos para ver qué estás evitando y qué te está costando.">
+  <meta property="og:title" content="adricamente | Terapia psicológica online">
+  <meta property="og:description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita. Adrián Cuñat, Graduado en Psicología cursando el Máster en Psicología General Sanitaria.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/">
-
   <link rel="canonical" href="https://adricamente.com/">
 
-  <!-- Icono y previsualización al compartir. Las rutas empiezan
-       por / para que valgan igual desde /mapa/ que desde la raíz. -->
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -47,61 +38,180 @@
   <meta property="og:locale" content="es_ES">
   <meta name="twitter:card" content="summary_large_image">
 
-  <!-- Umami. Sin cookies y sin datos personales, así que no hace
-       falta banner de consentimiento ni tocar cookies.html. -->
+  <!-- Umami: medición sin cookies y sin datos personales. Por eso
+       esta web no necesita banner de consentimiento. -->
   <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
-
-  <!-- Medición. La función da nombre a los cinco momentos del
-       embudo: clic_mapa, mapa_inicio, mapa_fin, alta_correo y
-       clic_reserva. Si algún día cambias de proveedor, se toca
-       aquí y en ningún otro sitio. -->
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
-  <link rel="stylesheet" href="/estilos.css?v=3">
+  <link rel="stylesheet" href="/estilos.css?v=4">
 </head>
 
 <body>
 <a class="saltar" href="#principal">Saltar al contenido</a>
-<div class="contenedor">
+<div class="contenedor ancho">
 
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
     <nav>
-      <a href="/sesiones/">Sesiones</a>
-      <a href="/quien-soy/">Quién soy</a>
-      <a href="/mapa/">El mapa</a>
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+      <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Pedir cita</a>
     </nav>
   </header>
 
   <main id="principal">
 
-  <!-- ===== 1. Lo primero que se lee =========================== -->
-  <h1>Psicología para quien siente que su vida no arranca</h1>
+  <section class="hero">
+    <h1>Terapia psicológica online para quien siente que su vida no arranca</h1>
+    <p class="entradilla">
+      No es que te falte actitud. Es que llevas tiempo haciendo algo que
+      funciona a corto plazo y te está saliendo carísimo a largo.
+    </p>
+    <div class="acciones">
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Pedir cita &middot; primera sesión gratis</a>
+      <a class="enlace-fuerte" onclick="window.medir&&window.medir('clic_mapa')"
+         href="/mapa/">o empieza tú solo con el mapa</a>
+    </div>
+  </section>
 
-  <p class="grande">
-    No es que te falte actitud. Es que llevas tiempo haciendo algo que
-    funciona a corto plazo y te está saliendo carísimo a largo.
-  </p>
+  <dl class="confianza">
+    <div><dt>Formación</dt><dd>Graduado en Psicología (UNED). Cursando el Máster en Psicología General Sanitaria (UNIR)</dd></div>
+    <div><dt>Dónde</dt><dd>Centro sanitario Neurococos, con supervisión colegiada</dd></div>
+    <div><dt>Modalidad</dt><dd>100&nbsp;% online, para residentes en España</dd></div>
+    <div><dt>Sesión</dt><dd>60 minutos, 30&nbsp;€. La primera es gratuita</dd></div>
+  </dl>
 
+  <!-- ===== Presentación =======================================
+       LA FOTO: cuando tengas el retrato, guárdalo como
+       /adrian.jpg y quita los signos de comentario de la línea
+       marcada. La sección está pensada para funcionar con foto y
+       sin ella, para que la web no parezca rota mientras tanto. -->
+  <h2>Hola, soy Adrián</h2>
+  <!-- <p><img src="/adrian.jpg" alt="Retrato de Adrián Cuñat Andrés" width="760" height="760" style="border-radius:12px"></p> -->
   <p>
-    Soy Adrián Cuñat, Graduado en Psicología, terminando el Máster en
-    Psicología General Sanitaria. Hago contenido sobre por qué nos
-    quedamos atascados, y atiendo online a personas de veintitantos y
-    treintaitantos que llevan demasiado tiempo esperando a estar listas.
+    Adrián Cuñat Andrés. Graduado en Psicología por la UNED y cursando el
+    Máster en Psicología General Sanitaria en UNIR, en prácticas
+    supervisadas en el centro sanitario Neurococos. Atiendo online a
+    personas de veintitantos y treintaitantos que llevan demasiado tiempo
+    esperando a estar listas.
+  </p>
+  <p>
+    Trabajo desde terapias contextuales y cognitivo-conductuales: en vez
+    de intentar controlar lo que sientes, miramos qué haces con ello y qué
+    te está costando. Nada de frases motivadoras ni de recetas. Un plan, y
+    revisarlo. <a href="/sobre-mi/">Quién soy, con detalle</a>.
   </p>
 
-  <!-- ===== 2. La oferta principal: el mapa ==================== -->
-  <h2>Empieza por aquí</h2>
+  <!-- ===== En qué puedo ayudarte ============================== -->
+  <h2>¿En qué puedo ayudarte?</h2>
+  <p>
+    Cuatro formas distintas de lo mismo: algo que alivia hoy y que, a
+    fuerza de repetirse, va estrechando la vida.
+  </p>
+  <div class="rejilla">
+    <a class="tarjeta" href="/areas/ansiedad/">
+      <h3>Ansiedad</h3>
+      <p>Preocupación que no para, tensión en el cuerpo, evitar lo que la dispara. La evitación calma hoy y agranda el problema mañana.</p>
+      <span class="mas">Ver cómo se trabaja &rarr;</span>
+    </a>
+    <a class="tarjeta" href="/areas/procrastinacion/">
+      <h3>Procrastinación y bloqueo</h3>
+      <p>Saber qué tienes que hacer y no hacerlo. No es pereza ni falta de organización: es un mecanismo de alivio que funciona demasiado bien.</p>
+      <span class="mas">Ver cómo se trabaja &rarr;</span>
+    </a>
+    <a class="tarjeta" href="/areas/autoestima/">
+      <h3>Autoestima e inseguridad</h3>
+      <p>Hablarte a ti mismo como no le hablarías a nadie, y organizar la vida alrededor de no quedar mal.</p>
+      <span class="mas">Ver cómo se trabaja &rarr;</span>
+    </a>
+    <a class="tarjeta" href="/areas/estado-de-animo/">
+      <h3>Estado de ánimo bajo</h3>
+      <p>Desgana, cansancio, cosas que antes te gustaban y ya no. La vida se va encogiendo poco a poco.</p>
+      <span class="mas">Ver cómo se trabaja &rarr;</span>
+    </a>
+  </div>
 
+  <!-- ===== Cómo funciona ====================================== -->
+  <h2>Cómo funciona</h2>
+  <ol class="pasos">
+    <li>
+      <strong>Sesión informativa · 20 minutos · gratis</strong>
+      Me cuentas qué te pasa y te digo con franqueza si creo que puedo
+      ayudarte. Si creo que no, te oriento a dónde ir. No es terapia y no
+      tienes que decidir nada ese día.
+    </li>
+    <li>
+      <strong>Dos o tres sesiones de evaluación</strong>
+      Cuándo empezó, qué lo mantiene hoy, qué has probado ya y qué pasó.
+      Sin esto, cualquier plan es un tiro al aire.
+    </li>
+    <li>
+      <strong>Te devuelvo lo que veo y acordamos un plan</strong>
+      Qué creo que está pasando, con qué objetivos vamos a trabajar y
+      cómo. Si no estás de acuerdo, se discute: el plan es de los dos o
+      no funciona.
+    </li>
+    <li>
+      <strong>Trabajo y revisión</strong>
+      Sesiones de una hora, y cada pocas semanas paramos a mirar si esto
+      se está moviendo. El objetivo del proceso es terminar, no que
+      vengas indefinidamente.
+    </li>
+  </ol>
+
+  <!-- ===== Tarifas =========================================== -->
+  <h2>Cuánto cuesta</h2>
+
+  <div class="tarifa">
+    <p class="precio">30&nbsp;€ <span>por sesión de 60 minutos</span></p>
+    <p>
+      La primera sesión, la informativa de veinte minutos, no se cobra.
+      La frecuencia la eliges tú: semanal o quincenal.
+    </p>
+    <p style="margin-bottom:0">
+      <a href="/tarifas/">Pago, cancelaciones y lo que incluye &rarr;</a>
+    </p>
+  </div>
+
+  <!-- ===== El hueco de los testimonios ========================
+       Casi todas las webs del sector ponen aquí reseñas de
+       pacientes. Aquí no se puede y, en vez de dejar un hueco,
+       se explica por qué. Explicar una ausencia incómoda es más
+       creíble que rellenarla. -->
+  <h2 id="sin-testimonios">Por qué aquí no vas a ver testimonios</h2>
+  <p>
+    En casi todas las webs de psicólogos hay, más o menos por esta altura,
+    una fila de reseñas de pacientes. Aquí no la vas a encontrar, y no es
+    porque no haya gente contenta.
+  </p>
+  <p>
+    Es que pedirle a alguien que está en terapia contigo que escriba
+    públicamente lo bien que le va me parece una forma de aprovecharse de
+    una relación que es desigual por definición. Y sin pedirlo, las reseñas
+    no aparecen solas.
+  </p>
+  <p>
+    Así que lo que puedo darte en su lugar es esto: veinte minutos gratis
+    para que me escuches y lo juzgues tú, y un ejercicio que puedes hacer
+    ahora mismo sin darme ni tu correo.
+  </p>
+
+  <!-- ===== El mapa =========================================== -->
   <div class="caja destacada">
     <h3>El mapa de lo que evitas</h3>
     <p>
-      Seis preguntas para ver, en diez minutos, qué estás esquivando,
-      qué te alivia hacerlo y qué te está costando de verdad. Es el
-      mismo análisis que hago en consulta el primer día, hecho por ti.
+      Seis preguntas para ver, en diez minutos, qué estás esquivando, qué
+      te alivia hacerlo y qué te está costando de verdad. Es el mismo
+      análisis que hago en consulta el primer día, hecho por ti.
     </p>
     <ul class="datos">
       <li>6 preguntas</li>
@@ -114,124 +224,116 @@
     </p>
   </div>
 
-  <!-- ===== 3. Qué suele estar pasando ========================
-       Tres mecanismos, no tres consejos. Es lo que diferencia
-       esta página de las mil que dicen «cuídate». Y es el mismo
-       material que hay en las cartas del correo, a propósito:
-       quien lo lee aquí y se reconoce, se apunta. -->
-  <h2>Qué suele estar pasando</h2>
+  <!-- ===== Preguntas frecuentes =============================== -->
+  <h2>Preguntas frecuentes</h2>
+  <div class="faq">
+    <details>
+      <summary>¿La terapia online funciona igual que la presencial?</summary>
+      <p>Para la mayoría de los problemas por los que la gente pide cita —ansiedad, estado de ánimo, evitación, autoestima— la investigación disponible no encuentra diferencias relevantes de eficacia entre el formato online y el presencial, siempre que el tratamiento sea el mismo y se haga bien.</p><p>Lo que sí cambia es la logística: no pierdes el viaje, es más fácil sostener la frecuencia y hay menos sesiones perdidas. Necesitas un sitio donde puedas hablar tranquilo, y eso a veces es lo difícil.</p>
+    </details>
 
-  <h3>Lo que te hunde funciona</h3>
-  <p>
-    Cancelas el plan y notas alivio antes de colgar. Dejas el correo
-    difícil para mañana y el nudo del estómago se afloja. Eso que haces
-    quita malestar de verdad, y muy rápido. Por eso se repite. No estás
-    fallando en algo fácil: estás perdiendo contra un mecanismo de
-    aprendizaje que aprendió antes que tú y que no se cansa.
-  </p>
+    <details>
+      <summary>¿Quién me va a atender exactamente?</summary>
+      <p>Adrián Cuñat Andrés, graduado en Psicología por la UNED y cursando el Máster en Psicología General Sanitaria en UNIR. Atiendo en prácticas supervisadas dentro del centro sanitario Neurococos, no por mi cuenta. Lo digo tal cual porque tienes derecho a saberlo antes de sentarte.</p>
+    </details>
 
-  <h3>La motivación llega después</h3>
-  <p>
-    Esperar a tener ganas parece prudencia y casi siempre es evitación
-    con buena presentación. Las ganas aparecen a los diez minutos de
-    haber empezado, no a los diez días de estar esperándolas.
-  </p>
+    <details>
+      <summary>¿Qué es eso de la supervisión?</summary>
+      <p>En la sesión estamos tú y yo, nadie más. La supervisión ocurre entre sesiones: reviso el caso con un profesional colegiado del centro, que está sujeto al mismo secreto profesional que yo. Es lo que hace que haya dos cabezas pensando en lo tuyo en vez de una.</p>
+    </details>
 
-  <h3>El coste no se ve junto</h3>
-  <p>
-    Una tarde. Una conversación que no tuviste. Un mensaje sin responder.
-    Cada trozo es asumible por separado y ninguno pide explicaciones,
-    pero el total existe: se ve como una vida que se ha ido estrechando
-    sin poder señalar el día en que pasó.
-  </p>
+    <details>
+      <summary>¿Cuánto dura un proceso?</summary>
+      <p>Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso. El objetivo declarado del proceso es terminar.</p>
+    </details>
 
-  <!-- ===== 4. La segunda puerta: reservar ===================== -->
-  <h2 id="sesion">¿Prefieres que lo hablemos?</h2>
+    <details>
+      <summary>¿Lo que cuente sale de ahí?</summary>
+      <p>No. Todo está protegido por secreto profesional, también para quien supervisa. Las únicas excepciones son las que marca la ley: riesgo grave para tu vida o la de otra persona, y requerimiento judicial.</p>
+    </details>
 
-  <p>
-    Tengo unas pocas sesiones informativas gratuitas al mes: veinte
-    minutos para que me cuentes qué te trae y yo te diga honestamente
-    si creo que puedo ayudarte. No es una sesión de terapia y no
-    tienes que decidir nada ese día.
-  </p>
-
-  <div class="caja">
-    <p>
-      Las sesiones se realizan en el centro sanitario
-      <strong>Neurococos</strong>, online y solo para residentes en España.
-      La terapia son 60 minutos, 30&nbsp;€, semanal o quincenal según te
-      convenga. <a href="/sesiones/">Aquí está todo con detalle</a>: cómo
-      funciona, qué pasa el primer día y para quién no es.
-    </p>
-    <p>
-      <strong>En la sesión estamos tú y yo, nadie más.</strong> La
-      supervisión ocurre entre sesiones: reviso el caso con un profesional
-      colegiado del centro, que por tanto conoce la información clínica y
-      está sujeto al mismo secreto profesional que yo. No es un trámite que
-      arrastro — es lo que hace que haya dos cabezas pensando en lo tuyo en
-      vez de una.
-    </p>
-    <p style="margin-bottom:0">
-      <!-- target="_blank" abre en pestaña nueva; rel="noopener" es
-           obligatorio por seguridad siempre que uses target blank. -->
-      <a class="boton"
-         onclick="window.medir&&window.medir('clic_reserva')" href="https://cal.com/adricamente/sesion-informativa-gratuita"
-         target="_blank" rel="noopener">Reservar mi sesión</a>
-    </p>
+    <details>
+      <summary>¿Puedo pagar cada sesión, sin bonos ni permanencia?</summary>
+      <p>Sí, y es lo único que hay. Se paga por transferencia antes de cada sesión, no hay bonos, no hay paquetes y no hay permanencia. Puedes dejarlo cuando quieras, aunque preferiría que me lo dijeras para cerrarlo bien.</p>
+    </details>
   </div>
 
-  <!-- ===== 5. Quién soy ====================================== -->
-  <h2>Quién te va a atender</h2>
+  <!-- ===== Últimos artículos ================================== -->
+  <h2>Últimos artículos</h2>
+  <div class="rejilla">
+    <a class="tarjeta" href="/blog/por-que-lo-repites/">
+      <h3>Por qué lo repites aunque sepas que te perjudica</h3>
+      <p>Lo sigues haciendo porque funciona. No para tu vida: para el minuto siguiente.</p>
+      <span class="mas">Leer &rarr;</span>
+    </a>
+    <a class="tarjeta" href="/blog/cuando-este-listo/">
+      <h3>«Cuando esté listo» no llega nunca</h3>
+      <p>La motivación no va delante de la acción. Va detrás.</p>
+      <span class="mas">Leer &rarr;</span>
+    </a>
+    <a class="tarjeta" href="/blog/la-factura-que-no-ves/">
+      <h3>La factura que no ves</h3>
+      <p>El coste de evitar llega en trozos demasiado pequeños para hacer algo con ellos.</p>
+      <span class="mas">Leer &rarr;</span>
+    </a>
+  </div>
+  <p style="margin-top:18px"><a href="/blog/">Ver todos los artículos &rarr;</a></p>
 
-  <p>
-    Adrián Cuñat Andrés. Graduado en Psicología por la UNED y
-    estudiante del Máster en Psicología General Sanitaria en UNIR,
-    actualmente en prácticas supervisadas en el centro sanitario
-    Neurococos.
-  </p>
-
-  <p>
-    Trabajo desde terapias contextuales y cognitivo-conductuales: en
-    vez de intentar controlar lo que sientes, miramos qué haces con
-    ello y qué te está costando. Nada de frases motivadoras ni de
-    recetas. Un plan, y revisarlo.
-    <a href="/quien-soy/">Lo demás está aquí</a>.
-  </p>
-
-  <p class="apunte">
-    Hasta obtener el título de Máster y la correspondiente colegiación
-    no ejerzo por cuenta propia: la atención se presta dentro del
-    centro sanitario y con supervisión de un profesional colegiado.
-  </p>
-
-  <!-- ===== 6. Dónde encontrarme ============================== -->
-  <h2>Dónde publico</h2>
-  <p>
-    Subo un vídeo al día en
-    <a href="https://www.instagram.com/adricamente" target="_blank" rel="noopener">Instagram</a>,
-    <a href="https://www.tiktok.com/@adricamente" target="_blank" rel="noopener">TikTok</a> y
-    <a href="https://www.youtube.com/@adricamente" target="_blank" rel="noopener">YouTube</a>.
-  </p>
+  <section class="cinta">
+    <h2>Empezar</h2>
+    <p>Veinte minutos, gratis, para que me cuentes qué te trae y yo te diga honestamente si creo que puedo ayudarte. No es terapia y no tienes que decidir nada ese día.</p>
+    <p>
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar mi sesión</a>
+    </p>
+    <p class="apunte" style="margin-bottom:0">Las sesiones son online y solo para residentes en España, en el centro sanitario Neurococos.</p>
+  </section>
 
   </main>
 
-  <!-- ===== 7. Pie ============================================ -->
   <footer>
-    <nav>
-      <a href="/sesiones/">Sesiones</a>
-      <a href="/quien-soy/">Quién soy</a>
-      <a href="/mapa/">El mapa</a>
-      <a href="/aviso-legal.html">Aviso legal</a>
-      <a href="/privacidad.html">Privacidad</a>
-      <a href="/cookies.html">Cookies</a>
-      <a href="mailto:hola@adricamente.com">hola@adricamente.com</a>
-    </nav>
+    <div class="pie-columnas">
+      <div>
+        <h4>Adrián Cuñat Andrés</h4>
+        <p>
+          Graduado en Psicología por la UNED. Cursando el Máster en
+          Psicología General Sanitaria en UNIR. En prácticas supervisadas
+          en el centro sanitario Neurococos.
+        </p>
+        <p>
+          Hasta obtener el título y la colegiación no ejerzo por cuenta
+          propia: la atención se presta dentro del centro sanitario y con
+          supervisión de un profesional colegiado.
+        </p>
+      </div>
+      <div>
+        <h4>La web</h4>
+        <ul>
+          <li><a href="/sobre-mi/">Sobre mí</a></li>
+          <li><a href="/terapia-online/">Terapia online</a></li>
+          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/tarifas/">Tarifas</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/mapa/">El mapa de lo que evitas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto y legal</h4>
+        <ul>
+          <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="mailto:hola@adricamente.com">hola@adricamente.com</a></li>
+          <li><a href="/aviso-legal.html">Aviso legal</a></li>
+          <li><a href="/privacidad.html">Privacidad</a></li>
+          <li><a href="/cookies.html">Cookies</a></li>
+        </ul>
+      </div>
+    </div>
     <p>
       Los contenidos de esta web tienen finalidad divulgativa y
       psicoeducativa. No constituyen diagnóstico ni tratamiento y no
       sustituyen a la consulta con un profesional sanitario. Si estás
-      pasándolo mal, habla con tu médico de familia o con un
-      profesional de la psicología.
+      pasándolo mal, habla con tu médico de familia o con un profesional
+      de la psicología. Si estás en peligro, llama al 024 o al 112.
     </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
@@ -239,8 +341,6 @@
 </div>
 
 <script>
-  // El año del pie se actualiza solo. Una tontería, pero evita que
-  // en enero la web diga 2026 y parezca abandonada.
   document.getElementById('anyo').textContent = new Date().getFullYear();
 </script>
 </body>

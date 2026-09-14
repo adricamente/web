@@ -185,12 +185,25 @@ a:hover{color:var(--accent-3)}
 .cabecera{
   display:flex;
   flex-wrap:wrap;
-  align-items:baseline;
-  gap:6px 22px;
-  padding:26px 0 30px;
+  align-items:center;
+  gap:10px 22px;
+  padding:18px 0;
+  border-bottom:1px solid var(--line);
+  margin-bottom:34px;
 }
-.cabecera .marca{margin:0}
-.cabecera nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-left:auto}
+.cabecera .marca{margin:0;flex:0 0 auto}
+.cabecera nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-left:auto;align-items:center}
+
+/* El botón de cita vive dentro del menú y va siempre a la derecha.
+   Es el patrón que usa casi todo el sector: una sola acción visible
+   en todo momento, sin tener que buscarla. */
+.cabecera .cita{
+  font-family:Archivo,sans-serif;
+  font-size:14.5px;font-weight:700;letter-spacing:-.01em;
+  background:var(--accent-2);color:var(--sobre-accent);
+  padding:9px 16px;border-radius:6px;text-decoration:none;
+}
+.cabecera .cita:hover{background:var(--accent-3);color:var(--sobre-accent);text-decoration:none}
 .cabecera nav a{
   font-family:"Source Sans 3",sans-serif;
   font-size:15.5px;
@@ -425,3 +438,151 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
   html{scroll-behavior:auto}
   *{animation:none !important;transition:none !important}
 }
+
+/* ============================================================
+   9. Los componentes del estándar del sector
+   ------------------------------------------------------------
+   Todo lo de aquí abajo existe porque, al mirar quince webs de
+   psicólogos españoles con consulta online, estas son las piezas
+   que repiten casi todas: una primera pantalla con la promesa y
+   el botón de cita, una franja de credenciales, una rejilla de
+   «en qué puedo ayudarte», los pasos del proceso, las tarifas y
+   las preguntas frecuentes.
+
+   Que la estructura sea la habitual no es conformismo: es que
+   quien entra en una web de psicólogo ya sabe dónde mira, y
+   pelearse con esa costumbre solo consigue que no encuentre el
+   botón. Lo que distingue a esta web es el texto y el color, no
+   colocar las cosas en sitios raros.
+   ============================================================ */
+
+/* --- 9.1 La primera pantalla ------------------------------------
+   Sin foto todavía: una sola columna, con la promesa grande y el
+   botón enseguida. Cuando haya retrato, .hero pasa a dos columnas
+   solo (y siempre) con la clase .con-foto. */
+
+.hero{padding:6px 0 10px}
+.hero h1{margin-bottom:18px}
+.hero .entradilla{font-size:1.2rem;line-height:1.5;color:var(--ink-2);max-width:54ch;margin-bottom:26px}
+.hero .acciones{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;margin-bottom:8px}
+.hero .acciones .boton{width:auto;max-width:none}
+
+.hero.con-foto{display:grid;grid-template-columns:1.25fr .85fr;gap:38px;align-items:center}
+.hero.con-foto img{border-radius:14px;box-shadow:var(--shadow)}
+@media (max-width:760px){
+  .hero.con-foto{grid-template-columns:1fr;gap:24px}
+}
+
+/* Enlace secundario al lado del botón: la segunda puerta, sin
+   competir con la primera. */
+.enlace-fuerte{
+  font-family:"Source Sans 3",sans-serif;
+  font-size:16px;font-weight:600;color:var(--accent-2);
+  text-underline-offset:4px;
+}
+
+/* --- 9.2 La franja de confianza ---------------------------------
+   Cuatro datos comprobables y ni uno inventado. En este sector la
+   tentación es poner «+500 pacientes» y aquí eso no se puede: no
+   es verdad todavía y una cifra que no se puede justificar hace
+   más daño que no poner ninguna. */
+
+.confianza{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  margin:30px 0 8px;
+}
+.confianza div{background:var(--surface);padding:15px 16px}
+.confianza dt{
+  font-family:Archivo,sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:-.01em;color:var(--accent-2);margin-bottom:2px;
+}
+.confianza dd{margin:0;font-size:14.5px;line-height:1.4;color:var(--ink-2)}
+@media (max-width:760px){.confianza{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:380px){.confianza{grid-template-columns:1fr}}
+
+/* --- 9.3 Rejilla de tarjetas -------------------------------------
+   Sirve para «¿en qué puedo ayudarte?» y para los artículos.
+   auto-fit + minmax hace que el número de columnas lo decida el
+   ancho disponible, sin media queries y sin que nunca quede una
+   tarjeta sola y estirada. */
+
+.rejilla{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(232px,1fr));
+  gap:16px;
+  margin:26px 0 10px;
+}
+.tarjeta{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:22px;
+  display:flex;flex-direction:column;
+  text-decoration:none;color:inherit;
+}
+a.tarjeta:hover{border-color:var(--line-strong);box-shadow:var(--shadow);color:inherit}
+.tarjeta h3{margin:0 0 8px}
+.tarjeta p{font-size:15.5px;color:var(--ink-2);margin:0 0 14px;max-width:none}
+.tarjeta .mas{
+  margin-top:auto;
+  font-family:"Source Sans 3",sans-serif;font-size:15px;font-weight:600;
+  color:var(--accent-2);
+}
+a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underline-offset:3px}
+
+/* --- 9.4 Tarifas -------------------------------------------------- */
+
+.tarifa{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-left:4px solid var(--accent);
+  border-radius:0 12px 12px 0;
+  padding:26px;
+  margin:26px 0 20px;
+  box-shadow:var(--shadow);
+}
+.tarifa .precio{margin-bottom:4px}
+.tarifa ul{margin:18px 0 0;padding-left:20px}
+.tarifa li{color:var(--ink-2)}
+
+/* --- 9.5 Artículos ------------------------------------------------ */
+
+.articulo-meta{
+  font-family:"Source Sans 3",sans-serif;
+  font-size:13.5px;font-weight:600;color:var(--muted);
+  margin:0 0 10px;
+}
+.articulo-cuerpo p{font-size:17.5px;line-height:1.65}
+.articulo-cuerpo h2{margin-top:36px}
+.migas{font-size:14px;color:var(--muted);margin:0 0 18px}
+.migas a{color:var(--muted);text-decoration:none}
+.migas a:hover{color:var(--accent-2);text-decoration:underline}
+
+/* --- 9.6 Pie a columnas ------------------------------------------
+   El pie de una web sanitaria no es decoración: es donde va la
+   identificación profesional que exige el artículo 10 de la LSSI.
+   Por eso tiene su propio bloque y no se mezcla con los enlaces. */
+
+.pie-columnas{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:26px;
+  margin-bottom:26px;
+}
+.pie-columnas h4{
+  font-family:Archivo,sans-serif;font-size:13.5px;font-weight:700;
+  letter-spacing:-.005em;color:var(--ink);margin:0 0 10px;
+}
+.pie-columnas ul{list-style:none;padding:0;margin:0}
+.pie-columnas li{margin-bottom:7px}
+.pie-columnas a{font-size:14.5px;color:var(--muted);text-decoration:none}
+.pie-columnas a:hover{color:var(--accent-2);text-decoration:underline}
+.pie-columnas p{font-size:14px;color:var(--muted);line-height:1.5;margin:0 0 10px}
+@media (max-width:700px){.pie-columnas{grid-template-columns:1fr 1fr}}
+@media (max-width:440px){.pie-columnas{grid-template-columns:1fr}}
