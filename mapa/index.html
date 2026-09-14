@@ -1,0 +1,616 @@
+<!doctype html>
+<!-- ============================================================
+     adricamente.com/mapa — el recurso gratuito
+     ------------------------------------------------------------
+     Seis pasos y un resultado. Todo ocurre en el navegador de la
+     persona: las respuestas NO se envían a ningún sitio. Eso no es
+     solo una promesa de la página, es cómo está construida — no hay
+     ni una línea que mande las respuestas fuera. Por eso esta web
+     no trata datos de salud y nos ahorramos el artículo 9 del RGPD.
+     ============================================================ -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>El mapa de lo que evitas | adricamente</title>
+  <meta name="description" content="Seis preguntas para ver, en diez minutos, qué estás evitando, qué te alivia hacerlo y qué te está costando.">
+  <meta property="og:title" content="El mapa de lo que evitas">
+  <meta property="og:description" content="Seis preguntas, diez minutos, y sales con tu propio patrón escrito en una frase.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adricamente.com/mapa/">
+  <link rel="canonical" href="https://adricamente.com/mapa/">
+
+  <!-- Icono y previsualización al compartir. Las rutas empiezan
+       por / para que valgan igual desde /mapa/ que desde la raíz. -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon-512.png" type="image/png" sizes="512x512">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#F4EFE5">
+  <meta property="og:image" content="https://adricamente.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="adricamente">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Umami. Sin cookies y sin datos personales, así que no hace
+       falta banner de consentimiento ni tocar cookies.html. -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+
+  <!-- Medición. Hoy no sale nada de aquí: la función solo da nombre
+       a los cuatro momentos del embudo. El día que contrates un
+       proveedor sin cookies (Plausible o Umami), pegas su script
+       encima de esta línea y los cuatro eventos empiezan a contar
+       solos, sin tocar nada más. -->
+  <script>window.medir=function(e){try{
+    if(window.plausible)window.plausible(e);
+    if(window.umami&&window.umami.track)window.umami.track(e);
+  }catch(_){}};</script>
+
+  <link rel="stylesheet" href="../estilos.css?v=2">
+
+  <style>
+  /* Estilos que solo existen en esta página. Todo lo compartido
+     está en estilos.css; aquí solo lo propio del ejercicio. */
+
+  .paso{display:none}
+  .paso.activo{display:block}
+
+  .contador{
+    font-family:Archivo,"Helvetica Neue",sans-serif;
+    font-size:13px;letter-spacing:-.005em;
+    color:var(--ink-2);margin:0 0 6px;font-weight:700;
+  }
+  .barra{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin:0 0 30px}
+  .barra i{display:block;height:100%;background:var(--accent);transition:width .3s ease}
+
+  .opciones{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
+  .opcion{
+    font-family:"Source Sans 3",sans-serif;font-size:15px;cursor:pointer;
+    background:var(--surface);color:var(--ink-2);
+    border:1px solid var(--line-strong);border-radius:22px;
+    padding:8px 15px;text-align:left;line-height:1.3;
+  }
+  .opcion:hover{border-color:var(--accent);color:var(--ink)}
+  /* aria-pressed no es decoración: es lo que le dice a un lector de
+     pantalla que el botón está activado. Lo usamos también para el estilo. */
+  .opcion[aria-pressed="true"]{background:var(--accent-2);border-color:var(--accent-2);color:var(--sobre-accent);font-weight:600}
+
+  .radios{display:flex;flex-direction:column;gap:8px;margin:0 0 18px}
+  .radio{
+    display:flex;gap:12px;align-items:flex-start;cursor:pointer;
+    background:var(--surface);border:1px solid var(--line-strong);
+    border-radius:8px;padding:13px 16px;
+  }
+  .radio:hover{border-color:var(--accent)}
+  .radio input{margin:4px 0 0;accent-color:var(--accent-2);flex:0 0 auto}
+  .radio.elegido{border-color:var(--accent);background:var(--accent-soft)}
+
+  .navegacion{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:26px}
+  .navegacion .boton{max-width:220px}
+
+  .resultado{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:26px 24px;box-shadow:var(--shadow);margin:0 0 24px;
+  }
+  .resultado .titulo{
+    font-family:Archivo,"Helvetica Neue",sans-serif;
+    font-size:13px;letter-spacing:-.005em;
+    color:var(--accent-2);font-weight:700;margin:0 0 16px;
+  }
+  .resultado p{
+    font-family:Archivo,sans-serif;font-weight:600;font-size:1.18rem;
+    line-height:1.45;letter-spacing:-.012em;color:var(--ink);
+    margin:0 0 14px;max-width:none;
+  }
+  .resultado p:last-child{margin-bottom:0}
+  .resultado u{text-decoration:none;color:var(--accent-2);border-bottom:2px solid var(--accent-soft)}
+
+  .lectura{border-left:3px solid var(--accent);padding:2px 0 2px 20px;margin:0 0 26px}
+  .lectura p{color:var(--ink-2)}
+
+  .aviso{font-size:14.5px;margin-top:12px;min-height:1.4em}
+  .aviso.bien{color:var(--accent-2);font-weight:600}
+  .aviso.mal{color:#B3261E}
+  @media (prefers-color-scheme: dark){.aviso.mal{color:#FF9A90}}
+  </style>
+</head>
+
+<body>
+<div class="contenedor" style="padding-block:32px 0">
+
+  <p class="marca"><a href="../index.html">adricamente</a></p>
+
+  <!-- ===== PASO 0 · portada ================================== -->
+  <div class="paso activo" id="p0">
+    <h1>El mapa de lo que evitas</h1>
+    <p class="grande">
+      Seis preguntas para ver, en diez minutos, qué estás esquivando,
+      qué te alivia hacerlo y qué te está costando de verdad.
+    </p>
+    <ul class="datos">
+      <li>6 preguntas</li>
+      <li>~10 minutos</li>
+      <li>No sale de tu móvil</li>
+    </ul>
+    <p class="apunte">
+      No es un test ni te va a dar un diagnóstico. Es el mismo análisis
+      que hago en consulta el primer día, hecho por ti. Al final te
+      queda una frase que describe tu propio patrón, y suele incomodar
+      un poco.
+    </p>
+    <div class="navegacion"><button class="boton" type="button" data-ir="1">Empezar</button></div>
+  </div>
+
+  <!-- ===== PASO 1 ============================================ -->
+  <div class="paso" id="p1">
+    <p class="contador">Paso 1 de 6</p>
+    <div class="barra"><i style="width:16.6%"></i></div>
+    <h2 style="margin-top:0">¿Qué llevas tiempo esquivando?</h2>
+    <p class="apunte">No hace falta que sea algo grande. Casi nunca lo es. Elige lo primero que se te ha venido a la cabeza.</p>
+    <ul class="opciones" data-grupo="situacion">
+      <li><button class="opcion" type="button">Tener una conversación pendiente</button></li>
+      <li><button class="opcion" type="button">Hacer un trámite o escribir un correo</button></li>
+      <li><button class="opcion" type="button">Pedir cita al médico</button></li>
+      <li><button class="opcion" type="button">Quedar con gente</button></li>
+      <li><button class="opcion" type="button">Buscar otro trabajo</button></li>
+      <li><button class="opcion" type="button">Empezar algo que te importa</button></li>
+      <li><button class="opcion" type="button">Terminar una relación</button></li>
+      <li><button class="opcion" type="button">Cuidarte</button></li>
+    </ul>
+    <label class="campo" for="c1">O escríbelo tú</label>
+    <input type="text" id="c1" data-libre="situacion" placeholder="Llamar a mi padre">
+    <div class="navegacion">
+      <button class="boton" type="button" data-ir="2">Siguiente</button>
+      <button class="boton-texto" type="button" data-ir="0">Atrás</button>
+    </div>
+  </div>
+
+  <!-- ===== PASO 2 ============================================ -->
+  <div class="paso" id="p2">
+    <p class="contador">Paso 2 de 6</p>
+    <div class="barra"><i style="width:33.3%"></i></div>
+    <h2 style="margin-top:0">Justo antes de ponerte, ¿qué notas?</h2>
+    <p class="apunte">En el cuerpo o en la cabeza, en el segundo previo. No lo que piensas después: lo que aparece primero.</p>
+    <ul class="opciones" data-grupo="emocion">
+      <li><button class="opcion" type="button">Un peso en el pecho</button></li>
+      <li><button class="opcion" type="button">La cabeza acelerada</button></li>
+      <li><button class="opcion" type="button">Una pereza enorme</button></li>
+      <li><button class="opcion" type="button">Mal humor</button></li>
+      <li><button class="opcion" type="button">La mente en blanco</button></li>
+      <li><button class="opcion" type="button">Que no vas a ser capaz</button></li>
+      <li><button class="opcion" type="button">Vergüenza</button></li>
+      <li><button class="opcion" type="button">Miedo a hacerlo mal</button></li>
+    </ul>
+    <label class="campo" for="c2">O escríbelo tú</label>
+    <input type="text" id="c2" data-libre="emocion" placeholder="Un nudo en el estómago">
+    <div class="navegacion">
+      <button class="boton" type="button" data-ir="3">Siguiente</button>
+      <button class="boton-texto" type="button" data-ir="1">Atrás</button>
+    </div>
+  </div>
+
+  <!-- ===== PASO 3 ============================================ -->
+  <div class="paso" id="p3">
+    <p class="contador">Paso 3 de 6</p>
+    <div class="barra"><i style="width:50%"></i></div>
+    <h2 style="margin-top:0">¿Y qué haces para dejar de notarlo?</h2>
+    <p class="apunte">Sé concreto y sé honesto. Aquí es donde la gente se pone elegante y se engaña. Nadie más va a leer esto.</p>
+    <ul class="opciones" data-grupo="conducta">
+      <li><button class="opcion" type="button">Coger el móvil</button></li>
+      <li><button class="opcion" type="button">Dejarlo para mañana</button></li>
+      <li><button class="opcion" type="button">Ponerte con otra cosa «útil»</button></li>
+      <li><button class="opcion" type="button">Comer algo</button></li>
+      <li><button class="opcion" type="button">Fumar o beber</button></li>
+      <li><button class="opcion" type="button">Echarte a dormir</button></li>
+      <li><button class="opcion" type="button">Cancelarlo</button></li>
+      <li><button class="opcion" type="button">Decir que sí a otra cosa</button></li>
+    </ul>
+    <label class="campo" for="c3">O escríbelo tú</label>
+    <input type="text" id="c3" data-libre="conducta" placeholder="Ponerme a limpiar la casa entera">
+    <div class="navegacion">
+      <button class="boton" type="button" data-ir="4">Siguiente</button>
+      <button class="boton-texto" type="button" data-ir="2">Atrás</button>
+    </div>
+  </div>
+
+  <!-- ===== PASO 4 ============================================ -->
+  <div class="paso" id="p4">
+    <p class="contador">Paso 4 de 6</p>
+    <div class="barra"><i style="width:66.6%"></i></div>
+    <h2 style="margin-top:0">En ese momento, ¿qué pasa con lo que sentías?</h2>
+    <p class="apunte">Piensa en el segundo exacto en que lo dejas. No en cómo te sientes por la noche.</p>
+    <div class="radios" id="grupo-alivio">
+      <label class="radio"><input type="radio" name="alivio" value="desaparece del todo"><span>Desaparece del todo</span></label>
+      <label class="radio"><input type="radio" name="alivio" value="baja mucho"><span>Baja mucho</span></label>
+      <label class="radio"><input type="radio" name="alivio" value="baja un poco"><span>Baja un poco</span></label>
+      <label class="radio"><input type="radio" name="alivio" value="sigue igual"><span>Sigue igual, pero al menos no lo estoy mirando de frente</span></label>
+    </div>
+    <div class="navegacion">
+      <button class="boton" type="button" data-ir="5">Siguiente</button>
+      <button class="boton-texto" type="button" data-ir="3">Atrás</button>
+    </div>
+  </div>
+
+  <!-- ===== PASO 5 ============================================ -->
+  <div class="paso" id="p5">
+    <p class="contador">Paso 5 de 6</p>
+    <div class="barra"><i style="width:83.3%"></i></div>
+    <h2 style="margin-top:0">¿Qué te ha costado en los últimos seis meses?</h2>
+    <p class="apunte">Esta es la parte que casi nadie se para a mirar, porque la factura llega en cómodos plazos.</p>
+    <ul class="opciones" data-grupo="coste">
+      <li><button class="opcion" type="button">Oportunidades que dejaste pasar</button></li>
+      <li><button class="opcion" type="button">Gente que se ha alejado</button></li>
+      <li><button class="opcion" type="button">Tu salud</button></li>
+      <li><button class="opcion" type="button">Dinero</button></li>
+      <li><button class="opcion" type="button">Hablarte fatal a ti mismo</button></li>
+      <li><button class="opcion" type="button">Seguir exactamente donde ya estabas</button></li>
+      <li><button class="opcion" type="button">Que se haya hecho más grande</button></li>
+      <li><button class="opcion" type="button">Dormir peor</button></li>
+    </ul>
+    <label class="campo" for="c5">O escríbelo tú</label>
+    <input type="text" id="c5" data-libre="coste" placeholder="Dos años de mi vida">
+    <div class="navegacion">
+      <button class="boton" type="button" data-ir="6">Siguiente</button>
+      <button class="boton-texto" type="button" data-ir="4">Atrás</button>
+    </div>
+  </div>
+
+  <!-- ===== PASO 6 ============================================ -->
+  <div class="paso" id="p6">
+    <p class="contador">Paso 6 de 6</p>
+    <div class="barra"><i style="width:100%"></i></div>
+    <h2 style="margin-top:0">Última, y es la que importa</h2>
+    <p class="grande">
+      Si eso que sientes no tuviera que desaparecer para poder actuar
+      — si pudieras hacerlo <em>con</em> el malestar puesto —,
+      ¿qué harías esta semana?
+    </p>
+    <label class="campo" for="c6">Algo pequeño y concreto</label>
+    <textarea id="c6" data-libre="paso" placeholder="Mandarle el mensaje. Aunque me tiemble la mano."></textarea>
+    <div class="navegacion">
+      <button class="boton" type="button" data-ir="7">Ver mi mapa</button>
+      <button class="boton-texto" type="button" data-ir="5">Atrás</button>
+    </div>
+  </div>
+
+  <!-- ===== PASO 7 · el resultado ============================= -->
+  <div class="paso" id="p7">
+    <p class="contador">Tu mapa</p>
+    <div class="barra"><i style="width:100%"></i></div>
+
+    <div class="resultado">
+      <p class="titulo">Esto es lo que has descrito</p>
+      <p id="r1"></p>
+      <p id="r2"></p>
+      <p id="r3"></p>
+      <p id="r4"></p>
+    </div>
+
+    <div class="lectura">
+      <h3>Lo que estás viendo tiene nombre</h3>
+      <p>Se llama <strong>evitación</strong>, y no es falta de voluntad. Es justo lo contrario: es un aprendizaje que funciona <em>demasiado</em> bien. Cada vez que evitas, el malestar baja de verdad, y tu cerebro registra que la jugada salió bien. Por eso la repites sin decidirlo.</p>
+      <p>El problema no es que falles. Es que funciona a corto plazo, siempre, y la factura llega tarde y a plazos. Por eso cuesta tanto verla.</p>
+    </div>
+
+    <div class="lectura">
+      <h3>Lo que casi nunca funciona</h3>
+      <p>Esperar a tener ganas. Esperar a sentirte preparado. Esperar a que baje la ansiedad y <em>entonces</em> hacerlo.</p>
+      <p>Si la acción depende de que el malestar baje, y lo que baja el malestar es precisamente no actuar, el círculo está cerrado. Ninguna app de productividad lo abre, porque atacan el horario cuando el problema es lo que sientes.</p>
+    </div>
+
+    <div class="lectura">
+      <h3>Por dónde se empieza</h3>
+      <p id="r5"></p>
+      <p>Una vez. Pequeño. Con el malestar puesto, no sin él. La fuerza de voluntad no se entrena leyendo sobre disciplina: se entrena sosteniendo la incomodidad diez minutos más de lo que aguantaste ayer.</p>
+      <p><strong>Ponle día y hora ahora mismo</strong>, antes de cerrar esto. Un plan sin momento concreto es un deseo.</p>
+    </div>
+
+    <div class="navegacion" style="margin-bottom:30px">
+      <button class="boton-texto" type="button" id="copiar">Copiar mi mapa</button>
+      <button class="boton-texto" type="button" data-ir="1">Volver a hacerlo con otra cosa</button>
+    </div>
+
+    <!-- ===== Captura de correo ==============================
+         CONECTADO a la lista «Mapa · evitación» de Brevo.
+         La dirección del action= sale del formulario de Brevo
+         (Compartir → HTML simple). Si algún día rehaces ese
+         formulario allí, la dirección cambia y hay que pegarla
+         aquí otra vez — es lo único que se rompería.
+         Los name= de los campos (NOMBRE y EMAIL) tienen que
+         coincidir exactamente con los atributos de Brevo.
+         ====================================================== -->
+    <div class="caja" id="bloque-correo">
+      <h3>¿Te mando la guía para romper el círculo?</h3>
+      <p class="apunte">Una guía corta por correo con los tres pasos para empezar a salir de esto, y algún envío más de vez en cuando. Te sales cuando quieras.</p>
+      <p class="apunte">Tu mapa no te lo puedo mandar: no lo guardo en ningún sitio. Dale a <strong>copiar</strong> aquí arriba y guárdatelo tú.</p>
+
+      <!-- El formulario envía "dentro" de un iframe invisible que está
+           al final de la página, fuera de este bloque. Así el navegador
+           no se va a la web de Brevo y la persona no pierde su mapa.
+           El iframe tiene que estar FUERA de aquí: este bloque se
+           reemplaza al enviar, y si el iframe viviera dentro, se
+           destruiría a mitad del envío y el correo no llegaría. -->
+      <form id="form-correo" method="POST" target="destino_brevo"
+            action="https://d6a8aed2.sibforms.com/serve/MUIFAFcdEKuH2fb0V225fhqAI7tCaDecOxxwEC5q85cfSeHymMQCE14uo-Nl5SooYhutgK4dzIC2OstuFeifPAD4Y0VhC0EoBmzLlFfFiwC__5W82hbOqQ-twqnrg87BJ5I4Qq2m0ICpvgH1IZ4QqTjDcKbfEYkUoieAbX7U_EjehxNADTtVJqu7ARifIFPkNKOHMfdVZkjeo-3xvQ=="
+            style="margin-top:16px">
+        <div style="margin-bottom:12px">
+          <label class="campo" for="nombre">Tu nombre</label>
+          <input type="text" id="nombre" name="NOMBRE" autocomplete="given-name" placeholder="Adrián" required>
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="campo" for="correo">Tu correo</label>
+          <input type="email" id="correo" name="EMAIL" autocomplete="email" placeholder="hola@correo.com" required>
+        </div>
+
+        <!-- Campo trampa para robots: una persona no lo ve nunca, un
+             bot lo rellena. Si viene relleno, no enviamos. -->
+        <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off"
+               aria-hidden="true" style="position:absolute;left:-9999px">
+        <input type="hidden" name="locale" value="es">
+        <!-- Le dice a Brevo que esto es un envío de formulario plano,
+             sin su JavaScript. Si falta, el envío no se procesa bien. -->
+        <input type="hidden" name="html_type" value="simple">
+
+        <label class="acepto">
+          <input type="checkbox" id="consentimiento" required>
+          <span>He leído y acepto la <a href="../privacidad.html">política de privacidad</a>, y acepto recibir los correos de adricamente.</span>
+        </label>
+
+        <button class="boton" type="submit">Enviádmela</button>
+        <p class="aviso" id="aviso-correo"></p>
+      </form>
+
+      <p class="apunte" style="margin-top:14px;font-size:13px">
+        Responsable: Adrián Cuñat Andrés. Finalidad: enviarte la guía
+        solicitada y comunicaciones de adricamente. Legitimación: tu
+        consentimiento. Derechos: acceso, rectificación, supresión y
+        retirada del consentimiento escribiendo a hola@adricamente.com.
+      </p>
+    </div>
+
+    <!-- ===== Reserva ======================================== -->
+    <div class="caja">
+      <h3>¿Y si lo vemos juntos?</h3>
+      <p class="apunte">
+        Tengo unas pocas sesiones informativas gratuitas al mes:
+        <strong>20 minutos</strong> para que me cuentes qué te trae y
+        te diga honestamente si puedo ayudarte. No es una sesión de
+        terapia y no tienes que decidir nada. Online, y solo para
+        residentes en España.
+      </p>
+      <p class="apunte" style="margin-top:10px">
+        Las sesiones se realizan en el centro sanitario Neurococos. En la
+        sesión estamos tú y yo, nadie más: la supervisión ocurre entre
+        sesiones, al revisar el caso con un profesional colegiado del centro.
+      </p>
+      <p style="margin:18px 0 0">
+        <a class="boton" onclick="window.medir&&window.medir('clic_reserva')" href="https://cal.com/adricamente/sesion-informativa-gratuita"
+           target="_blank" rel="noopener">Reservar mi sesión</a>
+      </p>
+    </div>
+
+    <footer>
+      <nav>
+        <a href="../index.html">Inicio</a>
+        <a href="../aviso-legal.html">Aviso legal</a>
+        <a href="../privacidad.html">Privacidad</a>
+        <a href="../cookies.html">Cookies</a>
+      </nav>
+      <p>
+        <strong>Tus respuestas no salen de este dispositivo.</strong>
+        Nada de lo que has escrito en el ejercicio se envía a ningún
+        sitio ni lo veo yo: desaparece en cuanto cierras la página. Si
+        dejas tu correo, solo se guardan tu nombre y tu correo.
+      </p>
+      <p>
+        Esto es material psicoeducativo, no una evaluación clínica ni
+        un diagnóstico, y no sustituye a un tratamiento. Si estás
+        pasándolo mal de verdad, habla con un profesional o con tu
+        médico de familia.
+      </p>
+    </footer>
+  </div>
+
+  <!-- El destino invisible del formulario. Vive aquí, al final y fuera
+       de todo, para que no se destruya cuando cambiamos el bloque del
+       correo por el mensaje de "hecho". -->
+  <iframe id="destino_brevo" name="destino_brevo" title="Envío del formulario"
+          aria-hidden="true" tabindex="-1"
+          style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
+
+</div>
+
+<script>
+/* ============================================================
+   La lógica del ejercicio.
+   "use strict" hace que JavaScript avise de errores que si no
+   se tragaría en silencio. Ponlo siempre.
+   ============================================================ */
+(function(){
+  "use strict";
+
+  // Aquí viven las respuestas mientras la persona navega.
+  // Es una variable normal: cuando se cierra la pestaña, se va.
+  var datos = {situacion:"", emocion:"", conducta:"", alivio:"", coste:"", paso:""};
+
+  var pasos = [].slice.call(document.querySelectorAll('.paso'));
+
+  var medidos = {};  // cada evento se cuenta una vez por visita
+  function unaVez(evento){
+    if (medidos[evento]) return;
+    medidos[evento] = true;
+    if (window.medir) window.medir(evento);
+  }
+
+  function mostrar(n){
+    pasos.forEach(function(p, i){ p.classList.toggle('activo', i === n); });
+    window.scrollTo(0, 0);
+    if (n === 1) unaVez('mapa_inicio');
+    if (n === 7){ pintar(); unaVez('mapa_fin'); }
+  }
+
+  // --- Botones de opción -------------------------------------
+  document.querySelectorAll('[data-grupo]').forEach(function(lista){
+    var clave = lista.dataset.grupo;
+    lista.addEventListener('click', function(ev){
+      var b = ev.target.closest('.opcion');
+      if (!b) return;
+      var yaEstaba = b.getAttribute('aria-pressed') === 'true';
+      lista.querySelectorAll('.opcion').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
+      if (!yaEstaba){
+        b.setAttribute('aria-pressed','true');
+        datos[clave] = b.textContent.trim();
+        var libre = document.querySelector('[data-libre="'+clave+'"]');
+        if (libre) libre.value = '';
+      } else {
+        datos[clave] = '';
+      }
+    });
+  });
+
+  // --- Campos de texto libre ---------------------------------
+  // Si escriben, mandan ellos: se desmarca la opción elegida.
+  document.querySelectorAll('[data-libre]').forEach(function(campo){
+    campo.addEventListener('input', function(){
+      var clave = campo.dataset.libre;
+      if (campo.value.trim()){
+        datos[clave] = campo.value.trim();
+        var lista = document.querySelector('[data-grupo="'+clave+'"]');
+        if (lista) lista.querySelectorAll('.opcion').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
+      }
+    });
+  });
+
+  // --- Radios del paso 4 -------------------------------------
+  document.querySelectorAll('#grupo-alivio input').forEach(function(r){
+    r.addEventListener('change', function(){
+      datos.alivio = r.value;
+      document.querySelectorAll('#grupo-alivio .radio').forEach(function(l){ l.classList.remove('elegido'); });
+      r.closest('.radio').classList.add('elegido');
+    });
+  });
+
+  // --- Navegación --------------------------------------------
+  document.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-ir]');
+    if (!b) return;
+    mostrar(parseInt(b.dataset.ir, 10));
+  });
+
+  // --- Construcción del mapa ---------------------------------
+  // Cada respuesta del paso 4 tiene su propia lectura. La cuarta
+  // no puede decir "funciona" porque el malestar no baja: lo que
+  // alivia ahí es no mirarlo de frente, y eso hay que decirlo bien.
+  var ALIVIO = {
+    "desaparece del todo": {frase:"desaparece del todo",
+      refuerzo:"Funciona. Funciona del todo y funciona rápido. Por eso lo repites sin decidirlo."},
+    "baja mucho": {frase:"baja de golpe",
+      refuerzo:"Funciona. Por eso lo repites sin decidirlo."},
+    "baja un poco": {frase:"afloja un poco",
+      refuerzo:"Con que afloje un poco basta: tu cerebro ya ha apuntado que la jugada sirve."},
+    "sigue igual": {frase:"no baja",
+      refuerzo:"Y aun así lo repites. Porque no tener que mirarlo de frente también es un alivio, aunque no lo parezca."}
+  };
+
+  // Pasa la primera letra a minúscula, para que las opciones
+  // encajen dentro de una frase sin quedar con mayúscula suelta.
+  function min(t){ return t ? t.charAt(0).toLowerCase() + t.slice(1) : t; }
+
+  // Nunca metas texto de un usuario en el HTML sin escaparlo:
+  // así es como se cuelan ataques de inyección (XSS).
+  function limpiar(t){
+    return String(t == null ? "" : t).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function pintar(){
+    var s  = min(datos.situacion) || "eso que llevas tiempo esquivando";
+    var e  = min(datos.emocion)   || "algo que preferirías no notar";
+    var c  = min(datos.conducta)  || "cualquier otra cosa";
+    var a  = ALIVIO[datos.alivio] || {frase:"cambia", refuerzo:"Y por eso lo repites sin decidirlo."};
+    var k  = min(datos.coste)     || "tiempo";
+    var p  = datos.paso           || "eso que has escrito hace un momento";
+
+    document.getElementById('r1').innerHTML = 'Cuando te toca <u>'+limpiar(s)+'</u>, notas <u>'+limpiar(e)+'</u>.';
+    document.getElementById('r2').innerHTML = 'Y lo que haces es <u>'+limpiar(c)+'</u>. El malestar <u>'+limpiar(a.frase)+'</u>.';
+    document.getElementById('r3').textContent = a.refuerzo;
+    document.getElementById('r4').innerHTML = 'En seis meses, eso te ha costado <u>'+limpiar(k)+'</u>.';
+    document.getElementById('r5').innerHTML = 'Lo has escrito tú hace un minuto: <strong>'+limpiar(p)+'</strong>';
+  }
+
+  // --- Copiar al portapapeles --------------------------------
+  document.getElementById('copiar').addEventListener('click', function(){
+    var a = ALIVIO[datos.alivio] || {frase:'cambia'};
+    var texto =
+      'MI MAPA\n\n' +
+      'Cuando me toca ' + (min(datos.situacion) || '—') + ', noto ' + (min(datos.emocion) || '—') + '.\n' +
+      'Y lo que hago es ' + (min(datos.conducta) || '—') + '. El malestar ' + a.frase + '.\n' +
+      'En seis meses me ha costado: ' + (min(datos.coste) || '—') + '.\n\n' +
+      'MI SIGUIENTE PASO: ' + (datos.paso || '—') + '\n\n— adricamente.com';
+
+    var boton = this;
+    function fin(ok){
+      boton.textContent = ok ? 'Copiado' : 'No se pudo copiar';
+      setTimeout(function(){ boton.textContent = 'Copiar mi mapa'; }, 2500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(function(){ fin(true); }, function(){ fin(false); });
+    } else {
+      fin(false);
+    }
+  });
+
+  // --- Formulario de correo ----------------------------------
+  var form  = document.getElementById('form-correo');
+  var aviso = document.getElementById('aviso-correo');
+
+  var destino = document.getElementById('destino_brevo');
+  var enviando = false;   // ¿hay un envío en marcha?
+  var yaMostrado = false; // para no pintar el mensaje dos veces
+
+  function mostrarHecho(){
+    if (yaMostrado) return;
+    yaMostrado = true;
+    unaVez('alta_correo');
+    document.getElementById('bloque-correo').innerHTML =
+      '<h3>Hecho. Revisa tu correo.</h3>' +
+      '<p class="apunte">Te he mandado un correo para que confirmes que eres tú. ' +
+      'Hasta que no pulses ese enlace no te llega nada más — es la forma de ' +
+      'asegurarnos de que nadie te apunta sin tu permiso.</p>' +
+      '<p class="apunte" style="margin-top:10px">Si no lo ves, mira en promociones o spam. ' +
+      'Y antes de cerrar: copia tu mapa ahí arriba, que es tuyo y no lo tengo yo.</p>';
+  }
+
+  // El iframe avisa cuando Brevo ha respondido. Ese es el momento
+  // real en que el envío ha terminado, y solo entonces cambiamos
+  // el bloque. (El primer 'load' es el del iframe vacío al cargar
+  // la página, por eso miramos la bandera 'enviando'.)
+  destino.addEventListener('load', function(){
+    if (enviando) mostrarHecho();
+  });
+
+  form.addEventListener('submit', function(ev){
+    // Si el campo trampa viene relleno, es un robot: no enviamos.
+    if (form.elements['email_address_check'].value !== ''){
+      ev.preventDefault();
+      return;
+    }
+
+    // Aquí NO llamamos a preventDefault: dejamos que el formulario
+    // se envíe de verdad. Como su target es el iframe invisible,
+    // la página no se mueve y el mapa no se pierde.
+    enviando = true;
+    aviso.textContent = 'Un momento…';
+    aviso.className = 'aviso';
+
+    // Red de seguridad: si por lo que sea el iframe no avisa nunca,
+    // a los 6 segundos mostramos el mensaje igualmente. Para entonces
+    // el envío ya ha salido de sobra.
+    setTimeout(mostrarHecho, 6000);
+  });
+})();
+</script>
+</body>
+</html>
