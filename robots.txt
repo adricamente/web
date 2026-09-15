@@ -7,3 +7,7 @@ Allow: /
 Disallow: /gracias.html
 
 Sitemap: https://adricamente.com/sitemap.xml
+# Carpeta temporal: las cuatro cartas, para poder cargarlas en Brevo
+# sin reescribirlas a mano. Se borra en cuanto esten las plantillas.
+User-agent: *
+Disallow: /correos/
