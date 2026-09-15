@@ -243,6 +243,28 @@ a{color:var(--accent-2);text-underline-offset:3px}
 a:hover{color:var(--accent-3)}
 
 .grande{font-size:1.15rem;color:var(--ink-2)}
+
+/* --- Las negritas ------------------------------------------------
+   La gente no lee las webs: las barre. Los estudios de seguimiento
+   ocular llevan veinte años diciendo lo mismo — se leen entre el
+   veinte y el treinta por ciento de las palabras, en zigzag, y lo
+   que frena el ojo es un cambio de peso.
+
+   Por eso la negrita aquí no es énfasis de voz: es un punto de
+   anclaje. Va MÁS OSCURA además de más gruesa, porque el texto
+   secundario es gris cálido y el salto de color es lo que hace que
+   se vea de un vistazo.
+
+   La regla al escribir: una negrita por párrafo como mucho, y que
+   sea una frase que se entienda sola. La prueba es leer solo las
+   negritas de una página seguidas: si de ahí sale el argumento,
+   están bien puestas. Si sale una sopa de palabras sueltas, no.
+
+   Y si se subraya todo, no se subraya nada. */
+p strong, li strong, dd strong, .tarjeta strong{
+  font-weight:700;
+  color:var(--ink);
+}
 .apunte{color:var(--muted);font-size:15.5px}
 
 /* --- La marca ----------------------------------------------------
