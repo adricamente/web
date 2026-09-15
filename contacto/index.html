@@ -35,7 +35,17 @@
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
-  <link rel="stylesheet" href="/estilos.css?v=10">
+  <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
+       de leer el CSS. Sin esto el navegador no sabe que existen hasta
+       que ha descargado y parseado la hoja entera, y el titular se
+       pinta con la fuente del sistema y luego salta. Solo estas dos:
+       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-800-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-400-normal.woff2">
+
+  <link rel="stylesheet" href="/estilos.css?v=11">
 </head>
 
 <body>
@@ -71,6 +81,31 @@
     <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar mi sesión</a>
   </p>
+
+  <h2>Por WhatsApp</h2>
+  <p>
+    Para dudas rápidas de horario, precio o cómo funciona esto:
+    <strong>contesto yo, no hay ningún equipo detrás.</strong>
+  </p>
+  <p>
+    <a class="boton secundario" onclick="window.medir&&window.medir('clic_whatsapp')"
+       href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web.%20Tengo%20una%20duda%20sobre%20"
+       target="_blank" rel="noopener">Escribirme por WhatsApp</a>
+  </p>
+  <div class="mensaje aviso">
+    <p>
+      <strong>No me cuentes por aquí lo que te pasa.</strong> WhatsApp es
+      de Meta, no está pensado para información de salud y yo no puedo
+      garantizar ahí la confidencialidad que sí tiene una sesión. Úsalo
+      para logística: horarios, precio, dudas sobre el funcionamiento.
+    </p>
+    <p style="margin-bottom:0">
+      Y tampoco hago valoraciones por mensaje. Responder «qué te pasa» en
+      cuatro líneas, sin haber evaluado nada, es justo la clase de cosa
+      que hace daño aunque suene amable. Para eso están los veinte
+      minutos, que además son gratis.
+    </p>
+  </div>
 
   <h2>Por correo</h2>
   <p>
@@ -158,6 +193,9 @@
           <li><a href="/privacidad.html">Privacidad</a></li>
           <li><a href="/cookies.html">Cookies</a></li>
         </ul>
+        <p style="margin-top:12px">
+          <a href="/reservar/">¿Ya eres paciente? Reserva aquí</a>
+        </p>
       </div>
     </div>
     <p>

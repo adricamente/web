@@ -35,7 +35,17 @@
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
-  <link rel="stylesheet" href="/estilos.css?v=10">
+  <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
+       de leer el CSS. Sin esto el navegador no sabe que existen hasta
+       que ha descargado y parseado la hoja entera, y el titular se
+       pinta con la fuente del sistema y luego salta. Solo estas dos:
+       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-800-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-400-normal.woff2">
+
+  <link rel="stylesheet" href="/estilos.css?v=11">
 </head>
 
 <body>
@@ -148,6 +158,9 @@
           <li><a href="/privacidad.html">Privacidad</a></li>
           <li><a href="/cookies.html">Cookies</a></li>
         </ul>
+        <p style="margin-top:12px">
+          <a href="/reservar/">¿Ya eres paciente? Reserva aquí</a>
+        </p>
       </div>
     </div>
     <p>
