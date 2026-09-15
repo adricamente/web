@@ -47,7 +47,7 @@
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
-  <link rel="stylesheet" href="../estilos.css?v=8">
+  <link rel="stylesheet" href="../estilos.css?v=9">
 
   <style>
   /* Estilos que solo existen en esta página. Todo lo compartido
@@ -111,8 +111,9 @@
 
   .aviso{font-size:14.5px;margin-top:12px;min-height:1.4em}
   .aviso.bien{color:var(--accent-2);font-weight:600}
-  .aviso.mal{color:#B3261E}
-  @media (prefers-color-scheme: dark){.aviso.mal{color:#FF9A90}}
+  /* usa el rojo de la paleta, no uno suelto; y ya no hay tema
+     oscuro que anular */
+  .aviso.mal{color:var(--error)}
   </style>
 </head>
 

@@ -56,20 +56,108 @@
      laboratorio, y es lo único que sobrevive de la paleta
      anterior, porque era lo que mejor funcionaba de ella. */
 
-  --bg:#FAF9F5;           /* blanco cálido, el papel de todo */
-  --surface:#FFFFFF;      /* tarjetas y cajas */
-  --surface-2:#F4F3EF;    /* cajas secundarias */
-  --ink:#1A222B;          /* texto principal, azul muy oscuro */
-  --ink-2:#46515C;        /* texto secundario */
-  --muted:#5E6975;        /* texto terciario, notas al pie */
-  --line:#E5E3DC;         /* separadores suaves */
-  --line-strong:#CECBC2;  /* bordes de campos */
-  --accent:#1F5474;       /* azul de marca */
+  /* ---- 1.a. La familia neutra: TODA cálida, tono 92° ----
+     Esto era lo que estaba roto. El papel y las líneas venían de
+     la época naranja y son cálidos (tono ~98°); el texto se puso
+     azulado al cambiar de acento (tono ~262°). Resultado: papel
+     cálido, grises fríos y acento frío, sin que nadie hubiera
+     decidido eso. Se nota poco por separado y mucho junto: la
+     página parecía impresa dos veces con dos tintas distintas.
+
+     Ahora los ocho neutros salen del mismo tono que el papel
+     (92°, croma entre 2 y 3,6). Son grises cálidos, casi
+     imperceptiblemente cálidos, y por eso el azul es LO ÚNICO
+     frío de la página. Esa diferencia de temperatura es la que
+     hace el trabajo de jerarquía: lo frío es lo que se pulsa. */
+
+  --bg:#FAF9F5;           /* L*97.9 · el papel de todo */
+  --surface:#FFFFFF;      /* L*100  · tarjetas y cajas */
+  --surface-2:#F5F3EF;    /* L*95.8 · cajas secundarias */
+  --ink:#25231F;          /* L*14.0 · texto principal, negro cálido — 14.9:1 */
+  --ink-2:#52504A;        /* L*34.0 · texto secundario — 7.65:1 */
+  --muted:#6C6963;        /* L*44.5 · texto terciario — 5.19:1 */
+  --line:#E6E4DF;         /* L*90.5 · separador decorativo, sin exigencia */
+  --line-strong:#CECCC6;  /* L*82.0 · separador que se debe notar */
+  --borde-campo:#8E8B85;  /* L*58.0 · bordes de <input> — 3.22:1 sobre papel,
+                             3.40:1 sobre blanco. Es el mínimo que exige la
+                             norma WCAG 1.4.11 para que se vea dónde escribir.
+                             El borde anterior (#CECBC2) daba 1.54:1: estaba
+                             incumpliendo, y era el único fallo funcional. */
+
+  /* ---- 1.b. El azul, que es lo único frío ----
+     Un solo tono (255°) en cuatro pesos. La regla: azul sólido =
+     acción principal · azul de contorno = acción secundaria ·
+     azul de texto = enlace · azul al 10% = adorno de marca, nunca
+     se pulsa. Lo que no es ninguna de esas cuatro cosas no va en
+     azul, y por eso los antetítulos han dejado de ir en azul. */
+
+  --accent:#1F5474;       /* L*33.8 · azul de marca — 7.73:1 */
   --accent-2:#1F5474;     /* el mismo: enlaces y botones */
-  --accent-3:#173F58;     /* al pasar el ratón */
-  --sobre-accent:#F2F8FC; /* el texto que va encima del azul */
-  --accent-soft:#E4EDF3;  /* fondo suave del acento */
-  --shadow:0 1px 2px rgba(26,34,43,.05), 0 12px 32px -16px rgba(26,34,43,.28);
+  --accent-3:#173F58;     /* L*25.1 · al pasar el ratón — 10.56:1 */
+  --accent-borde:#778EA3; /* L*58.0 · contorno del botón secundario — 3.22:1 */
+  --sobre-accent:#F2F8FC; /* el texto que va encima del azul — 7.60:1 */
+  --accent-soft:#E5EDF5;  /* L*93.5 · fondo suave del acento */
+
+  /* ---- 1.c. Los cuatro papeles semánticos ----
+     No los usa casi nada hoy —un error de formulario, poco más—
+     pero una paleta sin ellos obliga a inventarse un rojo el día
+     que hace falta, y el rojo que uno se inventa a las once de la
+     noche nunca cumple contraste. Cada papel tiene dos valores:
+     el FUERTE para texto e iconos y el SUAVE para fondos.
+
+     Ojo con el aviso: NO existe un ámbar que sirva como texto.
+     El de IBM (#F1C21B) da 1.60:1 sobre este papel; el más oscuro
+     que sigue leyéndose como ámbar, 2.80:1. Los dos incumplen. Por
+     eso el aviso es marrón tostado sobre fondo ámbar claro, nunca
+     texto ámbar. */
+
+  --error:#A12C2E;        /* texto de error — 6.84:1 */
+  --error-soft:#FFE6E3;   /* fondo de error (tinta encima: 13.2:1) */
+  --exito:#2C632B;        /* texto de confirmación — 6.81:1 */
+  --exito-soft:#E2F0E0;   /* fondo de confirmación */
+  --aviso:#7B4D13;        /* texto de advertencia — 6.84:1 */
+  --aviso-soft:#FCEAD2;   /* fondo de advertencia */
+  --info:#1F5474;         /* informativo = el azul de marca, a propósito:
+                             un segundo azul solo confundiría */
+  --info-soft:#E5EDF5;
+
+  --shadow:0 1px 2px rgba(37,35,31,.05), 0 12px 32px -16px rgba(37,35,31,.28);
+}
+
+/* --- 1 ter. La marca fuera de la pantalla -----------------------
+   Estos cuatro valores no pintan nada en esta página. Están aquí
+   porque son parte de la misma paleta y tienen que vivir en un
+   único sitio: el día que cambie el azul, cambian con él.
+
+   --fondo-video  La cortina. NO es el azul de marca: una cortina
+                  de #1F5474 en un despacho pequeño devuelve luz
+                  azul a la cara y deja el plano en penumbra. Este
+                  azul empolvado (L*63) queda claramente detrás,
+                  lee como "su azul" en cámara y separa bien del
+                  pelo oscuro. En tienda se pide como "azul gris"
+                  o "dusty blue", tela mate y tupida. El azul
+                  fuerte aparece en los rótulos SOBRE el vídeo, no
+                  en la pared.
+   --ropa-clara   El rango de camisa: de avena a blanco roto. Con
+                  la cortina puesta, una camisa azul media queda a
+                  1.47:1 del fondo y se funde. Cálido y claro.
+   --rotulo-video Fondo de los subtítulos y rótulos en Reels, con
+                  texto blanco encima: 11.1:1. En vídeo el texto
+                  se mueve, se comprime y se ve al sol, así que el
+                  listón no es 4.5:1 sino 7:1.
+   --tinta-papel  Para imprimir. #FAF9F5 no existe en papel: el
+                  papel ES el fondo. En una tarjeta van dos tintas
+                  y ninguna trama de fondo. El azul en cuatricromía
+                  hay que probarlo con el impresor; si algún día
+                  hiciera falta color directo, se elige con el
+                  abanico físico en la mano y con luz de norte,
+                  nunca convirtiendo un hexadecimal. */
+
+:root{
+  --fondo-video:#859BAE;
+  --ropa-clara:#D9D2C5;
+  --rotulo-video:#173F58;
+  --tinta-papel:#25231F;
 }
 
 /* --- 1 bis. Por qué esta web NO tiene tema oscuro ---------------
@@ -176,14 +264,18 @@ a:hover{color:var(--accent-3)}
    Ojo: ya NO va en mayúsculas ni con las letras separadas. Ese
    tratamiento es el que sonaba a producto de software. Ahora es
    un antetítulo de revista: Archivo, tamaño pequeño, en el
-   naranja que trabaja. Se distingue de la marca por el tamaño y
-   el peso, no por las mayúsculas. */
+   idioma visual del software. Ahora es un antetítulo de revista:
+   Archivo, tamaño pequeño, en gris cálido.
+
+   Iba en azul y se ha quitado: un antetítulo no se pulsa, y si
+   va del mismo color que los enlaces, el azul deja de querer
+   decir "esto se pulsa". El azul solo trabaja si es escaso. */
 .etiqueta{
   font-family:Archivo,"Helvetica Neue",sans-serif;
   font-size:13px;
   font-weight:700;
   letter-spacing:-.005em;
-  color:var(--accent-2);
+  color:var(--muted);
   margin:0 0 26px;
 }
 
@@ -266,6 +358,24 @@ a:hover{color:var(--accent-3)}
 }
 .boton:hover,button.boton:hover{background:var(--accent-3);color:var(--sobre-accent)}
 .boton[disabled]{opacity:.45;cursor:not-allowed}
+
+/* El peldaño intermedio. Antes solo había botón sólido o enlace
+   subrayado, y entre los dos hay un salto enorme: todo lo que no
+   era LA acción acababa pareciendo LA acción. Este es azul de
+   contorno: se ve que se pulsa, se ve que no es lo principal.
+   El contorno da 3.22:1 contra el papel, que es lo que pide la
+   norma para un borde que identifica un control. */
+.boton.secundario,button.boton.secundario{
+  background:transparent;
+  color:var(--accent-2);
+  border:1.5px solid var(--accent-borde);
+  padding:13.5px 26.5px;   /* compensa el borde para que mida igual */
+}
+.boton.secundario:hover,button.boton.secundario:hover{
+  background:var(--accent-soft);
+  border-color:var(--accent-2);
+  color:var(--accent-3);
+}
 
 .boton-texto{
   font-family:"Source Sans 3",sans-serif;
@@ -413,7 +523,7 @@ input[type=text],input[type=email],textarea{
   font-size:16.5px;   /* por debajo de 16px, el iPhone hace zoom al enfocar */
   color:var(--ink);
   background:var(--surface);
-  border:1px solid var(--line-strong);
+  border:1px solid var(--borde-campo);
   border-radius:7px;
   padding:12px 14px;
   width:100%;
@@ -454,6 +564,36 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
   html{scroll-behavior:auto}
   *{animation:none !important;transition:none !important}
 }
+
+/* Al seleccionar texto con el ratón. Si no se define, el
+   navegador pone su azul de sistema, que no es este azul. */
+::selection{background:var(--accent-soft);color:var(--ink)}
+
+/* --- 8 bis. Mensajes ---------------------------------------------
+   Un aviso nunca se dice solo con el color: lleva palabra o icono.
+   Quien no distingue rojo de verde —uno de cada doce hombres— no
+   puede quedarse sin la información (WCAG 1.4.1). Por eso la
+   barra lateral y el texto, y no un fondo de color a secas. */
+
+.mensaje{
+  border-left:4px solid var(--muted);
+  background:var(--surface-2);
+  border-radius:0 8px 8px 0;
+  padding:14px 18px;
+  margin:0 0 18px;
+  font-size:15.5px;
+  color:var(--ink);
+}
+.mensaje p{margin:0;max-width:none}
+.mensaje strong{font-weight:700}
+.mensaje.error {border-color:var(--error); background:var(--error-soft)}
+.mensaje.exito {border-color:var(--exito); background:var(--exito-soft)}
+.mensaje.aviso {border-color:var(--aviso); background:var(--aviso-soft)}
+.mensaje.info  {border-color:var(--info);  background:var(--info-soft)}
+.mensaje.error strong{color:var(--error)}
+.mensaje.exito strong{color:var(--exito)}
+.mensaje.aviso strong{color:var(--aviso)}
+.mensaje.info  strong{color:var(--info)}
 
 /* ============================================================
    9. Los componentes del estándar del sector
