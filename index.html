@@ -46,7 +46,7 @@
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
-  <link rel="stylesheet" href="/estilos.css?v=6">
+  <link rel="stylesheet" href="/estilos.css?v=7">
 </head>
 
 <body>
@@ -69,46 +69,25 @@
 
   <main id="principal">
 
-  <section class="hero con-foto">
-    <div>
-      <h1>Terapia psicológica online para quien siente que su vida no arranca</h1>
-      <p class="entradilla">
-        No es que te falte actitud. Es que llevas tiempo haciendo algo que
-        funciona a corto plazo y te está saliendo carísimo a largo.
-      </p>
-      <div class="acciones">
-        <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Pedir cita &middot; primera sesión gratis</a>
-        <a class="enlace-fuerte" onclick="window.medir&&window.medir('clic_mapa')"
-           href="/mapa/">o empieza tú solo con el mapa</a>
-      </div>
+  <!-- El dibujo de las dos curvas estaba AQUÍ, en la primera
+       pantalla, y se ha movido más abajo. Una línea naranja sobre
+       fondo, sin una cara al lado, es el idioma visual de una
+       aplicación de bolsa: tres personas distintas leyeron la
+       portada como "una web de trading". Bajo un titular que lo
+       explica, el mismo dibujo se lee como lo que es. Y este hueco
+       es el que ocupará el retrato cuando lo haya. -->
+  <section class="hero">
+    <h1>Terapia psicológica online para quien siente que su vida no arranca</h1>
+    <p class="entradilla">
+      No es que te falte actitud. Es que llevas tiempo haciendo algo que
+      funciona a corto plazo y te está saliendo carísimo a largo.
+    </p>
+    <div class="acciones">
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Pedir cita &middot; primera sesión gratis</a>
+      <a class="enlace-fuerte" onclick="window.medir&&window.medir('clic_mapa')"
+         href="/mapa/">o empieza tú solo con el mapa</a>
     </div>
-  <figure class="figura">
-    <svg viewBox="0 0 400 176" role="img" aria-labelledby="mec-t mec-d" class="dibujo"
-         fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <title id="mec-t">Las dos curvas del mecanismo</title>
-      <desc id="mec-d">
-        Una línea da un pico cada vez que se evita algo y enseguida
-        vuelve a cero: es el alivio. Otra línea sube un escalón en cada
-        una de esas veces y nunca baja: es el coste.
-      </desc>
-      <path class="eje" d="M30 12 V164 M30 164 H392"/>
-      <line class="marca-evento" x1="90" y1="164" x2="90" y2="158"/><line class="marca-evento" x1="162" y1="164" x2="162" y2="158"/><line class="marca-evento" x1="234" y1="164" x2="234" y2="158"/><line class="marca-evento" x1="306" y1="164" x2="306" y2="158"/>
-      <path class="trazo-coste" d="M30 150 L88 150 L95 134 L160 134 L167 118 L232 118 L239 102 L304 102 L311 86 L386 86"/>
-      <path class="trazo-alivio" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
-    </svg>
-
-    <ul class="leyenda">
-      <li><span class="muestra alivio"></span>Lo que notas: el alivio</li>
-      <li><span class="muestra coste"></span>Lo que se acumula: el coste</li>
-    </ul>
-
-    <figcaption>
-      Cada marca de abajo es una vez que lo evitas. Esto no son datos:
-      es el mecanismo. El alivio pega un pico y se desinfla en segundos;
-      el coste sube un escalón y ya no vuelve a bajar solo.
-    </figcaption>
-  </figure>
   </section>
 
   <dl class="confianza">
@@ -171,6 +150,39 @@
       <span class="mas">Ver cómo se trabaja &rarr;</span>
     </a>
   </div>
+
+  <h3 style="margin-top:34px">Y lo que tienen en común</h3>
+  <p>
+    Eso que haces para que el malestar baje funciona de verdad, y funciona
+    rápido. Lo que no se nota es lo otro: que cada vez deja un poco de
+    factura, y esa no baja sola.
+  </p>
+  <figure class="figura">
+    <svg viewBox="0 0 400 176" role="img" aria-labelledby="mec-t mec-d" class="dibujo"
+         fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="mec-t">Las dos curvas del mecanismo</title>
+      <desc id="mec-d">
+        Una línea da un pico cada vez que se evita algo y enseguida
+        vuelve a cero: es el alivio. Otra línea sube un escalón en cada
+        una de esas veces y nunca baja: es el coste.
+      </desc>
+      <path class="eje" d="M30 12 V164 M30 164 H392"/>
+      <line class="marca-evento" x1="90" y1="164" x2="90" y2="158"/><line class="marca-evento" x1="162" y1="164" x2="162" y2="158"/><line class="marca-evento" x1="234" y1="164" x2="234" y2="158"/><line class="marca-evento" x1="306" y1="164" x2="306" y2="158"/>
+      <path class="trazo-coste" d="M30 150 L88 150 L95 134 L160 134 L167 118 L232 118 L239 102 L304 102 L311 86 L386 86"/>
+      <path class="trazo-alivio" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
+    </svg>
+
+    <ul class="leyenda">
+      <li><span class="muestra alivio"></span>Lo que notas: el alivio</li>
+      <li><span class="muestra coste"></span>Lo que se acumula: el coste</li>
+    </ul>
+
+    <figcaption>
+      Cada marca de abajo es una vez que lo evitas. Esto no son datos:
+      es el mecanismo. El alivio pega un pico y se desinfla en segundos;
+      el coste sube un escalón y ya no vuelve a bajar solo.
+    </figcaption>
+  </figure>
 
   <!-- ===== Cómo funciona ====================================== -->
   <h2>Cómo funciona</h2>

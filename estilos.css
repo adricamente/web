@@ -62,29 +62,35 @@
   --shadow:0 1px 2px rgba(22,33,31,.05), 0 12px 32px -16px rgba(22,33,31,.28);
 }
 
-/* Tema oscuro cuando el sistema del visitante lo pide.
-   Aquí la lógica se invierte: sobre fondo oscuro el naranja
-   claro es el que se lee, y el texto de dentro del botón pasa
-   a ser oscuro. Con el texto claro daba 2,44:1, que es peor
-   que el problema que arreglamos en el tema claro. */
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#0F1A18;
-    --surface:#17231F;
-    --surface-2:#1D2B26;
-    --ink:#F3EEE4;
-    --ink-2:#C6D1CB;
-    --muted:#8B9A94;
-    --line:#2A3A34;
-    --line-strong:#3D5049;
-    --accent:#FF7A45;
-    --accent-2:#FF9468;
-    --accent-3:#FFB08C;
-    --sobre-accent:#16211F;
-    --accent-soft:#2E1C14;
-    --shadow:0 1px 2px rgba(0,0,0,.35), 0 12px 32px -16px rgba(0,0,0,.7);
-  }
-}
+/* --- 1 bis. Por qué esta web NO tiene tema oscuro ---------------
+   Lo tuvo, y se ha quitado a propósito.
+
+   Tres razones, y la primera es la que pesa:
+
+   1. La mayoría de la gente joven lleva el móvil en oscuro, así
+      que el tema oscuro no era "una opción para quien la quiera":
+      era LA versión que veía casi todo el mundo. Y esa versión
+      era un fondo casi negro con una línea naranja encima, que
+      es literalmente el idioma visual de una aplicación de bolsa.
+      Dos de cada tres personas a las que se les enseñó dijeron
+      alguna variante de "parece de trading" o "es triste".
+
+   2. De quince webs de psicólogos españoles que se revisaron
+      para montar esta, ninguna tiene tema oscuro. No es
+      casualidad: el sector entero vive en fondos claros.
+
+   3. Mantener dos temas es mantener dos juegos de contrastes,
+      y cada cambio hay que comprobarlo dos veces.
+
+   Si algún día se recupera, que no sea un negro: un tostado
+   oscuro cálido, y comprobando contraste otra vez.
+
+   color-scheme: light le dice al navegador que no invierta por su
+   cuenta los campos de formulario ni las barras de desplazamiento
+   cuando el sistema está en oscuro. Sin esta línea, el móvil pinta
+   los <input> en gris oscuro sobre nuestro fondo claro. */
+
+:root{ color-scheme: light; }
 
 /* --- 2. Reglas base --------------------------------------------
    border-box hace que el padding no sume al ancho. Es la primera
