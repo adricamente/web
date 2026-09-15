@@ -30,36 +30,46 @@
    suelto en el resto del archivo: usa var(--loquesea).
    Esto permite tener tema claro y oscuro sin duplicar el CSS.
 
-   IMPORTANTE — los dos naranjas no son "el mismo más oscuro".
-   Tienen trabajos distintos y no son intercambiables:
-
-     --accent    display. Logotipo, titulares, barras, bordes.
-                 Cosas grandes o que no son texto.
-     --accent-2  interactivo. Enlaces, botones y etiquetas
-                 pequeñas. Es más oscuro porque el claro no
-                 llega al contraste mínimo de accesibilidad
-                 (4,5:1) cuando lleva texto pequeño encima.
-
-   Si pones el naranja de display en un enlace, la web deja de
-   cumplir accesibilidad. Se comprobó y fallaba: #D9430A sobre
-   el crema da 3,85:1. #B83708 da 5,11:1. */
+   Historia, por si algún día alguien se pregunta por qué:
+   esto fue naranja sobre crema durante una semana. Se cambió
+   porque tres lectores distintos leyeron la portada como una web
+   de trading, y porque la investigación de categoría dice que en
+   sanidad —que es una decisión de altísima implicación— salirse
+   de la norma cromática sube el escepticismo en vez de la
+   distinción. La distinción se gasta ahora en las fotos y en el
+   tono, que no cuestan credibilidad. */
 
 :root{
-  /* Paleta clara (la de por defecto) */
-  --bg:#F4EFE5;           /* fondo crema cálido */
-  --surface:#FCFAF5;      /* tarjetas y cajas */
-  --surface-2:#F8F3EA;    /* cajas secundarias */
-  --ink:#16211F;          /* texto principal, petróleo muy oscuro */
-  --ink-2:#41514E;        /* texto secundario */
-  --muted:#5E6D69;        /* texto terciario, notas al pie */
-  --line:#DFD6C7;         /* separadores suaves */
-  --line-strong:#C6BAA6;  /* bordes de campos */
-  --accent:#D9430A;       /* naranja de display */
-  --accent-2:#B83708;     /* naranja interactivo: enlaces y botones */
-  --accent-3:#9C2F06;     /* el interactivo al pasar el ratón */
-  --sobre-accent:#FFF7F2; /* el texto que va encima del naranja */
-  --accent-soft:#FAE3D7;  /* fondo suave del acento */
-  --shadow:0 1px 2px rgba(22,33,31,.05), 0 12px 32px -16px rgba(22,33,31,.28);
+  /* ---- La paleta ----
+     Azul hondo sobre blanco cálido.
+
+     Un solo acento, no dos. Con el naranja anterior hacían falta
+     dos tonos —uno para mostrar y otro para lo que se pulsa—
+     porque el claro no llegaba al contraste mínimo con texto
+     pequeño encima. Este azul cumple en los dos papeles, así que
+     --accent y --accent-2 son el mismo color a propósito. Se
+     mantienen los dos nombres para no tener que tocar las mil
+     líneas que ya los usan.
+
+     El fondo NO es blanco puro: lleva un punto cálido. Es lo que
+     evita que una web de salud con azul acabe pareciendo un
+     laboratorio, y es lo único que sobrevive de la paleta
+     anterior, porque era lo que mejor funcionaba de ella. */
+
+  --bg:#FAF9F5;           /* blanco cálido, el papel de todo */
+  --surface:#FFFFFF;      /* tarjetas y cajas */
+  --surface-2:#F4F3EF;    /* cajas secundarias */
+  --ink:#1A222B;          /* texto principal, azul muy oscuro */
+  --ink-2:#46515C;        /* texto secundario */
+  --muted:#5E6975;        /* texto terciario, notas al pie */
+  --line:#E5E3DC;         /* separadores suaves */
+  --line-strong:#CECBC2;  /* bordes de campos */
+  --accent:#1F5474;       /* azul de marca */
+  --accent-2:#1F5474;     /* el mismo: enlaces y botones */
+  --accent-3:#173F58;     /* al pasar el ratón */
+  --sobre-accent:#F2F8FC; /* el texto que va encima del azul */
+  --accent-soft:#E4EDF3;  /* fondo suave del acento */
+  --shadow:0 1px 2px rgba(26,34,43,.05), 0 12px 32px -16px rgba(26,34,43,.28);
 }
 
 /* --- 1 bis. Por qué esta web NO tiene tema oscuro ---------------
