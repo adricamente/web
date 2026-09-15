@@ -103,7 +103,12 @@
        marcada. La sección está pensada para funcionar con foto y
        sin ella, para que la web no parezca rota mientras tanto. -->
   <h2>Hola, soy Adrián</h2>
-  <!-- <p><img src="/adrian.jpg" alt="Retrato de Adrián Cuñat Andrés" width="760" height="760" style="border-radius:12px"></p> -->
+  <div class="presentacion">
+    <img class="retrato" src="/fotos/adrian.webp"
+         srcset="/fotos/adrian.webp 1x, /fotos/adrian@2x.webp 2x"
+         width="170" height="206" loading="lazy" decoding="async"
+         alt="Adrián Cuñat Andrés, de frente y sonriendo">
+    <div class="texto">
   <p>
     Adrián Cuñat Andrés. Graduado en Psicología por la UNED y cursando el
     Máster en Psicología General Sanitaria en UNIR, en prácticas
@@ -117,6 +122,8 @@
     te está costando. Nada de frases motivadoras ni de recetas. Un plan, y
     revisarlo. <a href="/sobre-mi/">Quién soy, con detalle</a>.
   </p>
+    </div>
+  </div>
 
   <!-- ===== En qué puedo ayudarte ============================== -->
   <h2>¿En qué puedo ayudarte?</h2>

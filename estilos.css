@@ -891,6 +891,54 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 }
 
 /* ============================================================
+   12. El retrato
+   ------------------------------------------------------------
+   La foto va recortada sobre fondo transparente y apoyada en el
+   papel de la web, no metida en una caja blanca. Dos razones:
+
+   1. Una foto recortada sobre el color de marca se lee como
+      decisión; una foto con la habitación de fondo se lee como
+      lo que había a mano. Y lo que hay detrás de una persona
+      dice tanto como la persona: una estantería de libros de
+      negocio y una luz LED rosa no dicen "psicólogo sanitario".
+
+   2. Asi la misma imagen sirve en cualquier sitio de la web sin
+      que se vea el borde del recuadro.
+
+   El formato es WebP con transparencia. Pesa 33 kB, que es menos
+   que una sola tipografía.
+   ============================================================ */
+
+.presentacion{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:26px;
+  align-items:start;
+  margin:0 0 10px;
+}
+.presentacion .texto p:last-child{margin-bottom:0}
+
+.retrato{
+  width:170px;height:auto;
+  /* Un pelín de sombra para que la figura recortada se apoye en
+     el papel en vez de flotar. */
+  filter:drop-shadow(0 10px 14px rgba(37,35,31,.16));
+  /* La foto acaba donde acaba el encuadre, así que sin esto los
+     hombros se cortan en una línea recta y vuelve a parecer una
+     foto dentro de un recuadro. La máscara la disuelve en el
+     papel: la figura se acaba, no la fotografía. */
+  -webkit-mask-image:linear-gradient(to bottom,#000 74%,rgba(0,0,0,0) 99%);
+          mask-image:linear-gradient(to bottom,#000 74%,rgba(0,0,0,0) 99%);
+}
+.retrato.grande{width:230px}
+.retrato.pequeno{width:96px}
+
+@media (max-width:620px){
+  .presentacion{grid-template-columns:1fr;gap:6px}
+  .retrato,.retrato.grande{width:150px}
+}
+
+/* ============================================================
    11. La hoja de registro
    ------------------------------------------------------------
    Es la única página del sitio pensada para acabar en papel, así
