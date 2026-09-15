@@ -733,3 +733,63 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   .paso-ciclo{flex-direction:row;align-items:center;gap:11px}
   .paso-ciclo span{margin:0}
 }
+
+/* ============================================================
+   11. La hoja de registro
+   ------------------------------------------------------------
+   Es la única página del sitio pensada para acabar en papel, así
+   que tiene su propio bloque de impresión. Las líneas para
+   escribir son bordes inferiores de verdad y no guiones bajos:
+   así se estiran solas al ancho que haya y en el móvil no
+   desbordan.
+   ============================================================ */
+
+.dia{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:16px 18px;
+  margin:0 0 14px;
+  background:var(--surface);
+  break-inside:avoid;
+}
+.dia h3{
+  margin:0 0 12px;
+  color:var(--accent-2);
+  font-size:1rem;
+}
+.rejilla-dia{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.campo-hoja.ancho{grid-column:1 / -1}
+.campo-hoja.corto{max-width:160px}
+.campo-hoja span{
+  display:block;
+  font-family:"Source Sans 3",sans-serif;
+  font-size:13px;font-weight:600;color:var(--muted);
+  margin-bottom:9px;
+}
+.campo-hoja .linea{
+  border-bottom:1px solid var(--line-strong);
+  height:22px;
+}
+.campo-hoja .linea + .linea{margin-top:9px}
+@media (max-width:560px){
+  .rejilla-dia{grid-template-columns:1fr}
+  .campo-hoja.corto{max-width:none}
+}
+
+@media print{
+  /* En papel sobran la cabecera, el pie, los botones y todo lo
+     que no sea la hoja. Y el fondo crema se queda en la
+     pantalla: imprimirlo gasta tinta y no aporta nada. */
+  .cabecera,footer,.saltar,.boton,.cinta,.al-imprimir-oculto,.caja.destacada,.apunte{
+    display:none !important;
+  }
+  body{background:#fff;color:#000;font-size:11pt}
+  .contenedor{max-width:none;padding:0}
+  h1{font-size:20pt;margin-bottom:6pt}
+  h2{font-size:13pt;margin:14pt 0 8pt}
+  .grande{font-size:11pt;color:#333}
+  .dia{border:1px solid #999;background:#fff;padding:8pt 10pt;margin-bottom:8pt}
+  .dia h3{color:#000;font-size:11pt;margin-bottom:8pt}
+  .campo-hoja span{color:#555;font-size:8.5pt;margin-bottom:6pt}
+  .campo-hoja .linea{border-bottom:1px solid #999;height:16pt}
+}

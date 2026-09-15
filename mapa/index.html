@@ -47,7 +47,7 @@
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
-  <link rel="stylesheet" href="../estilos.css?v=5">
+  <link rel="stylesheet" href="../estilos.css?v=6">
 
   <style>
   /* Estilos que solo existen en esta página. Todo lo compartido
@@ -307,6 +307,7 @@
     </div>
 
     <div class="navegacion" style="margin-bottom:30px">
+      <button class="boton-texto" type="button" id="guardar">Guardar mi mapa</button>
       <button class="boton-texto" type="button" id="copiar">Copiar mi mapa</button>
       <button class="boton-texto" type="button" data-ir="1">Volver a hacerlo con otra cosa</button>
     </div>
@@ -321,9 +322,36 @@
          coincidir exactamente con los atributos de Brevo.
          ====================================================== -->
     <div class="caja" id="bloque-correo">
-      <h3>¿Te mando la guía para romper el círculo?</h3>
-      <p class="apunte">Una guía corta por correo con los tres pasos para empezar a salir de esto, y algún envío más de vez en cuando. Te sales cuando quieras.</p>
-      <p class="apunte">Tu mapa no te lo puedo mandar: no lo guardo en ningún sitio. Dale a <strong>copiar</strong> aquí arriba y guárdatelo tú.</p>
+      <h3>Lo que viene después del mapa</h3>
+      <p>
+        El mapa te ha dicho qué está pasando. Lo que falta es lo otro:
+        qué hacer con ello. Déjame tu correo y te mando dos cosas
+        concretas.
+      </p>
+      <ul style="margin:0 0 4px">
+        <li>
+          <strong>La hoja de registro de una semana.</strong> Es lo primero
+          que pido en consulta justo después de hacer este análisis: siete
+          días apuntando cuándo aparece, qué haces y cuánto te alivia. En
+          una semana se ve el patrón entero, no solo el trozo de hoy. Te
+          llega en el primer correo, para imprimir o rellenar en el móvil.
+        </li>
+        <li>
+          <strong>Cuatro cartas, una cada pocos días.</strong> Por qué lo
+          repites aunque sepas que te perjudica · «Cuando esté listo» no
+          llega nunca · La factura que no ves · Cuándo dejar de hacerlo
+          solo.
+        </li>
+      </ul>
+      <p class="apunte" style="margin-top:12px">
+        Después escribo de vez en cuando. Te das de baja de un clic y tu
+        correo no se lo paso a nadie.
+      </p>
+      <p class="apunte">
+        <strong>Lo que no te puedo mandar es tu mapa</strong>, y es a
+        propósito: no lo guardo en ningún sitio y no quiero empezar a
+        hacerlo. Guárdatelo tú con el botón de aquí arriba.
+      </p>
 
       <!-- El formulario envía "dentro" de un iframe invisible que está
            al final de la página, fuera de este bloque. Así el navegador
@@ -357,7 +385,7 @@
           <span>He leído y acepto la <a href="../privacidad.html">política de privacidad</a>, y acepto recibir los correos de adricamente.</span>
         </label>
 
-        <button class="boton" type="submit">Enviádmela</button>
+        <button class="boton" type="submit">Mandarme la hoja y las cartas</button>
         <p class="aviso" id="aviso-correo"></p>
       </form>
 
@@ -544,15 +572,49 @@
     document.getElementById('r5').innerHTML = 'Lo has escrito tú hace un minuto: <strong>'+limpiar(p)+'</strong>';
   }
 
-  // --- Copiar al portapapeles --------------------------------
-  document.getElementById('copiar').addEventListener('click', function(){
+  // --- El texto del mapa -------------------------------------
+  // Lo arman igual el botón de copiar y el de guardar, así que
+  // vive en una sola función. Si se cambia la redacción, cambia
+  // en los dos sitios a la vez.
+  function textoDelMapa(){
     var a = ALIVIO[datos.alivio] || {frase:'cambia'};
-    var texto =
-      'MI MAPA\n\n' +
+    return 'MI MAPA\n\n' +
       'Cuando me toca ' + (min(datos.situacion) || '—') + ', noto ' + (min(datos.emocion) || '—') + '.\n' +
       'Y lo que hago es ' + (min(datos.conducta) || '—') + '. El malestar ' + a.frase + '.\n' +
       'En seis meses me ha costado: ' + (min(datos.coste) || '—') + '.\n\n' +
       'MI SIGUIENTE PASO: ' + (datos.paso || '—') + '\n\n— adricamente.com';
+  }
+
+  // --- Guardar como archivo ----------------------------------
+  // Se construye en el propio navegador con un Blob y se descarga
+  // desde ahí. No pasa por ningún servidor: es literalmente el
+  // mismo texto que ya está en pantalla, guardado en un archivo.
+  // Por eso se puede seguir prometiendo que el mapa no sale de
+  // su dispositivo, que es lo que hace que la gente lo rellene
+  // diciendo la verdad.
+  document.getElementById('guardar').addEventListener('click', function(){
+    var boton = this;
+    try {
+      var blob = new Blob([textoDelMapa()], {type:'text/plain;charset=utf-8'});
+      var url  = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'mi-mapa.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      if (window.medir) window.medir('mapa_guardado');
+      boton.textContent = 'Guardado';
+    } catch (_) {
+      boton.textContent = 'No se pudo guardar';
+    }
+    setTimeout(function(){ boton.textContent = 'Guardar mi mapa'; }, 2500);
+  });
+
+  // --- Copiar al portapapeles --------------------------------
+  document.getElementById('copiar').addEventListener('click', function(){
+    var texto = textoDelMapa();
 
     var boton = this;
     function fin(ok){
@@ -583,8 +645,9 @@
       '<p class="apunte">Te he mandado un correo para que confirmes que eres tú. ' +
       'Hasta que no pulses ese enlace no te llega nada más — es la forma de ' +
       'asegurarnos de que nadie te apunta sin tu permiso.</p>' +
-      '<p class="apunte" style="margin-top:10px">Si no lo ves, mira en promociones o spam. ' +
-      'Y antes de cerrar: copia tu mapa ahí arriba, que es tuyo y no lo tengo yo.</p>';
+      '<p class="apunte" style="margin-top:10px">En cuanto confirmes te llega la hoja de registro. ' +
+      'Si no ves el correo, mira en promociones o spam.</p>' +
+      '<p class="apunte">Y antes de cerrar: guarda tu mapa ahí arriba, que es tuyo y no lo tengo yo.</p>';
   }
 
   // El iframe avisa cuando Brevo ha respondido. Ese es el momento
