@@ -1,13 +1,72 @@
 # adricamente.com
-# Todo el sitio es público y se puede indexar. Lo único que no
-# tiene sentido en un buscador es la página de gracias, porque
-# solo se llega a ella desde el correo de confirmación.
+# -----------------------------------------------------------------
+# Todo el sitio es público y se puede rastrear. Lo de abajo no
+# restringe nada: está escrito para dejar constancia de una decisión
+# y para que nadie pegue aquí, en el futuro, una de esas plantillas
+# que circulan por internet bloqueando "bots de IA" sin mirar cuáles.
+#
+# Porque hay una trampa: algunos de esos bots NO son de
+# entrenamiento, son los que alimentan las respuestas con fuentes.
+# Bloquearlos no protege nada y te borra de las citas.
+
 User-agent: *
 Allow: /
 Disallow: /gracias.html
+# Carpeta temporal con las cuatro cartas, para cargarlas en Brevo sin
+# reescribirlas a mano. Se borra en cuanto estén las plantillas.
+Disallow: /correos/
+
+# --- Los que NO se pueden bloquear -------------------------------
+# Estos cuatro son los que leen la web para citarla en respuestas.
+# La documentación de cada empresa lo dice sin rodeos:
+#
+#   OAI-SearchBot    "Sites that are opted out of OAI-SearchBot will
+#                     not be shown in ChatGPT search answers."
+#   Claude-SearchBot  bloquearlo "may reduce your site's visibility
+#                     and accuracy in user search results"
+#   Claude-User       lo mismo: es la consulta en vivo del usuario
+#   PerplexityBot     bloquearlo deja solo dominio y titular, sin texto
+#
+# Y los dos buscadores de siempre, que además alimentan los resúmenes
+# de IA de Google y a Copilot respectivamente.
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# --- Los de entrenamiento ----------------------------------------
+# GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot,
+# meta-externalagent y Amazonbot sirven para entrenar modelos, no
+# para citar. Se dejan abiertos a propósito: el contenido de esta
+# web es divulgación y que circule no hace daño.
+#
+# Si algún día se quisiera cerrar el entrenamiento, los dos únicos
+# que se pueden bloquear SIN coste de visibilidad son
+# Google-Extended y Applebot-Extended: las dos empresas documentan
+# que no afecta a la inclusión ni al ranking en sus buscadores.
+# Los demás no están documentados tan claro. Mirarlo antes de tocar.
 
 Sitemap: https://adricamente.com/sitemap.xml
-# Carpeta temporal: las cuatro cartas, para poder cargarlas en Brevo
-# sin reescribirlas a mano. Se borra en cuanto esten las plantillas.
-User-agent: *
-Disallow: /correos/
