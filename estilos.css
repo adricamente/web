@@ -945,12 +945,45 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   /* Un pelín de sombra para que la figura recortada se apoye en
      el papel en vez de flotar. */
   filter:drop-shadow(0 10px 14px rgba(37,35,31,.16));
-  /* La foto acaba donde acaba el encuadre, así que sin esto los
-     hombros se cortan en una línea recta y vuelve a parecer una
-     foto dentro de un recuadro. La máscara la disuelve en el
-     papel: la figura se acaba, no la fotografía. */
-  -webkit-mask-image:linear-gradient(to bottom,#000 74%,rgba(0,0,0,0) 99%);
-          mask-image:linear-gradient(to bottom,#000 74%,rgba(0,0,0,0) 99%);
+}
+
+/* La foto acaba donde acaba el encuadre, así que sin esto los
+   hombros se cortan en una línea recta y vuelve a parecer una foto
+   dentro de un recuadro. La máscara la disuelve en el papel: se
+   acaba la figura, no la fotografía.
+
+   Por qué está escrito así y no en una línea:
+
+   - Va dentro de @supports. Si el motor no entiende máscaras, no
+     recibe ninguna declaración a medias; se queda con la foto
+     entera, que es fea pero no rota. Antes lo tenía suelto y en el
+     navegador de escritorio salía el borde recto.
+   - Los cuatro ajustes van explícitos. El valor por omisión de
+     mask-repeat es "repeat", y los WebKit antiguos con el prefijo
+     no calculan igual el tamaño automático: el degradado se
+     repetía y aparecían bandas. Con no-repeat y 100% 100% el
+     degradado cubre la imagen una sola vez en todos.
+   - mask-mode:alpha dice explícitamente que lo que borra es la
+     transparencia del degradado, no su luminosidad. Por omisión
+     es "match-source", que para una imagen CSS ya significa alpha,
+     pero los motores viejos no coinciden en eso y un degradado de
+     negro a transparente interpretado por luminosidad borra justo
+     lo contrario: la cabeza en vez de los hombros.
+   - El prefijo -webkit- va primero y el estándar después, para que
+     el navegador que entiende los dos se quede con el segundo. */
+@supports ((-webkit-mask-image:linear-gradient(#000,#000)) or (mask-image:linear-gradient(#000,#000))){
+  .retrato{
+    -webkit-mask-image:linear-gradient(to bottom,#000 74%,rgba(0,0,0,0) 99%);
+    -webkit-mask-repeat:no-repeat;
+    -webkit-mask-position:center top;
+    -webkit-mask-size:100% 100%;
+    -webkit-mask-source-type:alpha;
+            mask-image:linear-gradient(to bottom,#000 74%,rgba(0,0,0,0) 99%);
+            mask-repeat:no-repeat;
+            mask-position:center top;
+            mask-size:100% 100%;
+            mask-mode:alpha;
+  }
 }
 .retrato.grande{width:230px}
 .retrato.pequeno{width:96px}
