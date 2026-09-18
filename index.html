@@ -61,7 +61,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=17">
+  <link rel="stylesheet" href="/estilos.css?v=18">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -160,6 +160,10 @@
 
 <body>
 <a class="saltar" href="#principal">Saltar al contenido</a>
+<!-- La barra de lectura. Está vacía a propósito: es una línea de
+     color que el CSS estira con el scroll, sin JavaScript y sin
+     contenido que un lector de pantalla tenga que anunciar. -->
+<div class="barra-lectura" aria-hidden="true"></div>
 <div class="contenedor ancho">
 
   <header class="cabecera">
@@ -213,7 +217,7 @@
   <!-- ===== Presentación ===================================== -->
   <h2>Hola, soy Adrián</h2>
   <div class="presentacion">
-    <img class="retrato" src="/fotos/adrian-retrato.webp"
+    <img class="retrato" src="/fotos/adrian-retrato.webp?v=8192c5"
          width="200" height="250" loading="lazy" decoding="async"
          alt="Adrián Cuñat Andrés, de frente, con camisa azul claro y gafas de pasta, sonriendo">
     <div class="texto">
@@ -282,10 +286,10 @@
         vuelve a cero: es el alivio. Otra línea sube un escalón en cada
         una de esas veces y nunca baja: es el coste.
       </desc>
-      <path class="eje" d="M30 12 V164 M30 164 H392"/>
+      <path class="eje" pathLength="1" d="M30 12 V164 M30 164 H392"/>
       <line class="marca-evento" x1="90" y1="164" x2="90" y2="158"/><line class="marca-evento" x1="162" y1="164" x2="162" y2="158"/><line class="marca-evento" x1="234" y1="164" x2="234" y2="158"/><line class="marca-evento" x1="306" y1="164" x2="306" y2="158"/>
-      <path class="trazo-coste" d="M30 150 L88 150 L95 134 L160 134 L167 118 L232 118 L239 102 L304 102 L311 86 L386 86"/>
-      <path class="trazo-alivio" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
+      <path class="trazo-coste" pathLength="1" d="M30 150 L88 150 L95 134 L160 134 L167 118 L232 118 L239 102 L304 102 L311 86 L386 86"/>
+      <path class="trazo-alivio" pathLength="1" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
     </svg>
 
     <ul class="leyenda">
@@ -329,8 +333,8 @@
   </ol>
 
   <figure class="banda">
-    <img src="/fotos/banda-portada.webp"
-         srcset="/fotos/banda-portada-m.webp 800w, /fotos/banda-portada.webp 1600w"
+    <img src="/fotos/banda-portada.webp?v=6eb1d9"
+         srcset="/fotos/banda-portada-m.webp?v=4fd32e 800w, /fotos/banda-portada.webp?v=6eb1d9 1600w"
          sizes="(max-width:720px) 100vw, 680px"
          width="1600" height="600" loading="lazy" decoding="async"
          alt="Una planta pequeña sobre un taburete de madera, junto a una cortina con luz de día">
@@ -432,8 +436,8 @@
   <h2>Últimos artículos</h2>
   <div class="rejilla">
     <a class="tarjeta con-foto" href="/blog/por-que-lo-repites/">
-      <img class="ficha" src="/fotos/ficha-repites.webp"
-           srcset="/fotos/ficha-repites-m.webp 400w, /fotos/ficha-repites.webp 800w"
+      <img class="ficha" src="/fotos/ficha-repites.webp?v=8d610f"
+           srcset="/fotos/ficha-repites-m.webp?v=194600 400w, /fotos/ficha-repites.webp?v=8d610f 800w"
            sizes="(max-width:720px) 100vw, 320px"
            width="800" height="450" loading="lazy" decoding="async" alt="Sombras de una barandilla repetidas sobre una pared">
       <div class="cuerpo">
@@ -443,8 +447,8 @@
       </div>
     </a>
     <a class="tarjeta con-foto" href="/blog/cuando-este-listo/">
-      <img class="ficha" src="/fotos/ficha-listo.webp"
-           srcset="/fotos/ficha-listo-m.webp 400w, /fotos/ficha-listo.webp 800w"
+      <img class="ficha" src="/fotos/ficha-listo.webp?v=ff08ee"
+           srcset="/fotos/ficha-listo-m.webp?v=8554c7 400w, /fotos/ficha-listo.webp?v=ff08ee 800w"
            sizes="(max-width:720px) 100vw, 320px"
            width="800" height="450" loading="lazy" decoding="async" alt="Luz filtrada por una persiana sobre una pared clara">
       <div class="cuerpo">
@@ -454,8 +458,8 @@
       </div>
     </a>
     <a class="tarjeta con-foto" href="/blog/la-factura-que-no-ves/">
-      <img class="ficha" src="/fotos/ficha-factura.webp"
-           srcset="/fotos/ficha-factura-m.webp 400w, /fotos/ficha-factura.webp 800w"
+      <img class="ficha" src="/fotos/ficha-factura.webp?v=c1b151"
+           srcset="/fotos/ficha-factura-m.webp?v=bcc796 400w, /fotos/ficha-factura.webp?v=c1b151 800w"
            sizes="(max-width:720px) 100vw, 320px"
            width="800" height="450" loading="lazy" decoding="async" alt="Luz de tarde entrando en diagonal sobre una pared">
       <div class="cuerpo">
@@ -469,7 +473,7 @@
 
   <section class="cinta">
     <h2>Empezar</h2>
-    <p>Treinta minutos, gratis, para que me cuentes qué te trae y yo te diga honestamente si creo que puedo ayudarte. <strong>No es terapia y no tienes que decidir nada ese día.</strong></p>
+    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y yo te diga honestamente si creo que puedo ayudarte. <strong>No es terapia y no tienes que decidir nada ese día.</strong></p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar mi sesión</a>
@@ -523,45 +527,22 @@
         </p>
       </div>
     </div>
-    <!-- Los recursos de crisis no van escondidos en un párrafo de
-         letra pequeña. Van en su propio bloque, con los números
-         pulsables, porque quien los necesita no está para leer un
-         aviso legal. Casi ninguna web de psicólogo en España los
-         pone; es de las cosas más baratas y más necesarias que puede
-         hacer una. -->
-    <div class="crisis">
-      <h4><svg class="icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="3.4"/><path d="M5.9 5.9 9.6 9.6M14.4 14.4l3.7 3.7M18.1 5.9 14.4 9.6M9.6 14.4 5.9 18.1"/></svg>Si lo estás pasando muy mal ahora mismo</h4>
-      <ul>
-        <li>
-          <a href="tel:024"><strong>024</strong></a> &mdash; Línea de
-          atención a la conducta suicida del Ministerio de Sanidad.
-          Gratuita, confidencial y las 24 horas, todos los días del año.
-          También por
-          <a href="https://www2.cruzroja.es/web/cruzroja/chat-linea024" target="_blank" rel="noopener">chat</a>
-          y en lengua de signos.
-        </li>
-        <li>
-          <a href="tel:112"><strong>112</strong></a> &mdash; Emergencias,
-          si hay peligro inmediato para tu vida o la de otra persona.
-        </li>
-        <li>
-          <a href="tel:+34717003717"><strong>717 003 717</strong></a>
-          &mdash; Teléfono de la Esperanza, si necesitas hablar con
-          alguien y no es una emergencia.
-        </li>
-      </ul>
-      <p>
-        Yo no atiendo urgencias y no estoy disponible fuera del horario
-        de las sesiones. Esos tres sí lo están.
-      </p>
-    </div>
+    <!-- Lo legal y los teléfonos de urgencia estaban aquí en dos
+         bloques grandes. Fuera: en la página que tiene que vender,
+         un muro de descargos se lee como desconfianza, no como
+         responsabilidad. El descargo completo vive ahora en el aviso
+         legal, que es su sitio.
 
-    <p>
-      Los contenidos de esta web tienen finalidad divulgativa y
-      psicoeducativa. No constituyen diagnóstico ni tratamiento y no
-      sustituyen a la consulta con un profesional sanitario. Si estás
-      pasándolo mal, habla con tu médico de familia o con un profesional
-      de la psicología.
+         Lo único que se queda es una línea de urgencias, en la letra
+         pequeña y sin dramatismo. No estorba a nadie y está ahí el
+         día que hace falta. El aviso con contexto sigue estando donde
+         de verdad se lee: dentro de cada página de área, justo al
+         hablar de cuándo esto no es lo tuyo. -->
+    <p class="legal-pie">
+      Urgencias: <a href="tel:024">024</a> (conducta suicida, 24&nbsp;h)
+      &middot; <a href="tel:112">112</a>.
+      <a href="/aviso-legal.html">Aviso legal</a> &middot;
+      <a href="/privacidad.html">Privacidad</a>.
     </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>

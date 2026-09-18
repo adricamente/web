@@ -47,7 +47,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=17">
+  <link rel="stylesheet" href="/estilos.css?v=18">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -72,6 +72,10 @@
 
 <body>
 <a class="saltar" href="#principal">Saltar al contenido</a>
+<!-- La barra de lectura. Está vacía a propósito: es una línea de
+     color que el CSS estira con el scroll, sin JavaScript y sin
+     contenido que un lector de pantalla tenga que anunciar. -->
+<div class="barra-lectura" aria-hidden="true"></div>
 <div class="contenedor ancho">
 
   <header class="cabecera">
@@ -101,7 +105,7 @@
   </p>
 
   <div class="presentacion">
-    <img class="retrato" src="/fotos/adrian-online.webp"
+    <img class="retrato" src="/fotos/adrian-online.webp?v=2dbd87"
          width="200" height="250" loading="lazy" decoding="async"
          alt="Adrián Cuñat Andrés de tres cuartos, con polo verde, mirando a cámara y sonriendo">
     <div class="texto">
@@ -207,12 +211,7 @@
   </p>  <div class="faq">
     <details>
       <summary>¿Qué plataforma se usa y tengo que instalar algo?</summary>
-      <p>No hay que instalar nada. Te llega un enlace por correo y se abre en el navegador del móvil o del ordenador. La videollamada va por <strong>Google Meet</strong>, con cifrado en tránsito y sin grabación.</p>
-    </details>
-
-    <details>
-      <summary>¿Se graba la sesión?</summary>
-      <p><strong>No. Nunca, y no hay una opción para hacerlo.</strong> Tampoco tomo notas durante la sesión con la cámara apagada ni nada parecido: las notas clínicas las escribo después, y son las que exige la historia clínica, no una transcripción.</p>
+      <p>No hay que instalar nada. Te llega un enlace por correo y se abre en el navegador del móvil o del ordenador. La videollamada va por <strong>Google Meet</strong>, con cifrado en tránsito.</p>
     </details>
 
     <details>
@@ -267,10 +266,8 @@
       <h3>No es el sitio si</h3>
       <ul>
         <li>Estás en peligro ahora mismo o tienes pensamientos de hacerte daño. Llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</li>
-        <li>Hay un consumo activo que necesita un recurso específico de adicciones.</li>
         <li>Tienes menos de 18 años: no atiendo a menores.</li>
         <li>Buscas un informe pericial, un peritaje o un certificado. Eso es otro trabajo distinto.</li>
-        <li>Necesitas medicación o ajustarla: eso lo lleva psiquiatría, no psicología.</li>
       </ul>
     </div>
   </div>
@@ -298,11 +295,6 @@
     </details>
 
     <details>
-      <summary>Vivo fuera de España. ¿Puedo?</summary>
-      <p>No. La atención se presta solo a personas residentes en España, porque la habilitación profesional y la responsabilidad sanitaria son las de aquí.</p>
-    </details>
-
-    <details>
       <summary>¿Puedo probar y ya veré?</summary>
       <p>Es exactamente lo que es la sesión informativa: treinta minutos, gratis, sin compromiso y sin que nadie te llame después para insistir. Si sales de ahí y decides que no, no pasa nada.</p>
     </details>
@@ -310,7 +302,7 @@
 
   <section class="cinta">
     <h2>Empezar</h2>
-    <p>Treinta minutos, gratis, para ver qué te pasa y decirte con honestidad si creo que puedo ayudarte.</p>
+    <p>Treinta minutos, <strong>gratis</strong>, para ver qué te pasa y decirte con honestidad si creo que puedo ayudarte.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar mi sesión</a>
@@ -364,45 +356,22 @@
         </p>
       </div>
     </div>
-    <!-- Los recursos de crisis no van escondidos en un párrafo de
-         letra pequeña. Van en su propio bloque, con los números
-         pulsables, porque quien los necesita no está para leer un
-         aviso legal. Casi ninguna web de psicólogo en España los
-         pone; es de las cosas más baratas y más necesarias que puede
-         hacer una. -->
-    <div class="crisis">
-      <h4><svg class="icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="3.4"/><path d="M5.9 5.9 9.6 9.6M14.4 14.4l3.7 3.7M18.1 5.9 14.4 9.6M9.6 14.4 5.9 18.1"/></svg>Si lo estás pasando muy mal ahora mismo</h4>
-      <ul>
-        <li>
-          <a href="tel:024"><strong>024</strong></a> &mdash; Línea de
-          atención a la conducta suicida del Ministerio de Sanidad.
-          Gratuita, confidencial y las 24 horas, todos los días del año.
-          También por
-          <a href="https://www2.cruzroja.es/web/cruzroja/chat-linea024" target="_blank" rel="noopener">chat</a>
-          y en lengua de signos.
-        </li>
-        <li>
-          <a href="tel:112"><strong>112</strong></a> &mdash; Emergencias,
-          si hay peligro inmediato para tu vida o la de otra persona.
-        </li>
-        <li>
-          <a href="tel:+34717003717"><strong>717 003 717</strong></a>
-          &mdash; Teléfono de la Esperanza, si necesitas hablar con
-          alguien y no es una emergencia.
-        </li>
-      </ul>
-      <p>
-        Yo no atiendo urgencias y no estoy disponible fuera del horario
-        de las sesiones. Esos tres sí lo están.
-      </p>
-    </div>
+    <!-- Lo legal y los teléfonos de urgencia estaban aquí en dos
+         bloques grandes. Fuera: en la página que tiene que vender,
+         un muro de descargos se lee como desconfianza, no como
+         responsabilidad. El descargo completo vive ahora en el aviso
+         legal, que es su sitio.
 
-    <p>
-      Los contenidos de esta web tienen finalidad divulgativa y
-      psicoeducativa. No constituyen diagnóstico ni tratamiento y no
-      sustituyen a la consulta con un profesional sanitario. Si estás
-      pasándolo mal, habla con tu médico de familia o con un profesional
-      de la psicología.
+         Lo único que se queda es una línea de urgencias, en la letra
+         pequeña y sin dramatismo. No estorba a nadie y está ahí el
+         día que hace falta. El aviso con contexto sigue estando donde
+         de verdad se lee: dentro de cada página de área, justo al
+         hablar de cuándo esto no es lo tuyo. -->
+    <p class="legal-pie">
+      Urgencias: <a href="tel:024">024</a> (conducta suicida, 24&nbsp;h)
+      &middot; <a href="tel:112">112</a>.
+      <a href="/aviso-legal.html">Aviso legal</a> &middot;
+      <a href="/privacidad.html">Privacidad</a>.
     </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>

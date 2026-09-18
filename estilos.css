@@ -579,47 +579,26 @@ footer nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:14px}
 footer nav a{font-size:14px;color:var(--muted);text-decoration:none}
 footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 
-/* --- 7 bis. Los recursos de crisis -------------------------------
-   Va dentro del pie pero no se comporta como el pie: tiene su propio
-   papel, su propio borde y los números en grande y pulsables.
+/* --- 7 bis. La última línea del pie ------------------------------
+   Aquí había un bloque grande con los teléfonos de urgencia y otro
+   con el descargo de "esto no sustituye a un profesional". Los dos
+   fuera: en la página que tiene que convencer a alguien de pedir
+   cita, un muro de advertencias se lee como desconfianza y no como
+   responsabilidad. El descargo completo está en el aviso legal, que
+   es su sitio, y el aviso con contexto sigue dentro de cada página
+   de área, que es donde de verdad se lee.
 
-   Está aquí por una razón que no es de diseño. Quien llega a una web
-   de psicología a las tres de la mañana no viene a leer un aviso
-   legal, y el 024 escondido en la última línea de la letra pequeña
-   no lo encuentra nadie. Casi ninguna web de psicólogo en España lo
-   pone; es lo más barato y lo más necesario que se puede añadir.
+   Se queda una línea con los dos teléfonos, en letra pequeña y sin
+   dramatismo. No estorba y está el día que hace falta.
    ---------------------------------------------------------------- */
 
-.crisis{
-  background:var(--surface);
-  border:1px solid var(--line-strong);
-  border-radius:14px;
-  padding:20px 22px;
-  margin:0 0 26px;
+.legal-pie{
+  font-size:13.5px;line-height:1.6;color:var(--muted);
+  max-width:none;margin:0 0 8px;
 }
-.crisis h4{
-  display:flex;align-items:center;gap:9px;
-  margin:0 0 12px;color:var(--ink);font-size:16px;
-}
-.crisis h4 .icono{color:var(--accent-2);flex:0 0 auto}
-.crisis ul{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:10px}
-.crisis li{
-  margin:0;font-size:15px;line-height:1.5;color:var(--ink-2);
-  padding-left:0;
-}
-.crisis li a{font-variant-numeric:tabular-nums}
-.crisis li > a:first-child{
-  font-size:17px;text-decoration:none;
-  border-bottom:2px solid var(--accent-borde);
-  padding-bottom:1px;
-}
-.crisis li > a:first-child:hover{border-bottom-color:var(--accent-3)}
-.crisis p{margin:0;font-size:14px;line-height:1.5;color:var(--muted);max-width:60ch}
-
-@media (max-width:520px){
-  .crisis{padding:17px 18px;border-radius:12px}
-  .crisis li{font-size:15.5px}
-}
+.legal-pie a{color:var(--muted);text-underline-offset:2px}
+.legal-pie a:hover{color:var(--accent-2)}
+.legal-pie a[href^="tel:"]{font-variant-numeric:tabular-nums;font-weight:600}
 
 /* --- 8. Accesibilidad --------------------------------------------
    Quien navega con teclado tiene que ver dónde está. Nunca quites
@@ -1361,4 +1340,165 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 
 .icono{stroke-width:1.7}
 .insignia .icono{stroke-width:1.5}          /* 32 px o más */
-.confianza dt .icono,.crisis h4 .icono{stroke-width:1.85}  /* 18–20 px */
+.confianza dt .icono{stroke-width:1.85}   /* 18–20 px */
+
+/* ============================================================
+   16. El movimiento que sí se nota
+   ------------------------------------------------------------
+   Lo de la sección 14 es higiene: fundidos cortos que nadie
+   comenta. Esto es lo otro, lo que se ve.
+
+   Cuatro piezas y ninguna más. Las cuatro van atadas al scroll con
+   `animation-timeline`, o sea, sin una línea de JavaScript: el
+   navegador las mueve en su propio hilo y no compiten con nada.
+   Donde no exista, la página se ve igual, quieta y completa.
+
+   Y las cuatro respetan la misma regla que el resto: nada tapa
+   contenido, nada se mueve de sitio de verdad, y `reduce` lo apaga.
+   ============================================================ */
+
+/* --- 16.1 La barra de lectura -----------------------------------
+   Una línea de tres píxeles arriba del todo que avanza con la
+   página. En una web de textos largos dice dos cosas a la vez:
+   cuánto llevas y cuánto queda. Es lo único de toda la web que
+   está siempre en pantalla moviéndose, y por eso es tan fina y del
+   color de marca, no de un color de aviso. */
+
+.barra-lectura{
+  position:fixed;inset:0 0 auto 0;height:3px;z-index:60;
+  background:var(--accent-2);
+  transform-origin:0 50%;
+  transform:scaleX(0);
+  pointer-events:none;
+}
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .barra-lectura{
+      animation:leer linear;
+      animation-timeline:scroll(root block);
+    }
+    @keyframes leer{to{transform:scaleX(1)}}
+  }
+}
+
+/* --- 16.2 La cabecera que se asienta ----------------------------
+   Al empezar a bajar, la cabecera pierde altura y gana una línea
+   inferior: deja de ser parte de la portada y pasa a ser una barra
+   de navegación. Son ocho píxeles de diferencia; no se ve moverse,
+   se nota que ha cambiado.
+
+   `animation-range` en los primeros 120 px: la transición ocurre
+   entera antes de que nadie se dé cuenta de que está ocurriendo. */
+
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .cabecera{
+      animation:asentar linear both;
+      animation-timeline:scroll(root block);
+      animation-range:0 120px;
+      will-change:padding-block,box-shadow;
+    }
+    @keyframes asentar{
+      from{box-shadow:0 1px 0 transparent}
+      to{box-shadow:0 1px 0 var(--line), 0 6px 20px -14px rgba(37,35,31,.5)}
+    }
+  }
+}
+
+/* --- 16.3 Los diagramas se dibujan solos ------------------------
+   Esta es la buena, y es la única que además significa algo.
+
+   Las dos curvas del mecanismo cuentan un proceso que pasa en el
+   tiempo: cada vez que evitas algo el alivio da un pico y el coste
+   sube un escalón. Dibujarlas de golpe es enseñar el resultado;
+   dibujarlas mientras bajas es enseñar el proceso, que es
+   exactamente de lo que va la página.
+
+   Funciona con `pathLength="1"`, que le dice al navegador «haz como
+   si este trazo midiera 1». Así el CSS puede recorrerlo sin saber
+   cuánto mide de verdad. El eje aparece primero, luego el coste, y
+   el alivio el último, porque es el que se lee.
+
+   Ninguna de las ocho webs de psicólogos que miré dibuja un solo
+   mecanismo. Ni quieto. */
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .dibujo .eje,
+    .dibujo .trazo-coste,
+    .dibujo .trazo-alivio{
+      stroke-dasharray:1;
+      animation:trazar linear both;
+      animation-timeline:view();
+    }
+    .dibujo .eje{animation-range:entry 12% entry 55%}
+    .dibujo .trazo-coste{animation-range:entry 22% entry 80%}
+    .dibujo .trazo-alivio{animation-range:entry 34% cover 18%}
+    @keyframes trazar{
+      from{stroke-dashoffset:1}
+      to{stroke-dashoffset:0}
+    }
+    /* Las marcas de cada evento aparecen con el escalón que les
+       corresponde, no todas de golpe al principio. */
+    .dibujo .marca-evento{
+      animation:marcar linear both;
+      animation-timeline:view();
+      animation-range:entry 30% entry 85%;
+    }
+    @keyframes marcar{from{opacity:0}to{opacity:1}}
+  }
+}
+
+/* --- 16.4 La foto que respira dentro de su marco ----------------
+   La imagen es un 12 % más alta que el hueco y se desliza dentro
+   mientras pasa por pantalla. No es parallax de página —eso mueve
+   el fondo respecto al texto y es lo que marean las guías de
+   accesibilidad—: aquí no se mueve nada de la página, solo el
+   contenido dentro de un marco que sigue quieto.
+
+   El recorrido total es de 24 px a lo largo de toda la pantalla.
+   Es deliberadamente poco: tiene que notarse que la foto está viva,
+   no que se está moviendo. */
+
+.banda{overflow:hidden;border-radius:14px}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .banda img{
+      animation:respirar linear both;
+      animation-timeline:view();
+      animation-range:cover;
+      will-change:transform;
+    }
+    @keyframes respirar{
+      from{transform:scale(1.06) translateY(-12px)}
+      to{transform:scale(1.06) translateY(12px)}
+    }
+  }
+}
+
+/* --- 16.5 Las tarjetas, al pasar por encima ---------------------
+   Dos píxeles de subida, el borde que se marca y el icono que se
+   adelanta tres. Es la diferencia entre una tarjeta que parece una
+   caja con texto y una que parece que se puede pulsar. */
+
+@media (prefers-reduced-motion:no-preference) and (hover:hover){
+  .tarjeta .icono{transition:transform var(--t-corto) var(--entra)}
+  a.tarjeta:hover{transform:translateY(-2px)}
+  a.tarjeta:hover .icono{transform:translateX(3px)}
+  a.tarjeta:hover .ficha{transform:scale(1.03)}
+  .tarjeta.con-foto{overflow:hidden}
+  .tarjeta.con-foto .ficha{transition:transform 420ms var(--entra)}
+}
+
+/* --- 16.6 El interruptor, otra vez ------------------------------
+   La sección 14 ya apaga animaciones y transiciones. Esto apaga lo
+   que esa regla no alcanza: la barra de lectura, que se queda
+   simplemente invisible. */
+
+@media (prefers-reduced-motion:reduce){
+  .barra-lectura{display:none}
+}
+@media print{
+  .barra-lectura{display:none}
+  .dibujo .eje,.dibujo .trazo-coste,.dibujo .trazo-alivio{stroke-dasharray:none !important}
+}
