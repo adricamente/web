@@ -773,11 +773,14 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    10. Los dibujos
    ------------------------------------------------------------
    Iconos y diagramas, todos escritos dentro del HTML y todos
-   dibujados a mano. Nada de imágenes de banco: las guías de
-   comunicación en salud mental piden evitar el repertorio de
-   siempre (la cabeza entre las manos, la mirada perdida), y
-   además los estudios de seguimiento ocular dicen que las fotos
-   genéricas de gente ni se miran.
+   dibujados a mano. Nada de imágenes de banco CON GENTE: las
+   guías de comunicación en salud mental piden evitar el
+   repertorio de siempre (la cabeza entre las manos, la mirada
+   perdida), y además los estudios de seguimiento ocular dicen
+   que las fotos genéricas de personas ni se miran. Las fotos que
+   sí hay en la web son de objetos y de luz —sección 13—, y no
+   ilustran ningún sufrimiento: solo dan respiro entre bloques de
+   texto.
 
    Todo usa currentColor o variables, así que el tema oscuro
    funciona solo, sin duplicar un único dibujo.
@@ -1028,4 +1031,76 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   .dia h3{color:#000;font-size:11pt;margin-bottom:8pt}
   .campo-hoja span{color:#555;font-size:8.5pt;margin-bottom:6pt}
   .campo-hoja .linea{border-bottom:1px solid #999;height:16pt}
+}
+
+/* ============================================================
+   13. Las fotografías
+   ------------------------------------------------------------
+   Dos piezas y ninguna más.
+
+   .banda es una franja ancha que separa dos bloques de texto.
+   No explica nada y no tiene que explicarlo: en una página larga
+   el ojo necesita un sitio donde no haya que leer. Por eso son
+   fotos de objetos y de luz —una taza, unos libros, una sombra
+   en la pared— y nunca de personas. La razón no es estética: las
+   guías de comunicación en salud mental piden no ilustrar el
+   malestar con gente sufriendo, y una foto de banco de alguien
+   «angustiado» es exactamente eso.
+
+   .ficha es la miniatura de un artículo del blog.
+
+   Las dos van a 8:3 y a 16:9 respectivamente y las imágenes
+   vienen ya recortadas a esa proporción, así que aspect-ratio no
+   reencuadra nada: está para reservar el hueco antes de que la
+   foto cargue y que el texto no dé un salto.
+   ============================================================ */
+
+.banda{
+  margin:34px 0 30px;
+  padding:0;
+}
+.banda img{
+  display:block;
+  width:100%;height:auto;
+  aspect-ratio:8/3;
+  object-fit:cover;
+  border-radius:14px;
+  background:var(--surface-2);
+}
+.banda figcaption{
+  font-size:14px;line-height:1.5;color:var(--muted);
+  margin-top:10px;max-width:56ch;
+}
+
+/* En pantallas estrechas una franja de 8:3 se queda en una tira
+   de ochenta píxeles que no se ve. Se le da más alto. */
+@media (max-width:620px){
+  .banda{margin:26px 0 24px}
+  .banda img{aspect-ratio:2/1;border-radius:12px}
+}
+
+/* La foto de un artículo va pegada al borde superior de la
+   tarjeta, sin separación: la tarjeta tiene overflow oculto y la
+   imagen hereda su esquina redondeada. */
+.tarjeta.con-foto{padding:0;overflow:hidden}
+.tarjeta.con-foto .ficha{
+  display:block;width:100%;height:auto;
+  aspect-ratio:16/9;object-fit:cover;
+  background:var(--surface-2);
+  border-bottom:1px solid var(--line);
+}
+.tarjeta.con-foto .cuerpo{
+  padding:20px 22px 22px;
+  display:flex;flex-direction:column;flex:1;
+}
+.tarjeta.con-foto .cuerpo .mas{margin-top:auto}
+
+/* El tema oscuro no existe en esta web (sección 1 bis), pero si
+   algún día existe, una foto clara sobre papel oscuro deslumbra.
+   Se deja bajada de brillo preparada y desactivada. */
+@media (prefers-color-scheme:dark){
+  :root[data-tema="oscuro"] .banda img,
+  :root[data-tema="oscuro"] .tarjeta.con-foto .ficha{
+    filter:brightness(.88);
+  }
 }
