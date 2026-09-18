@@ -961,7 +961,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   box-shadow:var(--shadow);
   /* Fondo por si la imagen tarda: evita el salto de blanco a foto. Es el
      mismo gris del fondo de las fotos, así que ni siquiera se nota. */
-  background:#C7C3BC;
+  background:#A9A194;
 }
 .retrato.grande{width:230px}
 
