@@ -487,6 +487,99 @@ p strong, li strong, dd strong, .tarjeta strong{
 .doble ul{margin:0;padding-left:20px}
 .doble li{font-size:16px;color:var(--ink-2)}
 
+/* La idea del artículo, sacada a la vista.
+   Mil palabras en párrafos iguales se abandonan por la mitad. Este
+   bloque hace dos cosas a la vez: le da al ojo un sitio donde
+   descansar, y deja fuera del muro la única frase que alguien se va
+   a llevar si no lee el resto. No es una cita de nadie: es la idea. */
+
+.idea{
+  margin:34px 0;padding:22px 24px 24px;
+  background:var(--accent-soft);
+  border-radius:14px;
+  border-left:4px solid var(--accent-2);
+  border-radius:0 14px 14px 0;
+}
+.idea .rotulo-idea{
+  font-family:Archivo,sans-serif;font-size:11.5px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);
+  margin:0 0 9px;
+}
+.idea p:not(.rotulo-idea){
+  font-family:Archivo,sans-serif;
+  font-size:clamp(1.05rem,2.7vw,1.3rem);
+  font-weight:600;line-height:1.32;letter-spacing:-.017em;
+  color:var(--ink);margin:0;max-width:34ch;text-wrap:balance;
+}
+@media (max-width:520px){.idea{padding:18px 19px 20px}}
+
+/* Ficha técnica: los datos de un servicio con icono, en rejilla.
+   Es la misma información que una lista de viñetas, pero se consulta
+   en vez de leerse. El ojo salta al dato que busca en lugar de
+   recorrer seis frases que empiezan todas igual. */
+
+.ficha-tecnica{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;
+  margin:26px 0 20px;
+}
+.ficha-tecnica > div{background:var(--surface);padding:16px 17px}
+.ficha-tecnica dt{
+  display:flex;align-items:center;gap:8px;
+  font-family:Archivo,sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:.02em;text-transform:uppercase;color:var(--accent-2);
+  margin:0 0 6px;
+}
+.ficha-tecnica dt .icono{color:inherit;flex:0 0 auto;stroke-width:1.85}
+.ficha-tecnica dd{margin:0;font-size:15.5px;line-height:1.45;color:var(--ink-2)}
+.ficha-tecnica dd a{color:var(--accent-2)}
+
+/* Las señales de cada área, en fichas y no en viñetas.
+   Siete síntomas seguidos en una lista son un muro: se lee el
+   primero, el segundo y se salta al final. En fichas se reconocen de
+   un vistazo, que es justo lo que tiene que pasar —quien lee esto se
+   está buscando a sí mismo en la lista, no estudiándola. */
+
+.senales{
+  list-style:none;padding:0;margin:24px 0 16px;max-width:none;
+  display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(255px,1fr));
+}
+.senales li{
+  margin:0;padding:13px 15px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-left:3px solid var(--accent-borde);
+  border-radius:0 9px 9px 0;
+  font-size:15.5px;line-height:1.45;color:var(--ink-2);
+}
+
+/* Sí y no, con marca. El icono hace aquí trabajo de verdad: separa
+   de un vistazo lo que encaja de lo que excluye, sin tener que leer
+   la cabecera de la columna. */
+
+.dos-columnas{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:26px 0 20px}
+@media (max-width:640px){.dos-columnas{grid-template-columns:1fr}}
+.dos-columnas .columna{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:19px 20px;
+}
+.dos-columnas .columna h3{margin:0 0 12px}
+.dos-columnas .columna.si h3{color:var(--exito)}
+.dos-columnas .columna.no h3{color:var(--ink-2)}
+ul.marcada{list-style:none;padding:0;margin:0;max-width:none;display:grid;gap:11px}
+ul.marcada li{
+  display:grid;grid-template-columns:20px 1fr;gap:10px;align-items:start;
+  margin:0;font-size:15.5px;line-height:1.45;color:var(--ink-2);
+}
+ul.marcada .icono{margin-top:2px;stroke-width:2}
+.columna.si ul.marcada .icono{color:var(--exito)}
+.columna.no ul.marcada .icono{color:var(--muted)}
+
 /* El precio. Un número grande no es presumir: es no hacer que
    nadie tenga que buscarlo ni escribir para preguntarlo. */
 .precio{
@@ -870,7 +963,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   stroke-linecap:round;stroke-linejoin:round;
 }
 .dibujo .trazo-coste{
-  stroke:var(--ink);stroke-width:2.2;fill:none;
+  stroke:var(--ink-2);stroke-width:2.3;fill:none;
   stroke-linecap:round;stroke-linejoin:round;
 }
 .dibujo .rotulo{
@@ -880,6 +973,55 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .dibujo .rotulo.alivio{fill:var(--accent-2)}
 .dibujo .rotulo.coste{fill:var(--ink-2)}
 .dibujo .rotulo.eje-txt{fill:var(--muted);font-weight:600;font-size:11px}
+
+/* --- 10.1 bis. Piezas de los tres diagramas nuevos ---------------
+   Cada mecanismo tiene su forma: una curva, unas barras y una
+   espiral. Que sean distintas no es capricho: tres dibujos con la
+   misma silueta se leen como una plantilla, y entonces dejan de
+   mirarse. */
+
+/* El trazo de "lo que no pasa": punteado y claro. Punteado porque
+   describe una espera, no un recorrido. */
+.dibujo .trazo-flojo{
+  stroke:var(--muted);stroke-width:2.2;fill:none;
+  stroke-dasharray:1 8;stroke-linecap:round;
+}
+
+/* Las barras de la vida que se estrecha. La hueca es el sitio que
+   ocupaba antes; la llena, lo que queda. */
+.dibujo .barra-fantasma{fill:var(--surface-2);stroke:var(--line);stroke-width:1}
+.dibujo .barra-llena{fill:var(--accent-soft);stroke:var(--accent-borde);stroke-width:1.2}
+
+/* Los nodos de la espiral. Van rellenos del acento con la cifra
+   encima en el papel, que es la misma pareja que usan los pasos
+   numerados del resto de la web. */
+.dibujo .nodo{fill:var(--accent-2);stroke:none}
+.dibujo .rotulo.nodo-txt{fill:var(--sobre-accent);font-weight:700;font-size:11px}
+
+.figura .muestra.flojo{
+  background:none;border-top:2px dashed var(--line-strong);
+  height:0;width:20px;border-radius:0;
+}
+.figura .muestra.llena{background:var(--accent-soft);border:1px solid var(--accent-borde);height:11px;border-radius:3px}
+.figura .muestra.hueca{background:var(--surface-2);border:1px solid var(--line);height:11px;border-radius:3px}
+
+/* Leyenda numerada: cuando el dibujo tiene estaciones y no capas,
+   la leyenda deja de ser una fila de muestras y pasa a ser una lista
+   en columna, que es como se lee un recorrido. */
+.figura .leyenda.numerada{
+  display:grid;gap:9px;margin-top:14px;
+  grid-template-columns:1fr;
+}
+.figura .leyenda.numerada li{
+  display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;
+  font-size:15px;color:var(--ink-2);margin:0;
+}
+.figura .leyenda.numerada .cifra{
+  font-family:Archivo,sans-serif;font-size:11px;font-weight:700;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--accent-2);color:var(--sobre-accent);
+  display:grid;place-items:center;margin-top:1px;
+}
 
 /* --- 10.2 El ciclo ----------------------------------------------
    Cuatro casillas con flechas. Está hecho con cajas de HTML y no
@@ -1426,7 +1568,8 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   @media (prefers-reduced-motion:no-preference){
     .dibujo .eje,
     .dibujo .trazo-coste,
-    .dibujo .trazo-alivio{
+    .dibujo .trazo-alivio,
+    .dibujo .trazo-flojo{
       stroke-dasharray:1;
       animation:trazar linear both;
       animation-timeline:view();
@@ -1434,6 +1577,14 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     .dibujo .eje{animation-range:entry 12% entry 55%}
     .dibujo .trazo-coste{animation-range:entry 22% entry 80%}
     .dibujo .trazo-alivio{animation-range:entry 34% cover 18%}
+    .dibujo .trazo-flojo{animation-range:entry 14% entry 62%}
+    /* Las barras y los nodos no se pueden "trazar": aparecen, y en
+       orden, que es lo que cuenta la pieza. */
+    .dibujo .barra-llena,.dibujo .nodo,.dibujo .nodo-txt{
+      animation:marcar linear both;
+      animation-timeline:view();
+      animation-range:entry 26% entry 88%;
+    }
     @keyframes trazar{
       from{stroke-dashoffset:1}
       to{stroke-dashoffset:0}

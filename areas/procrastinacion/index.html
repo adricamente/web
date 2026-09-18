@@ -47,7 +47,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=18">
+  <link rel="stylesheet" href="/estilos.css?v=20">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -107,7 +107,7 @@
   <p class="grande"><strong>Posponer no es un fallo de carácter ni un problema de organización.</strong> Es una conducta que quita malestar de forma inmediata, y por eso se repite aunque sepas perfectamente lo que te está costando.</p>
 
   <h2>Cómo se ve por dentro</h2>
-  <ul>
+  <ul class="senales">
     <li>Saber exactamente qué tienes que hacer y no hacerlo.</li>
     <li>Empezar mil cosas pequeñas para no empezar la importante.</li>
     <li>Esperar a estar «con la cabeza despejada», a tener ganas, a que sea lunes.</li>
@@ -151,6 +151,33 @@
     <p class="vuelta">Y por eso se repite mañana, y pasado</p>
     <p class="fuga">Mientras tanto, el coste: lo importante lleva meses sin moverse</p>
   </div>
+  <figure class="figura">
+    <svg viewBox="0 0 400 176" role="img" aria-labelledby="gan-t gan-d" class="dibujo"
+         fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="gan-t">Cuándo llegan las ganas</title>
+      <desc id="gan-d">
+        Si esperas a tener ganas para empezar, la línea de las ganas se
+        queda plana indefinidamente. Si empiezas sin ellas, empieza a
+        subir desde ese momento, primero despacio y luego más deprisa.
+      </desc>
+      <path class="eje" pathLength="1" d="M30 12 V150 M30 150 H392"/>
+      <line class="marca-evento" x1="168" y1="150" x2="168" y2="144"/>
+      <text class="rotulo eje-txt" x="168" y="164" text-anchor="middle">empiezas</text>
+      <path class="trazo-flojo" pathLength="1" d="M30 137 L386 137"/>
+      <path class="trazo-alivio" pathLength="1" d="M30 128 L168 128 C228 128 258 108 298 70 C328 42 356 32 386 28"/>
+    </svg>
+
+    <ul class="leyenda">
+      <li><span class="muestra flojo" aria-hidden="true"></span>Las ganas, si esperas a tenerlas</li>
+      <li><span class="muestra alivio" aria-hidden="true"></span>Las ganas, si empiezas sin ellas</li>
+    </ul>
+    <figcaption>
+      No es una frase motivadora: es el orden real. La motivación es
+      una consecuencia de haber empezado, no un requisito para
+      empezar. Por eso esperar a tenerla es esperar a algo que solo
+      aparece si no esperas.
+    </figcaption>
+  </figure>
 
   <figure class="banda">
     <img src="/fotos/banda-procrastinacion.webp?v=f42a65"
