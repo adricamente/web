@@ -19,10 +19,10 @@
   <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>adricamente | Terapia psicológica online</title>
+  <title>Psicólogo online, 30 € la sesión | adricamente</title>
   <meta name="description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
 
-  <meta property="og:title" content="adricamente | Terapia psicológica online">
+  <meta property="og:title" content="Psicólogo online, 30 € la sesión | adricamente">
   <meta property="og:description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/">
@@ -54,14 +54,27 @@
   <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
        de leer el CSS. Sin esto el navegador no sabe que existen hasta
        que ha descargado y parseado la hoja entera, y el titular se
-       pinta con la fuente del sistema y luego salta. Solo estas dos:
-       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+       pinta con la fuente del sistema y luego salta.
+
+       Aquí había solo dos, con el argumento de que precargar las cinco
+       le quitaba ancho de banda a lo que sí se ve. La premisa era
+       falsa: midiendo qué pesos se pintan dentro de la primera pantalla
+       salen los cinco, en todas las páginas. Los tres que faltaban no
+       se descubrían hasta tener el CSS descargado y parseado —tres
+       niveles de dependencia— y eran la causa nombrada del único
+       desplazamiento de diseño que quedaba. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=27">
+  <link rel="stylesheet" href="/estilos.min.css?v=28">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -105,16 +118,25 @@
         }
       }
     ],
-    "alumniOf": [
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Nacional de Educación a Distancia (UNED)"
-      },
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Internacional de La Rioja (UNIR)"
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Nacional de Educación a Distancia (UNED)"
+    },
+    "affiliation": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Internacional de La Rioja (UNIR)"
+    },
+    "description": "Psicólogo colegiado nº CM03836. No tiene el título de Psicólogo General Sanitario: cursa el Máster en Psicología General Sanitaria y atiende en prácticas supervisadas dentro del centro sanitario Neurococos.",
+    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
+    "homeLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Albacete",
+        "addressRegion": "Castilla-La Mancha",
+        "addressCountry": "ES"
       }
-    ],
+    },
     "worksFor": {
       "@type": "MedicalClinic",
       "name": "Neurococos",
@@ -138,6 +160,7 @@
     ],
     "knowsLanguage": "es",
     "sameAs": [
+      "https://www.copclm.com/",
       "https://www.instagram.com/adricamente",
       "https://www.tiktok.com/@adricamente",
       "https://www.youtube.com/@adricamente"
@@ -226,16 +249,25 @@
         }
       }
     ],
-    "alumniOf": [
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Nacional de Educación a Distancia (UNED)"
-      },
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Internacional de La Rioja (UNIR)"
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Nacional de Educación a Distancia (UNED)"
+    },
+    "affiliation": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Internacional de La Rioja (UNIR)"
+    },
+    "description": "Psicólogo colegiado nº CM03836. No tiene el título de Psicólogo General Sanitario: cursa el Máster en Psicología General Sanitaria y atiende en prácticas supervisadas dentro del centro sanitario Neurococos.",
+    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
+    "homeLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Albacete",
+        "addressRegion": "Castilla-La Mancha",
+        "addressCountry": "ES"
       }
-    ],
+    },
     "worksFor": {
       "@type": "MedicalClinic",
       "name": "Neurococos",
@@ -259,6 +291,7 @@
     ],
     "knowsLanguage": "es",
     "sameAs": [
+      "https://www.copclm.com/",
       "https://www.instagram.com/adricamente",
       "https://www.tiktok.com/@adricamente",
       "https://www.youtube.com/@adricamente"
@@ -269,6 +302,7 @@
     "name": "España"
   },
   "sameAs": [
+    "https://www.copclm.com/",
     "https://www.instagram.com/adricamente",
     "https://www.tiktok.com/@adricamente",
     "https://www.youtube.com/@adricamente"
@@ -293,7 +327,7 @@
       "name": "¿Quién me va a atender exactamente?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Adrián Cuñat Andrés, graduado en Psicología por la UNED y colegiado nº CM03836 en el Colegio Oficial de Psicología de Castilla-La Mancha. Estoy cursando el Máster en Psicología General Sanitaria en UNIR, y hasta tenerlo atiendo en prácticas supervisadas dentro del centro sanitario Neurococos, no por mi cuenta . Lo digo tal cual porque tienes derecho a saberlo antes de sentarte."
+        "text": "Adrián Cuñat Andrés, graduado en Psicología por la UNED y colegiado nº CM03836 en el Colegio Oficial de Psicología de Castilla-La Mancha. Estoy cursando el Máster en Psicología General Sanitaria en UNIR, y hasta tenerlo atiendo en prácticas supervisadas dentro del centro sanitario Neurococos, no por mi cuenta. Lo digo tal cual porque tienes derecho a saberlo antes de sentarte."
       }
     },
     {
@@ -301,7 +335,7 @@
       "name": "¿Qué es eso de la supervisión?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "En la sesión estamos tú y yo , nadie más. La supervisión ocurre entre sesiones: reviso el caso con un profesional colegiado del centro, que está sujeto al mismo secreto profesional que yo. Es lo que hace que haya dos cabezas pensando en lo tuyo en vez de una."
+        "text": "En la sesión estamos tú y yo, nadie más. La supervisión ocurre entre sesiones: reviso el caso con un profesional colegiado del centro, que está sujeto al mismo secreto profesional que yo. Es lo que hace que haya dos cabezas pensando en lo tuyo en vez de una."
       }
     },
     {
@@ -309,7 +343,7 @@
       "name": "¿Cuánto dura un proceso?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso. El objetivo declarado del proceso es terminar ."
+        "text": "Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso. El objetivo declarado del proceso es terminar."
       }
     },
     {
@@ -317,7 +351,7 @@
       "name": "¿Lo que cuente sale de ahí?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Todo está protegido por secreto profesional , también para quien supervisa. Las únicas excepciones son las que marca la ley: riesgo grave para tu vida o la de otra persona, y requerimiento judicial."
+        "text": "No. Todo está protegido por secreto profesional, también para quien supervisa. Las únicas excepciones son las que marca la ley: riesgo grave para tu vida o la de otra persona, y requerimiento judicial."
       }
     },
     {
@@ -325,7 +359,7 @@
       "name": "¿Puedo pagar cada sesión, sin bonos ni permanencia?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sí, y es lo único que hay. Se paga por transferencia antes de cada sesión, no hay bonos , no hay paquetes y no hay permanencia . Puedes dejarlo cuando quieras, aunque preferiría que me lo dijeras para cerrarlo bien."
+        "text": "Sí, y es lo único que hay. Se paga por transferencia antes de cada sesión, no hay bonos, no hay paquetes y no hay permanencia. Puedes dejarlo cuando quieras, aunque preferiría que me lo dijeras para cerrarlo bien."
       }
     }
   ]
@@ -339,8 +373,13 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
-<div class="contenedor ancho">
-
+<!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
+     Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
+     en las páginas de área, así que medía 120 px en unas y 151 en
+     otras —el botón se caía a la fila de abajo— y el visitante veía
+     recomponerse lo único que aparece en las veintiséis páginas. -->
+<div class="franja-cabecera">
+  <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
     <nav>
@@ -351,10 +390,14 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
   </header>
+  </div>
+</div>
+
+<div class="contenedor ancho">
 
   <main id="principal">
 
@@ -369,10 +412,10 @@
     <h1>Terapia psicológica online para quien siente que su vida no arranca</h1>
     <p class="entradilla">
       No es que te falte actitud. Es que llevas tiempo haciendo
-      algo que <strong>funciona a corto plazo</strong> y te está saliendo <strong>carísimo a largo</strong>.
+      algo que <strong>funciona</strong> a corto plazo y te está saliendo <strong>carísimo</strong> a largo.
     </p>
     <div class="acciones">
-      <a class="boton grande" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_portada')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </div>
     <p class="tranquiliza">
@@ -404,7 +447,7 @@
     nº CM03836, y cursando el Máster en Psicología General Sanitaria en
     UNIR, en prácticas supervisadas en el centro sanitario Neurococos.
     Atiendo online a
-    personas de veintitantos y treintaitantos que llevan demasiado tiempo <strong>esperando a estar listas</strong>.
+    gente de veinte a cuarenta y tantos que lleva demasiado tiempo <strong>esperando</strong> a estar lista.
   </p>
   <p>
     Trabajo desde terapias contextuales y cognitivo-conductuales: en vez
@@ -417,9 +460,9 @@
   <!-- ===== En qué puedo ayudarte ============================== -->
   <h2>¿En qué puedo ayudarte?</h2>
   <p>
-    Cuatro formas distintas de lo mismo: algo que <strong>alivia hoy</strong> y que, a fuerza de repetirse, <strong>va estrechando la vida</strong>.
+    Cuatro formas distintas de lo mismo: algo que <strong>alivia</strong> hoy y que, a fuerza de repetirse, <strong>estrecha</strong> la vida.
   </p>
-  <div class="rejilla">
+  <div class="rejilla cuatro">
     <a class="tarjeta" href="/areas/ansiedad/">
       <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg>
       <h3>Ansiedad</h3>
@@ -449,7 +492,7 @@
   <h3 style="margin-top:34px">Y lo que tienen en común</h3>
   <p>
     Eso que haces para que el malestar baje funciona de verdad, y funciona
-    rápido. Lo que no se nota es lo otro: que cada vez deja <strong>un poco de factura</strong>, y esa <strong>no baja sola</strong>.
+    rápido. Lo que no se nota es lo otro: que cada vez deja <strong>factura</strong>, y esa factura no baja sola.
   </p>
   <figure class="figura">
     <svg viewBox="0 0 400 176" role="img" aria-labelledby="mec-t mec-d" class="dibujo"
@@ -461,8 +504,8 @@
         una de esas veces y nunca baja: es el coste.
       </desc>
       <path class="eje" pathLength="1" d="M30 12 V164 M30 164 H392"/>
-      <line class="marca-evento" x1="90" y1="164" x2="90" y2="158"/><line class="marca-evento" x1="162" y1="164" x2="162" y2="158"/><line class="marca-evento" x1="234" y1="164" x2="234" y2="158"/><line class="marca-evento" x1="306" y1="164" x2="306" y2="158"/>
-      <path class="trazo-coste" pathLength="1" d="M30 150 L88 150 L95 134 L160 134 L167 118 L232 118 L239 102 L304 102 L311 86 L386 86"/>
+      <line class="marca-evento" x1="90" y1="168" x2="90" y2="156"/><line class="marca-evento" x1="162" y1="168" x2="162" y2="156"/><line class="marca-evento" x1="234" y1="168" x2="234" y2="156"/><line class="marca-evento" x1="306" y1="168" x2="306" y2="156"/>
+      <path class="trazo-coste" pathLength="1" d="M30 152 L88 152 L95 139 L160 139 L167 126 L232 126 L239 113 L304 113 L311 100 L386 100"/>
       <path class="trazo-alivio" pathLength="1" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
     </svg>
 
@@ -483,7 +526,7 @@
   </p>
 
   <!-- ===== Cómo funciona ====================================== -->
-  <h2>Cómo funciona</h2>
+  <h2>Cómo funciona un proceso, paso a paso</h2>
   <ol class="pasos">
     <li>
       <strong>Sesión informativa · 30 minutos · gratis</strong>
@@ -537,7 +580,8 @@
       La primera sesión, la informativa de treinta minutos, <strong>no se cobra</strong>. La frecuencia la eliges tú: semanal o quincenal.
     </p>
     <p style="margin-bottom:0">
-      <a href="/tarifas/">Pago, cancelaciones y lo que incluye &rarr;</a>
+      <a href="/tarifas/">Pago, cancelaciones y lo que incluye &rarr;</a><br>
+      <a href="/cuanto-cuesta-un-psicologo-online/">¿Cuánto cuesta un psicólogo online? &rarr;</a>
     </p>
   </div>
 
@@ -548,7 +592,7 @@
   <h2>¿No es el momento? Llévate esto</h2>
   <p>
     Tres herramientas gratis, sin registro y sin que te llame nadie.
-    <strong>Dos ni siquiera piden el correo.</strong> Están aquí porque
+    <strong>Dos de las tres</strong> ni siquiera piden el correo. Están aquí porque
     la mayoría de la gente que lo está pasando mal no va a ir a terapia
     este año, y entender el mecanismo por tu cuenta ya vale para algo.
   </p>
@@ -585,7 +629,7 @@
   <p>
     En casi todas las webs de psicólogos hay, más o menos por esta altura,
     una fila de reseñas de pacientes. Aquí no la vas a encontrar, y
-    no es porque <strong>no haya gente contenta</strong>.
+    no es porque no haya <strong>gente contenta</strong>.
   </p>
   <p>
     Es que pedirle a alguien que está en terapia contigo que escriba
@@ -603,7 +647,7 @@
     <h3>El mapa de lo que evitas</h3>
     <p>
       Seis preguntas para ver, en diez minutos, qué estás esquivando, qué
-      te alivia hacerlo y qué te está costando de verdad. Es <strong>el mismo análisis</strong> que hago en consulta el primer día, <strong>hecho por ti</strong>.
+      te alivia hacerlo y qué te está costando de verdad. Es <strong>la primera mitad</strong> del análisis que hago en consulta el primer día, hecha por ti. La otra mitad es qué se hace con eso.
     </p>
     <ul class="datos">
       <li>6 preguntas</li>
@@ -657,7 +701,7 @@
       <img class="ficha" src="/fotos/ficha-repites.webp?v=8d610f"
            srcset="/fotos/ficha-repites-m.webp?v=194600 400w, /fotos/ficha-repites.webp?v=8d610f 800w"
            sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" loading="lazy" decoding="async" alt="Sombras de una barandilla repetidas sobre una pared">
+           width="800" height="450" decoding="async" alt="Sombras de una barandilla repetidas sobre una pared">
       <div class="cuerpo">
         <h3>Por qué lo repites aunque sepas que te perjudica</h3>
         <p>Lo sigues haciendo porque funciona. No para tu vida: para el minuto siguiente.</p>
@@ -700,10 +744,10 @@
   </div>
 
   <section class="cinta">
-    <h2>Empezar</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y yo te diga honestamente si creo que puedo ayudarte. <strong>No es terapia y no tienes que decidir nada ese día.</strong></p>
+    <h2>El siguiente paso son treinta minutos</h2>
+    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y salgas sabiendo qué haría yo con ello. <strong>No es terapia</strong> y no tienes que <strong>decidir</strong> nada ese día.</p>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>

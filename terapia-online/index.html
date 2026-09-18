@@ -5,10 +5,10 @@
   <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Terapia online | adricamente</title>
+  <title>Terapia psicológica online en España | adricamente</title>
   <meta name="description" content="Terapia psicológica online desde el centro sanitario Neurococos. Sesiones de 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita de 30 minutos.">
 
-  <meta property="og:title" content="Terapia online | adricamente">
+  <meta property="og:title" content="Terapia psicológica online en España | adricamente">
   <meta property="og:description" content="Terapia psicológica online desde el centro sanitario Neurococos. Sesiones de 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita de 30 minutos.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/terapia-online/">
@@ -40,14 +40,27 @@
   <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
        de leer el CSS. Sin esto el navegador no sabe que existen hasta
        que ha descargado y parseado la hoja entera, y el titular se
-       pinta con la fuente del sistema y luego salta. Solo estas dos:
-       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+       pinta con la fuente del sistema y luego salta.
+
+       Aquí había solo dos, con el argumento de que precargar las cinco
+       le quitaba ancho de banda a lo que sí se ve. La premisa era
+       falsa: midiendo qué pesos se pintan dentro de la primera pantalla
+       salen los cinco, en todas las páginas. Los tres que faltaban no
+       se descubrían hasta tener el CSS descargado y parseado —tres
+       niveles de dependencia— y eran la causa nombrada del único
+       desplazamiento de diseño que quedaba. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=27">
+  <link rel="stylesheet" href="/estilos.min.css?v=28">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -62,7 +75,7 @@
     {
       "@type": "ListItem",
       "position": 2,
-      "name": "Terapia online",
+      "name": "Terapia psicológica online en España",
       "item": "https://adricamente.com/terapia-online/"
     }
   ]
@@ -111,16 +124,25 @@
         }
       }
     ],
-    "alumniOf": [
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Nacional de Educación a Distancia (UNED)"
-      },
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Internacional de La Rioja (UNIR)"
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Nacional de Educación a Distancia (UNED)"
+    },
+    "affiliation": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Internacional de La Rioja (UNIR)"
+    },
+    "description": "Psicólogo colegiado nº CM03836. No tiene el título de Psicólogo General Sanitario: cursa el Máster en Psicología General Sanitaria y atiende en prácticas supervisadas dentro del centro sanitario Neurococos.",
+    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
+    "homeLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Albacete",
+        "addressRegion": "Castilla-La Mancha",
+        "addressCountry": "ES"
       }
-    ],
+    },
     "worksFor": {
       "@type": "MedicalClinic",
       "name": "Neurococos",
@@ -144,6 +166,7 @@
     ],
     "knowsLanguage": "es",
     "sameAs": [
+      "https://www.copclm.com/",
       "https://www.instagram.com/adricamente",
       "https://www.tiktok.com/@adricamente",
       "https://www.youtube.com/@adricamente"
@@ -197,7 +220,7 @@
       "name": "¿Qué plataforma se usa y tengo que instalar algo?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No hay que instalar nada. Te llega un enlace por correo y se abre en el navegador del móvil o del ordenador. La videollamada va por Google Meet , con cifrado en tránsito."
+        "text": "No hay que instalar nada. Te llega un enlace por correo y se abre en el navegador del móvil o del ordenador. La videollamada va por Google Meet, con cifrado en tránsito."
       }
     },
     {
@@ -205,7 +228,7 @@
       "name": "¿Quién puede ver mi historia?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yo, y el profesional colegiado que supervisa los casos dentro del centro sanitario, que está sujeto al mismo secreto profesional que yo. Nadie más. Los datos se tratan como explico en la política de privacidad ."
+        "text": "Yo, y el profesional colegiado que supervisa los casos dentro del centro sanitario, que está sujeto al mismo secreto profesional que yo. Nadie más. Los datos se tratan como explico en la política de privacidad."
       }
     },
     {
@@ -213,7 +236,7 @@
       "name": "¿Qué necesito por mi parte?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Poco: una conexión que aguante una hora, auriculares —mejor que el altavoz, por tu intimidad más que por el sonido— y un sitio donde puedas hablar sin que te oigan . Esto último es lo único difícil de verdad, y hay quien lo resuelve en el coche aparcado. Vale."
+        "text": "Poco: una conexión que aguante una hora, auriculares —mejor que el altavoz, por tu intimidad más que por el sonido— y un sitio donde puedas hablar sin que te oigan. Esto último es lo único difícil de verdad, y hay quien lo resuelve en el coche aparcado. Vale."
       }
     },
     {
@@ -229,15 +252,15 @@
       "name": "¿Funciona igual que ir presencialmente?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Para la mayoría de motivos por los que se pide cita, la investigación disponible no encuentra diferencias relevantes de eficacia entre el formato online y el presencial. Lo que sí cambia es la logística, y a favor: no hay desplazamiento, es más fácil sostener la frecuencia y se abandona menos."
+        "text": "Para la mayoría de motivos por los que se pide cita, la investigación no encuentra diferencias relevantes de eficacia entre el formato online y el presencial. El metaanálisis más reciente ( Meyer-Keirath y cols., J Med Internet Res, 2026) reúne doce ensayos aleatorizados y novecientas personas y no encuentra diferencia en la reducción de síntomas. Lo que sí cambia es la logística, y a favor: no hay desplazamiento, es más fácil sostener la frecuencia y se abandona menos."
       }
     },
     {
       "@type": "Question",
-      "name": "¿La terapia online funciona igual que la presencial?",
+      "name": "¿Y si me lo encuentro por la calle o en redes?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Para la mayoría de los problemas por los que la gente pide cita, la investigación disponible no encuentra diferencias relevantes de eficacia entre el formato online y el presencial, siempre que el tratamiento sea el mismo y se haga bien. Lo que cambia es la logística: no pierdes el viaje y es más fácil sostener la frecuencia."
+        "text": "No te voy a saludar yo primero. Si lo haces tú, encantado, pero no doy por hecho que quieras que nadie sepa de qué nos conocemos. En redes no sigo ni contesto por privado a quien está en tratamiento, por lo mismo."
       }
     },
     {
@@ -253,7 +276,7 @@
       "name": "¿Cuánto dura todo esto?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso, y el objetivo declarado del proceso es terminar."
+        "text": "Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso."
       }
     },
     {
@@ -283,8 +306,13 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
-<div class="contenedor ancho">
-
+<!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
+     Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
+     en las páginas de área, así que medía 120 px en unas y 151 en
+     otras —el botón se caía a la fila de abajo— y el visitante veía
+     recomponerse lo único que aparece en las veintiséis páginas. -->
+<div class="franja-cabecera">
+  <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
     <nav>
@@ -295,10 +323,14 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
   </header>
+  </div>
+</div>
+
+<div class="contenedor ancho">
 
   <main id="principal">
 
@@ -307,7 +339,7 @@
 
   <p class="grande">
     Sesiones de una hora, por videollamada, desde el centro sanitario
-    Neurococos. La primera conversación es <strong>gratuita</strong>, dura <strong>treinta minutos</strong> y sirve exactamente para una cosa: <strong>saber si te sirve</strong>.
+    Neurococos. La primera conversación es <strong>gratuita</strong>, dura <strong>treinta minutos</strong> y sirve exactamente para una cosa: <strong>saber</strong> si te sirve.
   </p>
 
   <div class="presentacion">
@@ -371,7 +403,7 @@
   </ol>
 
   <h2>En qué puedo ayudarte</h2>
-  <div class="rejilla">
+  <div class="rejilla cuatro">
     <a class="tarjeta" href="/areas/ansiedad/">
       <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg>
       <h3>Ansiedad</h3>
@@ -398,7 +430,7 @@
     </a>
   </div>
 
-  <h2>Lo práctico</h2>
+  <h2>Duración, precio y cancelaciones</h2>
   <dl class="ficha-tecnica">
     <div>
       <dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="8.4"/><path pathLength="1" d="M12 6.8V12l3.4 2"/></svg>Duración</dt>
@@ -453,7 +485,7 @@
 
     <details>
       <summary>¿Funciona igual que ir presencialmente?</summary>
-      <p>Para la mayoría de motivos por los que se pide cita, la investigación disponible no encuentra diferencias relevantes de eficacia entre el formato online y el presencial. Lo que sí cambia es la logística, y a favor: no hay desplazamiento, es más fácil sostener la frecuencia y se abandona menos.</p>
+      <p>Para la mayoría de motivos por los que se pide cita, la investigación no encuentra diferencias relevantes de eficacia entre el formato online y el presencial. El metaanálisis más reciente (<a href="https://doi.org/10.2196/89177" rel="noopener">Meyer-Keirath y cols., <em>J Med Internet Res</em>, 2026</a>) reúne <strong>doce</strong> ensayos aleatorizados y novecientas personas y no encuentra diferencia en la reducción de síntomas. Lo que sí cambia es la logística, y a favor: no hay desplazamiento, es más fácil sostener la frecuencia y se abandona menos.</p>
     </details>
   </div>
 
@@ -506,8 +538,8 @@
   <h2>Preguntas frecuentes</h2>
   <div class="faq">
     <details>
-      <summary>¿La terapia online funciona igual que la presencial?</summary>
-      <p>Para la mayoría de los problemas por los que la gente pide cita, la investigación disponible no encuentra diferencias relevantes de eficacia entre el formato online y el presencial, siempre que el tratamiento sea el mismo y se haga bien. Lo que cambia es la logística: no pierdes el viaje y es más fácil sostener la frecuencia.</p>
+      <summary>¿Y si me lo encuentro por la calle o en redes?</summary>
+      <p>No te voy a saludar yo primero. Si lo haces tú, encantado, pero no doy por hecho que quieras que nadie sepa de qué nos conocemos. En redes no sigo ni contesto por privado a quien está en tratamiento, por lo mismo.</p>
     </details>
 
     <details>
@@ -517,7 +549,7 @@
 
     <details>
       <summary>¿Cuánto dura todo esto?</summary>
-      <p>Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso, y el objetivo declarado del proceso es terminar.</p>
+      <p>Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso.</p>
     </details>
 
     <details>
@@ -542,10 +574,10 @@
   </div>
 
   <section class="cinta">
-    <h2>Empezar</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para ver qué te pasa y decirte con honestidad si creo que puedo ayudarte.</p>
+    <h2>Ya sabes cómo es. Falta probarlo</h2>
+    <p>Treinta minutos por videollamada, <strong>gratis</strong>, para comprobar si esto se te hace raro o no. Mucha gente descubre ahí que se le hace menos raro de lo que temía.</p>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>

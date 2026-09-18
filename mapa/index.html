@@ -54,7 +54,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="../estilos.min.css?v=27">
+  <link rel="stylesheet" href="../estilos.min.css?v=28">
 
   <style>
   /* Estilos que solo existen en esta página. Todo lo compartido
@@ -75,7 +75,7 @@
   .opcion{
     font-family:"Source Sans 3",sans-serif;font-size:15px;cursor:pointer;
     background:var(--surface);color:var(--ink-2);
-    border:1px solid var(--line-strong);border-radius:22px;
+    border:1px solid var(--borde-campo);border-radius:22px;
     padding:8px 15px;text-align:left;line-height:1.3;
   }
   .opcion:hover{border-color:var(--accent);color:var(--ink)}
@@ -86,7 +86,7 @@
   .radios{display:flex;flex-direction:column;gap:8px;margin:0 0 18px}
   .radio{
     display:flex;gap:12px;align-items:flex-start;cursor:pointer;
-    background:var(--surface);border:1px solid var(--line-strong);
+    background:var(--surface);border:1px solid var(--borde-campo);
     border-radius:8px;padding:13px 16px;
   }
   .radio:hover{border-color:var(--accent)}
@@ -125,10 +125,17 @@
 </head>
 
 <body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
 <div class="barra-lectura" aria-hidden="true"></div>
 <div class="contenedor" style="padding-block:32px 0">
 
   <p class="marca"><a href="/">adricamente</a></p>
+
+  <main id="principal">
+  <!-- El anunciador de paso. Sin esto, quien usa lector de
+       pantalla pulsaba «Siguiente» y no oía absolutamente nada:
+       ni que había cambiado de pregunta, ni cuál era. -->
+  <p id="paso-vivo" role="status" aria-live="polite" class="solo-lectores"></p>
 
   <!-- ===== PASO 0 · portada ================================== -->
   <div class="paso activo" id="p0">
@@ -154,7 +161,7 @@
   <!-- ===== PASO 1 ============================================ -->
   <div class="paso" id="p1">
     <p class="contador">Paso 1 de 6</p>
-    <div class="barra"><i style="width:16.6%"></i></div>
+    <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="1"><i style="width:16.6%"></i></div>
     <h2 style="margin-top:0">¿Qué llevas tiempo esquivando?</h2>
     <p class="apunte">No hace falta que sea algo grande. Casi nunca lo es. Elige lo primero que se te ha venido a la cabeza.</p>
     <ul class="opciones" data-grupo="situacion">
@@ -178,7 +185,7 @@
   <!-- ===== PASO 2 ============================================ -->
   <div class="paso" id="p2">
     <p class="contador">Paso 2 de 6</p>
-    <div class="barra"><i style="width:33.3%"></i></div>
+    <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="2"><i style="width:33.3%"></i></div>
     <h2 style="margin-top:0">Justo antes de ponerte, ¿qué notas?</h2>
     <p class="apunte">En el cuerpo o en la cabeza, en el segundo previo. No lo que piensas después: lo que aparece primero.</p>
     <ul class="opciones" data-grupo="emocion">
@@ -202,7 +209,7 @@
   <!-- ===== PASO 3 ============================================ -->
   <div class="paso" id="p3">
     <p class="contador">Paso 3 de 6</p>
-    <div class="barra"><i style="width:50%"></i></div>
+    <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="3"><i style="width:50%"></i></div>
     <h2 style="margin-top:0">¿Y qué haces para dejar de notarlo?</h2>
     <p class="apunte">Sé concreto y sé honesto. Aquí es donde la gente se pone elegante y se engaña. Nadie más va a leer esto.</p>
     <ul class="opciones" data-grupo="conducta">
@@ -226,7 +233,7 @@
   <!-- ===== PASO 4 ============================================ -->
   <div class="paso" id="p4">
     <p class="contador">Paso 4 de 6</p>
-    <div class="barra"><i style="width:66.6%"></i></div>
+    <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="4"><i style="width:66.6%"></i></div>
     <h2 style="margin-top:0">En ese momento, ¿qué pasa con lo que sentías?</h2>
     <p class="apunte">Piensa en el segundo exacto en que lo dejas. No en cómo te sientes por la noche.</p>
     <div class="radios" id="grupo-alivio">
@@ -244,7 +251,7 @@
   <!-- ===== PASO 5 ============================================ -->
   <div class="paso" id="p5">
     <p class="contador">Paso 5 de 6</p>
-    <div class="barra"><i style="width:83.3%"></i></div>
+    <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="5"><i style="width:83.3%"></i></div>
     <h2 style="margin-top:0">¿Qué te ha costado en los últimos seis meses?</h2>
     <p class="apunte">Esta es la parte que casi nadie se para a mirar, porque la factura llega en cómodos plazos.</p>
     <ul class="opciones" data-grupo="coste">
@@ -268,7 +275,7 @@
   <!-- ===== PASO 6 ============================================ -->
   <div class="paso" id="p6">
     <p class="contador">Paso 6 de 6</p>
-    <div class="barra"><i style="width:100%"></i></div>
+    <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="6"><i style="width:100%"></i></div>
     <h2 style="margin-top:0">Última, y es la que importa</h2>
     <p class="grande">
       Si eso que sientes no tuviera que desaparecer para poder actuar
@@ -286,7 +293,7 @@
   <!-- ===== PASO 7 · el resultado ============================= -->
   <div class="paso" id="p7">
     <p class="contador">Tu mapa</p>
-    <div class="barra"><i style="width:100%"></i></div>
+    <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="6"><i style="width:100%"></i></div>
 
     <div class="resultado">
       <p class="titulo">Esto es lo que has descrito</p>
@@ -331,35 +338,12 @@
          coincidir exactamente con los atributos de Brevo.
          ====================================================== -->
     <div class="caja" id="bloque-correo">
-      <h3>Lo que viene después del mapa</h3>
+      <h3>Los días siguientes</h3>
       <p>
-        El mapa te ha dicho qué está pasando. Lo que falta es lo otro:
-        qué hacer con ello. Déjame tu correo y te mando dos cosas
-        concretas.
-      </p>
-      <ul style="margin:0 0 4px">
-        <li>
-          <strong>La hoja de registro de una semana.</strong> Es lo primero
-          que pido en consulta justo después de hacer este análisis: siete
-          días apuntando cuándo aparece, qué haces y cuánto te alivia. En
-          una semana se ve el patrón entero, no solo el trozo de hoy. Te
-          llega en el primer correo, para imprimir o rellenar en el móvil.
-        </li>
-        <li>
-          <strong>Cuatro cartas, una cada pocos días.</strong> Por qué lo
-          repites aunque sepas que te perjudica · «Cuando esté listo» no
-          llega nunca · La factura que no ves · Cuándo dejar de hacerlo
-          solo.
-        </li>
-      </ul>
-      <p class="apunte" style="margin-top:12px">
-        Después escribo de vez en cuando. Te das de baja de un clic y tu
-        correo no se lo paso a nadie.
-      </p>
-      <p class="apunte">
-        <strong>Lo que no te puedo mandar es tu mapa</strong>, y es a
-        propósito: no lo guardo en ningún sitio y no quiero empezar a
-        hacerlo. Guárdatelo tú con el botón de aquí arriba.
+        El mapa te ha dicho qué pasa. Lo que cuesta es lo otro:
+        sostenerlo más de un día. Déjame el correo y te mando
+        <strong>cuatro cartas</strong> en tres semanas, una cada pocos
+        días, con el resto del mecanismo.
       </p>
 
       <!-- El formulario envía "dentro" de un iframe invisible que está
@@ -390,29 +374,53 @@
         <input type="hidden" name="html_type" value="simple">
 
         <label class="acepto">
-          <input type="checkbox" id="consentimiento" required>
-          <span>He leído y acepto la <a href="../privacidad.html">política de privacidad</a>, y acepto recibir los correos de adricamente.</span>
+          <input type="checkbox" id="consentimiento" name="OPT_IN" value="1" required>
+          <span>Acepto recibir las cuatro cartas y los correos que Adrián escriba después. Me doy de baja de un clic. He leído la <a href="../privacidad.html">información sobre protección de datos</a>.</span>
         </label>
 
-        <button class="boton" type="submit">Mandarme la hoja y las cartas</button>
+        <button class="boton" type="submit">Mandarme las cartas</button>
         <p class="aviso" id="aviso-correo"></p>
       </form>
 
+      <p class="apunte" style="margin-top:14px">
+        Con la primera va también <a href="/registro/">la hoja de
+        registro</a>, que es lo primero que pido en consulta justo
+        después de este análisis. Es pública y gratis para todo el
+        mundo, así que puedes abrirla ahora sin dejar nada.
+      </p>
+      <p class="apunte">
+        <strong>Lo que no te puedo mandar es tu mapa</strong>, y es a
+        propósito: no lo guardo en ningún sitio y no quiero empezar a
+        hacerlo. Guárdatelo tú con el botón de aquí arriba.
+      </p>
+
       <p class="apunte" style="margin-top:14px;font-size:13px">
-        Responsable: Adrián Cuñat Andrés. Finalidad: enviarte la guía
-        solicitada y comunicaciones de adricamente. Legitimación: tu
-        consentimiento. Derechos: acceso, rectificación, supresión y
-        retirada del consentimiento escribiendo a hola@adricamente.com.
+        Responsable: Adrián Cuñat Andrés (NIF 23916598W). Finalidad:
+        enviarte las cartas y las comunicaciones de adricamente.
+        Legitimación: tu consentimiento. Destinatarios: Brevo
+        (Sendinblue SAS, Francia), que gestiona el envío como encargado
+        del tratamiento. Derechos: acceso, rectificación, supresión,
+        oposición, limitación, portabilidad y retirada del
+        consentimiento en hola@adricamente.com, y reclamación ante la
+        AEPD. <a href="/privacidad.html">Información detallada</a>.
       </p>
     </div>
+
+    <p class="apunte" style="margin-top:22px">
+      Este es el primero de <a href="/herramientas/">los tres</a>. Ahora
+      que lo tienes, <a href="/la-cuenta/">la cuenta</a> te dice cuántas
+      veces ha pasado ya lo que acabas de desmontar.
+    </p>
 
     <!-- ===== Reserva ======================================== -->
     <div class="caja">
       <h3>¿Y si lo vemos juntos?</h3>
       <p class="apunte">
-        Tengo unas pocas sesiones informativas gratuitas al mes:
+        Hago dos sesiones informativas a la semana, en dos ratos
+        fijos, porque el resto del horario es de pacientes:
         <strong>30 minutos</strong> para que me cuentes qué te trae y
-        te diga honestamente si puedo ayudarte. No es una sesión de
+        te diga honestamente si puedo ayudarte. Si esta semana ya no
+        queda ninguno, el calendario te ofrece el siguiente. No es una sesión de
         terapia y no tienes que decidir nada. Online, y solo para
         residentes en España.
       </p>
@@ -499,6 +507,7 @@
           aria-hidden="true" tabindex="-1"
           style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
 
+  </main>
 </div>
 
 <script>
@@ -523,9 +532,18 @@
     if (window.medir) window.medir(evento);
   }
 
+  var vivo = document.getElementById('paso-vivo');
+
   function mostrar(n){
     pasos.forEach(function(p, i){ p.classList.toggle('activo', i === n); });
     window.scrollTo(0, 0);
+    // El foco va al encabezado del paso nuevo. tabindex="-1" lo hace
+    // enfocable por programa sin meterlo en el recorrido del tabulador.
+    var act = pasos[n], h = act && act.querySelector('h1,h2,h3');
+    if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); }
+    if (vivo) vivo.textContent = (n >= 1 && n <= 6)
+      ? 'Paso ' + n + ' de 6'
+      : (n === 7 ? 'Tu mapa está listo' : '');
     if (n === 1) unaVez('mapa_inicio');
     if (n === 7){ pintar(); unaVez('mapa_fin'); }
   }
@@ -694,7 +712,8 @@
       'Hasta que no pulses ese enlace no te llega nada más — es la forma de ' +
       'asegurarnos de que nadie te apunta sin tu permiso.</p>' +
       '<p class="apunte" style="margin-top:10px">En cuanto confirmes te llega la hoja de registro. ' +
-      'Si no ves el correo, mira en promociones o spam.</p>' +
+      'Si en unos minutos no ves nada, mira en promociones o spam, y si sigue sin aparecer ' +
+      'escríbeme a hola@adricamente.com y te doy de alta yo.</p>' +
       '<p class="apunte">Y antes de cerrar: guarda tu mapa ahí arriba, que es tuyo y no lo tengo yo.</p>';
   }
 
@@ -729,10 +748,4 @@
 </script>
 
 </body>
-</html>  <p class="apunte">
-    Este es el primero de <a href="/herramientas/">los tres</a>. Cuando
-    lo tengas, <a href="/la-cuenta/">la cuenta</a> te dice cuántas veces
-    ha pasado ya lo que acabas de desmontar.
-  </p>
-
-
+</html>

@@ -5,10 +5,10 @@
   <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Autoestima e inseguridad | adricamente</title>
+  <title>Psicólogo online para la autoestima | adricamente</title>
   <meta name="description" content="Terapia online para la autoestima: qué mantiene la inseguridad y cómo se trabaja sin frases motivadoras. Sesiones de 60 minutos por 30 €.">
 
-  <meta property="og:title" content="Autoestima e inseguridad | adricamente">
+  <meta property="og:title" content="Psicólogo online para la autoestima | adricamente">
   <meta property="og:description" content="Terapia online para la autoestima: qué mantiene la inseguridad y cómo se trabaja sin frases motivadoras. Sesiones de 60 minutos por 30 €.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/areas/autoestima/">
@@ -40,14 +40,27 @@
   <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
        de leer el CSS. Sin esto el navegador no sabe que existen hasta
        que ha descargado y parseado la hoja entera, y el titular se
-       pinta con la fuente del sistema y luego salta. Solo estas dos:
-       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+       pinta con la fuente del sistema y luego salta.
+
+       Aquí había solo dos, con el argumento de que precargar las cinco
+       le quitaba ancho de banda a lo que sí se ve. La premisa era
+       falsa: midiendo qué pesos se pintan dentro de la primera pantalla
+       salen los cinco, en todas las páginas. Los tres que faltaban no
+       se descubrían hasta tener el CSS descargado y parseado —tres
+       niveles de dependencia— y eran la causa nombrada del único
+       desplazamiento de diseño que quedaba. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=27">
+  <link rel="stylesheet" href="/estilos.min.css?v=28">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -68,7 +81,7 @@
     {
       "@type": "ListItem",
       "position": 3,
-      "name": "Autoestima e inseguridad",
+      "name": "Psicólogo online para la autoestima",
       "item": "https://adricamente.com/areas/autoestima/"
     }
   ]
@@ -84,7 +97,7 @@
       "name": "¿Esto se arregla repitiéndome que valgo?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No, y probablemente ya lo has comprobado. Discutir con un pensamiento suele darle más presencia, no menos . Lo que se trabaja es otra cosa: qué dejas de hacer para no quedar mal, y qué te está costando eso."
+        "text": "No, y probablemente ya lo has comprobado. Discutir con un pensamiento suele darle más presencia, no menos. Lo que se trabaja es otra cosa: qué dejas de hacer para no quedar mal, y qué te está costando eso."
       }
     },
     {
@@ -122,8 +135,13 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
-<div class="contenedor">
-
+<!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
+     Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
+     en las páginas de área, así que medía 120 px en unas y 151 en
+     otras —el botón se caía a la fila de abajo— y el visitante veía
+     recomponerse lo único que aparece en las veintiséis páginas. -->
+<div class="franja-cabecera">
+  <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
     <nav>
@@ -134,10 +152,14 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
   </header>
+  </div>
+</div>
+
+<div class="contenedor">
 
   <main id="principal">
 
@@ -287,11 +309,21 @@
     </p>
   </div>
 
+  <div class="disponibilidad">
+    <p>
+      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      las hago en dos ratos fijos, porque el resto del horario es de
+      pacientes. Si esta semana ya no queda ninguno, el calendario te
+      ofrece el siguiente: no hay lista de espera ni hay que escribir
+      para preguntar.
+    </p>
+  </div>
+
   <section class="cinta">
     <h2>Si te has reconocido</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te pasa y yo te diga con honestidad si creo que puedo ayudarte. Si creo que no, <strong>te oriento</strong> a dónde ir.</p>
+    <p>Treinta minutos, <strong>gratis</strong>, para ponerle nombre a esto en voz alta. Sales con una idea de qué lo mantiene y de qué haría falta para moverlo. Y si esto no es lo mío, <strong>te oriento</strong> a dónde ir.</p>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>

@@ -47,14 +47,27 @@
   <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
        de leer el CSS. Sin esto el navegador no sabe que existen hasta
        que ha descargado y parseado la hoja entera, y el titular se
-       pinta con la fuente del sistema y luego salta. Solo estas dos:
-       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+       pinta con la fuente del sistema y luego salta.
+
+       Aquí había solo dos, con el argumento de que precargar las cinco
+       le quitaba ancho de banda a lo que sí se ve. La premisa era
+       falsa: midiendo qué pesos se pintan dentro de la primera pantalla
+       salen los cinco, en todas las páginas. Los tres que faltaban no
+       se descubrían hasta tener el CSS descargado y parseado —tres
+       niveles de dependencia— y eran la causa nombrada del único
+       desplazamiento de diseño que quedaba. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=27">
+  <link rel="stylesheet" href="/estilos.min.css?v=28">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -85,7 +98,7 @@
       "name": "¿Tengo que dar el correo?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. La cuenta y la hoja no piden nada . Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic."
+        "text": "Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. La cuenta y la hoja no piden nada. Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic."
       }
     },
     {
@@ -101,7 +114,7 @@
       "name": "¿Sirven si no voy a ir a terapia?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, han servido ."
+        "text": "Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, han servido."
       }
     },
     {
@@ -109,7 +122,7 @@
       "name": "¿Y si al hacerlas me pongo peor?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Mirar de frente lo que se evita incomoda, y eso es esperable. Si al hacerlo aparece algo que no puedes sostener solo, ahí es donde tiene sentido pedir cita. Y si estás en peligro ahora mismo, esto no es el sitio: llama al 024 o al 112 ."
+        "text": "Mirar de frente lo que se evita incomoda, y eso es esperable. Si al hacerlo aparece algo que no puedes sostener solo, ahí es donde tiene sentido pedir cita. Y si estás en peligro ahora mismo, esto no es el sitio: llama al 024 o al 112."
       }
     }
   ]
@@ -123,8 +136,13 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
-<div class="contenedor ancho">
-
+<!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
+     Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
+     en las páginas de área, así que medía 120 px en unas y 151 en
+     otras —el botón se caía a la fila de abajo— y el visitante veía
+     recomponerse lo único que aparece en las veintiséis páginas. -->
+<div class="franja-cabecera">
+  <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
     <nav>
@@ -135,10 +153,14 @@
       <a href="/herramientas/" aria-current="page">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
   </header>
+  </div>
+</div>
+
+<div class="contenedor ancho">
 
   <main id="principal">
 
@@ -147,18 +169,18 @@
 
   <p class="grande">
     Gratis, sin registro y sin que te llame nadie después.
-    <strong>Dos de las tres ni siquiera piden el correo.</strong> Están
+    <strong>Dos de las tres</strong> ni siquiera piden el correo. Están
     aquí porque la mayoría de la gente que lo está pasando mal no va a
     ir a terapia este año, y entender el mecanismo por tu cuenta ya vale
     para algo.
   </p>
 
-  <h2>Estas son las tres</h2>
+  <h2>Qué hace cada una</h2>
   <div class="rejilla">
     <a class="tarjeta" href="/mapa/">
       <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.4 6.4 9 4.2v13.4l-5.6 2.2z"/><path pathLength="1" d="M9 4.2l6 2.2v13.4L9 17.6"/><path pathLength="1" d="M15 6.4l5.6-2.2v13.4L15 19.8"/></svg>
       <h3>El mapa de lo que evitas</h3>
-      <p>Seis preguntas sobre <strong>una sola vez</strong> que evitaste algo. Diez minutos. Es el análisis que hago en consulta el primer día, hecho por ti.</p>
+      <p>Seis preguntas sobre <strong>una sola vez</strong> que evitaste algo. Diez minutos. Es la <strong>primera mitad</strong> del análisis que hago en consulta el primer día, hecha por ti.</p>
       <span class="mas">Hacer el mapa &rarr;</span>
     </a>
     <a class="tarjeta" href="/la-cuenta/">
@@ -233,7 +255,7 @@
   <h2>Y una advertencia que va en serio</h2>
   <p>
     Hacer las tres no es hacer terapia, y verlo claro no es lo mismo que
-    poder cambiarlo. <strong>Entender el mecanismo no lo apaga</strong>:
+    poder cambiarlo. Entender el mecanismo <strong>no lo apaga</strong>:
     si bastara con entenderlo, no existiría mi trabajo y tú habrías
     salido de esto hace años leyendo.
   </p>
@@ -248,12 +270,12 @@
   <div class="faq">
     <details>
       <summary>¿Tengo que dar el correo?</summary>
-      <p>Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. <strong>La cuenta y la hoja no piden nada</strong>. Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic.</p>
+      <p>Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. La cuenta y la hoja <strong>no piden nada</strong>. Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic.</p>
     </details>
 
     <details>
       <summary>¿Se guarda lo que escribo?</summary>
-      <p>No sale de tu navegador. <strong>No se envía a ningún servidor</strong> y no queda registro de tus respuestas: el cálculo se hace en tu propio móvil u ordenador.</p>
+      <p>No sale de tu navegador. No se envía a <strong>ningún servidor</strong> y no queda registro de tus respuestas: el cálculo se hace en tu propio móvil u ordenador.</p>
     </details>
 
     <details>
@@ -279,9 +301,9 @@
 
   <section class="cinta">
     <h2>Cuando quieras que lo miremos juntos</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué has visto y te diga con honestidad si creo que puedo ayudarte.</p>
+    <p>Treinta minutos, <strong>gratis</strong>, para mirar lo que te haya salido y ver qué eslabón de ahí se puede mover primero.</p>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>

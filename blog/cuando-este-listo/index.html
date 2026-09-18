@@ -40,14 +40,27 @@
   <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
        de leer el CSS. Sin esto el navegador no sabe que existen hasta
        que ha descargado y parseado la hoja entera, y el titular se
-       pinta con la fuente del sistema y luego salta. Solo estas dos:
-       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+       pinta con la fuente del sistema y luego salta.
+
+       Aquí había solo dos, con el argumento de que precargar las cinco
+       le quitaba ancho de banda a lo que sí se ve. La premisa era
+       falsa: midiendo qué pesos se pintan dentro de la primera pantalla
+       salen los cinco, en todas las páginas. Los tres que faltaban no
+       se descubrían hasta tener el CSS descargado y parseado —tres
+       niveles de dependencia— y eran la causa nombrada del único
+       desplazamiento de diseño que quedaba. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=27">
+  <link rel="stylesheet" href="/estilos.min.css?v=28">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -121,16 +134,25 @@
         }
       }
     ],
-    "alumniOf": [
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Nacional de Educación a Distancia (UNED)"
-      },
-      {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidad Internacional de La Rioja (UNIR)"
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Nacional de Educación a Distancia (UNED)"
+    },
+    "affiliation": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Internacional de La Rioja (UNIR)"
+    },
+    "description": "Psicólogo colegiado nº CM03836. No tiene el título de Psicólogo General Sanitario: cursa el Máster en Psicología General Sanitaria y atiende en prácticas supervisadas dentro del centro sanitario Neurococos.",
+    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
+    "homeLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Albacete",
+        "addressRegion": "Castilla-La Mancha",
+        "addressCountry": "ES"
       }
-    ],
+    },
     "worksFor": {
       "@type": "MedicalClinic",
       "name": "Neurococos",
@@ -154,6 +176,7 @@
     ],
     "knowsLanguage": "es",
     "sameAs": [
+      "https://www.copclm.com/",
       "https://www.instagram.com/adricamente",
       "https://www.tiktok.com/@adricamente",
       "https://www.youtube.com/@adricamente"
@@ -182,8 +205,13 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
-<div class="contenedor">
-
+<!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
+     Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
+     en las páginas de área, así que medía 120 px en unas y 151 en
+     otras —el botón se caía a la fila de abajo— y el visitante veía
+     recomponerse lo único que aparece en las veintiséis páginas. -->
+<div class="franja-cabecera">
+  <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
     <nav>
@@ -194,10 +222,14 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
   </header>
+  </div>
+</div>
+
+<div class="contenedor">
 
   <main id="principal">
 
@@ -205,13 +237,13 @@
 
   <article class="articulo-cuerpo">
     <h1>«Cuando esté listo» no llega nunca</h1>
-    <p class="articulo-meta">Septiembre de 2026 &middot; 3 min de lectura &middot; Adrián Cuñat</p>
+    <p class="articulo-meta">Septiembre de 2026 &middot; 1 min de lectura &middot; Adrián Cuñat</p>
 
   <figure class="banda">
     <img src="/fotos/banda-listo.webp?v=d33bdf"
          srcset="/fotos/banda-listo-m.webp?v=77efff 800w, /fotos/banda-listo.webp?v=d33bdf 1600w"
          sizes="(max-width:720px) 100vw, 680px"
-         width="1600" height="600" loading="lazy" decoding="async"
+         width="1600" height="600" fetchpriority="high" decoding="async"
          alt="Luz filtrada por una persiana sobre una pared clara">
   </figure>
 
@@ -250,7 +282,10 @@
     <p>
       La forma de distinguirlas es sencilla y bastante honesta: prepararse
       tiene un final. Si lo que haces no tiene fecha de fin, no te estás
-      preparando. Estás retrasando.
+      preparando. Estás retrasando. Cuando además cuesta arrancar
+      cualquier cosa, no solo esa, suele estar pasando otra cosa: es lo
+      que se mira en la <a href="/areas/estado-de-animo/">terapia para el
+      ánimo bajo</a>.
     </p>
   </article>
   <p style="margin-top:34px">
@@ -258,10 +293,10 @@
   </p>
 
   <section class="cinta">
-    <h2>¿Te has reconocido en esto?</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te pasa y yo te diga con honestidad si creo que puedo ayudarte.</p>
+    <h2>Si esto te ha descrito</h2>
+    <p>Treinta minutos por videollamada, <strong>gratis</strong>, y sales sabiendo si esto que acabas de leer es lo tuyo y qué se haría con ello.</p>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>

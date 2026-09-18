@@ -11,10 +11,14 @@
 
 User-agent: *
 Allow: /
-Disallow: /gracias.html
-# Carpeta temporal con las cuatro cartas, para cargarlas en Brevo sin
-# reescribirlas a mano. Se borra en cuanto estén las plantillas.
-Disallow: /correos/
+# gracias.html NO se bloquea aquí, aunque lo parezca: lleva su propia
+# etiqueta noindex, y si se prohíbe el rastreo Google no puede leerla.
+# Las dos instrucciones juntas se anulan y la URL acaba indexada sin
+# descripción. El noindex solo funciona si se deja entrar al robot.
+# La carpeta temporal con las cuatro cartas —para cargarlas en Brevo
+# sin reescribirlas a mano— tampoco se bloquea aquí: cada archivo
+# lleva noindex, nofollow, y prohibir el rastreo impediría leerlo.
+# Se borra en cuanto estén las plantillas cargadas.
 
 # --- Los que NO se pueden bloquear -------------------------------
 # Estos cuatro son los que leen la web para citarla en respuestas.
