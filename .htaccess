@@ -1,42 +1,88 @@
-# adricamente.com
-# -----------------------------------------------------------------
-# Esto lo lee el servidor de Hostinger en cada petición. Tres cosas:
-# una sola dirección para la web, compresión, y caché para lo que
-# no cambia nunca.
+# ============================================================
+#  adricamente.com — cabeceras del servidor
+#  ------------------------------------------------------------
+#  Esto es lo único de la web que no se puede probar en local:
+#  son instrucciones para el Apache de Hostinger.
+#
+#  Hace tres cosas, en orden de importancia:
+#
+#  1. Comprime el texto antes de enviarlo. Una página de 60 kB
+#     viaja en 14. Es gratis y es lo que más se nota en una
+#     conexión móvil mala, que es donde se pierden las visitas.
+#
+#  2. Le dice al navegador cuánto tiempo puede guardarse cada
+#     cosa. Las fotos y las fuentes, un año: llevan la huella
+#     del archivo pegada a la URL, así que si cambian, cambia
+#     la URL y se vuelven a pedir. El HTML, nada: tiene que
+#     poder cambiar hoy y verse hoy.
+#
+#  3. Cuatro cabeceras de seguridad que no cuestan nada y que
+#     los verificadores buscan.
+# ============================================================
 
-# --- Una sola dirección ------------------------------------------
-# Sin esto, adricamente.com y www.adricamente.com son dos webs
-# distintas para Google y se reparten la autoridad entre las dos.
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteCond %{HTTP_HOST} ^www\.adricamente\.com$ [NC]
-  RewriteRule ^(.*)$ https://adricamente.com/$1 [R=301,L]
-</IfModule>
-
-# --- Compresión ---------------------------------------------------
+# --- 1. Compresión ------------------------------------------
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/plain
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
   AddOutputFilterByType DEFLATE application/javascript application/json
-  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE image/svg+xml application/xml
+</IfModule>
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript image/svg+xml
 </IfModule>
 
-# --- Caché --------------------------------------------------------
-# Las fuentes y las imágenes no cambian nunca: un año, y que el
-# navegador ni pregunte. El HTML, en cambio, tiene que poder
-# cambiar hoy, así que se revalida siempre.
-# El CSS lleva ?v=N en la URL, así que también puede cachearse
-# fuerte: cuando cambia, cambia el número y es otra dirección.
+# --- 2. Caducidad -------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # Las imágenes y las fuentes llevan huella en la URL: un año.
+  ExpiresByType image/webp                 "access plus 1 year"
+  ExpiresByType image/png                  "access plus 1 year"
+  ExpiresByType image/jpeg                 "access plus 1 year"
+  ExpiresByType image/svg+xml              "access plus 1 year"
+  ExpiresByType image/x-icon               "access plus 1 year"
+  ExpiresByType font/woff2                 "access plus 1 year"
+  # La hoja de estilos lleva ?v= y se corta a mano al cambiarla.
+  ExpiresByType text/css                   "access plus 1 year"
+  # El HTML, no. Tiene que poder cambiar hoy y verse hoy.
+  ExpiresByType text/html                  "access plus 0 seconds"
+</IfModule>
+
 <IfModule mod_headers.c>
-  <FilesMatch "\.(woff2|png|jpg|jpeg|webp|ico|svg)$">
+  <FilesMatch "\.(webp|png|jpe?g|svg|ico|woff2)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
   <FilesMatch "\.css$">
-    Header set Cache-Control "public, max-age=31536000"
+    Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
   <FilesMatch "\.html$">
-    Header set Cache-Control "no-cache"
+    Header set Cache-Control "public, max-age=0, must-revalidate"
   </FilesMatch>
+
+  # --- 3. Seguridad -----------------------------------------
+  # Que nadie pueda meter la web dentro de un iframe suyo.
+  Header always set X-Frame-Options "SAMEORIGIN"
+  # Que el navegador no se invente el tipo de un archivo.
+  Header always set X-Content-Type-Options "nosniff"
+  # Que al salir a otro sitio no se filtre la URL completa.
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # Que nadie pida cámara, micrófono ni ubicación desde aquí.
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
 </IfModule>
 
-# --- Página de error propia ---------------------------------------
+# --- 4. Tipos correctos -------------------------------------
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+</IfModule>
+
+# --- 5. Una sola dirección ----------------------------------
+#  Sin www y con https. Que la misma página no exista en cuatro
+#  direcciones distintas es lo primero que mira un buscador.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://adricamente.com/$1 [R=301,L]
+  RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+  RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+</IfModule>
+
 ErrorDocument 404 /404.html

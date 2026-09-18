@@ -19,6 +19,44 @@
    pareciera un panel de control en vez de una consulta: es el
    idioma visual del software, no el de la salud. Fuera. */
 
+/* --- 0 bis. Las fuentes de reserva, ajustadas ------------------
+   Esto arregla un fallo real que medí con Lighthouse: el índice de
+   cambios de diseño (CLS) estaba en 0,178, por encima del 0,1 que
+   Google considera aceptable, y el culpable era el salto de la
+   fuente de reserva a la definitiva.
+
+   Con `font-display:swap` el texto se pinta primero con la fuente
+   del sistema y luego cambia. Si las dos no miden lo mismo, la
+   página entera se recoloca en ese instante: es el salto que se nota
+   al cargar y el que Google penaliza.
+
+   La solución es declarar la fuente de reserva con las métricas de
+   la buena. `size-adjust` iguala el ancho —Archivo tiene letras un
+   57,6 % del cuadratín de ancho medio y Arial un 52 %, de ahí el
+   110 %—, y los tres `override` igualan las alturas de línea. Con
+   esto, el hueco que ocupa el texto provisional es exactamente el
+   que va a ocupar el definitivo, y no se mueve nada.
+
+   Las cifras están medidas de los propios archivos .woff2, no
+   copiadas de ningún sitio. */
+
+@font-face{
+  font-family:"Archivo reserva";
+  src:local("Arial"),local("Helvetica Neue"),local("Liberation Sans");
+  size-adjust:110%;
+  ascent-override:80%;
+  descent-override:19%;
+  line-gap-override:0%;
+}
+@font-face{
+  font-family:"Source reserva";
+  src:local("Arial"),local("Helvetica Neue"),local("Liberation Sans");
+  size-adjust:94%;
+  ascent-override:109%;
+  descent-override:43%;
+  line-gap-override:0%;
+}
+
 @font-face{font-family:Archivo;src:url(fuentes/archivo-latin-700-normal.woff2) format('woff2');font-weight:700;font-style:normal;font-display:swap}
 @font-face{font-family:Archivo;src:url(fuentes/archivo-latin-800-normal.woff2) format('woff2');font-weight:800;font-style:normal;font-display:swap}
 @font-face{font-family:"Source Sans 3";src:url(fuentes/source-sans-3-latin-400-normal.woff2) format('woff2');font-weight:400;font-style:normal;font-display:swap}
@@ -205,7 +243,7 @@ body{
   margin:0;
   background:var(--bg);
   color:var(--ink);
-  font-family:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  font-family:"Source Sans 3","Source reserva","Segoe UI",system-ui,sans-serif;
   font-size:17px;
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
@@ -229,7 +267,7 @@ img{max-width:100%;height:auto}
    Siempre con una familia de reserva por si la fuente no carga. */
 
 h1,h2,h3{
-  font-family:Archivo,"Helvetica Neue",sans-serif;
+  font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
   letter-spacing:-.025em;
   text-wrap:balance;
   margin:0 0 14px;
@@ -276,7 +314,7 @@ p strong, li strong, dd strong, .tarjeta strong{
    mayúsculas y nunca con las letras separadas: eso es otro
    recurso tipográfico distinto y está justo debajo. */
 .marca{
-  font-family:Archivo,"Helvetica Neue",sans-serif;
+  font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
   font-size:20px;
   font-weight:800;
   letter-spacing:-.035em;
@@ -296,7 +334,7 @@ p strong, li strong, dd strong, .tarjeta strong{
    va del mismo color que los enlaces, el azul deja de querer
    decir "esto se pulsa". El azul solo trabaja si es escaso. */
 .etiqueta{
-  font-family:Archivo,"Helvetica Neue",sans-serif;
+  font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
   font-size:13px;
   font-weight:700;
   letter-spacing:-.005em;
@@ -331,14 +369,14 @@ p strong, li strong, dd strong, .tarjeta strong{
    Es el patrón que usa casi todo el sector: una sola acción visible
    en todo momento, sin tener que buscarla. */
 .cabecera .cita{
-  font-family:Archivo,sans-serif;
+  font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:14.5px;font-weight:700;letter-spacing:-.01em;
   background:var(--accent-2);color:var(--sobre-accent);
   padding:9px 16px;border-radius:6px;text-decoration:none;
 }
 .cabecera .cita:hover{background:var(--accent-3);color:var(--sobre-accent);text-decoration:none}
 .cabecera nav a{
-  font-family:"Source Sans 3",sans-serif;
+  font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:15.5px;
   font-weight:600;
   color:var(--ink-2);
@@ -366,7 +404,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 
 .boton,button.boton{
   display:inline-block;
-  font-family:Archivo,sans-serif;
+  font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:17px;
   font-weight:700;
   letter-spacing:-.01em;
@@ -403,7 +441,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 }
 
 .boton-texto{
-  font-family:"Source Sans 3",sans-serif;
+  font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:15px;
   font-weight:600;
   cursor:pointer;
@@ -437,7 +475,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   list-style:none;
 }
 .datos li{
-  font-family:"Source Sans 3",sans-serif;
+  font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:13.5px;
   font-weight:600;
   letter-spacing:0;
@@ -474,7 +512,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   position:absolute;left:0;top:1px;
   width:30px;height:30px;
   display:flex;align-items:center;justify-content:center;
-  font-family:Archivo,sans-serif;font-size:15px;font-weight:700;
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:15px;font-weight:700;
   color:var(--sobre-accent);background:var(--accent-2);
   border-radius:50%;
 }
@@ -501,12 +539,12 @@ p strong, li strong, dd strong, .tarjeta strong{
   border-radius:0 14px 14px 0;
 }
 .idea .rotulo-idea{
-  font-family:Archivo,sans-serif;font-size:11.5px;font-weight:700;
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:11.5px;font-weight:700;
   letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);
   margin:0 0 9px;
 }
 .idea p:not(.rotulo-idea){
-  font-family:Archivo,sans-serif;
+  font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:clamp(1.05rem,2.7vw,1.3rem);
   font-weight:600;line-height:1.32;letter-spacing:-.017em;
   color:var(--ink);margin:0;max-width:34ch;text-wrap:balance;
@@ -530,7 +568,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 .ficha-tecnica > div{background:var(--surface);padding:16px 17px}
 .ficha-tecnica dt{
   display:flex;align-items:center;gap:8px;
-  font-family:Archivo,sans-serif;font-size:13px;font-weight:700;
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:13px;font-weight:700;
   letter-spacing:.02em;text-transform:uppercase;color:var(--accent-2);
   margin:0 0 6px;
 }
@@ -583,7 +621,7 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
 /* El precio. Un número grande no es presumir: es no hacer que
    nadie tenga que buscarlo ni escribir para preguntarlo. */
 .precio{
-  font-family:Archivo,sans-serif;
+  font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:clamp(2.2rem,8vw,2.8rem);
   font-weight:800;
   letter-spacing:-.03em;
@@ -598,7 +636,7 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
 .faq{border-top:1px solid var(--line);margin:26px 0 0}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{
-  font-family:Archivo,sans-serif;
+  font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:1.02rem;font-weight:700;letter-spacing:-.015em;
   color:var(--ink);
   cursor:pointer;list-style:none;
@@ -628,7 +666,7 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
 /* --- 6. Formularios ---------------------------------------------- */
 
 label.campo{
-  font-family:"Source Sans 3",sans-serif;
+  font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:13.5px;
   letter-spacing:0;
   color:var(--ink-2);
@@ -775,7 +813,7 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 /* Enlace secundario al lado del botón: la segunda puerta, sin
    competir con la primera. */
 .enlace-fuerte{
-  font-family:"Source Sans 3",sans-serif;
+  font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:16px;font-weight:600;color:var(--accent-2);
   text-underline-offset:4px;
 }
@@ -821,7 +859,7 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
   margin:38px 0;
 }
 .llamada > p:first-child{
-  font-family:Archivo,sans-serif;
+  font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:clamp(1.02rem,2.5vw,1.2rem);font-weight:600;
   letter-spacing:-.015em;line-height:1.35;
   color:var(--ink);margin:0 0 16px;max-width:42ch;text-wrap:balance;
@@ -864,7 +902,7 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 }
 .confianza div{background:var(--surface);padding:15px 16px}
 .confianza dt{
-  font-family:Archivo,sans-serif;font-size:13px;font-weight:700;
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:13px;font-weight:700;
   letter-spacing:-.01em;color:var(--accent-2);margin-bottom:2px;
 }
 .confianza dd{margin:0;font-size:14.5px;line-height:1.4;color:var(--ink-2)}
@@ -896,7 +934,7 @@ a.tarjeta:hover{border-color:var(--line-strong);box-shadow:var(--shadow);color:i
 .tarjeta p{font-size:15.5px;color:var(--ink-2);margin:0 0 14px;max-width:none}
 .tarjeta .mas{
   margin-top:auto;
-  font-family:"Source Sans 3",sans-serif;font-size:15px;font-weight:600;
+  font-family:"Source Sans 3","Source reserva",sans-serif;font-size:15px;font-weight:600;
   color:var(--accent-2);
 }
 a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underline-offset:3px}
@@ -919,7 +957,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 /* --- 9.5 Artículos ------------------------------------------------ */
 
 .articulo-meta{
-  font-family:"Source Sans 3",sans-serif;
+  font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:13.5px;font-weight:600;color:var(--muted);
   margin:0 0 10px;
 }
@@ -940,8 +978,8 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   gap:26px;
   margin-bottom:26px;
 }
-.pie-columnas h4{
-  font-family:Archivo,sans-serif;font-size:13.5px;font-weight:700;
+.pie-columnas .titulo-pie{
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:13.5px;font-weight:700;
   letter-spacing:-.005em;color:var(--ink);margin:0 0 10px;
 }
 .pie-columnas ul{list-style:none;padding:0;margin:0}
@@ -1033,7 +1071,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   stroke-linecap:round;stroke-linejoin:round;
 }
 .dibujo .rotulo{
-  font-family:Archivo,"Helvetica Neue",sans-serif;
+  font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
   font-size:12px;font-weight:700;letter-spacing:-.01em;
 }
 .dibujo .rotulo.alivio{fill:var(--accent-2)}
@@ -1083,7 +1121,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   font-size:15px;color:var(--ink-2);margin:0;
 }
 .figura .leyenda.numerada .cifra{
-  font-family:Archivo,sans-serif;font-size:11px;font-weight:700;
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:11px;font-weight:700;
   width:20px;height:20px;border-radius:50%;
   background:var(--accent-2);color:var(--sobre-accent);
   display:grid;place-items:center;margin-top:1px;
@@ -1110,7 +1148,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   display:flex;flex-direction:column;gap:7px;
 }
 .paso-ciclo span{
-  font-family:Archivo,sans-serif;font-size:11px;font-weight:700;
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:11px;font-weight:700;
   color:var(--sobre-accent);background:var(--accent-2);
   width:20px;height:20px;border-radius:50%;
   display:grid;place-items:center;
@@ -1241,7 +1279,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .campo-hoja.corto{max-width:160px}
 .campo-hoja span{
   display:block;
-  font-family:"Source Sans 3",sans-serif;
+  font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:13px;font-weight:600;color:var(--muted);
   margin-bottom:9px;
 }
@@ -1468,20 +1506,25 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
          entrado del todo. Así, si alguien llega con un ancla a mitad
          de la página o el navegador le restaura el scroll, lo que ve
          está ya al final de la animación y no a medias. */
-      animation-range:entry 0% entry 70%;
+      animation-range:entry 30% cover 6%;
     }
-    /* Parte de 0.62, no de 0. Un bloque a opacidad cero esperando a
-       que alguien baje es el error clásico de esta técnica: si el
-       navegador no calcula el rango como esperabas —una captura de
-       página entera, una impresión, una búsqueda en la página que
-       salta ahí— el contenido no está en blanco, sencillamente. A 0.62
-       el fundido se sigue notando y, lo que importa más, el texto en el
-       fotograma más tenue sigue teniendo contraste suficiente para
-       leerse. Un bloque a media opacidad no es un efecto: es texto
-       ilegible durante medio segundo. */
+    /* Sin opacidad. Solo ocho píxeles.
+
+       Empezó siendo un fundido desde 0, que es el error clásico: si el
+       navegador no calcula el rango como esperas, el contenido no
+       aparece, sencillamente. Se subió el suelo a 0,62 para que nunca
+       desapareciera, y aun así Lighthouse marcaba fallo de contraste
+       en las tarjetas: a 0,62 de opacidad, un texto que cumple 7,65:1
+       se queda en 3,9:1, por debajo del mínimo. Durante medio segundo,
+       sí, pero es un fallo de accesibilidad real y no un matiz.
+
+       Así que fuera la opacidad. Ocho píxeles de subida no marean a
+       nadie —el problema vestibular está en el parallax y en los
+       desplazamientos grandes, no en esto— y el texto está siempre a
+       plena opacidad y a pleno contraste. */
     @keyframes aparecer{
-      from{opacity:.62;transform:translateY(8px)}
-      to{opacity:1;transform:none}
+      from{transform:translateY(8px)}
+      to{transform:none}
     }
   }
 }
@@ -1640,16 +1683,16 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
       animation:trazar linear both;
       animation-timeline:view();
     }
-    .dibujo .eje{animation-range:entry 12% entry 55%}
-    .dibujo .trazo-coste{animation-range:entry 22% entry 80%}
-    .dibujo .trazo-alivio{animation-range:entry 34% cover 18%}
-    .dibujo .trazo-flojo{animation-range:entry 14% entry 62%}
+    .dibujo .eje{animation-range:entry 42% entry 88%}
+    .dibujo .trazo-coste{animation-range:entry 50% cover 8%}
+    .dibujo .trazo-alivio{animation-range:entry 62% cover 22%}
+    .dibujo .trazo-flojo{animation-range:entry 44% entry 92%}
     /* Las barras y los nodos no se pueden "trazar": aparecen, y en
        orden, que es lo que cuenta la pieza. */
     .dibujo .barra-llena,.dibujo .nodo,.dibujo .nodo-txt{
       animation:marcar linear both;
       animation-timeline:view();
-      animation-range:entry 26% entry 88%;
+      animation-range:entry 52% cover 10%;
     }
     @keyframes trazar{
       from{stroke-dashoffset:1}
@@ -1660,7 +1703,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     .dibujo .marca-evento{
       animation:marcar linear both;
       animation-timeline:view();
-      animation-range:entry 30% entry 85%;
+      animation-range:entry 56% cover 12%;
     }
     @keyframes marcar{from{opacity:0}to{opacity:1}}
   }
@@ -1728,7 +1771,19 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    quieto. Ninguna tapa nada, ninguna mueve nada de sitio.
    ============================================================ */
 
-/* --- 17.1 Los iconos de las tarjetas se trazan solos ------------
+/* NOTA SOBRE LOS RANGOS DE TODA LA SECCIÓN
+   Todos los recorridos empiezan tarde a propósito: `entry 50 %` o
+   más. La razón es el móvil. Safari en iPhone pone la barra de
+   direcciones ABAJO, y ocupa unos cien píxeles de la parte inferior
+   de la pantalla. Con un rango que empieza en `entry 14 %`, el dibujo
+   entero ocurre detrás de esa barra: cuando el elemento asoma por
+   encima, ya está dibujado y no se ve nada.
+
+   Empezando a partir de la mitad de la entrada, el trazo ocurre con
+   el elemento ya despejado y a la vista. En escritorio se nota
+   igual; en móvil, la diferencia es que se nota.
+
+   --- 17.1 Los iconos de las tarjetas se trazan solos ------------
    Es la misma técnica que los diagramas: pathLength="1" en cada
    trazo del SVG y un recorrido de la línea. Aquí funciona bien
    porque los iconos están dibujados a mano y con un trazo continuo:
@@ -1746,7 +1801,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
       stroke-dasharray:1;
       animation:trazar-icono linear both;
       animation-timeline:view();
-      animation-range:entry 14% entry 78%;
+      animation-range:entry 52% cover 14%;
     }
     @keyframes trazar-icono{
       from{stroke-dashoffset:1}
@@ -1783,7 +1838,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     .pasos::after{
       animation:llenar linear both;
       animation-timeline:view();
-      animation-range:entry 55% cover 72%;
+      animation-range:entry 72% cover 78%;
     }
     @keyframes llenar{to{transform:scaleY(1)}}
   }
@@ -1799,4 +1854,97 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 @media print{
   .pasos::after{transform:scaleY(1)}
   .tarjeta > .icono *,.insignia .icono *{stroke-dasharray:none !important}
+}
+
+/* ============================================================
+   18. La cuenta que no haces
+   ------------------------------------------------------------
+   La única pieza de la web con JavaScript de verdad, y son veinte
+   líneas. Dos deslizadores, un número grande y el dibujo de la
+   marca redibujado con el número de quien está mirando.
+
+   Los deslizadores van con `accent-color`, que es la forma de
+   teñirlos sin reconstruirlos a mano: un input range rehecho con
+   pseudoelementos pierde el comportamiento de teclado y el tamaño
+   de objetivo táctil que trae de fábrica, y aquí eso vale más que
+   el control estético absoluto.
+   ============================================================ */
+
+.cuenta{margin:30px 0 26px;display:grid;gap:26px}
+.cuenta .campo{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:19px 21px 21px;
+}
+.cuenta label{
+  display:block;
+  font-family:Archivo,"Archivo reserva",sans-serif;
+  font-size:1.06rem;font-weight:700;letter-spacing:-.015em;
+  color:var(--ink);margin:0 0 5px;
+}
+.cuenta .pista{font-size:14.5px;line-height:1.5;color:var(--muted);margin:0 0 15px;max-width:54ch}
+.cuenta .control{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.cuenta input[type=range]{
+  flex:1 1 220px;min-width:180px;
+  accent-color:var(--accent-2);
+  height:26px;cursor:pointer;
+}
+.cuenta output{
+  flex:0 0 auto;min-width:8.5ch;
+  font-size:16px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;
+}
+.cuenta output strong{
+  font-family:Archivo,"Archivo reserva",sans-serif;
+  font-size:22px;font-weight:800;letter-spacing:-.02em;
+  color:var(--accent-2);
+}
+
+/* El número. Es el único sitio de toda la web donde algo se pone
+   grande de verdad, y se lo ha ganado: es el resultado. */
+.resultado{
+  background:var(--accent-soft);
+  border-radius:0 16px 16px 0;
+  border-left:4px solid var(--accent-2);
+  padding:24px 26px 26px;
+  margin:0 0 6px;
+}
+.resultado .cifra{
+  font-family:Archivo,"Archivo reserva",sans-serif;
+  font-size:clamp(3.2rem,13vw,5.4rem);
+  font-weight:800;letter-spacing:-.045em;line-height:.95;
+  color:var(--accent-2);
+  font-variant-numeric:tabular-nums;
+  margin:0 0 10px;
+}
+.resultado .explica{
+  font-size:17px;line-height:1.5;color:var(--ink-2);
+  margin:0;max-width:48ch;
+}
+
+.figura-cuenta{margin-top:20px}
+
+/* El descargo va inmediatamente después del dibujo, no al final de
+   la página: quien va a malinterpretar el número lo va a
+   malinterpretar ahí mismo, no seis párrafos más abajo. */
+.aviso-cuenta{
+  border:1px solid var(--line-strong);
+  border-radius:12px;
+  padding:17px 19px;
+  margin:22px 0 10px;
+  background:var(--surface-2);
+}
+.aviso-cuenta p{margin:0;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:62ch}
+
+@media (max-width:520px){
+  .cuenta .campo{padding:16px 17px 18px}
+  .resultado{padding:20px 21px 22px}
+}
+
+/* Sin JavaScript, los deslizadores no hacen nada. Se quedan, porque
+   el resultado de ejemplo que hay escrito en el HTML sigue
+   explicando el mecanismo, pero se avisa. */
+@media print{
+  .cuenta{display:none}
 }
