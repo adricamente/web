@@ -196,7 +196,10 @@
 
 *{box-sizing:border-box}
 
-html{scroll-behavior:smooth}
+/* El desplazamiento suave solo para quien no ha pedido lo contrario:
+   a quien marca "reducir movimiento" en su sistema, un scroll con
+   inercia le puede provocar mareo de verdad. */
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 
 body{
   margin:0;
@@ -575,6 +578,48 @@ footer p{font-size:13.5px;color:var(--muted);line-height:1.55;max-width:62ch}
 footer nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:14px}
 footer nav a{font-size:14px;color:var(--muted);text-decoration:none}
 footer nav a:hover{color:var(--accent-2);text-decoration:underline}
+
+/* --- 7 bis. Los recursos de crisis -------------------------------
+   Va dentro del pie pero no se comporta como el pie: tiene su propio
+   papel, su propio borde y los números en grande y pulsables.
+
+   Está aquí por una razón que no es de diseño. Quien llega a una web
+   de psicología a las tres de la mañana no viene a leer un aviso
+   legal, y el 024 escondido en la última línea de la letra pequeña
+   no lo encuentra nadie. Casi ninguna web de psicólogo en España lo
+   pone; es lo más barato y lo más necesario que se puede añadir.
+   ---------------------------------------------------------------- */
+
+.crisis{
+  background:var(--surface);
+  border:1px solid var(--line-strong);
+  border-radius:14px;
+  padding:20px 22px;
+  margin:0 0 26px;
+}
+.crisis h4{
+  display:flex;align-items:center;gap:9px;
+  margin:0 0 12px;color:var(--ink);font-size:16px;
+}
+.crisis h4 .icono{color:var(--accent-2);flex:0 0 auto}
+.crisis ul{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:10px}
+.crisis li{
+  margin:0;font-size:15px;line-height:1.5;color:var(--ink-2);
+  padding-left:0;
+}
+.crisis li a{font-variant-numeric:tabular-nums}
+.crisis li > a:first-child{
+  font-size:17px;text-decoration:none;
+  border-bottom:2px solid var(--accent-borde);
+  padding-bottom:1px;
+}
+.crisis li > a:first-child:hover{border-bottom-color:var(--accent-3)}
+.crisis p{margin:0;font-size:14px;line-height:1.5;color:var(--muted);max-width:60ch}
+
+@media (max-width:520px){
+  .crisis{padding:17px 18px;border-radius:12px}
+  .crisis li{font-size:15.5px}
+}
 
 /* --- 8. Accesibilidad --------------------------------------------
    Quien navega con teclado tiene que ver dónde está. Nunca quites
@@ -1112,3 +1157,208 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     filter:brightness(.88);
   }
 }
+
+
+/* ============================================================
+   14. El movimiento
+   ------------------------------------------------------------
+   Todo lo de aquí es opcional: si el navegador no lo entiende, la
+   página se ve exactamente igual, solo que quieta. Ni una línea de
+   JavaScript.
+
+   La regla que manda sobre todas las demás: esta es una web que
+   lee gente que a lo mejor está teniendo un mal día. El movimiento
+   está para confirmar lo que acabas de pulsar y para que la página
+   no aparezca de golpe, no para lucirse.
+
+   De ahí las tres restricciones que se respetan en todo el bloque:
+
+   1. Solo se anima `opacity` y `transform`. Todo lo demás obliga al
+      navegador a recalcular la página sesenta veces por segundo.
+   2. Nada se desplaza más de 10 px, nada escala, nada gira. Las
+      guías de accesibilidad son explícitas: para quien es sensible
+      al movimiento, un fundido es seguro y un deslizamiento no.
+   3. Nada dura más de 440 ms, y cerrar va siempre más rápido que
+      abrir, que es como se percibe que algo responde.
+
+   Y por encima de todo eso, `prefers-reduced-motion`, que lo apaga
+   entero.
+   ============================================================ */
+
+:root{
+  /* Curvas. La de entrada frena mucho al final —es lo que hace que
+     algo parezca que "llega" en vez de que "aparece"— y la de
+     salida acelera, porque irse no necesita ceremonia. */
+  --entra:cubic-bezier(.05,.7,.1,1);
+  --sale:cubic-bezier(.3,0,.8,.15);
+  --suave:cubic-bezier(.2,0,0,1);
+
+  --t-toque:120ms;   /* color al pasar el ratón */
+  --t-corto:170ms;   /* borde, subrayado, fondo de botón */
+  --t-abre:260ms;    /* desplegar una pregunta */
+  --t-cierra:190ms;  /* plegarla: un 27 % más rápido */
+  --t-entra:440ms;   /* aparecer al bajar */
+}
+
+/* --- 14.1 Lo que se pulsa ---------------------------------------
+   El subrayado de los enlaces crece de izquierda a derecha en vez
+   de encenderse de golpe. Es la micro-interacción más barata que
+   existe y la única que de verdad se nota. */
+
+@media (prefers-reduced-motion:no-preference){
+  a{
+    transition:color var(--t-toque) var(--suave),
+               text-decoration-color var(--t-corto) var(--suave);
+  }
+  .boton,.boton-linea,.tarjeta,.cita{
+    transition:background-color var(--t-corto) var(--suave),
+               border-color var(--t-corto) var(--suave),
+               color var(--t-toque) var(--suave),
+               box-shadow var(--t-corto) var(--suave),
+               transform var(--t-corto) var(--suave);
+  }
+  /* Un píxel al pulsar. Solo uno: es lo que hace que un botón se
+     sienta un botón y no una imagen de un botón. */
+  .boton:active,.boton-linea:active,.cita:active{transform:translateY(1px)}
+  .faq summary::after{transition:transform var(--t-corto) var(--suave)}
+  .faq details[open] summary::after{transform:rotate(180deg)}
+}
+
+/* El foco del teclado no se anima nunca: tiene que aparecer en el
+   momento exacto en que se llega al elemento. */
+:where(a,button,summary,input,textarea,select,[tabindex]):focus-visible{
+  outline:2px solid var(--accent-2);
+  outline-offset:3px;
+  border-radius:4px;
+}
+
+/* La tarjeta entera reacciona cuando el foco cae en su enlace. */
+.tarjeta:has(a:focus-visible),.rejilla a.tarjeta:focus-visible{
+  border-color:var(--line-strong);
+}
+
+/* --- 14.2 Las preguntas frecuentes ------------------------------
+   `<details>` abre de golpe desde 1996. Se puede animar sin tocar
+   el HTML con la rejilla de una fila que pasa de 0fr a 1fr, que
+   funciona en todos los navegadores, y con `::details-content`
+   donde exista, que es lo mismo pero mejor. */
+
+@media (prefers-reduced-motion:no-preference){
+  @supports selector(::details-content){
+    .faq details::details-content{
+      block-size:0;overflow:hidden;
+      transition:block-size var(--t-cierra) var(--sale),
+                 content-visibility var(--t-cierra) allow-discrete;
+    }
+    .faq details[open]::details-content{
+      block-size:auto;
+      transition-duration:var(--t-abre);
+      transition-timing-function:var(--entra);
+    }
+    @supports (interpolate-size:allow-keywords){
+      :root{interpolate-size:allow-keywords}
+    }
+  }
+}
+
+/* --- 14.3 Aparecer al bajar -------------------------------------
+   Solo opacidad y diez píxeles. Sin cascada escalonada: una
+   cascada de tarjetas encadena decenas de movimientos y desorienta
+   justo a quien viene nervioso.
+
+   Va con `animation-timeline`, que es scroll sin JavaScript. Si el
+   navegador no lo tiene, no pasa nada: el contenido está ahí,
+   visible, desde el primer momento. Nunca se parte de opacidad
+   cero sin condiciones; eso es el clásico error que deja una
+   página en blanco. */
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .banda,.presentacion,.rejilla,.tarifa,.cinta,.caja.destacada,.ciclo,.figura{
+      animation:aparecer linear both;
+      animation-timeline:view();
+      /* Empieza en cuanto el bloque asoma y termina cuando ya ha
+         entrado del todo. Así, si alguien llega con un ancla a mitad
+         de la página o el navegador le restaura el scroll, lo que ve
+         está ya al final de la animación y no a medias. */
+      animation-range:entry 0% entry 70%;
+    }
+    /* Parte de 0.62, no de 0. Un bloque a opacidad cero esperando a
+       que alguien baje es el error clásico de esta técnica: si el
+       navegador no calcula el rango como esperabas —una captura de
+       página entera, una impresión, una búsqueda en la página que
+       salta ahí— el contenido no está en blanco, sencillamente. A 0.62
+       el fundido se sigue notando y, lo que importa más, el texto en el
+       fotograma más tenue sigue teniendo contraste suficiente para
+       leerse. Un bloque a media opacidad no es un efecto: es texto
+       ilegible durante medio segundo. */
+    @keyframes aparecer{
+      from{opacity:.62;transform:translateY(8px)}
+      to{opacity:1;transform:none}
+    }
+  }
+}
+
+/* --- 14.4 Pasar de una página a otra ----------------------------
+   Un fundido de 200 ms entre documentos. Nada de deslizar: pasar
+   páginas de lado está señalado por nombre en las guías de
+   accesibilidad como problemático.
+
+   Donde no está implementado —Firefox, hoy— la navegación es la de
+   siempre. No hay nada que degrade. */
+
+@view-transition{navigation:auto}
+
+::view-transition-old(root),::view-transition-new(root){
+  animation-duration:200ms;
+  animation-timing-function:var(--suave);
+}
+/* La cabecera y el retrato no parpadean: se quedan quietos mientras
+   cambia lo demás. */
+.cabecera{view-transition-name:cabecera}
+.retrato{view-transition-name:retrato;object-fit:cover}
+
+/* --- 14.5 No renderizar lo que no se ve -------------------------
+   El navegador se salta el trabajo de maquetar lo que queda muy por
+   debajo hasta que hace falta. `contain-intrinsic-size` es
+   obligatorio: sin él la barra de desplazamiento pega saltos. */
+
+.faq,.ciclo{content-visibility:auto;contain-intrinsic-size:auto 520px}
+
+/* En papel no hay scroll, así que no hay nada que revelar: todo
+   entero y opaco. Y sin `content-visibility`, que en impresión deja
+   secciones fuera. */
+@media print{
+  *{animation:none !important;animation-timeline:none !important;opacity:1 !important;transform:none !important}
+  .faq,.ciclo{content-visibility:visible}
+}
+
+/* --- 14.6 El interruptor general --------------------------------
+   Quien tiene marcado "reducir movimiento" en su sistema no ve
+   absolutamente nada de lo anterior. No es una preferencia
+   estética: hay gente a la que el movimiento en pantalla le
+   provoca náuseas o migraña. */
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+    animation-timeline:none !important;
+    view-transition-name:none !important;
+  }
+  @view-transition{navigation:none}
+}
+
+/* ============================================================
+   15. Los iconos, por tamaño
+   ------------------------------------------------------------
+   Un mismo grosor de trazo para todos los tamaños no funciona: a
+   40 px el trazo de 1,7 se ve tosco y a 16 px se ve endeble. Se
+   compensa a ojo, que es como se ha hecho siempre en tipografía.
+   ============================================================ */
+
+.icono{stroke-width:1.7}
+.insignia .icono{stroke-width:1.5}          /* 32 px o más */
+.confianza dt .icono,.crisis h4 .icono{stroke-width:1.85}  /* 18–20 px */
