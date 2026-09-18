@@ -931,8 +931,13 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    excepcion es el de contacto, que si va redondo, porque ahi si
    cumple el papel de "quien te responde" al lado de un texto.
 
-   Las tres imagenes vienen ya recortadas a su proporcion exacta, asi
-   que el navegador no reencuadra nada: solo las escala.
+   Son cinco fotos distintas, una por pagina, y ninguna repite pose ni
+   ropa de la anterior. Cinco veces la misma sonrisa frontal en cinco
+   paginas se lee como una plantilla, no como una persona.
+
+   Todas vienen ya recortadas a su proporcion exacta y al doble de los
+   pixeles a los que se ven, asi que el navegador no reencuadra nada:
+   solo las escala.
    ============================================================ */
 
 .presentacion{
@@ -945,15 +950,18 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .presentacion .texto p:last-child{margin-bottom:0}
 
 .retrato{
-  width:170px;
+  width:190px;
   aspect-ratio:4/5;
   height:auto;
   object-fit:cover;
   border-radius:12px;
-  border:1px solid var(--line);
+  /* Sin borde. Las fotos traen ahora su propio fondo de estudio, que ya
+     es más oscuro que el papel de la página: la silueta se recorta sola
+     y una línea alrededor solo añadía ruido. */
   box-shadow:var(--shadow);
-  /* Fondo por si la imagen tarda: evita el salto de blanco a foto. */
-  background:var(--surface-2);
+  /* Fondo por si la imagen tarda: evita el salto de blanco a foto. Es el
+     mismo gris del fondo de las fotos, así que ni siquiera se nota. */
+  background:#C7C3BC;
 }
 .retrato.grande{width:230px}
 
@@ -964,13 +972,13 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   width:96px;
   aspect-ratio:1;
   border-radius:50%;
-  border-color:var(--line-strong);
   box-shadow:none;
 }
 
 @media (max-width:620px){
-  .presentacion{grid-template-columns:1fr;gap:6px}
-  .retrato,.retrato.grande{width:150px}
+  .presentacion{grid-template-columns:1fr;gap:10px}
+  .retrato,.retrato.grande{width:160px}
+  .retrato.pequeno{width:88px}
 }
 
 /* ============================================================
