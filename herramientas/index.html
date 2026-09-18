@@ -1,0 +1,375 @@
+<!doctype html>
+<!-- La casa de las tres herramientas. Antes estaban
+     enlazadas desde el pie y desde algún párrafo suelto, que es
+     tanto como no estar.
+
+     Es el segundo camino de conversión de la web: la mayoría de
+     quien entra no va a pedir cita hoy, y para esa mayoría la
+     alternativa no puede ser irse. -->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Herramientas gratis | adricamente</title>
+  <meta name="description" content="Tres herramientas gratis para entender por qué repites lo que te perjudica: el mapa de lo que evitas, la cuenta y la hoja de registro. Sin registro y sin tests.">
+
+  <meta property="og:title" content="Herramientas gratis | adricamente">
+  <meta property="og:description" content="Tres herramientas gratis para entender por qué repites lo que te perjudica: el mapa de lo que evitas, la cuenta y la hoja de registro. Sin registro y sin tests.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adricamente.com/herramientas/">
+  <link rel="canonical" href="https://adricamente.com/herramientas/">
+
+  <!-- El ?v=2 es porque el navegador se guarda el icono durante días.
+       Sin él, quien ya haya entrado seguiría viendo el naranja. -->
+  <link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
+  <link rel="icon" href="/favicon-512.png?v=2" type="image/png" sizes="512x512">
+  <link rel="icon" href="/marca/adricamente-baldosa.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+  <meta name="theme-color" content="#FAF9F5">
+  <meta property="og:image" content="https://adricamente.com/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Adrián Cuñat Andrés, psicólogo colegiado CM03836. Terapia psicológica online.">
+  <meta property="og:site_name" content="adricamente">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Umami: medición sin cookies y sin datos personales. Por eso
+       esta web no necesita banner de consentimiento. -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+  <script>window.medir=function(e){try{
+    if(window.plausible)window.plausible(e);
+    if(window.umami&&window.umami.track)window.umami.track(e);
+  }catch(_){}};</script>
+
+  <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
+       de leer el CSS. Sin esto el navegador no sabe que existen hasta
+       que ha descargado y parseado la hoja entera, y el titular se
+       pinta con la fuente del sistema y luego salta. Solo estas dos:
+       precargar las cinco le quita ancho de banda a lo que sí se ve. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-800-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-400-normal.woff2">
+
+  <link rel="stylesheet" href="/estilos.min.css?v=27">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "https://adricamente.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Herramientas gratis",
+      "item": "https://adricamente.com/herramientas/"
+    }
+  ]
+}
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Tengo que dar el correo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. La cuenta y la hoja no piden nada . Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Se guarda lo que escribo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No sale de tu navegador. No se envía a ningún servidor y no queda registro de tus respuestas: el cálculo se hace en tu propio móvil u ordenador."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Sirven si no voy a ir a terapia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, han servido ."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Y si al hacerlas me pongo peor?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Mirar de frente lo que se evita incomoda, y eso es esperable. Si al hacerlo aparece algo que no puedes sostener solo, ahí es donde tiene sentido pedir cita. Y si estás en peligro ahora mismo, esto no es el sitio: llama al 024 o al 112 ."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<!-- La barra de lectura. Está vacía a propósito: es una línea de
+     color que el CSS estira con el scroll, sin JavaScript y sin
+     contenido que un lector de pantalla tenga que anunciar. -->
+<div class="barra-lectura" aria-hidden="true"></div>
+<div class="contenedor ancho">
+
+  <header class="cabecera">
+    <p class="marca"><a href="/">adricamente</a></p>
+    <nav>
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/" aria-current="page">Herramientas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+      <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+    </nav>
+  </header>
+
+  <main id="principal">
+
+  <p class="etiqueta">Herramientas</p>
+  <h1>Tres cosas que puedes hacer sin mí</h1>
+
+  <p class="grande">
+    Gratis, sin registro y sin que te llame nadie después.
+    <strong>Dos de las tres ni siquiera piden el correo.</strong> Están
+    aquí porque la mayoría de la gente que lo está pasando mal no va a
+    ir a terapia este año, y entender el mecanismo por tu cuenta ya vale
+    para algo.
+  </p>
+
+  <h2>Estas son las tres</h2>
+  <div class="rejilla">
+    <a class="tarjeta" href="/mapa/">
+      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.4 6.4 9 4.2v13.4l-5.6 2.2z"/><path pathLength="1" d="M9 4.2l6 2.2v13.4L9 17.6"/><path pathLength="1" d="M15 6.4l5.6-2.2v13.4L15 19.8"/></svg>
+      <h3>El mapa de lo que evitas</h3>
+      <p>Seis preguntas sobre <strong>una sola vez</strong> que evitaste algo. Diez minutos. Es el análisis que hago en consulta el primer día, hecho por ti.</p>
+      <span class="mas">Hacer el mapa &rarr;</span>
+    </a>
+    <a class="tarjeta" href="/la-cuenta/">
+      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M5 5.6v12.8M9.4 5.6v12.8M13.8 5.6v12.8M18.2 5.6v12.8"/><path pathLength="1" d="M3.4 17.4 19.8 6.6"/></svg>
+      <h3>La cuenta que no haces</h3>
+      <p>Dos preguntas y una multiplicación: <strong>cuántas veces</strong> ha pasado ya. Y el dibujo del mecanismo redibujado con tu número. No es un test y no mide nada de ti.</p>
+      <span class="mas">Hacer la cuenta &rarr;</span>
+    </a>
+    <a class="tarjeta" href="/registro/">
+      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.4" y="3.2" width="15.2" height="17.6" rx="2.4"/><path pathLength="1" d="M8 8.2h8M8 12h8M8 15.8h4.6"/></svg>
+      <h3>La hoja de registro</h3>
+      <p>Siete días apuntando lo mismo, dos minutos al día. El mapa te enseña un episodio; esto te enseña <strong>el patrón</strong>, que es otra cosa y no se ve desde dentro.</p>
+      <span class="mas">Abrir la hoja &rarr;</span>
+    </a>
+  </div>
+  <div class="llamada">
+    <p>Y si prefieres saltarte todo esto y contarlo en voz alta, son treinta minutos y no cuestan nada.</p>
+    <p class="accion">
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+    </p>
+    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
+  </div>
+
+  <h2>Están en este orden a propósito</h2>
+  <p>
+    No son tres versiones de lo mismo. Miran la misma conducta a tres
+    distancias distintas, y esa es exactamente la secuencia que se sigue
+    en consulta:
+  </p>
+
+  <ol class="pasos">
+    <li>
+      <strong>Una vez</strong>
+      El mapa coge <em>un</em> episodio concreto y lo desmonta: qué
+      pasó, qué hiciste, qué conseguiste en el minuto siguiente y qué te
+      costó después. Es lo primero porque hasta que no ves un caso
+      entero, lo demás son teorías.
+    </li>
+    <li>
+      <strong>Cuántas veces</strong>
+      La cuenta multiplica ese episodio por las veces que se repite y
+      por los años que llevas. El número sale grande siempre, y no
+      porque lo tuyo sea grave: porque cifras pequeñas por años dan
+      cifras grandes. Eso es justo lo que no se ve desde dentro.
+    </li>
+    <li>
+      <strong>Y con qué forma</strong>
+      La hoja de registro son siete días seguidos apuntando lo mismo.
+      Ahí aparece el patrón: que casi siempre son dos o tres
+      situaciones, no veinte, y que el eslabón que se puede cambiar
+      está siempre en el mismo sitio.
+    </li>
+  </ol>
+
+  <div class="caja">
+    <h3>Qué no son</h3>
+    <p>
+      <strong>No son tests.</strong> No puntúan, no comparan con ninguna
+      norma y no dicen si tienes algo. Un cuestionario que puntuara
+      ansiedad se acercaría a insinuar un diagnóstico, y eso no se hace
+      por una web: se hace evaluando, que son dos o tres sesiones.
+    </p>
+    <p style="margin-bottom:0">
+      Lo que sí hacen es enseñarte el <strong>mecanismo</strong>, que es
+      el mismo para todo el mundo y que casi nadie explica sin
+      envolverlo en humo.
+    </p>
+  </div>
+
+
+  <h2>Y una advertencia que va en serio</h2>
+  <p>
+    Hacer las tres no es hacer terapia, y verlo claro no es lo mismo que
+    poder cambiarlo. <strong>Entender el mecanismo no lo apaga</strong>:
+    si bastara con entenderlo, no existiría mi trabajo y tú habrías
+    salido de esto hace años leyendo.
+  </p>
+  <p>
+    Sirven para tres cosas concretas: para ponerle nombre a algo que a
+    lo mejor llevas tiempo sin poder nombrar, para llegar a una primera
+    sesión sabiendo de qué hablar, y para decidir con información si
+    esto te compensa. Nada más, y ya es bastante.
+  </p>
+
+  <h2>Preguntas frecuentes</h2>
+  <div class="faq">
+    <details>
+      <summary>¿Tengo que dar el correo?</summary>
+      <p>Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. <strong>La cuenta y la hoja no piden nada</strong>. Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic.</p>
+    </details>
+
+    <details>
+      <summary>¿Se guarda lo que escribo?</summary>
+      <p>No sale de tu navegador. <strong>No se envía a ningún servidor</strong> y no queda registro de tus respuestas: el cálculo se hace en tu propio móvil u ordenador.</p>
+    </details>
+
+    <details>
+      <summary>¿Sirven si no voy a ir a terapia?</summary>
+      <p>Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, <strong>han servido</strong>.</p>
+    </details>
+
+    <details>
+      <summary>¿Y si al hacerlas me pongo peor?</summary>
+      Mirar de frente lo que se evita incomoda, y eso es esperable. Si al hacerlo aparece algo que no puedes sostener solo, ahí es donde tiene sentido pedir cita. Y si estás en peligro ahora mismo, esto no es el sitio: llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.
+    </details>
+  </div>
+
+  <div class="disponibilidad">
+    <p>
+      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      las hago en dos ratos fijos, porque el resto del horario es de
+      pacientes. Si esta semana ya no queda ninguno, el calendario te
+      ofrece el siguiente: no hay lista de espera ni hay que escribir
+      para preguntar.
+    </p>
+  </div>
+
+  <section class="cinta">
+    <h2>Cuando quieras que lo miremos juntos</h2>
+    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué has visto y te diga con honestidad si creo que puedo ayudarte.</p>
+    <p>
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+    </p>
+    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
+    <p class="apunte" style="margin-bottom:0">Trae lo que hayas hecho si quieres. Es exactamente con lo que se empieza a trabajar.</p>
+  </section>
+
+  </main>
+
+  <footer>
+    <div class="pie-columnas">
+      <div>
+        <p class="titulo-pie">Adrián Cuñat Andrés</p>
+        <p>
+          Graduado en Psicología por la UNED. <strong>Psicólogo colegiado
+          nº CM03836</strong> (Colegio Oficial de Psicología de Castilla-La
+          Mancha). Cursando el Máster en Psicología General Sanitaria en
+          UNIR. En prácticas supervisadas en el centro sanitario
+          Neurococos.
+        </p>
+        <p>
+          Estar colegiado no equivale a poder ejercer la psicología
+          sanitaria: eso lo da el título del máster. Hasta obtenerlo no
+          ejerzo por cuenta propia, y la atención se presta dentro del
+          centro sanitario y con supervisión.
+        </p>
+      </div>
+      <div>
+        <p class="titulo-pie">La web</p>
+        <ul>
+          <li><a href="/sobre-mi/">Sobre mí</a></li>
+          <li><a href="/terapia-online/">Terapia online</a></li>
+          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/tarifas/">Tarifas</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/primera-sesion/">La primera sesión</a></li>
+          <li><a href="/herramientas/">Herramientas gratis</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="titulo-pie">Contacto y legal</p>
+        <ul>
+          <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="mailto:hola@adricamente.com">hola@adricamente.com</a></li>
+          <li><a href="/aviso-legal.html">Aviso legal</a></li>
+          <li><a href="/privacidad.html">Privacidad</a></li>
+          <li><a href="/cookies.html">Cookies</a></li>
+        </ul>
+        <p style="margin-top:12px">
+          <a href="/reservar/">¿Ya eres paciente? Reserva aquí</a>
+        </p>
+      </div>
+    </div>
+    <!-- Lo legal y los teléfonos de urgencia estaban aquí en dos
+         bloques grandes. Fuera: en la página que tiene que vender,
+         un muro de descargos se lee como desconfianza, no como
+         responsabilidad. El descargo completo vive ahora en el aviso
+         legal, que es su sitio.
+
+         Lo único que se queda es una línea de urgencias, en la letra
+         pequeña y sin dramatismo. No estorba a nadie y está ahí el
+         día que hace falta. El aviso con contexto sigue estando donde
+         de verdad se lee: dentro de cada página de área, justo al
+         hablar de cuándo esto no es lo tuyo. -->
+    <p class="legal-pie">
+      Urgencias: <a href="tel:024">024</a> (conducta suicida, 24&nbsp;h)
+      &middot; <a href="tel:112">112</a>.
+      <a href="/aviso-legal.html">Aviso legal</a> &middot;
+      <a href="/privacidad.html">Privacidad</a>.
+    </p>
+    <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
+  </footer>
+
+</div>
+
+<!-- Aquí había una barra fija con el botón de reserva. Fuera, y no
+     por estética: la única recopilación honesta que encontré de
+     experimentos con barras fijas —treinta y tres pruebas A/B, con
+     los fracasos incluidos— da un 27 % de aciertos y un 18 % de
+     resultados peores, y ningún efecto positivo fuera de las páginas
+     de carrito y pago. Esto no es un carrito. Le estaba costando
+     píxeles permanentes en el dispositivo donde menos sobran, a
+     cambio de una probabilidad baja de aportar algo.
+
+     En su lugar va una llamada a mitad de página, que es la que
+     mejor relación coste/beneficio tiene y la que no había. -->
+
+<script>
+  document.getElementById('anyo').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

@@ -90,4 +90,14 @@
     <lastmod>2026-09-18</lastmod>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://adricamente.com/herramientas/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://adricamente.com/registro/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <priority>0.6</priority>
+  </url>
 </urlset>

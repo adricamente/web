@@ -1,11 +1,11 @@
 <!doctype html>
-<!-- Se entrega por correo, no se enlaza desde el menú y
-     lleva noindex. No es secreta: simplemente no tiene que
-     competir en Google con las páginas que sí posicionan. -->
+<!-- Llevó noindex mientras solo se entregaba por
+     correo. Ahora está en el centro de herramientas, en el menú y
+     en la portada, y busca algo que ninguna otra página de esta
+     web busca: autorregistro, plantilla, hoja de registro. -->
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="robots" content="noindex, nofollow">
   <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -51,7 +51,27 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=26">
+  <link rel="stylesheet" href="/estilos.min.css?v=27">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "https://adricamente.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "La hoja de registro de una semana",
+      "item": "https://adricamente.com/registro/"
+    }
+  ]
+}
+  </script>
 </head>
 
 <body>
@@ -69,6 +89,7 @@
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
       <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
       <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
@@ -88,7 +109,7 @@
   </p>
 
   <div class="caja destacada">
-    <h3>Cómo se rellena</h3>
+    <h2>Cómo se rellena</h2>
     <ol style="margin-bottom:0">
       <li><strong>Una vez al día, por la noche.</strong> Dos minutos. No hace falta que sea el peor momento del día: vale el que recuerdes.</li>
       <li><strong>Apunta lo que hiciste, no lo que deberías haber hecho.</strong> Esta hoja no la va a ver nadie. Si la maquillas, el patrón sale falso y no sirve para nada.</li>
@@ -196,6 +217,14 @@
     </ul>
   </div>
 
+  <p class="apunte al-imprimir-oculto">
+    Esta hoja es la tercera de <a href="/herramientas/">las tres
+    herramientas</a>. Si has llegado aquí sin pasar por las otras, el
+    <a href="/mapa/">mapa</a> desmonta un episodio y
+    <a href="/la-cuenta/">la cuenta</a> te dice cuántas veces ha pasado
+    ya.
+  </p>
+
   <section class="cinta al-imprimir-oculto">
     <h2>Si al leerla entera se te ha puesto mala cara</h2>
     <p>
@@ -241,8 +270,7 @@
           <li><a href="/tarifas/">Tarifas</a></li>
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
-          <li><a href="/mapa/">El mapa de lo que evitas</a></li>
-          <li><a href="/la-cuenta/">La cuenta que no haces</a></li>
+          <li><a href="/herramientas/">Herramientas gratis</a></li>
         </ul>
       </div>
       <div>

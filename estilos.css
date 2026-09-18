@@ -464,6 +464,11 @@ p strong, li strong, dd strong, .tarjeta strong{
   margin:0 0 20px;
 }
 .caja h3{margin-top:0}
+/* Un título dentro de una caja es un h2 cuando el orden de encabezados
+   lo pide —un h3 detrás de un h1 es un salto y los lectores de pantalla
+   lo anuncian mal—, pero visualmente sigue siendo el título de la caja,
+   no una sección de la página. Así que hereda el tamaño del h3. */
+.caja h2{margin:0 0 8px;font-size:1.1rem;line-height:1.25}
 .caja p:last-child{margin-bottom:0}
 
 .datos{
