@@ -801,65 +801,50 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
    sumarla. */
 .boton.grande{font-size:17px;padding:15px 28px}
 
-/* --- 9.1 bis. La barra fija del móvil ---------------------------
-   Solo en móvil, y solo pasada la primera pantalla. Arriba del todo
-   no aparece porque ahí ya está el botón del hero y taparía parte de
-   lo que hay que leer antes de decidir.
+/* --- 9.1 bis. La llamada de en medio y la disponibilidad --------
+   Aquí había una barra fija con el botón de reserva. Se quitó, y no
+   por estética: la única recopilación honesta de experimentos con
+   barras fijas —treinta y tres pruebas A/B con los fracasos dentro—
+   da un 27 % de aciertos, un 18 % de resultados peores y ningún
+   efecto positivo fuera de las páginas de carrito y pago. Esto no es
+   un carrito.
 
-   Se mueve sola con el scroll, sin JavaScript. Donde no exista esa
-   función CSS, se queda visible desde el principio, que tampoco está
-   mal: es el comportamiento que tienen las de todo el sector.
+   En su lugar, dos piezas. Una llamada a mitad de página, que es la
+   que mejor relación coste/beneficio tiene y la que no había, y un
+   bloque de disponibilidad real justo antes del cierre.
    ---------------------------------------------------------------- */
 
-.barra-movil{display:none}
-
-@media (max-width:720px){
-  .barra-movil{
-    display:block;
-    position:fixed;left:0;right:0;bottom:0;z-index:55;
-    background:var(--surface);
-    border-top:1px solid var(--line-strong);
-    box-shadow:0 -6px 24px -18px rgba(37,35,31,.6);
-    padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
-  }
-  .barra-movil > div{
-    display:flex;align-items:center;gap:14px;
-    max-width:680px;margin:0 auto;
-  }
-  .barra-movil p{
-    margin:0;flex:1 1 auto;min-width:0;line-height:1.22;
-    font-size:14px;color:var(--ink-2);
-  }
-  .barra-movil p strong{
-    display:block;color:var(--ink);font-size:15px;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .barra-movil p span{
-    display:block;font-size:12.5px;color:var(--muted);
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .barra-movil .boton{
-    flex:0 0 auto;width:auto;padding:12px 22px;font-size:15.5px;margin:0;
-    white-space:nowrap;
-  }
-  /* El pie necesita hueco por debajo o la barra le tapa la última
-     línea. */
-  footer{padding-bottom:78px}
+.llamada{
+  background:var(--accent-soft);
+  border-radius:14px;
+  padding:24px 26px 22px;
+  margin:38px 0;
 }
-
-@supports (animation-timeline:scroll()){
-  @media (max-width:720px) and (prefers-reduced-motion:no-preference){
-    .barra-movil{
-      animation:asomar linear both;
-      animation-timeline:scroll(root block);
-      animation-range:340px 480px;
-    }
-    @keyframes asomar{
-      from{transform:translateY(110%);visibility:hidden}
-      to{transform:translateY(0);visibility:visible}
-    }
-  }
+.llamada > p:first-child{
+  font-family:Archivo,sans-serif;
+  font-size:clamp(1.02rem,2.5vw,1.2rem);font-weight:600;
+  letter-spacing:-.015em;line-height:1.35;
+  color:var(--ink);margin:0 0 16px;max-width:42ch;text-wrap:balance;
 }
+.llamada .accion{margin:0 0 10px}
+.llamada .tranquiliza{margin:0}
+@media (max-width:520px){.llamada{padding:20px 20px 18px}}
+
+/* La disponibilidad. Escasez de la única clase que puede usar un
+   psicólogo colegiado: información de agenda y no técnica de presión.
+   Sin contador, sin rojo, sin números que bajen solos. El artículo 13
+   del código deontológico prohíbe las maniobras de captación
+   contrarias a la ley, y la escasez fabricada está en la lista negra
+   de la directiva europea de prácticas desleales. Además, cuando el
+   público es vulnerable por enfermedad mental, esa misma directiva
+   manda juzgar la práctica desde la perspectiva de ese grupo. */
+
+.disponibilidad{
+  border-left:3px solid var(--accent-borde);
+  padding:4px 0 4px 18px;
+  margin:30px 0 26px;
+}
+.disponibilidad p{margin:0;color:var(--ink-2);font-size:16px;line-height:1.55;max-width:58ch}
 
 /* --- 9.2 La franja de confianza ---------------------------------
    Cuatro datos comprobables y ni uno inventado. En este sector la
@@ -1733,4 +1718,85 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 @media print{
   .barra-lectura{display:none}
   .dibujo .eje,.dibujo .trazo-coste,.dibujo .trazo-alivio{stroke-dasharray:none !important}
+}
+
+/* ============================================================
+   17. Los iconos se dibujan, y los pasos se encadenan
+   ------------------------------------------------------------
+   Dos piezas más de movimiento, las dos atadas al scroll y las dos
+   dentro de @supports: donde no existan, todo se ve igual pero
+   quieto. Ninguna tapa nada, ninguna mueve nada de sitio.
+   ============================================================ */
+
+/* --- 17.1 Los iconos de las tarjetas se trazan solos ------------
+   Es la misma técnica que los diagramas: pathLength="1" en cada
+   trazo del SVG y un recorrido de la línea. Aquí funciona bien
+   porque los iconos están dibujados a mano y con un trazo continuo:
+   se ve el gesto de dibujarlos, que es exactamente lo que un icono
+   de librería no tiene.
+
+   Solo en las tarjetas de área y en las insignias. En la ficha
+   técnica y en las listas no: ahí el icono es una etiqueta que hay
+   que poder leer de golpe, no un adorno. */
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .tarjeta > .icono *,
+    .insignia .icono *{
+      stroke-dasharray:1;
+      animation:trazar-icono linear both;
+      animation-timeline:view();
+      animation-range:entry 14% entry 78%;
+    }
+    @keyframes trazar-icono{
+      from{stroke-dashoffset:1}
+      to{stroke-dashoffset:0}
+    }
+  }
+}
+
+/* --- 17.2 La línea que une los pasos ----------------------------
+   Los pasos numerados tienen ahora un hilo vertical que los
+   atraviesa y que se va llenando conforme bajas. Hace dos cosas: los
+   convierte en una secuencia de verdad —antes eran cuatro cajas con
+   un número— y da una sensación de avance que es justo de lo que
+   habla el contenido.
+
+   El hilo se dibuja con un pseudoelemento sobre la lista, no con un
+   elemento nuevo en el HTML. */
+
+.pasos{position:relative}
+/* Las bolas numeradas van por encima del hilo, no debajo: si no, la
+   línea las atraviesa y parece que el número está tachado. */
+.pasos li::before{z-index:1}
+.pasos li{position:relative}
+.pasos::before,
+.pasos::after{
+  content:"";position:absolute;left:15px;top:14px;bottom:14px;width:2px;
+  border-radius:2px;
+}
+.pasos::before{background:var(--line)}
+.pasos::after{background:var(--accent-2);transform-origin:50% 0;transform:scaleY(0)}
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .pasos::after{
+      animation:llenar linear both;
+      animation-timeline:view();
+      animation-range:entry 55% cover 72%;
+    }
+    @keyframes llenar{to{transform:scaleY(1)}}
+  }
+}
+/* Sin scroll-driven, el hilo se queda lleno: mejor una secuencia
+   marcada que un hilo gris a medias que no significa nada. */
+@supports not (animation-timeline:view()){
+  .pasos::after{transform:scaleY(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .pasos::after{transform:scaleY(1)}
+}
+@media print{
+  .pasos::after{transform:scaleY(1)}
+  .tarjeta > .icono *,.insignia .icono *{stroke-dasharray:none !important}
 }

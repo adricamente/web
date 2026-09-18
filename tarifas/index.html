@@ -47,7 +47,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=21">
+  <link rel="stylesheet" href="/estilos.css?v=23">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -98,15 +98,14 @@
   <h1>Cuánto cuesta y qué incluye</h1>
 
   <p class="grande">
-    <strong>Un precio, sin bonos, sin paquetes y sin permanencia.</strong>
+    <strong>Un precio</strong>, sin bonos, sin paquetes y <strong>sin permanencia</strong>.
     Está aquí escrito para que no tengas que escribirme a preguntarlo.
   </p>
 
   <div class="tarifa">
     <p class="precio">30&nbsp;€ <span>por sesión de 60 minutos</span></p>
     <p>
-      <strong>La sesión informativa de treinta minutos, la primera, no se
-      cobra.</strong>
+      La sesión informativa de treinta minutos, la primera, <strong>no se cobra</strong>.
     </p>
     <ul>
       <li>Sesión de una hora por videollamada.</li>
@@ -127,14 +126,11 @@
   <h2>El pago</h2>
   <p>
     Por transferencia, antes de cada sesión. Los datos te los doy al
-    reservar. <strong>No se guarda ningún dato bancario tuyo en esta
-    web.</strong>
+    reservar. No se guarda <strong>ningún dato bancario</strong> tuyo en esta web.
   </p>
   <p>
     No hay bonos ni descuentos por comprometerte a un número de sesiones.
-    <strong>Un descuento por comprar varias sesiones por adelantado es un
-    incentivo para seguir en terapia decidido antes de haberte
-    evaluado</strong>, y eso no me parece que deba venderse.
+    Un descuento por comprar varias sesiones por adelantado es un <strong>incentivo para seguir</strong> en terapia decidido <strong>antes de haberte evaluado</strong>, y eso no me parece que deba venderse.
   </p>
 
   <h2>Cancelaciones</h2>
@@ -144,9 +140,7 @@
     la sesión se considera realizada.
   </p>
   <p>
-    No es por castigar: ese hueco ya no se puede dar a nadie. <strong>Si te
-    pasa algo serio y no has podido avisar, dímelo y lo hablamos como
-    personas.</strong>
+    No es por castigar: ese hueco ya no se puede dar a nadie. Si te pasa algo serio y no has podido avisar, <strong>dímelo</strong> y lo hablamos <strong>como personas</strong>.
   </p>
 
   <h2>Preguntas sobre el dinero</h2>
@@ -163,7 +157,7 @@
 
     <details>
       <summary>¿El precio va a subir?</summary>
-      <p><strong>Sí, cuando termine el máster y me colegie.</strong> Lo digo antes de que lo preguntes porque me parece lo justo. A quien ya esté en tratamiento conmigo en ese momento le mantendré un precio de continuidad durante un tiempo, y se lo diré el primer día, no cuando vaya a subirlo.</p>
+      <p><strong>Sí</strong>, cuando termine el máster y me colegie. Lo digo antes de que lo preguntes porque me parece lo justo. A quien ya esté en tratamiento conmigo en ese momento le mantendré un precio de continuidad durante un tiempo, y se lo diré el primer día, no cuando vaya a subirlo.</p>
     </details>
 
     <details>
@@ -173,13 +167,13 @@
 
     <details>
       <summary>¿Hay alguna ayuda si no me lo puedo permitir?</summary>
-      <p>Por 30 € ya estoy en la parte baja del mercado y no puedo bajar más. <strong>Lo que sí puedo hacer es orientarte</strong>: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la sesión informativa y te digo qué hay en tu zona.</p>
+      <p>Por 30 € ya estoy en la parte baja del mercado y no puedo bajar más. Lo que sí puedo hacer es <strong>orientarte</strong>: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la sesión informativa y te digo qué hay en tu zona.</p>
     </details>
   </div>
 
   <section class="cinta">
     <h2>La primera es gratis</h2>
-    <p>Treinta minutos para contarme qué te trae. <strong>Si después decides que no, no pasa nada y no te va a llamar nadie.</strong></p>
+    <p>Treinta minutos para contarme qué te trae. Si después decides que no, <strong>no pasa nada</strong> y no te va a <strong>llamar nadie</strong>.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
@@ -255,19 +249,17 @@
 
 </div>
 
-<!-- La barra fija del móvil. Aparece pasada la primera pantalla y se
-     queda abajo el resto del recorrido. En el escritorio no existe:
-     allí el botón de la cabecera está siempre a la vista. Es el
-     patrón que repiten cinco de las ocho webs del sector, y la razón
-     es simple: el visitante decidido no debería tener que buscar
-     nunca dónde se pide cita. -->
-<div class="barra-movil" aria-hidden="false">
-  <div>
-    <p><strong>Sesión informativa</strong><span>Gratis &middot; 30 min &middot; online</span></p>
-    <a class="boton" onclick="window.medir&&window.medir('clic_reserva_movil')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar</a>
-  </div>
-</div>
+<!-- Aquí había una barra fija con el botón de reserva. Fuera, y no
+     por estética: la única recopilación honesta que encontré de
+     experimentos con barras fijas —treinta y tres pruebas A/B, con
+     los fracasos incluidos— da un 27 % de aciertos y un 18 % de
+     resultados peores, y ningún efecto positivo fuera de las páginas
+     de carrito y pago. Esto no es un carrito. Le estaba costando
+     píxeles permanentes en el dispositivo donde menos sobran, a
+     cambio de una probabilidad baja de aportar algo.
+
+     En su lugar va una llamada a mitad de página, que es la que
+     mejor relación coste/beneficio tiene y la que no había. -->
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();

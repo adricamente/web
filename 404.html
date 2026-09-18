@@ -48,7 +48,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=21">
+  <link rel="stylesheet" href="/estilos.css?v=23">
 </head>
 
 <body>
@@ -176,19 +176,17 @@
 
 </div>
 
-<!-- La barra fija del móvil. Aparece pasada la primera pantalla y se
-     queda abajo el resto del recorrido. En el escritorio no existe:
-     allí el botón de la cabecera está siempre a la vista. Es el
-     patrón que repiten cinco de las ocho webs del sector, y la razón
-     es simple: el visitante decidido no debería tener que buscar
-     nunca dónde se pide cita. -->
-<div class="barra-movil" aria-hidden="false">
-  <div>
-    <p><strong>Sesión informativa</strong><span>Gratis &middot; 30 min &middot; online</span></p>
-    <a class="boton" onclick="window.medir&&window.medir('clic_reserva_movil')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar</a>
-  </div>
-</div>
+<!-- Aquí había una barra fija con el botón de reserva. Fuera, y no
+     por estética: la única recopilación honesta que encontré de
+     experimentos con barras fijas —treinta y tres pruebas A/B, con
+     los fracasos incluidos— da un 27 % de aciertos y un 18 % de
+     resultados peores, y ningún efecto positivo fuera de las páginas
+     de carrito y pago. Esto no es un carrito. Le estaba costando
+     píxeles permanentes en el dispositivo donde menos sobran, a
+     cambio de una probabilidad baja de aportar algo.
+
+     En su lugar va una llamada a mitad de página, que es la que
+     mejor relación coste/beneficio tiene y la que no había. -->
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();

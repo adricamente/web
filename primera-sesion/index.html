@@ -47,7 +47,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=21">
+  <link rel="stylesheet" href="/estilos.css?v=23">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -111,15 +111,14 @@
          alt="Adrián Cuñat Andrés con la mano en la barbilla, de frente, escuchando">
     <div class="texto">
   <p>
-    <strong>Esto lo lleva una persona, no un formulario.</strong> Quien
+    Esto lo lleva <strong>una persona</strong>, no un formulario. Quien
     se va a conectar al otro lado soy yo, y el primer cuarto de hora
     consiste en que hables tú y yo escuche. No hay guion que seguir ni
     cuestionario que rellenar.
   </p>
   <p>
     Y si estás pensando «ya, pero es que no sé ni por dónde empezar»,
-    tranquilo: <strong>esa es exactamente la primera pregunta que te voy
-    a hacer yo</strong>, y se responde hablando.
+    tranquilo: esa es exactamente <strong>la primera pregunta</strong> que te voy a hacer yo, y se responde hablando.
   </p>
     </div>
   </div>
@@ -131,7 +130,7 @@
     abre en el navegador. Cinco minutos antes te llega un recordatorio.
   </p>
   <p>
-    <strong>No tienes que preparar nada.</strong> Ni pensar cómo
+    No tienes que <strong>preparar nada</strong>. Ni pensar cómo
     explicarlo, ni ordenarlo, ni traerlo escrito. Si llegas sin saber por
     dónde empezar, empezamos por ahí: es un sitio perfectamente normal
     desde el que arrancar.
@@ -165,7 +164,7 @@
       <strong>Luego hablas tú, sin guion</strong>
       Qué te trae, desde cuándo, y qué es lo que más te está molestando
       ahora mismo. No hace falta que sea ordenado ni completo.
-      <strong>No voy a interrumpirte para tomar notas.</strong>
+      <strong>No voy a interrumpirte</strong> para tomar notas.
     </li>
     <li>
       <strong>Te hago tres o cuatro preguntas</strong>
@@ -177,8 +176,7 @@
     <li>
       <strong>Y termino diciéndote lo que pienso</strong>
       Si creo que puedo ayudarte, te digo cómo lo trabajaríamos y cuánto
-      suele llevar algo así. <strong>Y si creo que no soy el sitio, te lo
-      digo y te oriento a dónde ir.</strong> Pasa, y cuando pasa lo digo
+      suele llevar algo así. Y si creo que no soy el sitio, <strong>te lo digo</strong> y te oriento a dónde ir. Pasa, y cuando pasa lo digo
       el primer día, no el quinto.
     </li>
   </ol>
@@ -234,9 +232,19 @@
     </p>
   </div>
 
+  <div class="disponibilidad">
+    <p>
+      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      las hago en dos ratos fijos, porque el resto del horario es de
+      pacientes. Si esta semana ya no queda ninguno, el calendario te
+      ofrece el siguiente: no hay lista de espera ni hay que escribir
+      para preguntar.
+    </p>
+  </div>
+
   <section class="cinta">
     <h2>Ya sabes lo que va a pasar</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, y ahora sin sorpresas. <strong>Sigues sin tener que decidir nada ese día.</strong></p>
+    <p>Treinta minutos, <strong>gratis</strong>, y ahora sin sorpresas. Sigues sin tener que <strong>decidir nada</strong> ese día.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
@@ -313,19 +321,17 @@
 
 </div>
 
-<!-- La barra fija del móvil. Aparece pasada la primera pantalla y se
-     queda abajo el resto del recorrido. En el escritorio no existe:
-     allí el botón de la cabecera está siempre a la vista. Es el
-     patrón que repiten cinco de las ocho webs del sector, y la razón
-     es simple: el visitante decidido no debería tener que buscar
-     nunca dónde se pide cita. -->
-<div class="barra-movil" aria-hidden="false">
-  <div>
-    <p><strong>Sesión informativa</strong><span>Gratis &middot; 30 min &middot; online</span></p>
-    <a class="boton" onclick="window.medir&&window.medir('clic_reserva_movil')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar</a>
-  </div>
-</div>
+<!-- Aquí había una barra fija con el botón de reserva. Fuera, y no
+     por estética: la única recopilación honesta que encontré de
+     experimentos con barras fijas —treinta y tres pruebas A/B, con
+     los fracasos incluidos— da un 27 % de aciertos y un 18 % de
+     resultados peores, y ningún efecto positivo fuera de las páginas
+     de carrito y pago. Esto no es un carrito. Le estaba costando
+     píxeles permanentes en el dispositivo donde menos sobran, a
+     cambio de una probabilidad baja de aportar algo.
+
+     En su lugar va una llamada a mitad de página, que es la que
+     mejor relación coste/beneficio tiene y la que no había. -->
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();

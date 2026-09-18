@@ -47,7 +47,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=21">
+  <link rel="stylesheet" href="/estilos.css?v=23">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -102,9 +102,9 @@
 
   <p class="migas"><a href="/">Inicio</a> &rsaquo; <a href="/areas/">Áreas</a> &rsaquo; Estado de ánimo bajo</p>
 
-  <p class="insignia"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 20.5h17"/><path d="M3.5 7l4.2 3.4 3.8-1.6 3.6 4.6 5.4 3.4"/></svg></p>
+  <p class="insignia"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.5 20.5h17"/><path pathLength="1" d="M3.5 7l4.2 3.4 3.8-1.6 3.6 4.6 5.4 3.4"/></svg></p>
   <h1>Terapia para el estado de ánimo bajo</h1>
-  <p class="grande"><strong>Cuando el ánimo baja, la vida se encoge: se hacen menos cosas, y hacer menos cosas baja más el ánimo.</strong> El trabajo consiste en meter la mano en ese círculo por el sitio por el que se puede.</p>
+  <p class="grande">Cuando el ánimo baja, <strong>la vida se encoge</strong>: se hacen menos cosas, y hacer menos cosas <strong>baja más el ánimo</strong>. El trabajo consiste en meter la mano en ese círculo por el sitio por el que se puede.</p>
 
   <h2>Cómo se ve por dentro</h2>
   <ul class="senales">
@@ -208,7 +208,7 @@
 
     <details>
       <summary>No tengo ganas de nada, ¿cómo voy a tener ganas de ir a terapia?</summary>
-      <p>No hace falta tenerlas. Es más: esperar a tener ganas es justo lo que mantiene el bache, porque las ganas vienen <em>después</em> de empezar a hacer, no antes. <strong>Se empieza sin ganas, a propósito y en pequeño.</strong></p>
+      <p>No hace falta tenerlas. Es más: esperar a tener ganas es justo lo que mantiene el bache, porque las ganas vienen <em>después</em> de empezar a hacer, no antes. Se empieza <strong>sin ganas</strong>, a propósito y <strong>en pequeño</strong>.</p>
     </details>
 
     <details>
@@ -220,6 +220,15 @@
       <summary>¿Y si no tengo un motivo claro para estar así?</summary>
       <p>Es lo más frecuente. Casi nunca hay un motivo único y limpio: hay un montón de pequeñas retiradas que se han ido sumando. Por eso se mira qué has dejado de hacer, no solo qué te pasó.</p>
     </details>
+  </div>
+
+  <div class="llamada">
+    <p>Si te has reconocido en casi todo lo de arriba, lo siguiente no es leer más: es contarlo en voz alta durante treinta minutos.</p>
+    <p class="accion">
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+    </p>
+    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
 
   <h2>Cuándo esto no es lo tuyo</h2>
@@ -242,7 +251,7 @@
 
   <section class="cinta">
     <h2>Si te has reconocido</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te pasa y yo te diga con honestidad si creo que puedo ayudarte. <strong>Si creo que no, te oriento a dónde ir.</strong></p>
+    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te pasa y yo te diga con honestidad si creo que puedo ayudarte. Si creo que no, <strong>te oriento</strong> a dónde ir.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
@@ -319,19 +328,17 @@
 
 </div>
 
-<!-- La barra fija del móvil. Aparece pasada la primera pantalla y se
-     queda abajo el resto del recorrido. En el escritorio no existe:
-     allí el botón de la cabecera está siempre a la vista. Es el
-     patrón que repiten cinco de las ocho webs del sector, y la razón
-     es simple: el visitante decidido no debería tener que buscar
-     nunca dónde se pide cita. -->
-<div class="barra-movil" aria-hidden="false">
-  <div>
-    <p><strong>Sesión informativa</strong><span>Gratis &middot; 30 min &middot; online</span></p>
-    <a class="boton" onclick="window.medir&&window.medir('clic_reserva_movil')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar</a>
-  </div>
-</div>
+<!-- Aquí había una barra fija con el botón de reserva. Fuera, y no
+     por estética: la única recopilación honesta que encontré de
+     experimentos con barras fijas —treinta y tres pruebas A/B, con
+     los fracasos incluidos— da un 27 % de aciertos y un 18 % de
+     resultados peores, y ningún efecto positivo fuera de las páginas
+     de carrito y pago. Esto no es un carrito. Le estaba costando
+     píxeles permanentes en el dispositivo donde menos sobran, a
+     cambio de una probabilidad baja de aportar algo.
+
+     En su lugar va una llamada a mitad de página, que es la que
+     mejor relación coste/beneficio tiene y la que no había. -->
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
