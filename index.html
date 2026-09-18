@@ -61,7 +61,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=20">
+  <link rel="stylesheet" href="/estilos.css?v=21">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -176,7 +176,7 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
       <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Pedir cita</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
   </header>
 
@@ -197,13 +197,16 @@
       a largo</strong>.
     </p>
     <div class="acciones">
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Pedir cita &middot; primera sesión gratis</a>
-      <a class="boton secundario" onclick="window.medir&&window.medir('clic_mapa')"
-         href="/mapa/">Empezar yo solo con el mapa</a>
+      <a class="boton grande" onclick="window.medir&&window.medir('clic_reserva')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </div>
-    <p class="apunte" style="margin-top:14px">
-      <a href="/primera-sesion/">Qué pasa exactamente en la primera sesión &rarr;</a>
+    <p class="tranquiliza">
+      30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta
+    </p>
+    <p class="apunte" style="margin-top:16px">
+      <a href="/primera-sesion/">Qué pasa exactamente en esos treinta minutos &rarr;</a>
+      <span class="separa">&middot;</span>
+      <a onclick="window.medir&&window.medir('clic_mapa')" href="/mapa/">O empieza tú solo con el mapa</a>
     </p>
   </section>
 
@@ -476,8 +479,9 @@
     <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y yo te diga honestamente si creo que puedo ayudarte. <strong>No es terapia y no tienes que decidir nada ese día.</strong></p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar mi sesión</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
+    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Las sesiones son online y solo para residentes en España, en el centro sanitario Neurococos.</p>
   </section>
 
@@ -547,6 +551,20 @@
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
+</div>
+
+<!-- La barra fija del móvil. Aparece pasada la primera pantalla y se
+     queda abajo el resto del recorrido. En el escritorio no existe:
+     allí el botón de la cabecera está siempre a la vista. Es el
+     patrón que repiten cinco de las ocho webs del sector, y la razón
+     es simple: el visitante decidido no debería tener que buscar
+     nunca dónde se pide cita. -->
+<div class="barra-movil" aria-hidden="false">
+  <div>
+    <p><strong>Sesión informativa</strong><span>Gratis &middot; 30 min &middot; online</span></p>
+    <a class="boton" onclick="window.medir&&window.medir('clic_reserva_movil')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar</a>
+  </div>
 </div>
 
 <script>

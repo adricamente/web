@@ -47,7 +47,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.css?v=20">
+  <link rel="stylesheet" href="/estilos.css?v=21">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -88,7 +88,7 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
       <a class="cita" onclick="window.medir&&window.medir('clic_reserva')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Pedir cita</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
   </header>
 
@@ -205,7 +205,7 @@
       <dd>Semanal o quincenal, lo eliges tú</dd>
     </div>
     <div>
-      <dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15.4 7.4H10.6a2.8 2.8 0 0 0 0 5.6h2.8a2.8 2.8 0 0 1 0 5.6H8.6"/><path d="M12 4.6v2.8M12 18.6v2.8"/></svg>Precio</dt>
+      <dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18.2 6.9A7.6 7.6 0 1 0 18.2 17.1"/><path d="M4.6 10.4h9.2M4.6 13.6h7.8"/></svg>Precio</dt>
       <dd>30&nbsp;€ la sesión. La informativa no se cobra. <a href="/tarifas/">Al detalle</a></dd>
     </div>
     <div>
@@ -323,8 +323,9 @@
     <p>Treinta minutos, <strong>gratis</strong>, para ver qué te pasa y decirte con honestidad si creo que puedo ayudarte.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar mi sesión</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
+    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">¿Prefieres empezar tú solo? <a href="/mapa/">El mapa de lo que evitas</a> son seis preguntas y diez minutos, y no tienes que dar tu correo.</p>
   </section>
 
@@ -394,6 +395,20 @@
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
+</div>
+
+<!-- La barra fija del móvil. Aparece pasada la primera pantalla y se
+     queda abajo el resto del recorrido. En el escritorio no existe:
+     allí el botón de la cabecera está siempre a la vista. Es el
+     patrón que repiten cinco de las ocho webs del sector, y la razón
+     es simple: el visitante decidido no debería tener que buscar
+     nunca dónde se pide cita. -->
+<div class="barra-movil" aria-hidden="false">
+  <div>
+    <p><strong>Sesión informativa</strong><span>Gratis &middot; 30 min &middot; online</span></p>
+    <a class="boton" onclick="window.medir&&window.medir('clic_reserva_movil')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar</a>
+  </div>
 </div>
 
 <script>

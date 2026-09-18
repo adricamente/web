@@ -780,6 +780,87 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
   text-underline-offset:4px;
 }
 
+/* La línea que va justo debajo del botón. Un botón solo dice "pulsa";
+   esta línea responde las cuatro preguntas que frenan a alguien en el
+   medio segundo anterior a pulsarlo: cuánto dura, dónde es, si se
+   compromete a algo y si le van a pedir la tarjeta.
+
+   Va en tabular-nums porque lleva cifras y porque, alineada, se lee
+   como una ficha y no como una frase. */
+.tranquiliza{
+  font-size:14.5px;line-height:1.5;color:var(--muted);
+  font-variant-numeric:tabular-nums;
+  margin:12px 0 0;max-width:46ch;
+}
+.cinta .tranquiliza{margin:-8px 0 0}
+.apunte .separa{color:var(--line-strong);margin:0 7px}
+
+/* El botón del hero, un punto más grande que el resto. Es la única
+   acción de la primera pantalla desde que el mapa pasó a ser un
+   enlace: dos botones ahí arriba repartían la atención en vez de
+   sumarla. */
+.boton.grande{font-size:17px;padding:15px 28px}
+
+/* --- 9.1 bis. La barra fija del móvil ---------------------------
+   Solo en móvil, y solo pasada la primera pantalla. Arriba del todo
+   no aparece porque ahí ya está el botón del hero y taparía parte de
+   lo que hay que leer antes de decidir.
+
+   Se mueve sola con el scroll, sin JavaScript. Donde no exista esa
+   función CSS, se queda visible desde el principio, que tampoco está
+   mal: es el comportamiento que tienen las de todo el sector.
+   ---------------------------------------------------------------- */
+
+.barra-movil{display:none}
+
+@media (max-width:720px){
+  .barra-movil{
+    display:block;
+    position:fixed;left:0;right:0;bottom:0;z-index:55;
+    background:var(--surface);
+    border-top:1px solid var(--line-strong);
+    box-shadow:0 -6px 24px -18px rgba(37,35,31,.6);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .barra-movil > div{
+    display:flex;align-items:center;gap:14px;
+    max-width:680px;margin:0 auto;
+  }
+  .barra-movil p{
+    margin:0;flex:1 1 auto;min-width:0;line-height:1.22;
+    font-size:14px;color:var(--ink-2);
+  }
+  .barra-movil p strong{
+    display:block;color:var(--ink);font-size:15px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .barra-movil p span{
+    display:block;font-size:12.5px;color:var(--muted);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .barra-movil .boton{
+    flex:0 0 auto;width:auto;padding:12px 22px;font-size:15.5px;margin:0;
+    white-space:nowrap;
+  }
+  /* El pie necesita hueco por debajo o la barra le tapa la última
+     línea. */
+  footer{padding-bottom:78px}
+}
+
+@supports (animation-timeline:scroll()){
+  @media (max-width:720px) and (prefers-reduced-motion:no-preference){
+    .barra-movil{
+      animation:asomar linear both;
+      animation-timeline:scroll(root block);
+      animation-range:340px 480px;
+    }
+    @keyframes asomar{
+      from{transform:translateY(110%);visibility:hidden}
+      to{transform:translateY(0);visibility:visible}
+    }
+  }
+}
+
 /* --- 9.2 La franja de confianza ---------------------------------
    Cuatro datos comprobables y ni uno inventado. En este sector la
    tentación es poner «+500 pacientes» y aquí eso no se puede: no
