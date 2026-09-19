@@ -997,7 +997,15 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
   color:var(--accent);
   margin:0 0 6px;
 }
-.precio span{font-size:1.05rem;font-weight:700;color:var(--ink-2);letter-spacing:0}
+/* El <span> de «por sesión de 60 minutos», y SOLO ese.
+   Aquí hubo un fallo feo y conviene dejarlo escrito: la cifra se
+   envolvió en un <span class="cifra"> para poder animarla contando, y
+   este selector —`.precio span`, sin más— se la tragó. El 30 dejó de
+   ser azul y grande y pasó a ser gris y pequeño, con la tipografía
+   del subtítulo. Un selector de descendencia sin acotar es lo que
+   pasa cuando el marcado cambia y la hoja no se entera.
+   Acotado a los hijos directos que NO son la cifra. */
+.precio > span:not(.cifra){font-size:1.05rem;font-weight:700;color:var(--ink-2);letter-spacing:0}
 
 /* Preguntas frecuentes con <details>. Se abren sin una línea de
    JavaScript y el buscador lee el contenido aunque estén cerradas. */
@@ -1596,6 +1604,11 @@ a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
   .anota{white-space:normal;max-width:44vw;text-align:center;line-height:1.25}
   .anota.izq{text-align:left}
   .anota.der{text-align:right}
+  /* Y las que son una frase entera, fuera. En una pantalla de 390 un
+     rótulo de cinco palabras pegado al borde derecho se parte en seis
+     líneas y tapa el dibujo que venía a explicar. Lo que dicen está
+     escrito, entero, en el pie de la figura. */
+  .anota.opcional{display:none}
 }
 @media (max-width:430px){
   .anota{font-size:11px;padding:1px 3px}
@@ -2412,66 +2425,24 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
 
 @supports (animation-timeline:view()){
   @media (prefers-reduced-motion:no-preference){
-    .dibujo .eje,
-    .dibujo .trazo-coste,
-    .dibujo .trazo-alivio{
-      stroke-dasharray:1;
-      animation:trazar linear both;
-      animation-timeline:view();
-    }
-    /* Esta no se traza: un dashoffset animado sobre un patrón
-       normalizado arrastra los puntos en vez de dibujarlos. Aparece,
-       como las barras y los nodos, que es lo que hace el resto de
-       piezas que no son un recorrido. */
-    .dibujo .trazo-flojo{
-      animation:marcar linear both;
-      animation-timeline:view();
-    }
-    /* El recorrido terminaba con la figura todavía en el cuarto
-       inferior de la pantalla: cuando el lector la tenía delante,
-       ya estaba dibujada. Ahora ocurre mientras cruza el centro. */
-    /* Terminan antes: con el rango anterior la figura entraba en
-       pantalla vacía y se quedaba así durante bastante scroll, que
-       en un móvil es una caja en blanco a media lectura. */
-    .dibujo .eje{animation-range:cover 26% cover 52%}
-    .dibujo .trazo-coste{animation-range:cover 36% cover 68%}
-    .dibujo .trazo-alivio{animation-range:cover 44% cover 76%}
-    .dibujo .trazo-flojo{animation-range:cover 36% cover 64%}
-    /* Las barras y los nodos no se pueden "trazar": aparecen, y en
-       orden, que es lo que cuenta la pieza. */
-    .dibujo .celda-llena,.dibujo .nodo,.dibujo .nodo-txt{
-      animation:marcar linear both;
-      animation-timeline:view();
-      animation-range:cover 32% cover 60%;
-    }
-    @keyframes trazar{
-      from{stroke-dashoffset:1}
-      to{stroke-dashoffset:0}
-    }
-    /* Las marcas de cada evento aparecen con el escalón que les
-       corresponde, no todas de golpe al principio. */
-    .dibujo .marca-evento{
-      animation:marcar linear both;
-      animation-timeline:view();
-      animation-range:cover 30% cover 62%;
-    }
-    @keyframes marcar{from{opacity:0}to{opacity:1}}
-    /* El precio. Es la cifra que decide media página y hasta ahora
-       entraba igual que un párrafo. Crece desde un punto por debajo
-       y la marca de la barra sube después: dos tiempos, no uno. */
+    /* El precio y la marca de su barra se quedan atados al scroll: un
+       estado intermedio aquí es una cifra un 6 % más pequeña, que no
+       se lee como un fallo. Lo que sí se leía como un fallo era un
+       dibujo a medias, y eso se ha ido abajo, a la sección 16.3 bis. */
     .tarifa .precio{
+      transform-origin:left center;
       animation:entrar-precio linear both;
       animation-timeline:view();
       animation-range:entry 30% cover 40%;
     }
     @keyframes entrar-precio{
-      from{opacity:0;transform:translateY(10px) scale(.94)}
-      to{opacity:1;transform:none}
+      from{transform:scale(.88)}
+      to{transform:none}
     }
     .tarifa .barra-mercado .yo{
       animation:subir-marca linear both;
       animation-timeline:view();
-      animation-range:cover 36% cover 64%;
+      animation-range:cover 22% cover 42%;
     }
     @keyframes subir-marca{
       from{transform:scaleY(0)}
@@ -2589,116 +2560,139 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
     .figura .leyenda li,.figura .leyenda.numerada li{
       animation:subir-tarjeta linear both;
       animation-timeline:view();
-      animation-range:cover 38% cover 68%;
+      animation-range:cover 30% cover 50%;
     }
   }
 }
 
-/* --- 16.4 ter. Las láminas, por dentro --------------------------
-   Las cinco láminas nuevas —la semana, el recorrido, el bono, los
-   treinta minutos y el umbral— no son trazos que se dibujen: son
-   masas, casillas y cajas. Trazarlas no valía; lo que tienen que
-   hacer es CONSTRUIRSE, en el orden en que se leen.
+/* --- 16.3 bis. Los dibujos se dibujan, y se terminan -------------
+   Esto estaba atado al scroll con animation-timeline y ha habido que
+   cambiarlo entero. La razón, en una frase: **una animación atada al
+   scroll solo avanza mientras se hace scroll**. Si alguien llega a un
+   dibujo y para a mirarlo —que es exactamente lo que hace cualquiera
+   al llegar a un dibujo—, el dibujo se queda donde estaba. A medias.
 
-   Y hay una regla que no se rompe: nada que contenga texto parte de
-   opacidad cero. Lo que se mueve son rectángulos, círculos y barras.
-   Los rótulos ya están puestos cuando llega el dibujo. */
+   En el móvil colaba de milagro, porque se baja con el dedo y se pasa
+   de largo. En escritorio, con la rueda y una ventana alta, la figura
+   entraba entera de golpe y se quedaba cortada por la mitad: la línea
+   del coste terminada a media anchura, la mancha rayada continuando
+   sola, y el trazo del alivio interrumpido. Parecía un fallo de
+   maquetación, y con razón, porque para quien lo mira lo es.
 
-@supports (animation-timeline:view()){
-  @media (prefers-reduced-motion:no-preference){
+   Se ajustaron los rangos tres veces para que terminaran antes. No es
+   arreglable por ahí: siempre hay una posición de parada en la que el
+   dibujo está a medias, porque el recorrido ES la posición.
 
-    /* La semana. Las ciento sesenta y ocho casillas grises no se
-       animan —ciento sesenta y ocho animaciones para que no se note
-       ninguna—: lo que entra es lo que significa algo. Primero la
-       sesión, con un golpe seco; después los ocho ratos de entre
-       semana, uno detrás de otro. */
-    .dibujo .celda-sesion{
-      transform-box:fill-box;transform-origin:center;
-      animation:plantar linear both;
-      animation-timeline:view();
-      animation-range:cover 30% cover 48%;
-    }
-    @keyframes plantar{
-      from{transform:scale(0)}
-      60%{transform:scale(1.35)}
-      to{transform:scale(1)}
-    }
-    .dibujo .celda-entre{
-      transform-box:fill-box;transform-origin:center;
-      animation:plantar linear both;
-      animation-timeline:view();
-      animation-range:cover 44% cover 70%;
-    }
-    .dibujo .celda-entre:nth-of-type(2n){animation-range:cover 48% cover 74%}
-    .dibujo .celda-entre:nth-of-type(3n){animation-range:cover 52% cover 78%}
+   Así que el disparo pasa a ser un evento y no una posición. Un
+   IntersectionObserver de doce líneas le pone la clase `dibujado` a
+   la figura la primera vez que entra en pantalla, y a partir de ahí
+   la animación es de las de toda la vida: dura lo que dura, se
+   termina sola y no vuelve a empezar. Nadie puede dejarla a medias.
 
-    /* El recorrido. Los hitos aparecen en el orden en que ocurrieron,
-       que es lo único que puede hacer un dibujo de una carrera. El de
-       «estoy aquí» entra el último y con el rebote, porque es el que
-       cuenta. */
-    .dibujo .hito{
-      transform-box:fill-box;transform-origin:center;
-      animation:plantar linear both;
-      animation-timeline:view();
-      animation-range:cover 34% cover 52%;
-    }
-    .dibujo .hito.ahora,.dibujo .hito.nucleo{animation-range:cover 52% cover 74%}
-    .dibujo .hito.vacio{animation-range:cover 62% cover 82%}
+   Lo que no cambia:
+     · Sin JavaScript no se oculta nada. La clase `js-dibujo` la pone
+       el propio guion, así que si no corre, los dibujos salen
+       completos y quietos, que es el estado bueno.
+     · `prefers-reduced-motion` sigue mandando: ahí no se oculta ni se
+       anima nada.
+     · Los tres pesos de trazo, la retícula y las tramas son los
+       mismos. Lo único que cambia es quién dispara. */
 
-    /* El bono. Las ocho cajas atadas entran juntas, como un bloque,
-       porque eso es lo que son. Las ocho sueltas entran de una en
-       una, con su punto de decisión, porque eso es lo que son. La
-       diferencia entre las dos filas es la tesis del dibujo, y el
-       movimiento la dice antes que el pie. */
-    .dibujo .caja-ses.atada{
-      animation:marcar linear both;
-      animation-timeline:view();
-      animation-range:cover 30% cover 46%;
-    }
-    .dibujo .caja-ses.suelta,.dibujo .decide{
-      transform-box:fill-box;transform-origin:center bottom;
-      animation:brotar linear both;
-      animation-timeline:view();
-      animation-range:cover 46% cover 76%;
-    }
-    .dibujo .caja-ses.suelta:nth-of-type(2n),
-    .dibujo .decide:nth-of-type(2n){animation-range:cover 50% cover 80%}
-    .dibujo .caja-ses.suelta:nth-of-type(3n),
-    .dibujo .decide:nth-of-type(3n){animation-range:cover 54% cover 84%}
-    @keyframes brotar{
-      from{transform:scaleY(0)}
-      to{transform:scaleY(1)}
-    }
+@media (prefers-reduced-motion:no-preference){
 
-    /* Los treinta minutos. La barra se llena de izquierda a derecha,
-       como pasa el tiempo. Un tramo detrás de otro, en el orden real
-       de la media hora. */
-    .dibujo .tramo{
-      transform-box:fill-box;transform-origin:left center;
-      animation:llenar linear both;
-      animation-timeline:view();
-      animation-range:cover 28% cover 44%;
-    }
-    .dibujo .tramo.tuyo{animation-range:cover 36% cover 62%}
-    .dibujo .tramo.mio:nth-of-type(3){animation-range:cover 58% cover 72%}
-    .dibujo .tramo.mio:nth-of-type(4){animation-range:cover 66% cover 80%}
-    @keyframes llenar{
-      from{transform:scaleX(0)}
-      to{transform:scaleX(1)}
-    }
-
-    /* Los sellos del blog: los anillos del que se extiende crecen de
-       dentro hacia fuera, que es literalmente lo que cuenta. */
-    .dibujo .anillo{
-      transform-box:fill-box;transform-origin:center;
-      animation:plantar linear both;
-      animation-timeline:view();
-      animation-range:cover 26% cover 50%;
-    }
-    .dibujo .anillo:nth-of-type(2){animation-range:cover 32% cover 58%}
-    .dibujo .anillo:nth-of-type(3){animation-range:cover 38% cover 66%}
-    .dibujo .anillo:nth-of-type(4){animation-range:cover 44% cover 74%}
+  /* Estado de partida: solo para quien tiene JavaScript, y solo hasta
+     que la figura entra en pantalla. */
+  .js-dibujo .figura:not(.dibujado) .dibujo .eje,
+  .js-dibujo .figura:not(.dibujado) .dibujo .trazo-coste,
+  .js-dibujo .figura:not(.dibujado) .dibujo .trazo-alivio,
+  .js-dibujo .figura:not(.dibujado) .dibujo .trazo-salida,
+  .js-dibujo .tarjeta:not(.dibujado) .cabeza-tarjeta .icono *,
+  .js-dibujo .insignia:not(.dibujado) .icono *{
+    stroke-dasharray:1 3;stroke-dashoffset:1;
   }
+  .js-dibujo .figura:not(.dibujado) .dibujo .trazo-flojo,
+  .js-dibujo .figura:not(.dibujado) .dibujo .area-coste,
+  .js-dibujo .figura:not(.dibujado) .dibujo .area-alivio,
+  .js-dibujo .figura:not(.dibujado) .dibujo .marca-evento,
+  .js-dibujo .figura:not(.dibujado) .dibujo .celda-llena,
+  .js-dibujo .figura:not(.dibujado) .dibujo .nodo,
+  .js-dibujo .figura:not(.dibujado) .dibujo .nodo-txt,
+  .js-dibujo .figura:not(.dibujado) .dibujo .punta,
+  .js-dibujo .figura:not(.dibujado) .dibujo .caja-ses.atada{opacity:0}
+  .js-dibujo .figura:not(.dibujado) .dibujo .celda-sesion,
+  .js-dibujo .figura:not(.dibujado) .dibujo .celda-entre,
+  .js-dibujo .figura:not(.dibujado) .dibujo .hito,
+  .js-dibujo .figura:not(.dibujado) .dibujo .anillo{transform:scale(0)}
+  .js-dibujo .figura:not(.dibujado) .dibujo .caja-ses.suelta,
+  .js-dibujo .figura:not(.dibujado) .dibujo .decide{transform:scaleY(0)}
+  .js-dibujo .figura:not(.dibujado) .dibujo .tramo{transform:scaleX(0)}
+
+  /* Y el recorrido, cuando entra. Los retardos cuentan la secuencia:
+     primero el eje, luego lo que se acumula, y el alivio al final
+     porque es el que se lee. */
+  .figura.dibujado .dibujo .eje{animation:trazar .55s var(--entra) both}
+  .figura.dibujado .dibujo .trazo-coste{animation:trazar 1s var(--entra) .18s both}
+  .figura.dibujado .dibujo .trazo-alivio{animation:trazar 1s var(--entra) .42s both}
+  .figura.dibujado .dibujo .trazo-salida{animation:trazar .8s var(--entra) .7s both}
+  .tarjeta.dibujado .cabeza-tarjeta .icono *,
+  .insignia.dibujado .icono *{animation:trazar .7s var(--entra) both}
+  @keyframes trazar{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+
+  .figura.dibujado .dibujo .area-coste,
+  .figura.dibujado .dibujo .area-alivio{animation:marcar .8s var(--entra) .25s both}
+  .figura.dibujado .dibujo .trazo-flojo{animation:marcar .7s var(--entra) .5s both}
+  .figura.dibujado .dibujo .punta{animation:marcar .5s var(--entra) 1.2s both}
+  .figura.dibujado .dibujo .marca-evento{animation:marcar .7s var(--entra) .35s both}
+  .figura.dibujado .dibujo .celda-llena{animation:marcar .7s var(--entra) .2s both}
+  .figura.dibujado .dibujo .nodo,
+  .figura.dibujado .dibujo .nodo-txt{animation:marcar .6s var(--entra) .55s both}
+  .figura.dibujado .dibujo .caja-ses.atada{animation:marcar .6s var(--entra) .1s both}
+  @keyframes marcar{from{opacity:0}to{opacity:1}}
+
+  /* Las piezas que se plantan. transform-box:fill-box hace que el
+     origen del escalado sea el centro de la propia pieza y no el del
+     lienzo entero, que es lo que las mandaba a la esquina. */
+  .figura .dibujo .celda-sesion,
+  .figura .dibujo .celda-entre,
+  .figura .dibujo .hito,
+  .figura .dibujo .anillo{transform-box:fill-box;transform-origin:center}
+  .figura .dibujo .caja-ses.suelta,
+  .figura .dibujo .decide{transform-box:fill-box;transform-origin:center bottom}
+  .figura .dibujo .tramo{transform-box:fill-box;transform-origin:left center}
+
+  .figura.dibujado .dibujo .celda-sesion{animation:plantar .5s var(--entra) .15s both}
+  .figura.dibujado .dibujo .celda-entre{animation:plantar .45s var(--entra) both}
+  .figura.dibujado .dibujo .celda-entre:nth-of-type(2n){animation-delay:.42s}
+  .figura.dibujado .dibujo .celda-entre:nth-of-type(3n){animation-delay:.55s}
+  .figura.dibujado .dibujo .celda-entre:nth-of-type(4n){animation-delay:.68s}
+  @keyframes plantar{
+    from{transform:scale(0)}
+    60%{transform:scale(1.3)}
+    to{transform:scale(1)}
+  }
+  .figura.dibujado .dibujo .hito{animation:plantar .5s var(--entra) both}
+  .figura.dibujado .dibujo .hito.lleno:nth-of-type(2){animation-delay:.18s}
+  .figura.dibujado .dibujo .hito.ahora,
+  .figura.dibujado .dibujo .hito.nucleo{animation-delay:.42s}
+  .figura.dibujado .dibujo .hito.vacio{animation-delay:.66s}
+  .figura.dibujado .dibujo .anillo{animation:plantar .5s var(--entra) both}
+  .figura.dibujado .dibujo .anillo:nth-of-type(2){animation-delay:.12s}
+  .figura.dibujado .dibujo .anillo:nth-of-type(3){animation-delay:.24s}
+  .figura.dibujado .dibujo .anillo:nth-of-type(4){animation-delay:.36s}
+
+  .figura.dibujado .dibujo .caja-ses.suelta,
+  .figura.dibujado .dibujo .decide{animation:brotar .45s var(--entra) both}
+  .figura.dibujado .dibujo .caja-ses.suelta:nth-of-type(2n),
+  .figura.dibujado .dibujo .decide:nth-of-type(2n){animation-delay:.3s}
+  .figura.dibujado .dibujo .caja-ses.suelta:nth-of-type(3n),
+  .figura.dibujado .dibujo .decide:nth-of-type(3n){animation-delay:.45s}
+  @keyframes brotar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+  .figura.dibujado .dibujo .tramo{animation:llenar-tramo .5s var(--entra) both}
+  .figura.dibujado .dibujo .tramo.tuyo{animation-delay:.22s}
+  .figura.dibujado .dibujo .tramo.mio:nth-of-type(3){animation-delay:.6s}
+  .figura.dibujado .dibujo .tramo.mio:nth-of-type(4){animation-delay:.78s}
+  @keyframes llenar-tramo{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 }
 
 /* --- 16.4 quater. La invitación a seguir bajando ----------------
@@ -2803,22 +2797,6 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
    técnica y en las listas no: ahí el icono es una etiqueta que hay
    que poder leer de golpe, no un adorno. */
 
-@supports (animation-timeline:view()){
-  @media (prefers-reduced-motion:no-preference){
-    .tarjeta > .icono *,
-    .insignia .icono *{
-      stroke-dasharray:1;
-      animation:trazar-icono linear both;
-      animation-timeline:view();
-      animation-range:cover 24% cover 58%;
-    }
-    @keyframes trazar-icono{
-      from{stroke-dashoffset:1}
-      to{stroke-dashoffset:0}
-    }
-  }
-}
-
 /* --- 17.2 La línea que une los pasos ----------------------------
    Los pasos numerados tienen ahora un hilo vertical que los
    atraviesa y que se va llenando conforme bajas. Hace dos cosas: los
@@ -2847,7 +2825,7 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
     .pasos::after{
       animation:llenar linear both;
       animation-timeline:view();
-      animation-range:cover 16% cover 72%;
+      animation-range:cover 12% cover 62%;
     }
     @keyframes llenar{to{transform:scaleY(1)}}
   }

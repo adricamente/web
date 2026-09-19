@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=31">
+  <link rel="stylesheet" href="/estilos.min.css?v=33">
 
 
   <script type="application/ld+json">
@@ -396,25 +396,36 @@
         <p class="titulo-pie">La web</p>
         <ul>
           <li><a href="/sobre-mi/">Sobre mí</a></li>
+          <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/terapia-online/">Terapia online</a></li>
           <li><a href="/areas/">Áreas</a></li>
           <li><a href="/tarifas/">Tarifas</a></li>
           <li><a href="/blog/">Blog</a></li>
-          <li><a href="/primera-sesion/">La primera sesión</a></li>
-          <li><a href="/herramientas/">Herramientas gratis</a></li>
+        </ul>
+        <!-- Las dos gratis, separadas de la navegación normal: no son
+             páginas de servicio, son cosas que alguien se lleva sin
+             pedir cita. Mezcladas con «Tarifas» y «Áreas» se leían
+             como una sección más y no como lo que son. -->
+        <p class="titulo-pie" style="margin-top:18px">Gratis, sin pedir cita</p>
+        <ul>
+          <li><a href="/herramientas/">Tres herramientas para entender qué te pasa</a></li>
           <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
-          <li><a href="/reservar/">¿Ya eres paciente? Reserva sesión</a></li>
         </ul>
       </div>
       <div>
         <p class="titulo-pie">Contacto y legal</p>
         <ul>
           <li><a href="/contacto/">Contacto</a></li>
-          <li><a href="mailto:hola@adricamente.com">hola@adricamente.com</a></li>
           <li><a href="/aviso-legal.html">Aviso legal</a></li>
           <li><a href="/privacidad.html">Privacidad</a></li>
           <li><a href="/cookies.html">Cookies</a></li>
         </ul>
+        <!-- El enlace directo al correo salía aquí y en la página de
+             contacto. Aquí sobra: quien busca el correo en el pie de
+             una página legal es quien ya lo tiene. Y «Reserva sesión»
+             salía dos veces en este mismo pie, una en cada columna.
+             Se queda una, y en el sitio donde tiene sentido: al lado
+             de la página de contacto. -->
         <p style="margin-top:12px">
           <a href="/reservar/">¿Ya eres paciente? Reserva aquí</a>
         </p>
@@ -457,42 +468,47 @@
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
 
-  /* La cifra del precio, contando. Se hace con JavaScript y no con
-     CSS a propósito: la versión de CSS —@property + counter-reset—
-     sustituye el texto por el contenido de un ::after, así que el día
-     que un navegador no la entienda del todo el precio desaparece.
-     Aquí el 30 está escrito en el HTML y lo único que hace el guion
-     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+  /* El disparo de los dibujos. Doce líneas que sustituyen a toda una
+     sección de animaciones atadas al scroll, y por un motivo que se
+     tardó en ver: una animación atada al scroll SOLO avanza mientras
+     se hace scroll. Quien llega a un dibujo y para a mirarlo —que es
+     lo que hace todo el mundo— lo dejaba a medias, y ahí se quedaba.
+     En escritorio pasaba siempre y se leía como un fallo.
 
-     Y no se anima para quien ha pedido menos movimiento: un número
-     saltando es justo la clase de cosa que molesta ahí. */
+     Aquí el disparo es un evento: la primera vez que la figura entra
+     en pantalla se le pone la clase, y la animación es de las de toda
+     la vida. Dura lo que dura, se termina sola y no se repite.
+
+     La clase js-dibujo en el <html> es la que activa el estado de
+     partida en la hoja de estilos. Se pone desde aquí a propósito: si
+     este guion no corre, no se oculta nada y los dibujos salen
+     completos y quietos, que es el estado correcto. */
   (function(){
-    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
-    if(!cifras.length || !window.IntersectionObserver) return;
+    if(!window.IntersectionObserver) return;
     if(window.matchMedia &&
        window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    /* :has() lo entienden todos los navegadores desde 2023, pero si
+       alguno no lo hace, querySelectorAll lanza y se queda todo sin
+       ocultar, que es el estado bueno. Se envuelve igual, para que el
+       error no ensucie la consola de nadie. */
+    var piezas;
+    try{ piezas = document.querySelectorAll('.figura, .tarjeta:has(.icono), .insignia'); }
+    catch(_){ piezas = document.querySelectorAll('.figura, .insignia'); }
+    if(!piezas.length) return;
+    document.documentElement.classList.add('js-dibujo');
 
     var ojo = new IntersectionObserver(function(entradas){
       entradas.forEach(function(e){
         if(!e.isIntersecting) return;
+        e.target.classList.add('dibujado');
         ojo.unobserve(e.target);
-        var fin = parseInt(e.target.dataset.hasta, 10);
-        var t0 = null, dur = 900;
-        e.target.style.fontVariantNumeric = 'tabular-nums';
-        function paso(ahora){
-          if(t0 === null) t0 = ahora;
-          var k = Math.min(1, (ahora - t0) / dur);
-          /* Desacelera al final: un contador lineal parece un
-             marcador de gasolinera, y este número no es eso. */
-          var suave = 1 - Math.pow(1 - k, 3);
-          e.target.textContent = String(Math.round(fin * suave));
-          if(k < 1) requestAnimationFrame(paso);
-          else e.target.textContent = String(fin);
-        }
-        requestAnimationFrame(paso);
       });
-    }, { threshold: .6 });
-    cifras.forEach(function(c){ ojo.observe(c); });
+    /* Un 22 % de la figura basta para disparar: con el umbral más
+       alto, una lámina más alta que la ventana no llegaba a cumplirlo
+       nunca y no se dibujaba jamás. */
+    }, { threshold: .22, rootMargin: '0px 0px -8% 0px' });
+    piezas.forEach(function(x){ ojo.observe(x); });
   })();
 </script>
 </body>

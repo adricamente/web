@@ -55,7 +55,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=31">
+  <link rel="stylesheet" href="/estilos.min.css?v=33">
   <!-- Aplica el tema guardado antes de pintar. Sin esto, quien ha
        elegido oscuro ve un fogonazo crema a pantalla completa. -->
   <script>try{var _t=localStorage.getItem('tema');
@@ -268,7 +268,46 @@
   </footer>
 
 </div>
-<script>document.getElementById('anyo').textContent = new Date().getFullYear();</script>
+<script>
+  document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El disparo de los dibujos. Doce líneas que sustituyen a toda una
+     sección de animaciones atadas al scroll, y por un motivo que se
+     tardó en ver: una animación atada al scroll SOLO avanza mientras
+     se hace scroll. Quien llega a un dibujo y para a mirarlo —que es
+     lo que hace todo el mundo— lo dejaba a medias, y ahí se quedaba.
+     En escritorio pasaba siempre y se leía como un fallo.
+
+     Aquí el disparo es un evento: la primera vez que la figura entra
+     en pantalla se le pone la clase, y la animación es de las de toda
+     la vida. Dura lo que dura, se termina sola y no se repite.
+
+     La clase js-dibujo en el <html> es la que activa el estado de
+     partida en la hoja de estilos. Se pone desde aquí a propósito: si
+     este guion no corre, no se oculta nada y los dibujos salen
+     completos y quietos, que es el estado correcto. */
+  (function(){
+    if(!window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var piezas = document.querySelectorAll('.figura, .tarjeta:has(.icono), .insignia');
+    if(!piezas.length) return;
+    document.documentElement.classList.add('js-dibujo');
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        e.target.classList.add('dibujado');
+        ojo.unobserve(e.target);
+      });
+    /* Un 22 % de la figura basta para disparar: con el umbral más
+       alto, una lámina más alta que la ventana no llegaba a cumplirlo
+       nunca y no se dibujaba jamás. */
+    }, { threshold: .22, rootMargin: '0px 0px -8% 0px' });
+    piezas.forEach(function(x){ ojo.observe(x); });
+  })();
+</script>
 
 
 </body>
