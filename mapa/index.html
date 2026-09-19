@@ -53,8 +53,19 @@
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="../estilos.min.css?v=29">
+  <link rel="stylesheet" href="../estilos.min.css?v=30">
+  <!-- Aplica el tema guardado antes de pintar. Sin esto, quien ha
+       elegido oscuro ve un fogonazo crema a pantalla completa. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
 
   <style>
   /* Estilos que solo existen en esta página. Todo lo compartido
@@ -165,14 +176,14 @@
     <h2 style="margin-top:0">¿Qué llevas tiempo esquivando?</h2>
     <p class="apunte">No hace falta que sea algo grande. Casi nunca lo es. Elige lo primero que se te ha venido a la cabeza.</p>
     <ul class="opciones" data-grupo="situacion">
-      <li><button class="opcion" type="button">Tener una conversación pendiente</button></li>
-      <li><button class="opcion" type="button">Hacer un trámite o escribir un correo</button></li>
-      <li><button class="opcion" type="button">Pedir cita al médico</button></li>
-      <li><button class="opcion" type="button">Quedar con gente</button></li>
-      <li><button class="opcion" type="button">Buscar otro trabajo</button></li>
-      <li><button class="opcion" type="button">Empezar algo que te importa</button></li>
-      <li><button class="opcion" type="button">Terminar una relación</button></li>
-      <li><button class="opcion" type="button">Cuidarte</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Tener una conversación pendiente</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Hacer un trámite o escribir un correo</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Pedir cita al médico</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Quedar con gente</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Buscar otro trabajo</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Empezar algo que te importa</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Terminar una relación</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Cuidarte</button></li>
     </ul>
     <label class="campo" for="c1">O escríbelo tú</label>
     <input type="text" id="c1" data-libre="situacion" placeholder="Llamar a mi padre">
@@ -189,14 +200,14 @@
     <h2 style="margin-top:0">Justo antes de ponerte, ¿qué notas?</h2>
     <p class="apunte">En el cuerpo o en la cabeza, en el segundo previo. No lo que piensas después: lo que aparece primero.</p>
     <ul class="opciones" data-grupo="emocion">
-      <li><button class="opcion" type="button">Un peso en el pecho</button></li>
-      <li><button class="opcion" type="button">La cabeza acelerada</button></li>
-      <li><button class="opcion" type="button">Una pereza enorme</button></li>
-      <li><button class="opcion" type="button">Mal humor</button></li>
-      <li><button class="opcion" type="button">La mente en blanco</button></li>
-      <li><button class="opcion" type="button">Que no vas a ser capaz</button></li>
-      <li><button class="opcion" type="button">Vergüenza</button></li>
-      <li><button class="opcion" type="button">Miedo a hacerlo mal</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Un peso en el pecho</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">La cabeza acelerada</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Una pereza enorme</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Mal humor</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">La mente en blanco</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Que no vas a ser capaz</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Vergüenza</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Miedo a hacerlo mal</button></li>
     </ul>
     <label class="campo" for="c2">O escríbelo tú</label>
     <input type="text" id="c2" data-libre="emocion" placeholder="Un nudo en el estómago">
@@ -213,14 +224,14 @@
     <h2 style="margin-top:0">¿Y qué haces para dejar de notarlo?</h2>
     <p class="apunte">Sé concreto y sé honesto. Aquí es donde la gente se pone elegante y se engaña. Nadie más va a leer esto.</p>
     <ul class="opciones" data-grupo="conducta">
-      <li><button class="opcion" type="button">Coger el móvil</button></li>
-      <li><button class="opcion" type="button">Dejarlo para mañana</button></li>
-      <li><button class="opcion" type="button">Ponerte con otra cosa «útil»</button></li>
-      <li><button class="opcion" type="button">Comer algo</button></li>
-      <li><button class="opcion" type="button">Fumar o beber</button></li>
-      <li><button class="opcion" type="button">Echarte a dormir</button></li>
-      <li><button class="opcion" type="button">Cancelarlo</button></li>
-      <li><button class="opcion" type="button">Decir que sí a otra cosa</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Coger el móvil</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Dejarlo para mañana</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Ponerte con otra cosa «útil»</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Comer algo</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Fumar o beber</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Echarte a dormir</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Cancelarlo</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Decir que sí a otra cosa</button></li>
     </ul>
     <label class="campo" for="c3">O escríbelo tú</label>
     <input type="text" id="c3" data-libre="conducta" placeholder="Ponerme a limpiar la casa entera">
@@ -255,14 +266,14 @@
     <h2 style="margin-top:0">¿Qué te ha costado en los últimos seis meses?</h2>
     <p class="apunte">Esta es la parte que casi nadie se para a mirar, porque la factura llega en cómodos plazos.</p>
     <ul class="opciones" data-grupo="coste">
-      <li><button class="opcion" type="button">Oportunidades que dejaste pasar</button></li>
-      <li><button class="opcion" type="button">Gente que se ha alejado</button></li>
-      <li><button class="opcion" type="button">Tu salud</button></li>
-      <li><button class="opcion" type="button">Dinero</button></li>
-      <li><button class="opcion" type="button">Hablarte fatal a ti mismo</button></li>
-      <li><button class="opcion" type="button">Seguir exactamente donde ya estabas</button></li>
-      <li><button class="opcion" type="button">Que se haya hecho más grande</button></li>
-      <li><button class="opcion" type="button">Dormir peor</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Oportunidades que dejaste pasar</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Gente que se ha alejado</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Tu salud</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Dinero</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Hablarte fatal a ti mismo</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Seguir exactamente donde ya estabas</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Que se haya hecho más grande</button></li>
+      <li><button class="opcion" type="button" aria-pressed="false">Dormir peor</button></li>
     </ul>
     <label class="campo" for="c5">O escríbelo tú</label>
     <input type="text" id="c5" data-libre="coste" placeholder="Dos años de mi vida">
@@ -303,9 +314,24 @@
       <p id="r4"></p>
     </div>
 
+    <!-- El aviso de crisis va AQUÍ y no en el pie. Lo que hay
+         justo encima está escrito a propósito para incomodar, y
+         quien acaba de leerlo tiene que encontrar el teléfono sin
+         tener que buscarlo. En el pie está a cientos de píxeles,
+         que es tanto como no estar. -->
+    <div class="mensaje aviso" role="note" style="margin:22px 0">
+      <p>
+        <strong>Si ahora mismo lo estás pasando muy mal</strong>, esto no
+        es el sitio. Llama al <a href="tel:024">024</a> —atención a la
+        conducta suicida, gratuito, 24 horas, todos los días— o al
+        <a href="tel:112">112</a>. Si prefieres escribir, el 024 también
+        atiende por chat desde su web.
+      </p>
+    </div>
+
     <div class="lectura">
       <h3>Lo que estás viendo tiene nombre</h3>
-      <p>Se llama <strong>evitación</strong>, y no es falta de voluntad. Es justo lo contrario: es un aprendizaje que funciona <em>demasiado</em> bien. Cada vez que evitas, el malestar baja de verdad, y tu cerebro registra que la jugada salió bien. Por eso la repites sin decidirlo.</p>
+      <p>Se llama <strong>evitación, y no es falta de voluntad</strong>. Es justo lo contrario: es un aprendizaje que funciona <em>demasiado</em> bien. Cada vez que evitas, el malestar baja de verdad, y tu cerebro registra que la jugada salió bien. Por eso la repites sin decidirlo.</p>
       <p>El problema no es que falles. Es que funciona a corto plazo, siempre, y la factura llega tarde y a plazos. Por eso cuesta tanto verla.</p>
     </div>
 
@@ -319,7 +345,7 @@
       <h3>Por dónde se empieza</h3>
       <p id="r5"></p>
       <p>Una vez. Pequeño. Con el malestar puesto, no sin él. La fuerza de voluntad no se entrena leyendo sobre disciplina: se entrena sosteniendo la incomodidad diez minutos más de lo que aguantaste ayer.</p>
-      <p>Ponle <strong>día y hora</strong> ahora mismo, antes de cerrar esto. Un plan sin momento concreto es un deseo.</p>
+      <p><strong>Ponle día y hora ahora mismo</strong>, antes de cerrar esto. Un plan sin momento concreto es un deseo.</p>
     </div>
 
     <div class="navegacion" style="margin-bottom:30px">
@@ -342,7 +368,7 @@
       <p>
         El mapa te ha dicho qué pasa. Lo que cuesta es lo otro:
         sostenerlo más de un día. Déjame el correo y te mando
-        <strong>cuatro cartas</strong> en tres semanas, una cada pocos
+        <strong>cuatro cartas en tres semanas</strong>, una cada pocos
         días, con el resto del mecanismo.
       </p>
 
@@ -389,7 +415,7 @@
         mundo, así que puedes abrirla ahora sin dejar nada.
       </p>
       <p class="apunte">
-        Lo que <strong>no</strong> te puedo mandar es <strong>tu mapa</strong>, y es a
+        <strong>Lo que no te puedo mandar es tu mapa</strong>, y es a
         propósito: no lo guardo en ningún sitio y no quiero empezar a
         hacerlo. Guárdatelo tú con el botón de aquí arriba.
       </p>
@@ -496,6 +522,7 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden><b>Tema</b><span>Automático</span></p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
   </div>
@@ -747,5 +774,50 @@
 })();
 </script>
 
+
+<script>
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+    function pintaBarra(){
+      var c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && c) meta.setAttribute('content', c);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', pintaBarra);
+    }
+  })();
+</script>
 </body>
 </html>

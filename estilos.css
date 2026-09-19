@@ -231,7 +231,7 @@
    3. «Mantener dos temas es mantener dos juegos de contrastes.»
       → Esta sí es real, y el precio se paga una vez: los diez
         ratios están calculados y escritos justo debajo, en la
-        sección 1 ter. El día que se toque un color, se recalculan.
+        sección 1 quater. El día que se toque un color, se recalculan.
 
    Lo que ha cambiado y decide: el público de esta web tiene entre
    veinte y cuarenta y tantos, y una parte de lo que se lee aquí se
@@ -239,13 +239,20 @@
    a las dos de la mañana, se le estaba dando un #FAF9F5 a pantalla
    completa. Eso no es una preferencia estética.
 
+   Y la duda razonable —«¿el modo oscuro pega en una web de
+   psicología?»— se resuelve sin apostar: hay un selector en el pie
+   con tres estados, y el de salida es «automático». Quien quiera
+   verla clara con el móvil en oscuro, puede; quien quiera verla
+   oscura con el móvil en claro, también. La preferencia se guarda en
+   el propio navegador y no sale de ahí.
+
    color-scheme: light dark le dice al navegador que esta web sabe
    pintarse de las dos maneras, para que no invierta por su cuenta
    los campos de formulario ni las barras de desplazamiento. */
 
 :root{ color-scheme: light dark; }
 
-/* --- 1 ter. El tema oscuro ---------------------------------------
+/* --- 1 quater. La paleta oscura, medida ------------------------
    Aquí había una decisión razonada de no tenerlo. La decisión era
    correcta cuando se tomó y ha dejado de serlo por una razón
    concreta: el público de esta web tiene entre veinte y cuarenta y
@@ -276,8 +283,26 @@
    claro sobre papel negro deslumbra, y en una web que se lee de
    noche eso no es un detalle estético. */
 
+/* El tema oscuro llega por dos caminos, y por eso el cuerpo está
+   escrito dos veces.
+
+   Uno: el sistema lo pide y la persona no ha dicho lo contrario. De
+   ahí el :not([data-theme="light"]).
+   Dos: la persona lo ha elegido a mano en el selector del pie.
+
+   Sin el segundo camino, quien tiene el móvil en claro no puede ver
+   esta web en oscuro ni queriendo, y quien lo tiene en oscuro no
+   puede salir. Un tema se decide por la luz que hay en la habitación,
+   y eso el sistema operativo lo acierta casi siempre, pero no
+   siempre.
+
+   Duplicar los tokens no gusta. La alternativa era anidar un @media
+   dentro de un selector con :is(), que en 2026 todavía se comporta
+   distinto según la versión de Safari, y esta web se lee sobre todo
+   en iPhone. Se duplica. */
+
 @media (prefers-color-scheme:dark){
-  :root{
+  :root:not([data-theme="light"]){
     --bg:#171614;
     --surface:#201F1C;
     --surface-2:#1B1A18;
@@ -295,7 +320,7 @@
     --sobre-accent:#10222E;
     --accent-soft:#1D2A34;
 
-    --error:#F0A29E;        /* sobre papel oscuro — 8.1:1 */
+    --error:#F0A29E;        /* sobre papel oscuro — 8,1:1 */
     --error-soft:#2E1A19;
     --exito:#7FC3A0;
     --exito-soft:#17241A;
@@ -315,6 +340,61 @@
   /* El gris del hueco de la foto, un punto más oscuro que el papel. */
   .retrato{background:#3A3833}
 }
+
+:root[data-theme="dark"]{
+    --bg:#171614;
+    --surface:#201F1C;
+    --surface-2:#1B1A18;
+    --ink:#EDEBE5;
+    --ink-2:#BFBCB4;
+    --muted:#97948C;
+    --line:#302E2A;
+    --line-strong:#454340;
+    --borde-campo:#78756D;
+
+    --accent:#7FB2D6;
+    --accent-2:#7FB2D6;
+    --accent-3:#A6CCE6;
+    --accent-borde:#5E8199;
+    --sobre-accent:#10222E;
+    --accent-soft:#1D2A34;
+
+    --error:#F0A29E;        /* sobre papel oscuro — 8,1:1 */
+    --error-soft:#2E1A19;
+    --exito:#7FC3A0;
+    --exito-soft:#17241A;
+    --aviso:#E0B270;
+    --aviso-soft:#2A2016;
+    --info:#7FB2D6;
+    --info-soft:#1D2A34;
+
+    /* En oscuro una sombra no separa: lo que separa es que la
+       superficie sea más clara que el papel. Se deja casi plana. */
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 32px -18px rgba(0,0,0,.6);
+}
+:root[data-theme="dark"] .banda img,
+:root[data-theme="dark"] .tarjeta.con-foto .ficha,
+:root[data-theme="dark"] .retrato{filter:brightness(.86) contrast(.96)}
+:root[data-theme="dark"] .retrato{background:#3A3833}
+
+/* El selector de tema del pie. Tres botones, uno marcado.
+   aria-pressed es lo que le dice a un lector de pantalla cuál está
+   activo; el color por sí solo no se lo dice a nadie. */
+.tema{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  margin:18px 0 0;font-size:14px;color:var(--muted);
+}
+.tema b{font-weight:600;color:var(--ink-2)}
+.tema div{display:flex;border:1px solid var(--line-strong);border-radius:var(--r-s);overflow:hidden}
+.tema button{
+  font:inherit;font-size:14px;padding:7px 12px;min-height:34px;
+  background:transparent;color:var(--ink-2);border:0;cursor:pointer;
+  border-left:1px solid var(--line-strong);
+}
+.tema button:first-child{border-left:0}
+.tema button:hover{background:var(--surface)}
+.tema button[aria-pressed="true"]{background:var(--accent);color:var(--sobre-accent);font-weight:600}
+.tema button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 
 /* --- 2. Reglas base --------------------------------------------
    border-box hace que el padding no sume al ancho. Es la primera
@@ -474,7 +554,7 @@ p strong, li strong, dd strong, .tarjeta strong{
    tres enlaces, y un menú que hay que abrir esconde el destino. */
 
 /* La franja va por fuera del contenedor de lectura para que la
-   cabecera mida lo mismo en las veintiséis páginas. En escritorio se
+   cabecera mida lo mismo en todas las páginas. En escritorio se
    queda pegada arriba: la portada mide diez mil píxeles en móvil y la
    acción existía durante los primeros ciento ochenta. */
 .franja-cabecera{
@@ -1297,7 +1377,9 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(232px,1fr));
   gap:16px;
-  margin:26px 0 10px;
+  /* Veinte abajo y no diez: es el hueco que necesita la animación de
+     entrada para no comerse el enlace que viene detrás. */
+  margin:26px 0 20px;
 }
 .tarjeta{
   background:var(--surface);
@@ -1333,6 +1415,28 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   box-shadow:var(--shadow);
 }
 .tarifa .precio{margin-bottom:4px}
+/* La defensa del precio, con su barra. La barra dice de un vistazo
+   lo que el párrafo dice en dos líneas: dónde cae 30 dentro de la
+   horquilla del mercado. No es un gráfico: son dos divs. */
+.tarifa .comparativa{
+  font-size:15px;color:var(--ink-2);line-height:1.5;
+  margin:16px 0 0;max-width:none;
+}
+/* La escala va de 20 a 60 €, así que: la horquilla del mercado
+   (39-55) ocupa del 47,5 % al 87,5 %, y la marca de los 30 € cae en
+   el 25 %. Los números salen de la tabla de /cuanto-cuesta/, no de
+   ninguna parte. */
+.tarifa .barra-mercado{
+  display:block;height:8px;border-radius:99px;
+  background:linear-gradient(90deg,
+    var(--line) 0 47.5%, var(--line-strong) 47.5% 87.5%, var(--line) 87.5%);
+  margin:0 0 12px;position:relative;
+}
+.tarifa .barra-mercado .yo{
+  position:absolute;left:25%;top:-5px;width:5px;height:18px;
+  border-radius:99px;background:var(--accent-2);
+  transform-origin:bottom center;
+}
 .tarifa ul{margin:18px 0 0;padding-left:20px}
 .tarifa li{color:var(--ink-2)}
 
@@ -1408,9 +1512,49 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   color:var(--accent-2);
 }
 
-/* En las tarjetas el icono va arriba, con aire, y no compite con
-   el título: es una señal de orientación, no una ilustración. */
-.tarjeta .icono{margin:0 0 12px;color:var(--accent-2)}
+/* El icono de la tarjeta iba ARRIBA, en su propia franja, con doce
+   píxeles de aire debajo. Cuatro tarjetas eran cuatro franjas de
+   cuarenta píxeles gastadas en decir lo que el título dice justo
+   después. Ahora va en la misma línea que el título: el ojo entra
+   por el icono y sale por el título en un solo movimiento.
+
+   align-items:start y no center, porque cuando el título ocupa dos
+   líneas —«Autoestima e inseguridad»— un icono centrado se queda
+   flotando entre las dos y no se sabe a cuál pertenece. */
+.cabeza-tarjeta{
+  display:flex;align-items:start;gap:10px;
+  margin:0 0 8px;
+}
+.cabeza-tarjeta .icono{flex:0 0 auto;color:var(--accent-2);margin:1px 0 0}
+.cabeza-tarjeta h3{margin:0;min-height:0}
+@media (max-width:640px){.cabeza-tarjeta h3{min-height:0}}
+
+/* La quinta casilla, la de «¿y si lo tuyo no está aquí?». Se parece a
+   las otras cuatro lo justo para que se lea en el mismo golpe de
+   vista, y se distingue lo justo para que no parezca un área más:
+   sin icono, con el borde de trazo discontinuo y el fondo del papel.
+   Es una puerta, no un cajón. */
+.tarjeta.abierta{
+  background:transparent;
+  border-style:dashed;
+  border-color:var(--line-strong);
+}
+a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
+
+/* Con cinco tarjetas, dos columnas dejan la quinta sola y estirada
+   ocupando una fila entera, que es exactamente lo que se quería
+   evitar con .cuatro. Aquí sí se quiere: la quinta cruza las dos
+   columnas a propósito, porque es la que recoge a quien no se ha
+   reconocido en ninguna de las cuatro de arriba. */
+.rejilla.cinco{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(232px,1fr));
+  gap:16px;margin:26px 0 10px;
+}
+@media (min-width:640px){
+  .rejilla.cinco{grid-template-columns:repeat(2,1fr)}
+  .rejilla.cinco>.abierta{grid-column:1 / -1}
+}
 
 /* En la franja de credenciales el icono y el rótulo van en la
    misma línea. Tamaño pequeño y mismo naranja que el texto. */
@@ -1446,6 +1590,16 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    punto: se salen de la lámina y el navegador los recorta. */
 .anota.izq{transform:translate(0,-50%)}
 .anota.der{transform:translate(-100%,-50%)}
+@media (max-width:560px){
+  /* En un móvil estrecho un rótulo largo con white-space:nowrap se
+     sale de la lámina y arrastra la página entera: un desbordamiento
+     horizontal de cincuenta píxeles en toda la web por culpa de una
+     etiqueta de cuatro palabras. Aquí se le permite partir y se le
+     pone techo. */
+  .anota{white-space:normal;max-width:44vw;text-align:center;line-height:1.25}
+  .anota.izq{text-align:left}
+  .anota.der{text-align:right}
+}
 @media (max-width:430px){
   .anota{font-size:11px;padding:1px 3px}
 }
@@ -1526,11 +1680,11 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 }
 .dibujo .rotulo.alivio{fill:var(--accent-2)}
 .dibujo .rotulo.coste{fill:var(--ink-2)}
-.dibujo .rotulo.eje-txt{fill:var(--muted);font-weight:600;font-size:11px}
+.dibujo .rotulo.eje-txt{fill:var(--muted);font-weight:600;font-size:8.5px}
 
-/* --- 10.1 bis. Piezas de los tres diagramas nuevos ---------------
-   Cada mecanismo tiene su forma: una curva, unas barras y una
-   espiral. Que sean distintas no es capricho: tres dibujos con la
+/* --- 10.1 bis. Piezas de los diagramas de mecanismo --------------
+   Cada mecanismo tiene su forma: una curva, unas barras, una malla,
+   una espiral y un umbral. Que sean distintas no es capricho: tres dibujos con la
    misma silueta se leen como una plantilla, y entonces dejan de
    mirarse. */
 
@@ -1560,6 +1714,68 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    numerados del resto de la web. */
 .dibujo .nodo{fill:var(--accent-2);stroke:none}
 .dibujo .rotulo.nodo-txt{fill:var(--sobre-accent);font-weight:700;font-size:11px}
+
+/* --- 10.1 ter. Las láminas anchas ---------------------------------
+   Las cinco piezas que han sustituido a las fotografías de banco: la
+   semana de 168 horas, el recorrido de la formación, el bono, los
+   treinta minutos y el umbral de la alarma.
+
+   Cada una vive en el hueco que ocupaba una foto y, a diferencia de
+   la foto, dice algo que no está escrito en el párrafo de al lado.
+   Comparten el fondo, la retícula y los tres pesos de trazo con los
+   diagramas de iconos.py, porque si no comparten nada se leen como
+   cinco invitados de cinco sitios distintos. */
+
+/* La semana: 168 casillas. La gris es una hora cualquiera, la rayada
+   es un rato de trabajo entre sesiones y la azul es la sesión. El
+   contraste tiene que ser suficiente entre las tres o el dibujo no
+   dice nada: gris muy bajo, gris medio y acento pleno. */
+.dibujo .celda{fill:var(--line);stroke:none}
+.dibujo .celda-entre{fill:var(--accent-borde);fill-opacity:.42;stroke:none}
+.dibujo .celda-sesion{fill:var(--accent-2);stroke:none}
+.figura .muestra.sesion{background:var(--accent-2);width:11px;height:11px;border-radius:2px}
+.figura .muestra.entre{background:color-mix(in srgb,var(--accent-borde) 42%,transparent);
+  width:11px;height:11px;border-radius:2px}
+
+/* El recorrido de la formación: dos hitos hechos, uno en curso y uno
+   que no. El de «estoy aquí» es un anillo con núcleo, que es la
+   convención que todo el mundo entiende sin explicación. */
+.dibujo .hito{vector-effect:non-scaling-stroke}
+.dibujo .hito.lleno{fill:var(--ink);stroke:none}
+.dibujo .hito.vacio{fill:var(--bg);stroke:var(--muted);stroke-width:2.2}
+.dibujo .hito.ahora{fill:var(--bg);stroke:var(--accent-2);stroke-width:3.4}
+.dibujo .hito.nucleo{fill:var(--accent-2);stroke:none}
+/* El rótulo de «estoy aquí», en el azul de marca: es el único de la
+   lámina que señala una posición y no una casilla. */
+.anota.ahora{color:var(--accent-2)}
+
+/* El bono: ocho cajas soldadas arriba, ocho sueltas abajo. La
+   diferencia entre atada y suelta tiene que verse a 320 px de ancho,
+   así que no se confía al hueco: la atada va rellena y con el borde
+   del papel entre una y otra, y la suelta va hueca. */
+.dibujo .caja-ses{vector-effect:non-scaling-stroke}
+.dibujo .caja-ses.atada{fill:none;stroke:var(--accent-borde);stroke-width:1.25}
+.dibujo .caja-ses.suelta{fill:var(--surface);stroke:var(--ink-2);stroke-width:2.2}
+.dibujo .decide{fill:var(--ink);stroke:none}
+.dibujo .decide.unica{fill:var(--accent-2)}
+/* La llave que abraza el bono, y la guía que señala la sesión en la
+   semana. Misma pieza, mismo peso: una línea fina que no compite. */
+.dibujo .guia{stroke:var(--borde-campo);stroke-width:1.25;fill:none}
+
+/* Los treinta minutos: la barra repartida y el peine de minutos.
+   El tramo de quien habla más va en la masa de acento; los míos, en
+   hueco con borde, porque la tesis del dibujo es cuánto hablas tú. */
+.dibujo .tramo{vector-effect:non-scaling-stroke}
+.dibujo .tramo.tuyo{fill:var(--accent-2);stroke:none}
+.dibujo .tramo.mio{fill:var(--accent-soft);stroke:var(--accent-borde);stroke-width:1.25}
+/* El rótulo que va DENTRO de un tramo de color: sin fondo, porque el
+   fondo de .anota es el papel y ahí taparía la propia barra. */
+.anota.dentro{background:none;color:var(--sobre-accent);font-size:12.5px}
+@media (max-width:560px){.anota.dentro{display:none}}
+.dibujo .diente{stroke:var(--line-strong);stroke-width:1;fill:none}
+.figura .muestra.tuyo{background:var(--accent-2);width:11px;height:11px;border-radius:2px}
+.figura .muestra.mio{background:var(--accent-soft);border:1px solid var(--accent-borde);
+  width:11px;height:11px;border-radius:2px}
 
 .figura .muestra.flojo{
   background:none;border-top:2px dashed var(--line-strong);
@@ -1708,76 +1924,30 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 }
 .retrato.grande{width:230px}
 
-/* --- 13.1 El retrato dentro del dibujo --------------------------
-   El encargo era «utilizar mi imagen con algún diseño». De las
-   cinco formas que existen de juntar una foto con un dibujo, tres
-   están descartadas y conviene dejar escrito por qué:
+/* --- 13.1 (retirada) El retrato dentro del dibujo ---------------
+   Aquí estuvo la curva del mecanismo cruzando el retrato por el pecho
+   y un campo de puntos asomando por detrás. La idea era buena sobre
+   el papel —usar la foto como parte del dibujo en vez de tenerla al
+   lado— y en escritorio se defendía. En el móvil no: la línea cae
+   sobre una foto que ya mide ciento sesenta píxeles y la trama se lee
+   como suciedad.
 
-   · Recortar la silueta y pegarla sobre el papel necesita canal
-     alfa, y el borde del pelo es donde se ve si el recorte lo hizo
-     una persona o un algoritmo. Ya se probó aquí y se quitó.
-   · El duotono sobre una cara es el lenguaje del cartel de
-     festival. En una consulta de psicología, «esta persona ha sido
-     procesada» juega en contra.
-   · El semitono real de la foto hay que renderizarlo en un editor;
-     aproximarlo con filtros SVG sale caro y sale mal.
+   Queda escrito para no repetirlo. La fotografía de esta web no
+   necesita que le pinten nada encima. Si algún día se quiere volver a
+   intentar, que sea con una foto hecha a propósito para eso, no
+   decorando una de estudio. */
 
-   Lo que sí: no tocar la fotografía y usarla. La curva del alivio
-   —la misma que está en el diagrama, no una decoración— entra por
-   el borde, cruza el retrato a la altura del pecho y sale por el
-   otro lado. Y detrás, un campo de puntos que sangra hacia el
-   papel, que es el gesto de imprenta sin poner un dedo en la foto.
-
-   La línea cruza el pecho y nunca la cara: una línea sobre los ojos
-   convierte a la persona en objeto de estudio. */
-
-.retrato-marco{
-  position:relative;margin:0;
-  width:190px;flex:0 0 auto;
-  isolation:isolate;
-}
-.retrato-marco .retrato{display:block;position:relative;z-index:1}
-/* El campo de puntos, desplazado hacia abajo y a la izquierda para
-   que asome por dos lados y se lea como una capa y no como un
-   marco. Va por detrás de la foto. */
-.retrato-marco::before{
-  content:"";position:absolute;z-index:0;
-  left:-16px;bottom:-16px;width:140px;height:140px;
-  background-image:radial-gradient(var(--accent-borde) 1.4px,transparent 1.4px);
-  background-size:7px 7px;
-  opacity:.55;
-}
-.retrato-marco .cruce{
-  position:absolute;inset:0;z-index:2;
-  width:100%;height:100%;pointer-events:none;
-}
-/* Papel sobre la foto: la línea parece abierta en la imagen, no
-   pintada encima. El mismo grosor que la tesis del diagrama. */
-.retrato-marco .cruce-linea{
-  stroke:var(--bg);stroke-width:5;fill:none;
-  stroke-linecap:round;stroke-linejoin:round;
-}
-/* El de "sobre mí" es el grande. */
-.retrato-marco:has(.retrato.grande){width:230px}
+/* En el móvil la foto pasaba a ciento sesenta píxeles encima del
+   texto y dejaba un hueco enorme a su derecha: una columna de una
+   sola columna con la foto encogida en una esquina. Ahora ocupa el
+   ancho entero, recortada a tres por dos y encuadrada un poco por
+   encima del centro, que es donde está la cara en las cinco fotos. */
 @media (max-width:620px){
-  .retrato-marco,.retrato-marco:has(.retrato.grande){width:160px}
-  .retrato-marco::before{width:96px;height:96px;left:-11px;bottom:-11px}
-}
-
-/* El de contacto es otro papel: acompana a "quien responde", va
-   redondo, sin sombra y con el borde un punto mas marcado para que
-   a 96px siga teniendo silueta. */
-.retrato.pequeno{
-  width:96px;
-  aspect-ratio:1;
-  border-radius:50%;
-  box-shadow:none;
-}
-
-@media (max-width:620px){
-  .presentacion{grid-template-columns:1fr;gap:10px}
-  .retrato,.retrato.grande{width:160px}
-  .retrato.pequeno{width:88px}
+  .presentacion{grid-template-columns:1fr;gap:16px}
+  .retrato,.retrato.grande{
+    width:100%;aspect-ratio:4/3;object-position:50% 14%;
+  }
+  .retrato.pequeno{width:88px;aspect-ratio:1;object-position:50% 50%}
 }
 
 /* ============================================================
@@ -1862,25 +2032,28 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 }
 
 /* ============================================================
-   13. Las fotografías
+   13. Las fotografías (lo que queda)
    ------------------------------------------------------------
-   Dos piezas y ninguna más.
+   Aquí se describían dos piezas —.banda, la franja ancha de
+   respiro, y .ficha, la miniatura del artículo— y las dos eran
+   fotografía de banco: una taza, unos libros, una sombra en la
+   pared. Nueve imágenes en total.
 
-   .banda es una franja ancha que separa dos bloques de texto.
-   No explica nada y no tiene que explicarlo: en una página larga
-   el ojo necesita un sitio donde no haya que leer. Por eso son
-   fotos de objetos y de luz —una taza, unos libros, una sombra
-   en la pared— y nunca de personas. La razón no es estética: las
-   guías de comunicación en salud mental piden no ilustrar el
-   malestar con gente sufriendo, y una foto de banco de alguien
-   «angustiado» es exactamente eso.
+   Ya no están. Cada hueco lo ocupa ahora un dibujo propio, que es
+   lo que la fotografía no hacía: decir algo. Las láminas anchas
+   están en laminas.py y su estilo en la sección 10.1 ter; los
+   cuatro sellos del blog, en la misma.
 
-   .ficha es la miniatura de un artículo del blog.
+   Lo que se mantiene, porque sigue siendo verdad y sigue estando
+   en vigor: en esta web no hay ni habrá fotografías de personas
+   sufriendo. Las guías de comunicación en salud mental piden no
+   ilustrar el malestar con gente angustiada, y una foto de banco
+   de alguien con la cabeza entre las manos es exactamente eso.
 
-   Las dos van a 8:3 y a 16:9 respectivamente y las imágenes
-   vienen ya recortadas a esa proporción, así que aspect-ratio no
-   reencuadra nada: está para reservar el hueco antes de que la
-   foto cargue y que el texto no dé un salto.
+   Las reglas de .banda y .ficha se quedan escritas abajo porque el
+   estilo de .ficha lo reutiliza la tarjeta con sello, y porque las
+   únicas fotografías que quedan —los cinco retratos— siguen
+   necesitando su hueco reservado para no mover el texto al cargar.
    ============================================================ */
 
 .banda{
@@ -1910,6 +2083,28 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 /* La foto de un artículo va pegada al borde superior de la
    tarjeta, sin separación: la tarjeta tiene overflow oculto y la
    imagen hereda su esquina redondeada. */
+/* Las tarjetas del blog con sello: el dibujo va arriba, a sangre, con
+   un fondo un punto distinto del papel para que se lea como lámina y
+   no como un garabato suelto encima del título. Ocupa el mismo hueco
+   que ocupaba la fotografía de banco que había antes. */
+.tarjeta.con-sello{padding:0;overflow:hidden}
+.tarjeta.con-sello .ficha{
+  display:block;background:var(--surface-2);
+  border-bottom:1px solid var(--line);
+  padding:10px 14px 4px;
+}
+.tarjeta.con-sello .ficha .sello{display:block;width:100%;height:auto}
+.tarjeta.con-sello .cuerpo{padding:18px 22px 22px;display:flex;flex-direction:column;flex:1}
+.tarjeta.con-sello .cuerpo .mas{margin-top:auto}
+a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
+
+/* El mismo sello, a ancho de columna, como cabecera del artículo. */
+.figura.sello-ancho{margin:26px 0 30px}
+.figura.sello-ancho .sello{display:block;width:100%;height:auto;max-height:230px}
+
+/* Piezas propias de los sellos. */
+.dibujo .anillo{stroke:var(--accent-borde);stroke-width:1.25;fill:none}
+
 .tarjeta.con-foto{padding:0;overflow:hidden}
 .tarjeta.con-foto .ficha{
   display:block;width:100%;height:auto;
@@ -2049,7 +2244,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
          entrado del todo. Así, si alguien llega con un ancla a mitad
          de la página o el navegador le restaura el scroll, lo que ve
          está ya al final de la animación y no a medias. */
-      animation-range:entry 30% cover 6%;
+      animation-range:entry 18% cover 46%;
     }
     /* Sin opacidad. Solo ocho píxeles.
 
@@ -2235,16 +2430,16 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     /* Terminan antes: con el rango anterior la figura entraba en
        pantalla vacía y se quedaba así durante bastante scroll, que
        en un móvil es una caja en blanco a media lectura. */
-    .dibujo .eje{animation-range:entry 70% entry 100%}
-    .dibujo .trazo-coste{animation-range:entry 88% cover 22%}
-    .dibujo .trazo-alivio{animation-range:cover 6% cover 38%}
-    .dibujo .trazo-flojo{animation-range:entry 88% cover 18%}
+    .dibujo .eje{animation-range:cover 26% cover 52%}
+    .dibujo .trazo-coste{animation-range:cover 36% cover 68%}
+    .dibujo .trazo-alivio{animation-range:cover 44% cover 76%}
+    .dibujo .trazo-flojo{animation-range:cover 36% cover 64%}
     /* Las barras y los nodos no se pueden "trazar": aparecen, y en
        orden, que es lo que cuenta la pieza. */
     .dibujo .celda-llena,.dibujo .nodo,.dibujo .nodo-txt{
       animation:marcar linear both;
       animation-timeline:view();
-      animation-range:entry 70% entry 95%;
+      animation-range:cover 32% cover 60%;
     }
     @keyframes trazar{
       from{stroke-dashoffset:1}
@@ -2255,9 +2450,30 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     .dibujo .marca-evento{
       animation:marcar linear both;
       animation-timeline:view();
-      animation-range:entry 56% cover 12%;
+      animation-range:cover 30% cover 62%;
     }
     @keyframes marcar{from{opacity:0}to{opacity:1}}
+    /* El precio. Es la cifra que decide media página y hasta ahora
+       entraba igual que un párrafo. Crece desde un punto por debajo
+       y la marca de la barra sube después: dos tiempos, no uno. */
+    .tarifa .precio{
+      animation:entrar-precio linear both;
+      animation-timeline:view();
+      animation-range:entry 30% cover 40%;
+    }
+    @keyframes entrar-precio{
+      from{opacity:0;transform:translateY(10px) scale(.94)}
+      to{opacity:1;transform:none}
+    }
+    .tarifa .barra-mercado .yo{
+      animation:subir-marca linear both;
+      animation-timeline:view();
+      animation-range:cover 36% cover 64%;
+    }
+    @keyframes subir-marca{
+      from{transform:scaleY(0)}
+      to{transform:scaleY(1)}
+    }
   }
 }
 
@@ -2284,6 +2500,238 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     @keyframes respirar{
       from{transform:scale(1.06) translateY(-12px)}
       to{transform:scale(1.06) translateY(12px)}
+    }
+  }
+}
+
+/* --- 16.4 bis. Más movimiento, y donde se ve --------------------
+   La queja era doble: que había poco y que lo poco que había ocurría
+   demasiado abajo. Lo segundo se arregla con los rangos de la sección
+   anterior. Esto es lo primero.
+
+   Cuatro piezas más, todas con la misma disciplina que el resto: cero
+   JavaScript, cero opacidad de partida en nada que lleve texto, y todo
+   dentro del doble candado de @supports y prefers-reduced-motion.
+   Si el navegador no lo entiende o la persona pide menos movimiento,
+   la página se ve exactamente igual, quieta. */
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+
+    /* 1. Las tarjetas entran de una en una. El escalonado no necesita
+       retardos: cada tarjeta tiene su propia línea de tiempo, y
+       desplazando un poco el rango de la segunda y la cuarta se
+       consigue que la fila no entre de golpe. */
+    .rejilla .tarjeta{
+      animation:subir-tarjeta linear both;
+      animation-timeline:view();
+      animation-range:entry 22% cover 44%;
+    }
+    .rejilla .tarjeta:nth-child(2n){animation-range:entry 16% cover 50%}
+    /* Ocho píxeles y no dieciséis. Con dieciséis, la tarjeta invadía
+       durante la animación los once píxeles de hueco que la separan
+       del enlace de debajo y le tapaba cinco de su área pulsable: axe
+       lo cazó como incumplimiento de 2.5.8 en dos enlaces de la
+       portada. Un objetivo táctil que se encoge mientras algo entra
+       en pantalla es un objetivo táctil que falla, y falla justo en
+       el móvil, que es donde se navega con el pulgar mientras se
+       baja. */
+    @keyframes subir-tarjeta{
+      from{transform:translateY(8px)}
+      to{transform:none}
+    }
+
+    /* 2. Cada celda de la franja de credenciales. Son cuatro datos y
+       entrar los cuatro a la vez los convierte en un bloque; entrando
+       en orden se leen como lo que son, cuatro cosas distintas. */
+    .confianza div{
+      animation:subir-tarjeta linear both;
+      animation-timeline:view();
+      animation-range:entry 26% cover 42%;
+    }
+    .confianza div:nth-child(2){animation-range:entry 22% cover 46%}
+    .confianza div:nth-child(3){animation-range:entry 18% cover 50%}
+    .confianza div:nth-child(4){animation-range:entry 14% cover 54%}
+
+    /* 3. El subrayado del titular de sección. Es la pieza que da la
+       sensación de «sigue bajando»: un trazo corto que se dibuja de
+       izquierda a derecha justo cuando el titular llega a la altura
+       de lectura. */
+    h2{position:relative}
+    .contenedor main h2::after{
+      /* Decorativo y, sobre todo, transparente al ratón: sin esto el
+         subrayado se coloca por encima del enlace que queda justo
+         encima del titular y le come parte del área pulsable. Lo
+         cazó axe como incumplimiento de 2.5.8, «objetivo
+         parcialmente tapado», en dos enlaces de la portada. */
+      pointer-events:none;
+      content:"";position:absolute;left:0;bottom:-10px;
+      width:58px;height:3px;border-radius:99px;
+      background:var(--accent-2);
+      transform:scaleX(0);transform-origin:0 50%;
+      animation:trazar-subrayado linear both;
+      animation-timeline:view();
+      animation-range:entry 38% cover 44%;
+    }
+    @keyframes trazar-subrayado{to{transform:scaleX(1)}}
+
+    /* 4. Las muestras de la leyenda de cada figura, que entran
+       después del dibujo y no antes. */
+    .figura .leyenda li,.figura .leyenda.numerada li{
+      animation:subir-tarjeta linear both;
+      animation-timeline:view();
+      animation-range:cover 38% cover 68%;
+    }
+  }
+}
+
+/* --- 16.4 ter. Las láminas, por dentro --------------------------
+   Las cinco láminas nuevas —la semana, el recorrido, el bono, los
+   treinta minutos y el umbral— no son trazos que se dibujen: son
+   masas, casillas y cajas. Trazarlas no valía; lo que tienen que
+   hacer es CONSTRUIRSE, en el orden en que se leen.
+
+   Y hay una regla que no se rompe: nada que contenga texto parte de
+   opacidad cero. Lo que se mueve son rectángulos, círculos y barras.
+   Los rótulos ya están puestos cuando llega el dibujo. */
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+
+    /* La semana. Las ciento sesenta y ocho casillas grises no se
+       animan —ciento sesenta y ocho animaciones para que no se note
+       ninguna—: lo que entra es lo que significa algo. Primero la
+       sesión, con un golpe seco; después los ocho ratos de entre
+       semana, uno detrás de otro. */
+    .dibujo .celda-sesion{
+      transform-box:fill-box;transform-origin:center;
+      animation:plantar linear both;
+      animation-timeline:view();
+      animation-range:cover 30% cover 48%;
+    }
+    @keyframes plantar{
+      from{transform:scale(0)}
+      60%{transform:scale(1.35)}
+      to{transform:scale(1)}
+    }
+    .dibujo .celda-entre{
+      transform-box:fill-box;transform-origin:center;
+      animation:plantar linear both;
+      animation-timeline:view();
+      animation-range:cover 44% cover 70%;
+    }
+    .dibujo .celda-entre:nth-of-type(2n){animation-range:cover 48% cover 74%}
+    .dibujo .celda-entre:nth-of-type(3n){animation-range:cover 52% cover 78%}
+
+    /* El recorrido. Los hitos aparecen en el orden en que ocurrieron,
+       que es lo único que puede hacer un dibujo de una carrera. El de
+       «estoy aquí» entra el último y con el rebote, porque es el que
+       cuenta. */
+    .dibujo .hito{
+      transform-box:fill-box;transform-origin:center;
+      animation:plantar linear both;
+      animation-timeline:view();
+      animation-range:cover 34% cover 52%;
+    }
+    .dibujo .hito.ahora,.dibujo .hito.nucleo{animation-range:cover 52% cover 74%}
+    .dibujo .hito.vacio{animation-range:cover 62% cover 82%}
+
+    /* El bono. Las ocho cajas atadas entran juntas, como un bloque,
+       porque eso es lo que son. Las ocho sueltas entran de una en
+       una, con su punto de decisión, porque eso es lo que son. La
+       diferencia entre las dos filas es la tesis del dibujo, y el
+       movimiento la dice antes que el pie. */
+    .dibujo .caja-ses.atada{
+      animation:marcar linear both;
+      animation-timeline:view();
+      animation-range:cover 30% cover 46%;
+    }
+    .dibujo .caja-ses.suelta,.dibujo .decide{
+      transform-box:fill-box;transform-origin:center bottom;
+      animation:brotar linear both;
+      animation-timeline:view();
+      animation-range:cover 46% cover 76%;
+    }
+    .dibujo .caja-ses.suelta:nth-of-type(2n),
+    .dibujo .decide:nth-of-type(2n){animation-range:cover 50% cover 80%}
+    .dibujo .caja-ses.suelta:nth-of-type(3n),
+    .dibujo .decide:nth-of-type(3n){animation-range:cover 54% cover 84%}
+    @keyframes brotar{
+      from{transform:scaleY(0)}
+      to{transform:scaleY(1)}
+    }
+
+    /* Los treinta minutos. La barra se llena de izquierda a derecha,
+       como pasa el tiempo. Un tramo detrás de otro, en el orden real
+       de la media hora. */
+    .dibujo .tramo{
+      transform-box:fill-box;transform-origin:left center;
+      animation:llenar linear both;
+      animation-timeline:view();
+      animation-range:cover 28% cover 44%;
+    }
+    .dibujo .tramo.tuyo{animation-range:cover 36% cover 62%}
+    .dibujo .tramo.mio:nth-of-type(3){animation-range:cover 58% cover 72%}
+    .dibujo .tramo.mio:nth-of-type(4){animation-range:cover 66% cover 80%}
+    @keyframes llenar{
+      from{transform:scaleX(0)}
+      to{transform:scaleX(1)}
+    }
+
+    /* Los sellos del blog: los anillos del que se extiende crecen de
+       dentro hacia fuera, que es literalmente lo que cuenta. */
+    .dibujo .anillo{
+      transform-box:fill-box;transform-origin:center;
+      animation:plantar linear both;
+      animation-timeline:view();
+      animation-range:cover 26% cover 50%;
+    }
+    .dibujo .anillo:nth-of-type(2){animation-range:cover 32% cover 58%}
+    .dibujo .anillo:nth-of-type(3){animation-range:cover 38% cover 66%}
+    .dibujo .anillo:nth-of-type(4){animation-range:cover 44% cover 74%}
+  }
+}
+
+/* --- 16.4 quater. La invitación a seguir bajando ----------------
+   La queja literal era «quiero que la página web te anime a seguir
+   bajando». Esto es lo que lo hace, y es una sola pieza: debajo de
+   la primera pantalla, una flecha fina que sube y baja despacio y
+   que se apaga en cuanto se empieza a bajar.
+
+   Va atada al scroll y no a un temporizador, así que desaparece en
+   el primer gesto y no vuelve a molestar. Y no es un botón: quien
+   la pulsa baja una pantalla, pero está ahí para verse, no para
+   usarse. */
+
+.baja{
+  display:flex;justify-content:center;margin:6px 0 0;
+}
+.baja a{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;
+  color:var(--muted);text-decoration:none;
+  border:1px solid var(--line);
+}
+.baja a:hover{color:var(--accent-2);border-color:var(--accent-borde)}
+.baja svg{width:20px;height:20px}
+
+@media (prefers-reduced-motion:no-preference){
+  .baja a{animation:cabecear 2.4s var(--entra) infinite}
+  @keyframes cabecear{
+    0%,70%,100%{transform:translateY(0)}
+    35%{transform:translateY(6px)}
+  }
+}
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    /* Y se retira sola: a media pantalla de scroll ya no está. */
+    .baja{
+      animation:apagar linear both;
+      animation-timeline:scroll(root block);
+      animation-range:0 50vh;
+    }
+    @keyframes apagar{
+      to{opacity:0;visibility:hidden}
     }
   }
 }
@@ -2353,7 +2801,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
       stroke-dasharray:1;
       animation:trazar-icono linear both;
       animation-timeline:view();
-      animation-range:entry 52% cover 14%;
+      animation-range:cover 24% cover 58%;
     }
     @keyframes trazar-icono{
       from{stroke-dashoffset:1}
@@ -2390,7 +2838,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     .pasos::after{
       animation:llenar linear both;
       animation-timeline:view();
-      animation-range:entry 72% cover 78%;
+      animation-range:cover 16% cover 72%;
     }
     @keyframes llenar{to{transform:scaleY(1)}}
   }

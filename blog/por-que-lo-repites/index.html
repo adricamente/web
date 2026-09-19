@@ -60,7 +60,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -218,7 +230,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -249,11 +261,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -266,15 +278,23 @@
 
   <article class="articulo-cuerpo">
     <h1>Por qué lo repites aunque sepas que te perjudica</h1>
-    <p class="articulo-meta">Septiembre de 2026 &middot; 2 min de lectura &middot; Adrián Cuñat</p>
+    <p class="articulo-meta">
+      <time datetime="2026-09-14">Septiembre de 2026</time> &middot;
+      2 min de lectura &middot;
+      <a rel="author" href="/sobre-mi/">Adrián Cuñat Andrés</a>,
+      psicólogo colegiado nº CM03836
+    </p>
 
-  <figure class="banda">
-    <img src="/fotos/banda-repites.webp?v=62c77c"
-         srcset="/fotos/banda-repites-m.webp?v=1c4f8c 720w, /fotos/banda-repites.webp?v=62c77c 960w"
-         sizes="(max-width:720px) 100vw, 680px"
-         width="960" height="360" fetchpriority="high" decoding="async"
-         alt="Sombras de una barandilla repetidas sobre una pared">
-  </figure>
+  <figure class="figura sello-ancho"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-rep-c-t s-rep-c-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-rep-c-t">Cuatro picos de alivio y cuatro escalones de coste</title>
+  <desc id="s-rep-c-d">Una línea fina sube y baja en cuatro picos: el alivio, que aparece y se va. Una línea gruesa sube en cuatro escalones y no vuelve a bajar: el coste.</desc>
+  <path class="reticula" d="M24 36 V132 M58 36 V132 M92 36 V132 M126 36 V132 M160 36 V132 M194 36 V132 M228 36 V132 M262 36 V132 M296 36 V132 M24 36 H296 M24 60 H296 M24 84 H296 M24 108 H296 M24 132 H296"/>
+  <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M24 132 L54 132 Q70 80 86 132 L112 132 Q128 80 144 132 L170 132 Q186 80 202 132 L228 132 Q244 80 260 132 L296 132"/>
+  <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M24 132 L70 132 L70 115 L128 115 L128 98 L186 98 L186 81 L244 81 L244 64 L296 64"/>
+  <path class="eje" vector-effect="non-scaling-stroke" d="M24 132 H296"/>
+</svg></figure>
 
     <p>
       Hay una pregunta que aparece siempre, tarde o temprano, dicha de una
@@ -290,10 +310,10 @@
       de esas conductas hace algo muy concreto y muy rápido: quita malestar.
     </p>
     <p>
-      Y lo que quita malestar se repite. Se llama <strong>refuerzo
-      negativo</strong> y es de los mecanismos de aprendizaje mejor
+      <strong>Lo que quita malestar se repite.</strong> Se llama refuerzo
+      negativo y es de los mecanismos de aprendizaje mejor
       estudiados que hay. No es una metáfora ni una forma de hablar: es
-      cómo <strong>aprende</strong> un organismo.
+      <strong>cómo aprende un organismo</strong>.
     </p>
 
   <aside class="idea">
@@ -307,9 +327,9 @@
       preguntas y una multiplicación. No mide nada de ti.
     </p>
     <p>
-      El alivio llega en <strong>segundos</strong> y el coste llega en
-      semanas, en meses, en forma de una vida más pequeña. El aprendizaje
-      <strong>no compara</strong> esas dos cosas. No puede. Solo registra
+      <strong>El alivio llega en segundos y el coste llega en
+      semanas</strong>, en meses, en forma de una vida más pequeña. <strong>El
+      aprendizaje no compara esas dos cosas.</strong> No puede. Solo registra
       lo que pasó justo después.
     </p>
     <p>
@@ -317,8 +337,7 @@
       <a href="/areas/procrastinacion/">terapia para la procrastinación</a>
       no va de organizarse mejor. No estás compitiendo con un capricho. Estás compitiendo con un sistema que
       aprendió antes que tú, que no se cansa y que tiene toda la razón
-      desde su punto de vista: lo que hiciste ayer <strong>sí</strong>
-      quitó el malestar de ayer.
+      desde su punto de vista: <strong>lo que hiciste ayer sí quitó el malestar de ayer</strong>.
     </p>
     <p>
       Que algo te esté hundiendo a doce meses vista y te esté salvando a
@@ -335,7 +354,7 @@
     <p>Treinta minutos por videollamada, <strong>gratis</strong>, y sales sabiendo si esto que acabas de leer es lo tuyo y qué se haría con ello.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">O empieza por tu cuenta con <a href="/mapa/">el mapa de lo que evitas</a>: seis preguntas, diez minutos y no sale de tu móvil.</p>
@@ -406,6 +425,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -425,6 +448,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

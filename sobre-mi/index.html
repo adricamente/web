@@ -64,7 +64,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -198,7 +210,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -229,11 +241,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -246,23 +258,18 @@
   <h1>Adrián Cuñat Andrés</h1>
 
   <div class="presentacion">
-    <figure class="retrato-marco">
-      <img class="retrato grande" src="/fotos/adrian-sobremi.webp?v=302ad1"
+    <img class="retrato grande" src="/fotos/adrian-sobremi.webp?v=302ad1"
          width="230" height="287" fetchpriority="high" decoding="async"
          alt="Adrián Cuñat Andrés, de frente, con polo verde y gafas de pasta, sonriendo">
-      <svg class="cruce" viewBox="0 0 400 500" aria-hidden="true" fill="none">
-        <path class="cruce-linea" vector-effect="non-scaling-stroke"
-              d="M-6 456 L96 456 C132 456 132 400 168 400 C204 400 204 456 240 456 L406 456"/>
-      </svg>
-    </figure>
     <div class="texto">
   <p class="grande">
     Graduado en Psicología por la UNED y cursando el Máster en
     Psicología General Sanitaria en UNIR. Colegiado nº CM03836.
-    Atiendo <strong>en prácticas supervisadas</strong> dentro del centro sanitario Neurococos, online y para toda España.
+    Atiendo en prácticas supervisadas dentro del <strong>centro sanitario
+    Neurococos</strong>, <strong>online y para toda España</strong>.
   </p>
   <p>
-    Trabajo con gente de veinte a cuarenta y tantos que lleva demasiado tiempo <strong>esperando</strong> a estar lista: para
+    Trabajo con gente de veinte a cuarenta y tantos que lleva demasiado tiempo <strong>esperando a estar lista</strong>: para
     cambiar de trabajo, para dejar una relación, para empezar algo que
     llevan años posponiendo.
   </p>
@@ -271,23 +278,24 @@
 
   <h2>Lo primero, porque es lo que importa</h2>
   <p>
-    Estoy colegiado, pero <strong>todavía</strong> no tengo el título, y eso significa que no ejerzo <strong>por cuenta propia</strong>. Son dos cosas
+    Estoy colegiado, pero <strong>todavía no tengo el título</strong>, y eso
+    significa que no ejerzo por cuenta propia. Son dos cosas
     distintas y conviene no confundirlas —<a href="/quien-es-quien-en-salud-mental/">aquí
     está la diferencia entera, con la ley al lado</a>—: la colegiación te acredita como
-    psicólogo, y el máster es lo que habilita para ejercer la psicología
-    sanitaria. Hasta tenerlo, lo que hago lo hago dentro de un centro
+    psicólogo, y <strong>el máster es lo que habilita para ejercer la
+    psicología sanitaria</strong>. Hasta tenerlo, lo que hago lo hago dentro de un centro
     sanitario y con un profesional colegiado supervisando los casos.
   </p>
   <p>
     Podría no contarlo, porque prácticamente nadie lo pregunta. Lo cuento
-    porque si vas a sentarte a hablar conmigo de lo que no hablas con nadie, lo mínimo es que sepas <strong>quién tienes delante</strong>. Y
+    porque si vas a sentarte a hablar conmigo de lo que no hablas con nadie, lo mínimo es que <strong>sepas quién tienes delante</strong>. Y
     porque el día que tenga el título vas a poder comprobar que lo que
     decía antes era verdad.
   </p>
 
   <div class="caja">
     <p style="margin-bottom:0">
-      En la sesión estamos <strong>tú y yo</strong>, nadie más. La
+      En la sesión <strong>estamos tú y yo, nadie más</strong>. La
       supervisión ocurre entre sesiones: reviso el caso con un profesional
       colegiado del centro, que por tanto conoce la información clínica y
       está sujeto al mismo secreto profesional que yo. No es un trámite
@@ -297,42 +305,60 @@
   </div>
 
   <div class="llamada">
-    <p>Eso es lo incómodo de mi situación, contado antes de que lo preguntes. Si aun así quieres que lo hablemos, son treinta minutos y no hay que <strong>decidir</strong> nada.</p>
+    <p>Eso es lo incómodo de mi situación, contado antes de que lo preguntes. Si aun así quieres que lo hablemos, son treinta minutos y <strong>no hay que decidir nada</strong>.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
 
   <h2>Cómo trabajo</h2>
   <p>
-    Desde terapias contextuales y cognitivo-conductuales. Traducido: en
+    Desde <strong>terapias contextuales y cognitivo-conductuales</strong>.
+    Traducido: en
     vez de pelearnos con lo que sientes, miramos qué haces cuando eso
     aparece, qué consigues a corto plazo y qué te está costando a largo.
-    Casi todo lo que nos hunde <strong>funciona</strong> muy bien para el minuto siguiente; ese es <strong>el problema</strong>.
+    Casi todo lo que nos hunde <strong>funciona muy bien para el minuto
+    siguiente</strong>; ese es el problema.
   </p>
   <p>
     A partir de ahí, un plan y revisarlo. Cosas concretas entre sesión y
     sesión, y una conversación cada pocas semanas sobre si esto se está
-    moviendo o no. Si no se mueve, <strong>lo cambiamos</strong>. Si sigue sin moverse, <strong>te lo digo</strong> y te ayudo a buscar otro sitio.
+    moviendo o no. Si no se mueve, lo cambiamos. Si sigue sin moverse, <strong>te lo digo y
+    te ayudo a buscar otro sitio</strong>.
   </p>
 
   <h3>Lo que no vas a encontrar</h3>
   <ul>
-    <li>Frases motivadoras. No sirven para nada y lo sabes.</li>
-    <li>Promesas de resultados o de plazos. Nadie honesto te las puede dar.</li>
-    <li>Diagnósticos por Instagram. Un vídeo no puede saber lo que te pasa.</li>
-    <li>Historias de pacientes. Ni con nombres cambiados, ni disimuladas, ni «de un amigo». Nunca.</li>
-    <li>Testimonios. <a href="/#sin-testimonios">Por esto</a>: pedirle una reseña pública a alguien que está en terapia contigo es aprovecharse de una relación desigual.</li>
+    <li><strong>Frases motivadoras.</strong> No sirven para nada y lo sabes.</li>
+    <li><strong>Promesas de resultados o de plazos.</strong> Nadie honesto te las puede dar.</li>
+    <li><strong>Diagnósticos por Instagram.</strong> Un vídeo no puede saber lo que te pasa.</li>
+    <li><strong>Historias de pacientes.</strong> Ni con nombres cambiados, ni disimuladas, ni «de un amigo». Nunca.</li>
+    <li><strong>Testimonios.</strong> <a href="/#sin-testimonios">Por esto</a>: pedirle una reseña pública a alguien que está en terapia contigo es aprovecharse de una relación desigual.</li>
   </ul>
 
-  <figure class="banda">
-    <img src="/fotos/banda-sobremi.webp?v=1fd63d"
-         srcset="/fotos/banda-sobremi-m.webp?v=ff22a2 800w, /fotos/banda-sobremi.webp?v=1fd63d 1600w"
-         sizes="(max-width:720px) 100vw, 680px"
-         width="1600" height="600" loading="lazy" decoding="async"
-         alt="Un rincón de una habitación con plantas, un espejo y suelo de madera">
+  <figure class="figura">
+    <div class="lamina">
+    <svg viewBox="0 0 400 176" role="img" aria-labelledby="rec-t rec-d" class="dibujo"
+         fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="rec-t">Las cuatro casillas de la carrera, con la mía marcada</title>
+      <desc id="rec-d">Una línea horizontal con cuatro puntos. Los dos primeros —grado en la UNED y colegiación número CM03836— están rellenos: hechos. El tercero, el Máster en Psicología General Sanitaria, es un círculo mayor con el centro marcado: es donde estoy ahora. El cuarto, el título y la consulta propia, está vacío, y el tramo que lleva hasta él es discontinuo.</desc>
+      <path class="reticula" d="M40 28 V148 M80 28 V148 M120 28 V148 M160 28 V148 M200 28 V148 M240 28 V148 M280 28 V148 M320 28 V148 M360 28 V148 M40 28 H360 M40 58 H360 M40 88 H360 M40 118 H360 M40 148 H360"/>
+      <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M40 88 H253"/>
+      <path class="trazo-flojo" vector-effect="non-scaling-stroke" pathLength="1" d="M253 88 H360"/>
+      <circle class="hito lleno" cx="40" cy="88" r="8"/><circle class="hito lleno" cx="146" cy="88" r="8"/><circle class="hito ahora" cx="253" cy="88" r="11"/><circle class="hito nucleo" cx="253" cy="88" r="4.2"/><circle class="hito vacio" cx="360" cy="88" r="8"/>
+    </svg>
+    <span class="anota izq" style="left:9.0%;top:26%">Grado</span>
+    <span class="anota izq" style="left:9.0%;top:74%">UNED</span>
+    <span class="anota" style="left:36.5%;top:26%">Colegiación</span>
+    <span class="anota" style="left:36.5%;top:74%">nº CM03836</span>
+    <span class="anota" style="left:63.2%;top:26%">Máster</span>
+    <span class="anota ahora" style="left:63.2%;top:74%">estoy aquí</span>
+    <span class="anota der" style="left:91.0%;top:26%">Título</span>
+    <span class="anota der" style="left:91.0%;top:74%">y consulta propia</span>
+    </div>
+    <figcaption>Esto es lo que quiere decir <strong>«en prácticas supervisadas»</strong>, sin adornos: dos casillas hechas, una en curso y una que no. Hasta que la última esté, atiendo dentro del <strong>centro sanitario Neurococos</strong> y con un profesional colegiado revisando los casos. El día que cambie, esta página lo dirá.</figcaption>
   </figure>
 
   <h2>Por qué publico vídeos todos los días</h2>
@@ -366,7 +392,7 @@
     <li>Orientación: terapias contextuales y cognitivo-conductuales.</li>
   </ul>
   <p class="apunte">
-    Los enlaces van <strong>a propósito</strong>. En esta web no hay
+    <strong>Los enlaces van a propósito.</strong> En esta web no hay
     testimonios de pacientes —no puede haberlos, lo prohíbe la normativa
     de publicidad sanitaria—, así que lo único que puedo ofrecerte en su
     lugar es que todo lo que digo de mí se pueda comprobar en sitios que
@@ -384,7 +410,7 @@
     <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y yo te diga honestamente si creo que puedo ayudarte.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Antes puedes mirar <a href="/terapia-online/">cómo son las sesiones</a> o <a href="/tarifas/">las tarifas</a>.</p>
@@ -455,6 +481,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -474,6 +504,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

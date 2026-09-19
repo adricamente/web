@@ -60,7 +60,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -86,91 +98,25 @@
   "@context": "https://schema.org",
   "@type": "Service",
   "name": "Terapia psicológica online",
-  "serviceType": "Psicoterapia",
+  "serviceType": "Atención psicológica",
   "description": "Sesiones de psicoterapia por videollamada, de 60 minutos, desde el centro sanitario Neurococos. La primera sesión informativa, de 30 minutos, es gratuita.",
   "provider": {
-    "@type": "Person",
-    "name": "Adrián Cuñat Andrés",
-    "url": "https://adricamente.com/sobre-mi/",
-    "email": "hola@adricamente.com",
-    "jobTitle": "Psicólogo colegiado, cursando el Máster en Psicología General Sanitaria",
-    "identifier": {
-      "@type": "PropertyValue",
-      "name": "Número de colegiado",
-      "value": "CM03836"
-    },
-    "memberOf": {
-      "@type": "Organization",
-      "name": "Colegio Oficial de Psicología de Castilla-La Mancha",
-      "url": "https://www.copclm.com/"
-    },
-    "hasCredential": [
-      {
-        "@type": "EducationalOccupationalCredential",
-        "credentialCategory": "degree",
-        "name": "Grado en Psicología",
-        "recognizedBy": {
-          "@type": "CollegeOrUniversity",
-          "name": "UNED"
-        }
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "credentialCategory": "Colegiación profesional",
-        "name": "Psicólogo colegiado nº CM03836",
-        "recognizedBy": {
-          "@type": "Organization",
-          "name": "Colegio Oficial de Psicología de Castilla-La Mancha"
-        }
-      }
-    ],
-    "alumniOf": {
-      "@type": "CollegeOrUniversity",
-      "name": "Universidad Nacional de Educación a Distancia (UNED)"
-    },
-    "affiliation": {
-      "@type": "CollegeOrUniversity",
-      "name": "Universidad Internacional de La Rioja (UNIR)"
-    },
-    "description": "Psicólogo colegiado nº CM03836. No tiene el título de Psicólogo General Sanitario: cursa el Máster en Psicología General Sanitaria y atiende en prácticas supervisadas dentro del centro sanitario Neurococos.",
-    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
-    "homeLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Albacete",
-        "addressRegion": "Castilla-La Mancha",
-        "addressCountry": "ES"
-      }
-    },
-    "worksFor": {
-      "@type": "MedicalClinic",
-      "name": "Neurococos",
-      "url": "https://www.doctoralia.es/clinicas/neurococos",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Raconada del Pare Leandro Calvo, 2",
-        "postalCode": "46701",
-        "addressLocality": "Gandia",
-        "addressRegion": "Valencia",
-        "addressCountry": "ES"
-      }
-    },
-    "knowsAbout": [
-      "Ansiedad",
-      "Procrastinación",
-      "Autoestima",
-      "Estado de ánimo bajo",
-      "Terapias contextuales",
-      "Terapia cognitivo-conductual"
-    ],
-    "knowsLanguage": "es",
-    "sameAs": [
-      "https://www.copclm.com/",
-      "https://www.instagram.com/adricamente",
-      "https://www.tiktok.com/@adricamente",
-      "https://www.youtube.com/@adricamente"
-    ]
+    "@type": "MedicalClinic",
+    "name": "Neurococos",
+    "url": "https://www.doctoralia.es/clinicas/neurococos",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Raconada del Pare Leandro Calvo, 2",
+      "postalCode": "46701",
+      "addressLocality": "Gandia",
+      "addressRegion": "Valencia",
+      "addressCountry": "ES"
+    }
+  },
+  "providerMobility": "static",
+  "serviceOutput": {
+    "@type": "Thing",
+    "name": "Sesión de psicología por videollamada"
   },
   "areaServed": {
     "@type": "Country",
@@ -252,7 +198,7 @@
       "name": "¿Hay alguna ayuda si no me lo puedo permitir?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Por 30 € ya estoy en la parte baja del mercado — aquí está la comparación — y no puedo bajar más. Lo que sí puedo hacer es orientarte: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la media hora y te digo qué hay en tu zona."
+        "text": "Por 30 € ya estoy en la parte baja del mercado — aquí está la comparación — y no puedo bajar más. Lo que sí puedo hacer es orientarte hacia lo que hay gratis: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la media hora y te digo qué hay en tu zona."
       }
     }
   ]
@@ -279,7 +225,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -310,11 +256,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -327,7 +273,8 @@
   <h1>Cuánto cuesta y qué incluye</h1>
 
   <p class="grande">
-    <strong>Un precio</strong>, sin bonos, sin paquetes y <strong>sin permanencia</strong>.
+    <strong>Un solo precio: 30&nbsp;€ la sesión de 60 minutos.</strong> Sin
+    bonos, sin paquetes y <strong>sin permanencia</strong>.
     Está aquí escrito para que no tengas que escribirme a preguntarlo.
   </p>
   <p class="apunte">
@@ -338,9 +285,9 @@
   </p>
 
   <div class="tarifa">
-    <p class="precio">30&nbsp;€ <span>por sesión de 60 minutos</span></p>
+    <p class="precio"><span class="cifra" data-hasta="30">30</span>&nbsp;€ <span>por sesión de 60 minutos</span></p>
     <p>
-      La primera, la <strong>media hora</strong> de la videollamada, no se cobra.
+      <strong>La primera media hora no se cobra.</strong>
     </p>
     <ul>
       <li>Sesión de una hora por videollamada.</li>
@@ -350,27 +297,44 @@
     </ul>
     <p class="apunte" style="margin-top:14px">
       La sesión de psicología online en España se mueve entre 35 y 65 €
-      según las guías de precios del sector. La mía está por debajo
-      porque estoy <strong>en prácticas</strong> supervisadas, y por eso
+      según las guías de precios del sector. <strong>La mía está por
+      debajo</strong> porque estoy en prácticas supervisadas, y por eso
       mismo subirá cuando termine el máster.
     </p>
   </div>
 
   <div class="llamada">
-    <p>Treinta euros es lo que cuesta cada sesión. La primera, la de treinta minutos, no cuesta nada y sirve justo para lo que estás haciendo ahora: <strong>decidir</strong> con información.</p>
+    <p>Treinta euros es lo que cuesta cada sesión. La primera, la de treinta minutos, no cuesta nada y sirve justo para lo que estás haciendo ahora: <strong>decidir con información</strong>.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
 
-  <figure class="banda">
-    <img src="/fotos/banda-tarifas.webp?v=7609e6"
-         srcset="/fotos/banda-tarifas-m.webp?v=0e1b5e 800w, /fotos/banda-tarifas.webp?v=7609e6 1600w"
-         sizes="(max-width:720px) 100vw, 680px"
-         width="1600" height="600" loading="lazy" decoding="async"
-         alt="Una taza de café sobre una mesa redonda de madera">
+  <figure class="figura">
+    <div class="lamina">
+    <svg viewBox="0 0 400 176" role="img" aria-labelledby="bon-t bon-d" class="dibujo"
+         fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="bon-t">Un bono de ocho sesiones frente a ocho sesiones sueltas</title>
+      <desc id="bon-d">Arriba, ocho rectángulos pegados entre sí formando un bloque rayado, con una llave encima y un solo punto de decisión en el centro: es el bono, ocho sesiones decididas de una vez. Abajo, los mismos ocho rectángulos separados, cada uno con su propio punto de decisión encima.</desc>
+      <defs><pattern id="bono-rayas" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="raya" x1="0" y1="0" x2="0" y2="7"/></pattern></defs>
+      <path class="reticula" d="M60 24 V162 M107 24 V162 M154 24 V162 M201 24 V162 M248 24 V162 M295 24 V162 M60 24.0 H332 M60 58.5 H332 M60 93.0 H332 M60 127.5 H332 M60 162.0 H332"/>
+      <rect x="72" y="52" width="248" height="28"
+            style="fill:url(#bono-rayas)" stroke="none"/>
+      <rect class="caja-ses atada" x="72" y="52" width="31" height="28"/><rect class="caja-ses atada" x="103" y="52" width="31" height="28"/><rect class="caja-ses atada" x="134" y="52" width="31" height="28"/><rect class="caja-ses atada" x="165" y="52" width="31" height="28"/><rect class="caja-ses atada" x="196" y="52" width="31" height="28"/><rect class="caja-ses atada" x="227" y="52" width="31" height="28"/><rect class="caja-ses atada" x="258" y="52" width="31" height="28"/><rect class="caja-ses atada" x="289" y="52" width="31" height="28"/>
+      <path class="guia" vector-effect="non-scaling-stroke" d="M72 38 V32 H320 V38"/>
+      <circle class="decide unica" cx="196.0" cy="26" r="4.6"/>
+      <rect class="caja-ses suelta" x="58.0" y="110" width="27" height="28"/><rect class="caja-ses suelta" x="93.0" y="110" width="27" height="28"/><rect class="caja-ses suelta" x="128.0" y="110" width="27" height="28"/><rect class="caja-ses suelta" x="163.0" y="110" width="27" height="28"/><rect class="caja-ses suelta" x="198.0" y="110" width="27" height="28"/><rect class="caja-ses suelta" x="233.0" y="110" width="27" height="28"/><rect class="caja-ses suelta" x="268.0" y="110" width="27" height="28"/><rect class="caja-ses suelta" x="303.0" y="110" width="27" height="28"/>
+      <circle class="decide" cx="71.5" cy="98" r="3.2"/><circle class="decide" cx="106.5" cy="98" r="3.2"/><circle class="decide" cx="141.5" cy="98" r="3.2"/><circle class="decide" cx="176.5" cy="98" r="3.2"/><circle class="decide" cx="211.5" cy="98" r="3.2"/><circle class="decide" cx="246.5" cy="98" r="3.2"/><circle class="decide" cx="281.5" cy="98" r="3.2"/><circle class="decide" cx="316.5" cy="98" r="3.2"/>
+
+    </svg>
+    <span class="anota izq" style="left:0;top:32%">con bono</span>
+    <span class="anota izq" style="left:0;top:76%">aquí</span>
+    <span class="anota" style="left:56%;top:12%">una sola decisión</span>
+    <span class="anota" style="left:50%;top:92%">ocho decisiones, una por sesión</span>
+    </div>
+    <figcaption>Por eso <strong>aquí no hay bonos</strong>. Un descuento por comprometerte a ocho sesiones es una decisión sobre tu tratamiento tomada <strong>antes de haberte evaluado</strong>, y quien se la juega en esa decisión no soy yo.</figcaption>
   </figure>
 
   <h2>El pago</h2>
@@ -381,17 +345,19 @@
   </p>
   <p>
     Por transferencia, antes de cada sesión. Los datos te los doy al
-    reservar. No se guarda <strong>ningún dato bancario</strong> tuyo en esta web.
+    reservar. <strong>No se guarda ningún dato bancario tuyo en esta web.</strong>
   </p>
   <p>
     No hay bonos ni descuentos por comprometerte a un número de sesiones.
-    Un descuento por comprar varias sesiones por adelantado es un <strong>incentivo para seguir</strong> en terapia decidido <strong>antes de haberte evaluado</strong>, y eso no me parece que deba venderse.
+    Un descuento por comprar varias sesiones por adelantado es un
+    <strong>incentivo para seguir en terapia decidido antes de haberte
+    evaluado</strong>, y eso no me parece que deba venderse.
   </p>
 
   <div class="caja">
     <h3>Si ya estás en tratamiento</h3>
     <p style="margin-bottom:0">
-      La sesión de <strong>60 minutos</strong> tiene su propia página
+      La <strong>sesión de 60 minutos</strong> tiene su propia página
       de reserva, con las mismas condiciones de cancelación:
       <a href="/reservar/">reservar la siguiente sesión</a>. La media
       hora gratis es solo la primera vez.
@@ -400,13 +366,14 @@
 
   <h2>Cancelaciones</h2>
   <p>
-    Puedes cancelar o cambiar la cita <strong>hasta 24 horas antes</strong>
-    sin coste, desde el mismo correo de confirmación. Con menos de 24 horas,
+    Puedes <strong>cancelar o cambiar la cita hasta 24 horas antes, sin
+    coste</strong>, desde el mismo correo de confirmación. Con menos de 24 horas,
     la sesión se considera realizada y se abona,
-    <strong>salvo causa justificada</strong>.
+    salvo causa justificada.
   </p>
   <p>
-    No es por castigar: ese hueco ya no se puede dar a nadie. Si te pasa algo serio y no has podido avisar, <strong>dímelo</strong> y lo hablamos <strong>como personas</strong>.
+    No es por castigar: ese hueco ya no se puede dar a nadie. Si te pasa algo serio y no has podido avisar, <strong>dímelo y lo
+    hablamos como personas</strong>.
   </p>
 
   <h2>Preguntas sobre el dinero</h2>
@@ -423,7 +390,7 @@
 
     <details>
       <summary>¿El precio va a subir?</summary>
-      <p><strong>Sí</strong>, cuando termine el máster y pueda atender por mi cuenta. Lo digo antes de que lo preguntes porque me parece lo justo. A quien esté en tratamiento conmigo ese día le mantengo el precio una temporada, y se lo digo el primer día, no cuando vaya a subirlo.</p>
+      <p><strong>Sí, cuando termine el máster</strong> y pueda atender por mi cuenta. Lo digo antes de que lo preguntes porque me parece lo justo. A quien esté en tratamiento conmigo ese día le mantengo el precio una temporada, y se lo digo el primer día, no cuando vaya a subirlo.</p>
     </details>
 
     <details>
@@ -433,7 +400,7 @@
 
     <details>
       <summary>¿Hay alguna ayuda si no me lo puedo permitir?</summary>
-      <p>Por 30 € ya estoy en la parte baja del mercado —<a href="/cuanto-cuesta-un-psicologo-online/">aquí está la comparación</a>— y no puedo bajar más. Lo que sí puedo hacer es <strong>orientarte</strong>: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la media hora y te digo qué hay en tu zona.</p>
+      <p>Por 30 € ya estoy en la parte baja del mercado —<a href="/cuanto-cuesta-un-psicologo-online/">aquí está la comparación</a>— y no puedo bajar más. Lo que sí puedo hacer es <strong>orientarte hacia lo que hay gratis</strong>: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la media hora y te digo qué hay en tu zona.</p>
     </details>
   </div>
 
@@ -449,10 +416,10 @@
 
   <section class="cinta">
     <h2>La primera es gratis</h2>
-    <p>Treinta minutos para contarme qué te trae. Si después decides que no, <strong>no pasa nada</strong> y no te va a <strong>llamar nadie</strong>.</p>
+    <p>Treinta minutos para contarme qué te trae. Si después decides que no, <strong>no pasa nada y no te va a llamar nadie</strong>.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
   </section>
@@ -522,6 +489,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -541,6 +512,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

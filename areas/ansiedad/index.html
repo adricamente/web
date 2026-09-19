@@ -60,7 +60,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -148,7 +160,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -179,11 +191,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -196,7 +208,7 @@
 
   <p class="insignia"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg></p>
   <h1>Terapia para la ansiedad</h1>
-  <p class="grande">La ansiedad <strong>no es el enemigo</strong>: es una alarma que funciona bien y <strong>se ha quedado encendida</strong>. El trabajo no es apagarla a la fuerza, es dejar de organizarte la vida alrededor de no oírla.</p>
+  <p class="grande"><strong>La ansiedad no es el enemigo</strong>: es una alarma que funciona bien y se ha quedado encendida. El trabajo no es apagarla a la fuerza, es dejar de organizarte la vida alrededor de no oírla.</p>
 
   <h2>Cómo se ve por dentro</h2>
   <ul class="senales">
@@ -242,15 +254,29 @@
     <p class="vuelta">Y por eso se repite mañana, y pasado</p>
     <p class="fuga">Mientras tanto, el coste: cada vez hay más cosas que «mejor no»</p>
   </div>
-
-
-  <figure class="banda">
-    <img src="/fotos/banda-ansiedad.webp?v=024e6b"
-         srcset="/fotos/banda-ansiedad-m.webp?v=03a3d9 800w, /fotos/banda-ansiedad.webp?v=024e6b 1600w"
-         sizes="(max-width:720px) 100vw, 680px"
-         width="1600" height="600" loading="lazy" decoding="async"
-         alt="Unos libros apilados sobre un taburete de madera">
+  <figure class="figura">
+    <div class="lamina">
+    <svg viewBox="0 0 400 176" role="img" aria-labelledby="alr-t alr-d" class="dibujo"
+         fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="alr-t">El umbral de la alarma, bajando en escalones</title>
+      <desc id="alr-d">Una línea gruesa e irregular recorre el dibujo: es la señal del día a día, con tres picos altos que son peligros reales. Debajo, una segunda línea marca el umbral a partir del cual salta la alarma. Empieza alto, por encima del ruido de fondo, y baja en tres escalones hasta quedar por debajo de casi todo. La zona rayada, bajo el umbral, es lo que todavía no dispara la alarma, y con cada escalón se hace más pequeña.</desc>
+      <defs><pattern id="alr-rayas" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="raya" x1="0" y1="0" x2="0" y2="7"/></pattern></defs>
+      <path class="reticula" d="M30.0 26 V150 M72.5 26 V150 M115.0 26 V150 M157.5 26 V150 M200.0 26 V150 M242.5 26 V150 M285.0 26 V150 M327.5 26 V150 M370.0 26 V150 M30 26 H370 M30 57 H370 M30 88 H370 M30 119 H370 M30 150 H370"/>
+      <path d="M30 74 L150 74 L150 96 L250 96 L250 116 L370 116 V138 H30 Z" style="fill:url(#alr-rayas)" stroke="none"/>
+      <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M30.0 128.1 L32.0 127.2 L34.0 126.3 L36.0 125.5 L38.0 124.8 L40.0 124.2 L42.0 123.8 L44.0 123.6 L46.0 123.6 L48.0 123.8 L50.0 124.1 L52.0 124.6 L54.0 125.3 L56.0 126.2 L58.0 127.1 L60.0 128.1 L62.0 129.1 L64.0 130.1 L66.0 131.1 L68.0 132.0 L70.0 132.8 L72.0 133.5 L74.0 134.1 L76.0 134.4 L78.0 134.6 L80.0 134.5 L82.0 134.2 L84.0 133.5 L86.0 132.2 L88.0 129.9 L90.0 126.3 L92.0 120.9 L94.0 113.5 L96.0 104.1 L98.0 93.6 L100.0 83.4 L102.0 75.3 L104.0 70.9 L106.0 71.2 L108.0 76.1 L110.0 84.5 L112.0 94.7 L114.0 104.9 L116.0 113.9 L118.0 121.1 L120.0 126.3 L122.0 129.9 L124.0 132.3 L126.0 134.0 L128.0 135.3 L130.0 136.3 L132.0 137.1 L134.0 137.7 L136.0 138.1 L138.0 138.4 L140.0 138.5 L142.0 138.3 L144.0 138.0 L146.0 137.5 L148.0 136.9 L150.0 136.1 L152.0 135.2 L154.0 134.2 L156.0 133.2 L158.0 132.2 L160.0 131.2 L162.0 130.3 L164.0 129.5 L166.0 128.8 L168.0 128.2 L170.0 127.9 L172.0 127.6 L174.0 127.6 L176.0 127.7 L178.0 128.0 L180.0 128.5 L182.0 129.0 L184.0 129.6 L186.0 130.3 L188.0 131.0 L190.0 131.7 L192.0 132.3 L194.0 132.7 L196.0 132.9 L198.0 132.5 L200.0 131.4 L202.0 129.2 L204.0 125.4 L206.0 119.9 L208.0 112.6 L210.0 104.2 L212.0 95.7 L214.0 88.5 L216.0 84.0 L218.0 83.0 L220.0 85.6 L222.0 91.0 L224.0 97.8 L226.0 104.8 L228.0 110.9 L230.0 115.7 L232.0 119.0 L234.0 121.1 L236.0 122.4 L238.0 123.3 L240.0 124.1 L242.0 124.9 L244.0 125.7 L246.0 126.6 L248.0 127.5 L250.0 128.5 L252.0 129.5 L254.0 130.5 L256.0 131.4 L258.0 132.2 L260.0 132.9 L262.0 133.5 L264.0 133.9 L266.0 134.1 L268.0 134.1 L270.0 134.0 L272.0 133.7 L274.0 133.3 L276.0 132.8 L278.0 132.2 L280.0 131.5 L282.0 130.8 L284.0 130.1 L286.0 129.4 L288.0 128.9 L290.0 128.4 L292.0 128.1 L294.0 127.9 L296.0 127.9 L298.0 127.9 L300.0 128.0 L302.0 128.0 L304.0 127.6 L306.0 126.3 L308.0 123.7 L310.0 119.2 L312.0 112.6 L314.0 103.9 L316.0 94.3 L318.0 85.1 L320.0 78.4 L322.0 75.6 L324.0 77.6 L326.0 84.0 L328.0 93.4 L330.0 104.0 L332.0 113.9 L334.0 122.0 L336.0 127.8 L338.0 131.3 L340.0 133.0 L342.0 133.5 L344.0 133.2 L346.0 132.6 L348.0 131.7 L350.0 130.9 L352.0 130.1 L354.0 129.4 L356.0 128.8 L358.0 128.4 L360.0 128.2 L362.0 128.1 L364.0 128.2 L366.0 128.5 L368.0 128.9 L370.0 129.4"/>
+      <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M30 74 L150 74 L150 96 L250 96 L250 116 L370 116"/>
+      <path class="eje" vector-effect="non-scaling-stroke" d="M30 138 H370"/>
+    </svg>
+    <span class="anota izq" style="left:8%;top:34%">antes saltaba aquí</span>
+    <span class="anota der" style="left:99%;top:52%">y ahora salta aquí</span>
+    </div>
+    <ul class="leyenda">
+      <li><span class="muestra coste" aria-hidden="true"></span>Lo que pasa: tres cosas que de verdad importaban y mucho ruido de fondo</li>
+      <li><span class="muestra alivio" aria-hidden="true"></span>El umbral: por encima de esta línea, salta la alarma</li>
+    </ul>
+    <figcaption>La alarma no está rota: <strong>está bien calibrada para un peligro que ya no es el que hay</strong>. Cada vez que evitas, el umbral baja un escalón más, porque evitar le confirma que tenía razón. El trabajo no es apagarla. Es subir el umbral, y eso se hace por el mismo sitio por el que bajó.</figcaption>
   </figure>
+
 
   <h2>Cómo se trabaja</h2>
   <p>
@@ -268,19 +294,20 @@
     Todo esto ocurre dentro del mismo proceso:
     <a href="/terapia-online/">media hora gratis, dos o tres
     sesiones de evaluación, un plan acordado y revisiones</a>. Sesiones
-    de 60 minutos, 30&nbsp;€, semanal o quincenal.
+    de 60 minutos, <a href="/cuanto-cuesta-un-psicologo-online/">30&nbsp;€</a>,
+    semanal o quincenal.
   </p>
 
   <h2>Preguntas frecuentes</h2>
   <div class="faq">
     <details>
       <summary>¿Se me va a quitar la ansiedad del todo?</summary>
-      <p>No, y desconfía de quien te lo prometa. La ansiedad es una <strong>respuesta normal y útil</strong>; el objetivo no es apagarla, es que deje de <strong>decidir por ti</strong>. Lo que sí cambia es cuánto la temes, cuánto evitas por su culpa y cuánto terreno te quita.</p>
+      <p>No, y desconfía de quien te lo prometa. <strong>La ansiedad es una respuesta normal y útil</strong>; el objetivo no es apagarla, es que <strong>deje de decidir por ti</strong>. Lo que sí cambia es cuánto la temes, cuánto evitas por su culpa y cuánto terreno te quita.</p>
     </details>
 
     <details>
       <summary>¿Cuántas sesiones voy a necesitar?</summary>
-      <p>No lo sé el primer día y quien te dé un número el primer día se lo está inventando. Lo honesto es esto: tras dos o tres sesiones de evaluación te digo qué veo, qué propongo y cada cuánto lo revisamos. El objetivo del proceso es <strong>terminar</strong>, no que vengas indefinidamente.</p>
+      <p>No lo sé el primer día y quien te dé un número el primer día se lo está inventando. Lo honesto es esto: tras dos o tres sesiones de evaluación te digo qué veo, qué propongo y cada cuánto lo revisamos. <strong>El objetivo del proceso es terminar</strong>, no que vengas indefinidamente.</p>
     </details>
 
     <details>
@@ -290,7 +317,7 @@
 
     <details>
       <summary>¿Y si empiezo y noto que va a peor?</summary>
-      <p>Al principio es bastante común notar más incomodidad, porque dejar de evitar significa acercarse a lo que se estaba esquivando. Eso <strong>se avisa antes</strong>, se hace <strong>a tu ritmo</strong> y se revisa cada semana. Si no se mueve en un tiempo razonable, te lo digo yo antes que tú.</p>
+      <p>Al principio es bastante común notar más incomodidad, porque dejar de evitar significa acercarse a lo que se estaba esquivando. Eso <strong>se avisa antes, se hace a tu ritmo y se revisa cada semana</strong>. Si no se mueve en un tiempo razonable, te lo digo yo antes que tú.</p>
     </details>
   </div>
 
@@ -298,7 +325,7 @@
     <p>Si te has reconocido en casi todo lo de arriba, lo siguiente no es leer más: es contarlo en voz alta durante treinta minutos.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -332,10 +359,10 @@
 
   <section class="cinta">
     <h2>Si te has reconocido</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para ponerle nombre a esto en voz alta. Sales con una idea de qué lo mantiene y de qué haría falta para moverlo. Y si esto no es lo mío, <strong>te oriento</strong> a dónde ir.</p>
+    <p>Treinta minutos, <strong>gratis</strong>, para ponerle nombre a esto en voz alta. Sales con una idea de qué lo mantiene y de qué haría falta para moverlo. Y si esto no es lo mío, <strong>te oriento a dónde ir</strong>.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Y si prefieres empezar por tu cuenta, <a href="/mapa/">el mapa</a> son seis preguntas y diez minutos.</p>
@@ -406,6 +433,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -425,6 +456,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

@@ -60,7 +60,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -102,7 +114,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -133,11 +145,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/" aria-current="page">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -150,13 +162,14 @@
   <h1>Hablamos</h1>
 
   <p class="grande">
-    La forma más rápida de empezar es reservar <strong>media hora</strong>.
-    Es gratis, me cuentas qué te pasa y no tienes que decidir nada ese día.
+    La forma más rápida de empezar es <strong>reservar media hora,
+    gratis</strong>. Me cuentas qué te pasa y <strong>no tienes que decidir
+    nada ese día</strong>.
   </p>
 
   <p>
     <a class="boton" onclick="window.medir&&window.medir('clic_reserva_contacto')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </p>
   <p class="apunte">
     ¿Prefieres saber antes qué va a pasar exactamente?
@@ -166,7 +179,7 @@
   <h2>Por WhatsApp</h2>
   <p>
     Para dudas rápidas de horario, precio o cómo funciona esto:
-    <strong>contesto yo</strong>, no hay ningún equipo detrás.
+    <strong>contesto yo, no hay ningún equipo detrás</strong>.
   </p>
   <p>
     <a class="boton secundario" onclick="window.medir&&window.medir('clic_whatsapp')"
@@ -196,7 +209,7 @@
     <a href="https://www.youtube.com/@adricamente" target="_blank" rel="noopener">YouTube</a>.
   </p>
   <p>
-    Leo los comentarios y los mensajes, pero no hago <strong>consultas por mensaje</strong> privado. No es por antipatía: es que responder «qué te
+    Leo los comentarios y los mensajes, pero <strong>no hago consultas por mensaje privado</strong>. No es por antipatía: es que responder «qué te
     pasa» en cuatro líneas, sin haber evaluado nada, es justo la clase de
     cosa que hace daño aunque suene amable.
   </p>
@@ -286,6 +299,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -305,6 +322,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

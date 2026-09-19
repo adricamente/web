@@ -70,7 +70,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -133,7 +145,7 @@
       "name": "¿Y si no me lo puedo permitir?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero orientarte sí puedo: en la media hora te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página."
+        "text": "Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero orientarte hacia lo que hay gratis sí puedo: en la media hora te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página."
       }
     }
   ]
@@ -160,7 +172,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -191,11 +203,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -210,7 +222,7 @@
   <h1>¿Cuánto cuesta un psicólogo online en España?</h1>
 
   <p class="grande">
-    Entre <strong>39 y 55 €</strong> la sesión en las plataformas
+    Entre <strong>39 y 55 € la sesión</strong> en las plataformas
     grandes, y entre 40 y 65 € de media según las guías de precios del
     sector. Aquí son <strong>30 €</strong>. Abajo está la tabla con lo
     que cobra cada uno y el enlace para comprobarlo, y antes de eso lo
@@ -294,13 +306,13 @@
 
   <h2>Por qué aquí son 30 € y no 50</h2>
   <p>
-    Porque estoy <strong>en prácticas</strong>. Es la explicación
-    entera y no hay otra.
+    <strong>Porque estoy en prácticas supervisadas.</strong> Es la
+    explicación entera y no hay otra.
   </p>
   <p>
-    Soy psicólogo colegiado —número CM03836, en el Colegio Oficial de
-    Psicología de Castilla-La Mancha— y estoy cursando el Máster en
-    Psicología General Sanitaria. Hasta que lo termine no ejerzo por
+    Soy <strong>psicólogo colegiado nº CM03836</strong> —en el Colegio Oficial
+    de Psicología de Castilla-La Mancha— y estoy cursando el <strong>Máster
+    en Psicología General Sanitaria</strong>. Hasta que lo termine no ejerzo por
     mi cuenta: atiendo dentro del centro sanitario Neurococos, con
     supervisión de un profesional colegiado del centro que revisa el
     caso entre sesiones. <a href="/sobre-mi/">Está contado entero
@@ -311,8 +323,8 @@
   <p>
     Eso tiene una consecuencia incómoda y una ventaja, y las dos son
     verdad. La incómoda es que no tengo los años de consulta que tiene
-    quien cobra 55. La ventaja es que <strong>el precio lo refleja</strong>,
-    en vez de cobrarte lo mismo y no contártelo.
+    quien cobra 55. La ventaja es que <strong>el precio lo refleja, en vez de cobrarte lo
+    mismo y no contártelo</strong>.
   </p>
   <p>
     Y el precio va a subir cuando termine el máster. Lo digo antes de
@@ -323,7 +335,7 @@
   <h2>Cuidado con las tres formas de que 30 no sean 30</h2>
   <ol class="pasos">
     <li>
-      <strong>El bono</strong>
+      <strong>El bono que te ata</strong>
       Los precios bajos del sector casi siempre son precios por
       sesión <em>dentro de un paquete</em> de cuatro, cinco u ocho
       sesiones pagadas por adelantado. La sesión suelta cuesta bastante
@@ -332,13 +344,13 @@
       terapia decidido antes de haberte evaluado.
     </li>
     <li>
-      <strong>La duración</strong>
+      <strong>La duración de la sesión</strong>
       «Sesión» no significa lo mismo en todas partes. Hay sesiones de
-      45 minutos y de 50. Las de aquí son de <strong>60</strong>, y la
+      45 minutos y de 50. <strong>Las de aquí son de 60 minutos</strong>, y la
       informativa de 30. Divide siempre por minutos antes de comparar.
     </li>
     <li>
-      <strong>La permanencia</strong>
+      <strong>La permanencia encubierta</strong>
       Suscripciones mensuales que se renuevan solas, mínimos de
       sesiones, penalizaciones por dejarlo. Aquí se paga sesión a
       sesión, por transferencia, y se deja cuando se quiera.
@@ -346,10 +358,10 @@
   </ol>
 
   <div class="llamada">
-    <p>La media hora no cuesta nada y sirve justo para esto: <strong>decidir</strong> con información, incluida la de si te conviene ir a otro sitio.</p>
+    <p>La media hora no cuesta nada y sirve justo para esto: <strong>decidir con información</strong>, incluida la de si te conviene ir a otro sitio.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -358,7 +370,7 @@
   <div class="faq">
     <details>
       <summary>¿Lo cubre el seguro médico?</summary>
-      <p>No. Hoy no trabajo con compañías de seguros, así que la sesión es privada y se paga íntegra. Si tu seguro cubre psicología, te conviene mirar primero lo que ofrecen: <strong>suele salir más barato</strong>, aunque con menos continuidad y con menos margen para elegir con quién.</p>
+      <p>No. Hoy no trabajo con compañías de seguros, así que la sesión es privada y se paga íntegra. Si tu seguro cubre psicología, te conviene mirar primero lo que ofrecen: <strong>suele salir más barato, aunque con menos continuidad</strong> y con menos margen para elegir con quién.</p>
     </details>
 
     <details>
@@ -368,17 +380,17 @@
 
     <details>
       <summary>¿Un precio bajo significa peor terapia?</summary>
-      <p>No necesariamente, pero conviene preguntar <strong>por qué</strong> es bajo. Hay tres motivos habituales: que sea un precio de plataforma con mucho volumen, que sea un bono que te ata, o que quien atiende esté empezando. El mío es el tercero y lo digo en todas partes. Lo que no me parece de recibo es un precio bajo sin explicación.</p>
+      <p>No necesariamente, pero <strong>conviene preguntar por qué es bajo</strong>. Hay tres motivos habituales: que sea un precio de plataforma con mucho volumen, que sea un bono que te ata, o que quien atiende esté empezando. El mío es el tercero y lo digo en todas partes. Lo que no me parece de recibo es un precio bajo sin explicación.</p>
     </details>
 
     <details>
       <summary>¿Hay que pagar por adelantado?</summary>
-      <p>Cada sesión se paga por transferencia <strong>antes</strong> de esa sesión, no antes del proceso. No hay bonos ni paquetes ni permanencia, y no se guarda ningún dato bancario tuyo en esta web.</p>
+      <p><strong>Cada sesión se paga por transferencia antes de esa sesión</strong>, no antes del proceso. No hay bonos ni paquetes ni permanencia, y no se guarda ningún dato bancario tuyo en esta web.</p>
     </details>
 
     <details>
       <summary>¿Y si no me lo puedo permitir?</summary>
-      <p>Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero <strong>orientarte</strong> sí puedo: en la media hora te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página.</p>
+      <p>Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero <strong>orientarte hacia lo que hay gratis</strong> sí puedo: en la media hora te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página.</p>
     </details>
   </div>
 
@@ -397,7 +409,7 @@
     <p>Treinta minutos por videollamada, <strong>gratis</strong>, para contarme qué te trae y saber qué haría yo con ello antes de gastarte un euro.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Todo lo demás —pago, cancelaciones y qué incluye— está en <a href="/tarifas/">la página de tarifas</a>.</p>
@@ -468,6 +480,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -487,6 +503,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

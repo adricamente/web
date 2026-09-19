@@ -2,15 +2,12 @@
 <!-- ============================================================
      adricamente.com/aviso-legal
      ------------------------------------------------------------
-     PENDIENTE 1: RESUELTO en septiembre de 2026. El art. 10.1.a de
-                  la LSSI admite el establecimiento permanente, y el
-                  servicio se presta en Neurococos. Confírmaselo al
-                  centro: es su dirección la que aparece.
-     PENDIENTE 2: RESUELTO en septiembre de 2026 con la colegiación.
-     PENDIENTE 3: pídele a Neurococos su número de inscripción en el
-                  registro sanitario autonómico y añádelo en el
-                  apartado 3. La LSSI (art. 10.1.c) pide los datos de
-                  la autorización administrativa.
+     Los datos del art. 10 de la LSSI, el alcance de la habilitación
+     (apartado 3) y las condiciones de contratación (apartado 6).
+     Lo que falte por completar NO se anota aquí: un comentario en
+     el HTML se publica, y decir en público qué dato legal falta es
+     justo lo contrario de lo que hace este documento. Va en
+     ~/artefactos/pendientes-legales.md.
      ============================================================ -->
 <html lang="es">
 <head>
@@ -51,8 +48,19 @@
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+  <!-- Aplica el tema guardado antes de pintar. Sin esto, quien ha
+       elegido oscuro ve un fogonazo crema a pantalla completa. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <style>
     .legal p, .legal li{font-size:16px;color:var(--ink-2);max-width:66ch}
     .legal h2{font-size:1.45rem;margin-top:36px}
@@ -109,34 +117,31 @@
 
   <h2 id="alcance">3. Alcance de la habilitación profesional</h2>
   <p>
-    La <strong>colegiación</strong> y el ejercicio de la psicología sanitaria
-    <strong>no son lo mismo</strong>, y este apartado existe para que no se
-    confundan.
+    <strong>La colegiación y el ejercicio de la psicología sanitaria no son
+    lo mismo</strong>, y este apartado existe para que no se confundan.
     El titular está colegiado como psicólogo, y se encuentra
     <strong>cursando el Máster en Psicología General Sanitaria</strong>.
   </p>
   <p>
     Hasta la obtención de dicho título, el titular
-    <strong>no presta</strong> servicios sanitarios por cuenta propia, no se
-    anuncia como Psicólogo General Sanitario y <strong>no ostenta</strong>
-    dicha habilitación.
+    <strong>no presta servicios sanitarios por cuenta propia</strong>, no se
+    anuncia como Psicólogo General Sanitario y no ostenta dicha
+    habilitación.
   </p>
   <p>
     Los servicios de psicología a los que se accede desde esta web se
-    prestan en el centro sanitario <strong>Neurococos</strong>
+    prestan en el <strong>centro sanitario Neurococos</strong>
     (Raconada del Pare Leandro Calvo 2, 46701 Gandia, Valencia), bajo
     la supervisión de profesionales colegiados habilitados y al amparo
     de la autorización sanitaria de dicho centro.
-    <!-- PENDIENTE 3: añadir aquí el número de inscripción del centro
-         en el registro sanitario de la Comunitat Valenciana. -->
   </p>
 
   <h2>4. Finalidad del sitio</h2>
   <p>
     Esta web tiene finalidad divulgativa y psicoeducativa.
-    Sus contenidos <strong>no constituyen</strong> asesoramiento clínico,
-    diagnóstico ni tratamiento psicológico, y <strong>no sustituyen</strong>
-    a la consulta con un profesional sanitario. Si estás
+    <strong>Sus contenidos no constituyen asesoramiento clínico, diagnóstico
+    ni tratamiento psicológico</strong>, y no sustituyen a la consulta con un
+    profesional sanitario. Si estás
     atravesando una situación de sufrimiento psíquico, acude a tu
     médico de familia o a un profesional de la psicología.
   </p>
@@ -259,11 +264,57 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden><b>Tema</b><span>Automático</span></p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
 </div>
 <script>document.getElementById('anyo').textContent = new Date().getFullYear();</script>
 
+
+<script>
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+    function pintaBarra(){
+      var c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && c) meta.setAttribute('content', c);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', pintaBarra);
+    }
+  })();
+</script>
 </body>
 </html>

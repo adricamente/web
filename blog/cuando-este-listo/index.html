@@ -60,7 +60,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -218,7 +230,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -249,11 +261,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -266,15 +278,25 @@
 
   <article class="articulo-cuerpo">
     <h1>«Cuando esté listo» no llega nunca</h1>
-    <p class="articulo-meta">Septiembre de 2026 &middot; 1 min de lectura &middot; Adrián Cuñat</p>
+    <p class="articulo-meta">
+      <time datetime="2026-09-14">Septiembre de 2026</time> &middot;
+      1 min de lectura &middot;
+      <a rel="author" href="/sobre-mi/">Adrián Cuñat Andrés</a>,
+      psicólogo colegiado nº CM03836
+    </p>
 
-  <figure class="banda">
-    <img src="/fotos/banda-listo.webp?v=d33bdf"
-         srcset="/fotos/banda-listo-m.webp?v=77efff 800w, /fotos/banda-listo.webp?v=d33bdf 1600w"
-         sizes="(max-width:720px) 100vw, 680px"
-         width="1600" height="600" fetchpriority="high" decoding="async"
-         alt="Luz filtrada por una persiana sobre una pared clara">
-  </figure>
+  <figure class="figura sello-ancho"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-lis-c-t s-lis-c-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-lis-c-t">Una barra de preparación que no llega a su punto final</title>
+  <desc id="s-lis-c-d">Una barra larga con marcas de tiempo ocupa casi todo el ancho: es la preparación. Donde debería empezar lo que se prepara, la línea se vuelve discontinua y termina en un círculo vacío.</desc>
+  <path class="reticula" d="M24 34 V150 M58 34 V150 M92 34 V150 M126 34 V150 M160 34 V150 M194 34 V150 M228 34 V150 M262 34 V150 M296 34 V150 M24 34 H296 M24 63 H296 M24 92 H296 M24 121 H296 M24 150 H296"/>
+  <rect class="tramo mio" x="24" y="82" width="190" height="28" rx="3"/>
+  <path class="diente" vector-effect="non-scaling-stroke" d="M24 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M38 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M52 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M66 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M80 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M94 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M108 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M122 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M136 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M150 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M164 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M178 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M192 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M206 110 V114.5"/>
+  <path class="trazo-flojo" vector-effect="non-scaling-stroke" pathLength="1"
+        d="M214 96 H296"/>
+  <circle class="hito vacio" cx="286" cy="96" r="8"/>
+</svg></figure>
 
     <p>
       Hay una idea muy extendida y bastante falsa: que primero viene la
@@ -282,8 +304,9 @@
       ese es el día en que empiezas.
     </p>
     <p>
-      El orden real es casi siempre el <strong>contrario</strong>. La motivación es en gran
-      medida un producto de haber empezado, no un requisito para empezar.
+      El orden real es casi siempre el contrario: <strong>la motivación es en
+      gran medida un producto de haber empezado, no un requisito para
+      empezar</strong>.
       Aparece a los diez minutos, no a los diez días de esperarla.
     </p>
     <p>
@@ -293,7 +316,8 @@
       poquito más el no empezar. No te quedas igual: te alejas.
     </p>
     <p>
-      Y aquí está la trampa fina: si esperas a tener ganas, estás esperando a que <strong>falle el mecanismo</strong>. Y el mecanismo no falla.
+      Y aquí está la trampa fina: <strong>si esperas a tener ganas, estás esperando a que falle el
+      mecanismo</strong>. Y el mecanismo no falla.
     </p>
 
   <aside class="idea">
@@ -309,9 +333,9 @@
     </p>
     <p>Casi nunca lo es. Normalmente es evitación con buena presentación.</p>
     <p>
-      La forma de distinguirlas es sencilla y bastante honesta: prepararse
-      tiene un <strong>final</strong>. Si lo que haces no tiene fecha de fin, no te estás
-      preparando. Estás retrasando. Cuando además cuesta arrancar
+      La forma de distinguirlas es sencilla y bastante honesta: <strong>prepararse
+      tiene un final</strong>. Si lo que haces no tiene fecha de fin, no te
+      estás preparando: <strong>estás retrasando</strong>. Cuando además cuesta arrancar
       cualquier cosa, no solo esa, suele estar pasando otra cosa: es lo
       que se mira en la <a href="/areas/estado-de-animo/">terapia para el
       ánimo bajo</a>.
@@ -326,7 +350,7 @@
     <p>Treinta minutos por videollamada, <strong>gratis</strong>, y sales sabiendo si esto que acabas de leer es lo tuyo y qué se haría con ello.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">O empieza por tu cuenta con <a href="/mapa/">el mapa de lo que evitas</a>: seis preguntas, diez minutos y no sale de tu móvil.</p>
@@ -397,6 +421,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -416,6 +444,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

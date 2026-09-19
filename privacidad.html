@@ -2,8 +2,10 @@
 <!-- ============================================================
      adricamente.com/privacidad
      ------------------------------------------------------------
-     PENDIENTE: cuando tengas el despacho de Albacete, añade la
-     dirección postal en el apartado 1 (busca "DOMICILIO").
+     Responsable, finalidades, bases jurídicas, encargados y
+     derechos. Lo que quede por completar va en
+     ~/artefactos/pendientes-legales.md, no en un comentario, porque
+     los comentarios del HTML se publican.
      ============================================================ -->
 <html lang="es">
 <head>
@@ -44,8 +46,19 @@
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+  <!-- Aplica el tema guardado antes de pintar. Sin esto, quien ha
+       elegido oscuro ve un fogonazo crema a pantalla completa. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <style>
     /* Las páginas legales se leen, no se escanean: texto algo más
        pequeño, líneas más cortas y títulos de apartado discretos. */
@@ -87,14 +100,14 @@
 
   <h3>a) Suscripción a la lista de correo</h3>
   <p>
-    Trato tu <strong>nombre</strong> y tu dirección de <strong>correo</strong>
+    Trato tu <strong>nombre y tu dirección de correo</strong>
     con la finalidad de enviarte el recurso que has solicitado y,
     después, comunicaciones periódicas con contenidos de divulgación
     psicológica e información sobre mis servicios y actividades.
   </p>
   <p>
-    La base jurídica es <strong>tu consentimiento</strong> (art. 6.1.a
-    del RGPD), que prestas al marcar la casilla correspondiente.
+    La base jurídica es <strong>tu consentimiento (art. 6.1.a del
+    RGPD)</strong>, que prestas al marcar la casilla correspondiente.
     Conservaré tus datos hasta que te des de baja o solicites su
     supresión.
   </p>
@@ -111,8 +124,8 @@
   </p>
   <p>
     Este canal lo presta <strong>WhatsApp Ireland Limited</strong> (grupo
-    Meta), que accede a los metadatos de la conversación. WhatsApp
-    <strong>no es un canal adecuado</strong> para información de salud y
+    Meta), que accede a los metadatos de la conversación. <strong>WhatsApp
+    no es un canal adecuado para información de salud</strong> y
     por eso te pido expresamente que no la incluyas: para eso está la
     sesión. Si prefieres no usar WhatsApp, tienes el correo electrónico y
     la reserva de cita como alternativas, y son igual de válidas.
@@ -130,11 +143,12 @@
   <h3>c) Ejercicio «El mapa de lo que evitas»</h3>
   <p>
     Las respuestas que escribes en este ejercicio
-    <strong>no se envían</strong> ni se almacenan en ningún sitio: se
+    <strong>no se envían ni se almacenan en ningún sitio</strong>: se
     procesan en tu propio navegador y desaparecen cuando cierras la
     página. No las recibo, no las veo y no puedo recuperarlas.
-    A través de esta web <strong>no trato</strong> ningún dato relativo a tu
-    salud.
+    <strong>Este ejercicio no genera para mí ningún dato sobre tu
+    salud.</strong> Lo que cuentes en sesión es otra cosa, y lo trata el
+    centro sanitario Neurococos como responsable, no esta web.
   </p>
 
   <h2>3. Servicios psicológicos</h2>
@@ -199,8 +213,8 @@
   <h2>5. Tus derechos</h2>
   <p>
     Puedes ejercer en cualquier momento tus derechos de
-    <strong>acceso</strong>, rectificación, supresión, oposición, limitación
-    del tratamiento y portabilidad, así como
+    <strong>acceso, rectificación, supresión, oposición, limitación del
+    tratamiento y portabilidad</strong>, así como
     <strong>retirar tu consentimiento</strong> en cualquier momento sin
     que ello afecte a la licitud del tratamiento previo.
   </p>
@@ -293,11 +307,57 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden><b>Tema</b><span>Automático</span></p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
 </div>
 <script>document.getElementById('anyo').textContent = new Date().getFullYear();</script>
 
+
+<script>
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+    function pintaBarra(){
+      var c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && c) meta.setAttribute('content', c);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', pintaBarra);
+    }
+  })();
+</script>
 </body>
 </html>

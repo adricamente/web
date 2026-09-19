@@ -19,10 +19,10 @@
   <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Psicólogo online, 30 € la sesión | adricamente</title>
+  <title>Psicólogo online para adultos, en España | adricamente</title>
   <meta name="description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera consulta gratuita de 30 minutos. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
 
-  <meta property="og:title" content="Psicólogo online, 30 € la sesión | adricamente">
+  <meta property="og:title" content="Psicólogo online para adultos, en España | adricamente">
   <meta property="og:description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera consulta gratuita de 30 minutos. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/">
@@ -74,97 +74,43 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Service",
   "name": "Terapia psicológica online",
-  "serviceType": "Psicoterapia",
+  "serviceType": "Atención psicológica",
   "description": "Sesiones de psicoterapia por videollamada, de 60 minutos, desde el centro sanitario Neurococos. La primera sesión informativa, de 30 minutos, es gratuita.",
   "provider": {
-    "@type": "Person",
-    "name": "Adrián Cuñat Andrés",
-    "url": "https://adricamente.com/sobre-mi/",
-    "email": "hola@adricamente.com",
-    "jobTitle": "Psicólogo colegiado, cursando el Máster en Psicología General Sanitaria",
-    "identifier": {
-      "@type": "PropertyValue",
-      "name": "Número de colegiado",
-      "value": "CM03836"
-    },
-    "memberOf": {
-      "@type": "Organization",
-      "name": "Colegio Oficial de Psicología de Castilla-La Mancha",
-      "url": "https://www.copclm.com/"
-    },
-    "hasCredential": [
-      {
-        "@type": "EducationalOccupationalCredential",
-        "credentialCategory": "degree",
-        "name": "Grado en Psicología",
-        "recognizedBy": {
-          "@type": "CollegeOrUniversity",
-          "name": "UNED"
-        }
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "credentialCategory": "Colegiación profesional",
-        "name": "Psicólogo colegiado nº CM03836",
-        "recognizedBy": {
-          "@type": "Organization",
-          "name": "Colegio Oficial de Psicología de Castilla-La Mancha"
-        }
-      }
-    ],
-    "alumniOf": {
-      "@type": "CollegeOrUniversity",
-      "name": "Universidad Nacional de Educación a Distancia (UNED)"
-    },
-    "affiliation": {
-      "@type": "CollegeOrUniversity",
-      "name": "Universidad Internacional de La Rioja (UNIR)"
-    },
-    "description": "Psicólogo colegiado nº CM03836. No tiene el título de Psicólogo General Sanitario: cursa el Máster en Psicología General Sanitaria y atiende en prácticas supervisadas dentro del centro sanitario Neurococos.",
-    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
-    "homeLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Albacete",
-        "addressRegion": "Castilla-La Mancha",
-        "addressCountry": "ES"
-      }
-    },
-    "worksFor": {
-      "@type": "MedicalClinic",
-      "name": "Neurococos",
-      "url": "https://www.doctoralia.es/clinicas/neurococos",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Raconada del Pare Leandro Calvo, 2",
-        "postalCode": "46701",
-        "addressLocality": "Gandia",
-        "addressRegion": "Valencia",
-        "addressCountry": "ES"
-      }
-    },
-    "knowsAbout": [
-      "Ansiedad",
-      "Procrastinación",
-      "Autoestima",
-      "Estado de ánimo bajo",
-      "Terapias contextuales",
-      "Terapia cognitivo-conductual"
-    ],
-    "knowsLanguage": "es",
-    "sameAs": [
-      "https://www.copclm.com/",
-      "https://www.instagram.com/adricamente",
-      "https://www.tiktok.com/@adricamente",
-      "https://www.youtube.com/@adricamente"
-    ]
+    "@type": "MedicalClinic",
+    "name": "Neurococos",
+    "url": "https://www.doctoralia.es/clinicas/neurococos",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Raconada del Pare Leandro Calvo, 2",
+      "postalCode": "46701",
+      "addressLocality": "Gandia",
+      "addressRegion": "Valencia",
+      "addressCountry": "ES"
+    }
+  },
+  "providerMobility": "static",
+  "serviceOutput": {
+    "@type": "Thing",
+    "name": "Sesión de psicología por videollamada"
   },
   "areaServed": {
     "@type": "Country",
@@ -327,7 +273,7 @@
       "name": "¿Quién me va a atender exactamente?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Adrián Cuñat Andrés, graduado en Psicología por la UNED y colegiado nº CM03836 en el Colegio Oficial de Psicología de Castilla-La Mancha. Estoy cursando el Máster en Psicología General Sanitaria en UNIR, y hasta tenerlo atiendo en prácticas supervisadas dentro del centro sanitario Neurococos, no por mi cuenta. Lo digo tal cual porque tienes derecho a saberlo antes de sentarte."
+        "text": "Adrián Cuñat Andrés, graduado en Psicología por la UNED y colegiado nº CM03836 en el Colegio Oficial de Psicología de Castilla-La Mancha. Estoy cursando el Máster en Psicología General Sanitaria en UNIR, y hasta tenerlo atiendo dentro del centro sanitario Neurococos, no por mi cuenta. Lo digo tal cual porque tienes derecho a saberlo antes de sentarte."
       }
     },
     {
@@ -343,7 +289,7 @@
       "name": "¿Cuánto dura un proceso?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso. El objetivo declarado del proceso es terminar."
+        "text": "Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso. El objetivo del proceso es terminar."
       }
     },
     {
@@ -359,7 +305,7 @@
       "name": "¿Puedo pagar cada sesión, sin bonos ni permanencia?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sí, y es lo único que hay. Se paga por transferencia antes de cada sesión, no hay bonos, no hay paquetes y no hay permanencia. Puedes dejarlo cuando quieras, aunque preferiría que me lo dijeras para cerrarlo bien."
+        "text": "Sí, y es lo único que hay. Se paga por transferencia antes de cada sesión: no hay bonos, ni paquetes, ni permanencia. Puedes dejarlo cuando quieras, aunque preferiría que me lo dijeras para cerrarlo bien."
       }
     }
   ]
@@ -386,7 +332,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -417,11 +363,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -441,11 +387,12 @@
     <h1>Terapia psicológica online para quien siente que su vida no arranca</h1>
     <p class="entradilla">
       No es que te falte actitud. Es que llevas tiempo haciendo
-      algo que <strong>funciona</strong> a corto plazo y te está saliendo <strong>carísimo</strong> a largo.
+      <strong>algo que funciona a corto plazo y te está saliendo
+      carísimo a largo</strong>.
     </p>
     <div class="acciones">
       <a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_portada')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </div>
     <p class="tranquiliza">
       30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta
@@ -456,7 +403,20 @@
     </p>
   </section>
 
-  <dl class="confianza">
+  <!-- La invitación a seguir bajando. Es una flecha, no un botón: está
+       para verse, y quien la pulsa baja una pantalla. Se apaga sola en
+       cuanto empieza el scroll, atada a la posición de la página y no
+       a un temporizador, así que no vuelve a molestar. -->
+  <p class="baja">
+    <a href="#confianza" aria-label="Seguir bajando">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </a>
+  </p>
+
+  <dl class="confianza" id="confianza">
     <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M2.8 8.6 12 4.4l9.2 4.2-9.2 4.2z"/><path pathLength="1" d="M6.8 10.6v4.6c0 1.6 2.3 2.9 5.2 2.9s5.2-1.3 5.2-2.9v-4.6"/><path pathLength="1" d="M21.2 8.6v5"/></svg>Formación</dt><dd>Psicólogo colegiado <a href="https://www.copclm.com/" target="_blank" rel="noopener">nº CM03836</a>, cursando el Máster en Psicología General Sanitaria</dd></div>
     <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M8 7V3.8h8V7"/><rect pathLength="1" x="3.8" y="7" width="16.4" height="13.2" rx="2.2"/><path pathLength="1" d="M12 11v5.2M9.4 13.6h5.2"/></svg>Dónde</dt><dd>Centro sanitario Neurococos, con supervisión colegiada</dd></div>
     <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="2.6" y="6" width="12.6" height="12" rx="2.4"/><path pathLength="1" d="M15.2 10.6 21.4 7v10l-6.2-3.6z"/></svg>Modalidad</dt><dd>100&nbsp;% online, para quien reside en España</dd></div>
@@ -466,26 +426,23 @@
   <!-- ===== Presentación ===================================== -->
   <h2>Hola, soy Adrián</h2>
   <div class="presentacion">
-    <figure class="retrato-marco">
-      <img class="retrato" src="/fotos/adrian-retrato.webp?v=8192c5"
+    <img class="retrato" src="/fotos/adrian-retrato.webp?v=8192c5"
          width="200" height="250" loading="lazy" decoding="async"
          alt="Adrián Cuñat Andrés, de frente, con camisa azul claro y gafas de pasta, sonriendo">
-      <svg class="cruce" viewBox="0 0 400 500" aria-hidden="true" fill="none">
-        <path class="cruce-linea" vector-effect="non-scaling-stroke"
-              d="M-6 456 L96 456 C132 456 132 400 168 400 C204 400 204 456 240 456 L406 456"/>
-      </svg>
-    </figure>
     <div class="texto">
   <p>
-    Adrián Cuñat Andrés. Graduado en Psicología por la UNED, colegiado
-    nº CM03836, y cursando el Máster en Psicología General Sanitaria en
-    UNIR, en prácticas supervisadas en el centro sanitario Neurococos.
+    Adrián Cuñat Andrés. Graduado en Psicología por la UNED,
+    <strong>colegiado nº CM03836</strong>, cursando el <strong>Máster en
+    Psicología General Sanitaria</strong> y en prácticas supervisadas en el
+    <strong>centro sanitario Neurococos</strong>.
     Atiendo online a
-    gente de veinte a cuarenta y tantos que lleva demasiado tiempo <strong>esperando</strong> a estar lista.
+    gente de veinte a cuarenta y tantos que lleva demasiado tiempo <strong>esperando a estar lista</strong>.
   </p>
   <p>
-    Trabajo desde terapias contextuales y cognitivo-conductuales: en vez
-    de intentar controlar lo que sientes, miramos <strong>qué haces</strong> con ello y <strong>qué te está costando</strong>. Nada de frases motivadoras ni de recetas. Un plan, y
+    Trabajo desde <strong>terapias contextuales y
+    cognitivo-conductuales</strong>: en vez de intentar controlar lo que
+    sientes, <strong>miramos qué haces con ello y qué te está
+    costando</strong>. Nada de frases motivadoras ni de recetas. Un plan, y
     revisarlo. <a href="/sobre-mi/">Quién soy, con detalle</a>.
   </p>
     </div>
@@ -494,39 +451,43 @@
   <!-- ===== En qué puedo ayudarte ============================== -->
   <h2>¿En qué puedo ayudarte?</h2>
   <p>
-    Cuatro formas distintas de lo mismo: algo que <strong>alivia</strong> hoy y que, a fuerza de repetirse, <strong>estrecha</strong> la vida.
+    Cuatro formas distintas de lo mismo: <strong>algo que alivia hoy y que,
+    a fuerza de repetirse, estrecha la vida</strong>.
   </p>
-  <div class="rejilla cuatro">
+  <div class="rejilla cinco">
     <a class="tarjeta" href="/areas/ansiedad/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg>
-      <h3>Ansiedad</h3>
-      <p>Preocupación que no para, tensión en el cuerpo, evitar lo que la dispara. La evitación <strong>calma hoy</strong> y <strong>agranda el problema</strong> mañana.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg><h3>Ansiedad</h3></span>
+      <p>Preocupación que no para, tensión en el cuerpo, evitar lo que la dispara. La evitación <strong>calma hoy y agranda el problema mañana</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
     </a>
     <a class="tarjeta" href="/areas/procrastinacion/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M6.5 3h11M6.5 21h11"/><path pathLength="1" d="M7 3c0 4.2 5 5.6 5 9s-5 4.8-5 9"/><path pathLength="1" d="M17 3c0 4.2-5 5.6-5 9s5 4.8 5 9"/><path pathLength="1" d="M8.9 5.6h6.2c-.5 1.7-3.1 2.9-3.1 2.9S9.4 7.3 8.9 5.6z" fill="currentColor" stroke="none"/></svg>
-      <h3>Procrastinación y bloqueo</h3>
-      <p>Saber qué tienes que hacer y no hacerlo. No es <strong>pereza</strong> ni <strong>falta de organización</strong>: es un mecanismo de alivio que funciona demasiado bien.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M6.5 3h11M6.5 21h11"/><path pathLength="1" d="M7 3c0 4.2 5 5.6 5 9s-5 4.8-5 9"/><path pathLength="1" d="M17 3c0 4.2-5 5.6-5 9s5 4.8 5 9"/><path pathLength="1" d="M8.9 5.6h6.2c-.5 1.7-3.1 2.9-3.1 2.9S9.4 7.3 8.9 5.6z" fill="currentColor" stroke="none"/></svg><h3>Procrastinación y bloqueo</h3></span>
+      <p>Saber qué tienes que hacer y no hacerlo. <strong>No es pereza ni falta de organización</strong>: es un mecanismo de alivio que funciona demasiado bien.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
     </a>
     <a class="tarjeta" href="/areas/autoestima/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.5" y="2.8" width="15" height="18.4" rx="7.5"/><circle pathLength="1" cx="12" cy="10.2" r="2.5"/><path pathLength="1" d="M7.8 17.6a4.4 4.4 0 0 1 8.4 0"/></svg>
-      <h3>Autoestima e inseguridad</h3>
-      <p>Hablarte a ti mismo como no le hablarías a nadie, y organizar la vida alrededor de <strong>no quedar mal</strong>.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.5" y="2.8" width="15" height="18.4" rx="7.5"/><circle pathLength="1" cx="12" cy="10.2" r="2.5"/><path pathLength="1" d="M7.8 17.6a4.4 4.4 0 0 1 8.4 0"/></svg><h3>Autoestima e inseguridad</h3></span>
+      <p>Hablarte a ti mismo como no le hablarías a nadie, y <strong>organizar la vida alrededor de no quedar mal</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
     </a>
     <a class="tarjeta" href="/areas/estado-de-animo/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.5 20.5h17"/><path pathLength="1" d="M3.5 7l4.2 3.4 3.8-1.6 3.6 4.6 5.4 3.4"/></svg>
-      <h3>Estado de ánimo bajo</h3>
-      <p>Desgana, cansancio, cosas que antes te gustaban y ya no. La vida <strong>se va encogiendo</strong> poco a poco.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.5 20.5h17"/><path pathLength="1" d="M3.5 7l4.2 3.4 3.8-1.6 3.6 4.6 5.4 3.4"/></svg><h3>Estado de ánimo bajo</h3></span>
+      <p>Desgana, cansancio, cosas que antes te gustaban y ya no. <strong>La vida se va encogiendo</strong> poco a poco.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
+    </a>
+    <a class="tarjeta abierta" href="/areas/#tambien">
+      <span class="cabeza-tarjeta"><h3>¿Y si lo tuyo no está aquí?</h3></span>
+      <p>Duelo, sueño, relaciones, trabajo, un cambio que se ha
+      atascado. <strong>Estas cuatro son las consultas más frecuentes,
+      no las únicas</strong>, y todas se trabajan igual.</p>
+      <span class="mas">Lo que también llevo &rarr;</span>
     </a>
   </div>
 
   <h3 style="margin-top:34px">Y lo que tienen en común</h3>
   <p>
     Eso que haces para que el malestar baje funciona de verdad, y funciona
-    rápido. Lo que no se nota es lo otro: que cada vez deja <strong>factura</strong>, y esa factura no baja sola.
+    rápido. Lo que no se nota es lo otro: que cada vez deja factura, y <strong>esa factura no baja sola</strong>.
   </p>
   <figure class="figura">
     <div class="lamina">
@@ -604,20 +565,32 @@
     </li>
   </ol>
 
-  <figure class="banda">
-    <img src="/fotos/banda-portada.webp?v=6eb1d9"
-         srcset="/fotos/banda-portada-m.webp?v=4fd32e 800w, /fotos/banda-portada.webp?v=6eb1d9 1600w"
-         sizes="(max-width:720px) 100vw, 680px"
-         width="1600" height="600" loading="lazy" decoding="async"
-         alt="Una planta pequeña sobre un taburete de madera, junto a una cortina con luz de día">
-    <figcaption>Las sesiones son por videollamada, así que el sitio lo pones tú. Solo hace falta que sea un sitio donde puedas hablar sin que nadie te oiga.</figcaption>
+  <figure class="figura">
+    <div class="lamina">
+    <svg viewBox="0 0 400 176" role="img" aria-labelledby="sem-t sem-d" class="dibujo"
+         fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="sem-t">Una semana entera, hora por hora, con la sesión marcada</title>
+      <desc id="sem-d">Una cuadrícula de siete filas por veinticuatro columnas: las ciento sesenta y ocho horas de una semana. Una sola casilla está marcada en azul: es la sesión. Ocho casillas más, pequeñas y rayadas, repartidas por la semana, son los ratos en que se hace algo de lo acordado. Todo lo demás está en gris.</desc>
+      <path class="reticula" d="M26 30 V149 M226 30 V149 M26 30 H376"/>
+      <text class="rotulo eje-txt" x="18" y="39.6" text-anchor="end">L</text><text class="rotulo eje-txt" x="18" y="56.6" text-anchor="end">M</text><text class="rotulo eje-txt" x="18" y="73.6" text-anchor="end">X</text><text class="rotulo eje-txt" x="18" y="90.6" text-anchor="end">J</text><text class="rotulo eje-txt" x="18" y="107.6" text-anchor="end">V</text><text class="rotulo eje-txt" x="18" y="124.6" text-anchor="end">S</text><text class="rotulo eje-txt" x="18" y="141.6" text-anchor="end">D</text>
+      <text class="rotulo eje-txt" x="32.2" y="24" text-anchor="middle">0</text><text class="rotulo eje-txt" x="119.8" y="24" text-anchor="middle">6</text><text class="rotulo eje-txt" x="207.4" y="24" text-anchor="middle">12</text><text class="rotulo eje-txt" x="295.0" y="24" text-anchor="middle">18</text>
+      <rect class="celda" x="26.0" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="40.6" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="55.2" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="69.8" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="84.4" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="99.0" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="113.6" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="128.2" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="142.8" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="157.4" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="172.0" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="186.6" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="201.2" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="215.8" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="230.4" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="245.0" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="259.6" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="274.2" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="288.8" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="303.4" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="318.0" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="332.6" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="347.2" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="361.8" y="30.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="26.0" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="40.6" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="55.2" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="69.8" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="84.4" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="99.0" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="113.6" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="128.2" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="142.8" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="157.4" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="172.0" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="186.6" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="201.2" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="215.8" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="230.4" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="245.0" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="259.6" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="274.2" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="288.8" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="303.4" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="318.0" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="332.6" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="347.2" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="361.8" y="47.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="26.0" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="40.6" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="55.2" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="69.8" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="84.4" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="99.0" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="113.6" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="128.2" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="142.8" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="157.4" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="172.0" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="186.6" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="201.2" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="215.8" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="230.4" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="245.0" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="259.6" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="274.2" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="288.8" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="318.0" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="332.6" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="347.2" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="361.8" y="64.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="26.0" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="40.6" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="55.2" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="69.8" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="84.4" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="99.0" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="113.6" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="128.2" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="142.8" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="157.4" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="172.0" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="186.6" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="201.2" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="215.8" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="230.4" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="245.0" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="259.6" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="274.2" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="288.8" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="303.4" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="318.0" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="332.6" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="347.2" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="361.8" y="81.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="26.0" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="40.6" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="55.2" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="69.8" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="84.4" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="99.0" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="113.6" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="128.2" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="142.8" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="157.4" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="172.0" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="186.6" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="201.2" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="215.8" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="230.4" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="245.0" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="259.6" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="274.2" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="288.8" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="303.4" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="318.0" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="332.6" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="347.2" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="361.8" y="98.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="26.0" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="40.6" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="55.2" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="69.8" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="84.4" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="99.0" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="113.6" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="128.2" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="142.8" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="157.4" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="172.0" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="186.6" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="201.2" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="215.8" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="230.4" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="245.0" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="259.6" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="274.2" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="288.8" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="303.4" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="318.0" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="332.6" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="347.2" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="361.8" y="115.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="26.0" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="40.6" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="55.2" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="69.8" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="84.4" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="99.0" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="113.6" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="128.2" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="142.8" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="157.4" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="172.0" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="186.6" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="201.2" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="215.8" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="230.4" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="245.0" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="259.6" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="274.2" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="288.8" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-entre" x="303.4" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="318.0" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="332.6" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="347.2" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda" x="361.8" y="132.0" width="12.4" height="14.8" rx="1.5"/><rect class="celda-sesion" x="303.4" y="64.0" width="12.4" height="14.8" rx="1.5"/>
+      <path class="guia" vector-effect="non-scaling-stroke" d="M309.6 80.0 V162"/>
+    </svg>
+    <span class="anota" style="left:74%;top:96%">la sesión: una hora</span>
+    </div>
+    <ul class="leyenda">
+      <li><span class="muestra sesion" aria-hidden="true"></span>La sesión: una hora</li>
+      <li><span class="muestra entre" aria-hidden="true"></span>Los ratos de entre semana: entre cinco y diez minutos cada uno</li>
+    </ul>
+    <figcaption>Una sesión es <strong>una hora de las ciento sesenta y ocho</strong> que tiene una semana. Por eso lo que de verdad mueve las cosas no pasa dentro de la sesión, sino en las otras ciento sesenta y siete: la hora sirve para decidir qué se hace con ellas.</figcaption>
   </figure>
 
   <div class="llamada">
     <p>Ya sabes cómo funciona. El siguiente paso son treinta minutos hablando, para ver si esto te sirve.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso <span class="par"><span class="separa">&middot;</span> <a href="/primera-sesion/">Qué pasa exactamente en esos treinta minutos</a></span></p>
   </div>
@@ -626,13 +599,25 @@
   <h2>Cuánto cuesta</h2>
 
   <div class="tarifa">
-    <p class="precio">30&nbsp;€ <span>por sesión de 60 minutos</span></p>
+    <p class="precio"><span class="cifra" data-hasta="30">30</span>&nbsp;€ <span>por sesión de 60 minutos</span></p>
     <p>
-      La primera sesión, la informativa de treinta minutos, <strong>no se cobra</strong>. La frecuencia la eliges tú: semanal o quincenal.
+      <strong>La primera, la sesión de conocernos, no se cobra.</strong>
+      La frecuencia la eliges tú: <strong>semanal o quincenal</strong>.
+    </p>
+    <!-- El precio estaba aquí solo, sin nada que lo explicara, y la
+         explicación vivía dos páginas más adentro. Un cuarenta por
+         ciento por debajo del mercado sin motivo al lado no se lee
+         como una ventaja: se lee como una sospecha. -->
+    <p class="comparativa">
+      <span class="barra-mercado"><span class="yo"></span></span>
+      La media del sector está entre <strong>39 y 55 € la sesión</strong>.
+      <strong>Aquí son 30 €, la hora entera</strong>, porque estoy en
+      prácticas supervisadas, y por eso mismo subirá cuando termine el
+      máster.
     </p>
     <p style="margin-bottom:0">
-      <a href="/tarifas/">Pago, cancelaciones y lo que incluye &rarr;</a><br>
-      <a href="/cuanto-cuesta-un-psicologo-online/">¿Cuánto cuesta un psicólogo online? &rarr;</a>
+      <a href="/cuanto-cuesta-un-psicologo-online/">Lo que cobra cada plataforma, con enlaces &rarr;</a><br>
+      <a href="/tarifas/">Pago, cancelaciones y lo que incluye &rarr;</a>
     </p>
   </div>
 
@@ -643,27 +628,24 @@
   <h2>¿No es el momento? Llévate esto</h2>
   <p>
     Tres herramientas gratis, sin registro y sin que te llame nadie.
-    <strong>Dos de las tres</strong> ni siquiera piden el correo. Están aquí porque
+    <strong>Dos de las tres ni siquiera piden el correo.</strong> Están aquí porque
     la mayoría de la gente que lo está pasando mal no va a ir a terapia
     este año, y entender el mecanismo por tu cuenta ya vale para algo.
   </p>
   <div class="rejilla">
     <a class="tarjeta" href="/mapa/">
-      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.4 6.4 9 4.2v13.4l-5.6 2.2z"/><path pathLength="1" d="M9 4.2l6 2.2v13.4L9 17.6"/><path pathLength="1" d="M15 6.4l5.6-2.2v13.4L15 19.8"/></svg>
-      <h3>El mapa de lo que evitas</h3>
-      <p>Seis preguntas sobre <strong>una sola vez</strong> que evitaste algo. Diez minutos.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.4 6.4 9 4.2v13.4l-5.6 2.2z"/><path pathLength="1" d="M9 4.2l6 2.2v13.4L9 17.6"/><path pathLength="1" d="M15 6.4l5.6-2.2v13.4L15 19.8"/></svg><h3>El mapa de lo que evitas</h3></span>
+      <p><strong>Seis preguntas sobre una sola vez que evitaste algo.</strong> Diez minutos.</p>
       <span class="mas">Hacer el mapa &rarr;</span>
     </a>
     <a class="tarjeta" href="/la-cuenta/">
-      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M5 5.6v12.8M9.4 5.6v12.8M13.8 5.6v12.8M18.2 5.6v12.8"/><path pathLength="1" d="M3.4 17.4 19.8 6.6"/></svg>
-      <h3>La cuenta que no haces</h3>
-      <p>Dos preguntas y una multiplicación: <strong>cuántas veces</strong> ha pasado ya.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M5 5.6v12.8M9.4 5.6v12.8M13.8 5.6v12.8M18.2 5.6v12.8"/><path pathLength="1" d="M3.4 17.4 19.8 6.6"/></svg><h3>La cuenta que no haces</h3></span>
+      <p><strong>Dos preguntas y una multiplicación: cuántas veces ha pasado ya.</strong></p>
       <span class="mas">Hacer la cuenta &rarr;</span>
     </a>
     <a class="tarjeta" href="/registro/">
-      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.4" y="3.2" width="15.2" height="17.6" rx="2.4"/><path pathLength="1" d="M8 8.2h8M8 12h8M8 15.8h4.6"/></svg>
-      <h3>La hoja de registro</h3>
-      <p>Siete días apuntando lo mismo. El mapa enseña un episodio; esto, <strong>el patrón</strong>.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.4" y="3.2" width="15.2" height="17.6" rx="2.4"/><path pathLength="1" d="M8 8.2h8M8 12h8M8 15.8h4.6"/></svg><h3>La hoja de registro</h3></span>
+      <p>Siete días apuntando lo mismo. <strong>El mapa enseña un episodio; esto, el patrón.</strong></p>
       <span class="mas">Abrir la hoja &rarr;</span>
     </a>
   </div>
@@ -680,16 +662,16 @@
   <p>
     En casi todas las webs de psicólogos hay, más o menos por esta altura,
     una fila de reseñas de pacientes. Aquí no la vas a encontrar, y
-    no es porque no haya <strong>gente contenta</strong>.
+    y <strong>no es porque no haya gente contenta</strong>.
   </p>
   <p>
     Es que pedirle a alguien que está en terapia contigo que escriba
-    públicamente lo bien que le va me parece una forma de <strong>aprovecharse</strong> de una relación <strong>desigual por definición</strong>. Y sin pedirlo, las reseñas
+    públicamente lo bien que le va me parece <strong>aprovecharse de una relación desigual</strong> por definición. Y sin pedirlo, las reseñas
     no aparecen solas.
   </p>
   <p>
-    Así que lo que puedo darte en su lugar es esto: <strong>media hora</strong>
-    gratis para que me escuches y <strong>lo juzgues tú</strong>, y tres
+    Así que lo que puedo darte en su lugar es esto: <strong>media hora
+    gratis para que lo juzgues tú</strong>, y tres
     ejercicios que puedes hacer ahora mismo sin darme ni tu correo.
   </p>
 
@@ -699,10 +681,10 @@
        prometer: que me escuches y lo juzgues tú. Este es el único
        punto de la portada donde la frase de al lado pide un botón. -->
   <div class="llamada">
-    <p>Es la única prueba que te puedo dar: media hora, escucharme, y <strong>juzgar</strong> tú.</p>
+    <p>Es la única prueba que te puedo dar: <strong>media hora, escucharme y juzgar tú</strong>.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -712,22 +694,22 @@
   <div class="faq">
     <details>
       <summary>¿La terapia online funciona igual que la presencial?</summary>
-      <p>Para la mayoría de los problemas por los que la gente pide cita —ansiedad, estado de ánimo, evitación, autoestima— la investigación disponible <strong>no encuentra diferencias</strong> de eficacia entre el formato online y el presencial, siempre que el tratamiento sea el mismo y se haga bien.</p><p>Lo que sí cambia es la logística: no pierdes el viaje, es más fácil sostener la frecuencia y hay menos sesiones perdidas. Necesitas un sitio donde puedas hablar tranquilo, y eso a veces es lo difícil.</p>
+      <p>Para la mayoría de los problemas por los que la gente pide cita —ansiedad, estado de ánimo, evitación, autoestima— la investigación disponible <strong>no encuentra diferencias de eficacia</strong> entre el formato online y el presencial, siempre que el tratamiento sea el mismo y se haga bien.</p><p>Lo que sí cambia es la logística: no pierdes el viaje, es más fácil sostener la frecuencia y hay menos sesiones perdidas. Necesitas un sitio donde puedas hablar tranquilo, y eso a veces es lo difícil.</p>
     </details>
 
     <details>
       <summary>¿Quién me va a atender exactamente?</summary>
-      <p>Adrián Cuñat Andrés, graduado en Psicología por la UNED y colegiado nº CM03836 en el Colegio Oficial de Psicología de Castilla-La Mancha. Estoy cursando el Máster en Psicología General Sanitaria en UNIR, y hasta tenerlo atiendo <strong>en prácticas supervisadas</strong> dentro del centro sanitario Neurococos, <strong>no por mi cuenta</strong>. Lo digo tal cual porque tienes derecho a saberlo antes de sentarte.</p>
+      <p>Adrián Cuñat Andrés, graduado en Psicología por la UNED y <strong>colegiado nº CM03836</strong> en el Colegio Oficial de Psicología de Castilla-La Mancha. Estoy cursando el <strong>Máster en Psicología General Sanitaria</strong> en UNIR, y hasta tenerlo atiendo dentro del <strong>centro sanitario Neurococos</strong>, no por mi cuenta. Lo digo tal cual porque tienes derecho a saberlo antes de sentarte.</p>
     </details>
 
     <details>
       <summary>¿Qué es eso de la supervisión?</summary>
-      <p>En la sesión estamos <strong>tú y yo</strong>, nadie más. La supervisión ocurre entre sesiones: reviso el caso con un profesional colegiado del centro, que está sujeto al mismo secreto profesional que yo. Es lo que hace que haya dos cabezas pensando en lo tuyo en vez de una.</p>
+      <p>En la sesión <strong>estamos tú y yo, nadie más</strong>. La supervisión ocurre entre sesiones: reviso el caso con un profesional colegiado del centro, que está sujeto al mismo secreto profesional que yo. Es lo que hace que haya dos cabezas pensando en lo tuyo en vez de una.</p>
     </details>
 
     <details>
       <summary>¿Cuánto dura un proceso?</summary>
-      <p>Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso. El objetivo declarado del proceso es <strong>terminar</strong>.</p>
+      <p>Depende del problema y no te voy a dar un número para quedar bien. En la devolución, sobre la tercera sesión, te doy una estimación con lo que ya sé de tu caso. El <strong>objetivo del proceso es terminar</strong>.</p>
     </details>
 
     <details>
@@ -737,40 +719,57 @@
 
     <details>
       <summary>¿Puedo pagar cada sesión, sin bonos ni permanencia?</summary>
-      <p>Sí, y es lo único que hay. Se paga por transferencia antes de cada sesión, <strong>no hay bonos</strong>, no hay paquetes y <strong>no hay permanencia</strong>. Puedes dejarlo cuando quieras, aunque preferiría que me lo dijeras para cerrarlo bien.</p>
+      <p>Sí, y es lo único que hay. Se paga por transferencia antes de cada sesión: <strong>no hay bonos, ni paquetes, ni permanencia</strong>. Puedes dejarlo cuando quieras, aunque preferiría que me lo dijeras para cerrarlo bien.</p>
     </details>
   </div>
 
   <!-- ===== Últimos artículos ================================== -->
   <h2>Últimos artículos</h2>
   <div class="rejilla">
-    <a class="tarjeta con-foto" href="/blog/por-que-lo-repites/">
-      <img class="ficha" src="/fotos/ficha-repites.webp?v=8d610f"
-           srcset="/fotos/ficha-repites-m.webp?v=194600 400w, /fotos/ficha-repites.webp?v=8d610f 800w"
-           sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" decoding="async" alt="Sombras de una barandilla repetidas sobre una pared">
+    <a class="tarjeta con-sello" href="/blog/por-que-lo-repites/">
+      <span class="ficha"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-rep-t-t s-rep-t-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-rep-t-t">Cuatro picos de alivio y cuatro escalones de coste</title>
+  <desc id="s-rep-t-d">Una línea fina sube y baja en cuatro picos: el alivio, que aparece y se va. Una línea gruesa sube en cuatro escalones y no vuelve a bajar: el coste.</desc>
+  <path class="reticula" d="M24 36 V132 M58 36 V132 M92 36 V132 M126 36 V132 M160 36 V132 M194 36 V132 M228 36 V132 M262 36 V132 M296 36 V132 M24 36 H296 M24 60 H296 M24 84 H296 M24 108 H296 M24 132 H296"/>
+  <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M24 132 L54 132 Q70 80 86 132 L112 132 Q128 80 144 132 L170 132 Q186 80 202 132 L228 132 Q244 80 260 132 L296 132"/>
+  <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M24 132 L70 132 L70 115 L128 115 L128 98 L186 98 L186 81 L244 81 L244 64 L296 64"/>
+  <path class="eje" vector-effect="non-scaling-stroke" d="M24 132 H296"/>
+</svg></span>
       <div class="cuerpo">
         <h3>Por qué lo repites aunque sepas que te perjudica</h3>
         <p>Lo sigues haciendo porque funciona. No para tu vida: para el minuto siguiente.</p>
         <span class="mas">Leer &rarr;</span>
       </div>
     </a>
-    <a class="tarjeta con-foto" href="/blog/cuando-este-listo/">
-      <img class="ficha" src="/fotos/ficha-listo.webp?v=ff08ee"
-           srcset="/fotos/ficha-listo-m.webp?v=8554c7 400w, /fotos/ficha-listo.webp?v=ff08ee 800w"
-           sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" loading="lazy" decoding="async" alt="Luz filtrada por una persiana sobre una pared clara">
+    <a class="tarjeta con-sello" href="/blog/cuando-este-listo/">
+      <span class="ficha"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-lis-t-t s-lis-t-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-lis-t-t">Una barra de preparación que no llega a su punto final</title>
+  <desc id="s-lis-t-d">Una barra larga con marcas de tiempo ocupa casi todo el ancho: es la preparación. Donde debería empezar lo que se prepara, la línea se vuelve discontinua y termina en un círculo vacío.</desc>
+  <path class="reticula" d="M24 34 V150 M58 34 V150 M92 34 V150 M126 34 V150 M160 34 V150 M194 34 V150 M228 34 V150 M262 34 V150 M296 34 V150 M24 34 H296 M24 63 H296 M24 92 H296 M24 121 H296 M24 150 H296"/>
+  <rect class="tramo mio" x="24" y="82" width="190" height="28" rx="3"/>
+  <path class="diente" vector-effect="non-scaling-stroke" d="M24 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M38 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M52 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M66 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M80 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M94 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M108 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M122 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M136 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M150 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M164 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M178 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M192 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M206 110 V114.5"/>
+  <path class="trazo-flojo" vector-effect="non-scaling-stroke" pathLength="1"
+        d="M214 96 H296"/>
+  <circle class="hito vacio" cx="286" cy="96" r="8"/>
+</svg></span>
       <div class="cuerpo">
         <h3>«Cuando esté listo» no llega nunca</h3>
         <p>La motivación no va delante de la acción. Va detrás.</p>
         <span class="mas">Leer &rarr;</span>
       </div>
     </a>
-    <a class="tarjeta con-foto" href="/blog/la-factura-que-no-ves/">
-      <img class="ficha" src="/fotos/ficha-factura.webp?v=c1b151"
-           srcset="/fotos/ficha-factura-m.webp?v=bcc796 400w, /fotos/ficha-factura.webp?v=c1b151 800w"
-           sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" loading="lazy" decoding="async" alt="Luz de tarde entrando en diagonal sobre una pared">
+    <a class="tarjeta con-sello" href="/blog/la-factura-que-no-ves/">
+      <span class="ficha"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-fac-t-t s-fac-t-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-fac-t-t">Ochenta y cuatro casillas, sesenta y dos de ellas llenas</title>
+  <desc id="s-fac-t-d">Una cuadrícula de ochenta y cuatro casillas. Sesenta y dos están rellenas y el resto solo dibujadas: lo que una cosa pequeña repetida acaba sumando.</desc>
+  <rect class="celda-llena" x="26.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="137.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="155.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="174.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="192.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="211.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="229.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="248.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="266.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="26.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="44.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="63.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="81.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="100.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="118.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="137.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="155.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="174.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="192.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="211.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="229.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="248.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="266.5" y="124.5" width="14.5" height="14.5" rx="1.5"/>
+</svg></span>
       <div class="cuerpo">
         <h3>La factura que no ves</h3>
         <p>El coste de evitar llega en trozos demasiado pequeños para hacer algo con ellos.</p>
@@ -792,10 +791,10 @@
 
   <section class="cinta">
     <h2>El siguiente paso son treinta minutos</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y salgas sabiendo qué haría yo con ello. No es una <strong>sesión de tratamiento</strong> y no tienes que <strong>decidir</strong> nada ese día.</p>
+    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y salgas sabiendo qué haría yo con ello. <strong>No tienes que decidir nada ese día.</strong></p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Las sesiones son online y solo para residentes en España, en el centro sanitario Neurococos.</p>
@@ -866,6 +865,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -885,6 +888,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

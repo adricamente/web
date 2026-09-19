@@ -60,7 +60,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -102,7 +114,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -133,11 +145,11 @@
       <a href="/blog/" aria-current="page">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -156,44 +168,66 @@
 
   <h2>Cuatro mecanismos, explicados</h2>
   <div class="rejilla cuatro">
-    <a class="tarjeta con-foto" href="/blog/por-que-lo-repites/">
-      <img class="ficha" src="/fotos/ficha-repites.webp?v=8d610f"
-           srcset="/fotos/ficha-repites-m.webp?v=194600 400w, /fotos/ficha-repites.webp?v=8d610f 800w"
-           sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" decoding="async" alt="Sombras de una barandilla repetidas sobre una pared">
+    <a class="tarjeta con-sello" href="/blog/por-que-lo-repites/">
+      <span class="ficha"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-rep-t-t s-rep-t-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-rep-t-t">Cuatro picos de alivio y cuatro escalones de coste</title>
+  <desc id="s-rep-t-d">Una línea fina sube y baja en cuatro picos: el alivio, que aparece y se va. Una línea gruesa sube en cuatro escalones y no vuelve a bajar: el coste.</desc>
+  <path class="reticula" d="M24 36 V132 M58 36 V132 M92 36 V132 M126 36 V132 M160 36 V132 M194 36 V132 M228 36 V132 M262 36 V132 M296 36 V132 M24 36 H296 M24 60 H296 M24 84 H296 M24 108 H296 M24 132 H296"/>
+  <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M24 132 L54 132 Q70 80 86 132 L112 132 Q128 80 144 132 L170 132 Q186 80 202 132 L228 132 Q244 80 260 132 L296 132"/>
+  <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M24 132 L70 132 L70 115 L128 115 L128 98 L186 98 L186 81 L244 81 L244 64 L296 64"/>
+  <path class="eje" vector-effect="non-scaling-stroke" d="M24 132 H296"/>
+</svg></span>
       <div class="cuerpo">
         <h3>Por qué lo repites aunque sepas que te perjudica</h3>
         <p>Lo sigues haciendo porque funciona. No para tu vida: para el minuto siguiente.</p>
         <span class="mas">Leer &rarr;</span>
       </div>
     </a>
-    <a class="tarjeta con-foto" href="/blog/cuando-este-listo/">
-      <img class="ficha" src="/fotos/ficha-listo.webp?v=ff08ee"
-           srcset="/fotos/ficha-listo-m.webp?v=8554c7 400w, /fotos/ficha-listo.webp?v=ff08ee 800w"
-           sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" loading="lazy" decoding="async" alt="Luz filtrada por una persiana sobre una pared clara">
+    <a class="tarjeta con-sello" href="/blog/cuando-este-listo/">
+      <span class="ficha"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-lis-t-t s-lis-t-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-lis-t-t">Una barra de preparación que no llega a su punto final</title>
+  <desc id="s-lis-t-d">Una barra larga con marcas de tiempo ocupa casi todo el ancho: es la preparación. Donde debería empezar lo que se prepara, la línea se vuelve discontinua y termina en un círculo vacío.</desc>
+  <path class="reticula" d="M24 34 V150 M58 34 V150 M92 34 V150 M126 34 V150 M160 34 V150 M194 34 V150 M228 34 V150 M262 34 V150 M296 34 V150 M24 34 H296 M24 63 H296 M24 92 H296 M24 121 H296 M24 150 H296"/>
+  <rect class="tramo mio" x="24" y="82" width="190" height="28" rx="3"/>
+  <path class="diente" vector-effect="non-scaling-stroke" d="M24 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M38 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M52 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M66 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M80 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M94 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M108 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M122 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M136 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M150 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M164 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M178 110 V114.5"/><path class="diente" vector-effect="non-scaling-stroke" d="M192 110 V119.0"/><path class="diente" vector-effect="non-scaling-stroke" d="M206 110 V114.5"/>
+  <path class="trazo-flojo" vector-effect="non-scaling-stroke" pathLength="1"
+        d="M214 96 H296"/>
+  <circle class="hito vacio" cx="286" cy="96" r="8"/>
+</svg></span>
       <div class="cuerpo">
         <h3>«Cuando esté listo» no llega nunca</h3>
         <p>La motivación no va delante de la acción. Va detrás.</p>
         <span class="mas">Leer &rarr;</span>
       </div>
     </a>
-    <a class="tarjeta con-foto" href="/blog/la-factura-que-no-ves/">
-      <img class="ficha" src="/fotos/ficha-factura.webp?v=c1b151"
-           srcset="/fotos/ficha-factura-m.webp?v=bcc796 400w, /fotos/ficha-factura.webp?v=c1b151 800w"
-           sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" loading="lazy" decoding="async" alt="Luz de tarde entrando en diagonal sobre una pared">
+    <a class="tarjeta con-sello" href="/blog/la-factura-que-no-ves/">
+      <span class="ficha"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-fac-t-t s-fac-t-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-fac-t-t">Ochenta y cuatro casillas, sesenta y dos de ellas llenas</title>
+  <desc id="s-fac-t-d">Una cuadrícula de ochenta y cuatro casillas. Sesenta y dos están rellenas y el resto solo dibujadas: lo que una cosa pequeña repetida acaba sumando.</desc>
+  <rect class="celda-llena" x="26.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="32.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="50.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="69.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="137.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="155.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="174.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="192.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="211.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="229.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="248.0" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="266.5" y="87.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="26.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="44.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="63.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="81.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="100.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-llena" x="118.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="137.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="155.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="174.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="192.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="211.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="229.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="248.0" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="266.5" y="106.0" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="26.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="44.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="63.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="81.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="100.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="118.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="137.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="155.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="174.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="192.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="211.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="229.5" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="248.0" y="124.5" width="14.5" height="14.5" rx="1.5"/><rect class="celda-hueca" x="266.5" y="124.5" width="14.5" height="14.5" rx="1.5"/>
+</svg></span>
       <div class="cuerpo">
         <h3>La factura que no ves</h3>
         <p>El coste de evitar llega en trozos demasiado pequeños para hacer algo con ellos.</p>
         <span class="mas">Leer &rarr;</span>
       </div>
     </a>
-    <a class="tarjeta con-foto" href="/blog/cuando-dejar-de-hacerlo-solo/">
-      <img class="ficha" src="/fotos/ficha-solo.webp?v=5cf6d0"
-           srcset="/fotos/ficha-solo-m.webp?v=c1e5be 400w, /fotos/ficha-solo.webp?v=5cf6d0 800w"
-           sizes="(max-width:720px) 100vw, 320px"
-           width="800" height="450" loading="lazy" decoding="async" alt="Una taza y una planta sobre una mesa de madera">
+    <a class="tarjeta con-sello" href="/blog/cuando-dejar-de-hacerlo-solo/">
+      <span class="ficha"><svg viewBox="0 0 320 180" role="img"
+     aria-labelledby="s-sol-t-t s-sol-t-d" class="dibujo sello "
+     fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <title id="s-sol-t-t">Cuatro anillos concéntricos que se van extendiendo</title>
+  <desc id="s-sol-t-d">Un punto en el centro y cuatro anillos cada vez más anchos alrededor, unidos por radios: algo que empezó en un sitio y ha ido tocando cosas que antes no tocaba.</desc>
+  <ellipse class="anillo" cx="160" cy="92" rx="34" ry="21" vector-effect="non-scaling-stroke"/><ellipse class="anillo" cx="160" cy="92" rx="62" ry="38" vector-effect="non-scaling-stroke"/><ellipse class="anillo" cx="160" cy="92" rx="90" ry="56" vector-effect="non-scaling-stroke"/><ellipse class="anillo" cx="160" cy="92" rx="118" ry="73" vector-effect="non-scaling-stroke"/>
+  <path class="guia" vector-effect="non-scaling-stroke" d="M191.3 100.2 L268.7 120.5"/><path class="guia" vector-effect="non-scaling-stroke" d="M167.4 112.6 L185.8 163.4"/><path class="guia" vector-effect="non-scaling-stroke" d="M137.3 107.7 L81.4 146.6"/><path class="guia" vector-effect="non-scaling-stroke" d="M126.7 87.6 L44.6 76.9"/><path class="guia" vector-effect="non-scaling-stroke" d="M146.4 72.7 L112.7 25.0"/><path class="guia" vector-effect="non-scaling-stroke" d="M177.4 73.9 L220.4 29.2"/>
+  <circle class="nodo" cx="160" cy="92" r="11"/>
+</svg></span>
       <div class="cuerpo">
         <h3>Cuándo dejar de hacerlo solo</h3>
         <p>Tres situaciones en las que ir por libre sale mucho más caro de lo que parece.</p>
@@ -280,6 +314,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -299,6 +337,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

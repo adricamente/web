@@ -67,7 +67,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -114,7 +126,7 @@
       "name": "¿Sirven si no voy a ir a terapia?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, han servido."
+        "text": "Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, han servido para algo."
       }
     },
     {
@@ -149,7 +161,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -180,11 +192,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -198,7 +210,7 @@
 
   <p class="grande">
     Gratis, sin registro y sin que te llame nadie después.
-    <strong>Dos de las tres</strong> ni siquiera piden el correo. Están
+    <strong>Dos de las tres ni siquiera piden el correo.</strong> Están
     aquí porque la mayoría de la gente que lo está pasando mal no va a
     ir a terapia este año, y entender el mecanismo por tu cuenta ya vale
     para algo.
@@ -207,21 +219,18 @@
   <h2>Qué hace cada una</h2>
   <div class="rejilla">
     <a class="tarjeta" href="/mapa/">
-      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.4 6.4 9 4.2v13.4l-5.6 2.2z"/><path pathLength="1" d="M9 4.2l6 2.2v13.4L9 17.6"/><path pathLength="1" d="M15 6.4l5.6-2.2v13.4L15 19.8"/></svg>
-      <h3>El mapa de lo que evitas</h3>
-      <p>Seis preguntas sobre <strong>una sola vez</strong> que evitaste algo. Diez minutos. Es la <strong>primera mitad</strong> del análisis que hago en consulta el primer día, hecha por ti.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.4 6.4 9 4.2v13.4l-5.6 2.2z"/><path pathLength="1" d="M9 4.2l6 2.2v13.4L9 17.6"/><path pathLength="1" d="M15 6.4l5.6-2.2v13.4L15 19.8"/></svg><h3>El mapa de lo que evitas</h3></span>
+      <p><strong>Seis preguntas sobre una sola vez que evitaste algo.</strong> Diez minutos. Es la <strong>primera mitad del análisis que hago en consulta el primer día</strong>, hecha por ti.</p>
       <span class="mas">Hacer el mapa &rarr;</span>
     </a>
     <a class="tarjeta" href="/la-cuenta/">
-      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M5 5.6v12.8M9.4 5.6v12.8M13.8 5.6v12.8M18.2 5.6v12.8"/><path pathLength="1" d="M3.4 17.4 19.8 6.6"/></svg>
-      <h3>La cuenta que no haces</h3>
-      <p>Dos preguntas y una multiplicación: <strong>cuántas veces</strong> ha pasado ya. Y el dibujo del mecanismo redibujado con tu número. No es un test y no mide nada de ti.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M5 5.6v12.8M9.4 5.6v12.8M13.8 5.6v12.8M18.2 5.6v12.8"/><path pathLength="1" d="M3.4 17.4 19.8 6.6"/></svg><h3>La cuenta que no haces</h3></span>
+      <p><strong>Dos preguntas y una multiplicación: cuántas veces ha pasado ya.</strong> Y el dibujo del mecanismo redibujado con tu número. No es un test y no mide nada de ti.</p>
       <span class="mas">Hacer la cuenta &rarr;</span>
     </a>
     <a class="tarjeta" href="/registro/">
-      <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.4" y="3.2" width="15.2" height="17.6" rx="2.4"/><path pathLength="1" d="M8 8.2h8M8 12h8M8 15.8h4.6"/></svg>
-      <h3>La hoja de registro</h3>
-      <p>Siete días apuntando lo mismo, dos minutos al día. El mapa te enseña un episodio; esto te enseña <strong>el patrón</strong>, que es otra cosa y no se ve desde dentro.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.4" y="3.2" width="15.2" height="17.6" rx="2.4"/><path pathLength="1" d="M8 8.2h8M8 12h8M8 15.8h4.6"/></svg><h3>La hoja de registro</h3></span>
+      <p>Siete días apuntando lo mismo, dos minutos al día. El mapa te enseña un episodio; <strong>esto te enseña el patrón</strong>, que es otra cosa y no se ve desde dentro.</p>
       <span class="mas">Abrir la hoja &rarr;</span>
     </a>
   </div>
@@ -229,7 +238,7 @@
     <p>Y si prefieres saltarte todo esto y contarlo en voz alta, son treinta minutos y no cuestan nada.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -243,21 +252,21 @@
 
   <ol class="pasos">
     <li>
-      <strong>Una vez</strong>
+      <strong>Una vez: un episodio</strong>
       El mapa coge <em>un</em> episodio concreto y lo desmonta: qué
       pasó, qué hiciste, qué conseguiste en el minuto siguiente y qué te
       costó después. Es lo primero porque hasta que no ves un caso
       entero, lo demás son teorías.
     </li>
     <li>
-      <strong>Cuántas veces</strong>
+      <strong>Cuántas veces se repite</strong>
       La cuenta multiplica ese episodio por las veces que se repite y
       por los años que llevas. El número sale grande siempre, y no
       porque lo tuyo sea grave: porque cifras pequeñas por años dan
       cifras grandes. Eso es justo lo que no se ve desde dentro.
     </li>
     <li>
-      <strong>Y con qué forma</strong>
+      <strong>Y con qué forma: el patrón de siete días</strong>
       La hoja de registro son siete días seguidos apuntando lo mismo.
       Ahí aparece el patrón: que casi siempre son dos o tres
       situaciones, no veinte, y que el eslabón que se puede cambiar
@@ -274,7 +283,7 @@
       por una web: se hace evaluando, que son dos o tres sesiones.
     </p>
     <p style="margin-bottom:0">
-      Lo que sí hacen es enseñarte el <strong>mecanismo</strong>, que es
+      <strong>Lo que sí hacen es enseñarte el mecanismo</strong>, que es
       el mismo para todo el mundo y que casi nadie explica sin
       envolverlo en humo.
     </p>
@@ -296,7 +305,7 @@
   <h2>Y una advertencia que va en serio</h2>
   <p>
     Hacer las tres no es hacer terapia, y verlo claro no es lo mismo que
-    poder cambiarlo. Entender el mecanismo <strong>no lo apaga</strong>:
+    poder cambiarlo. <strong>Entender el mecanismo no lo apaga</strong>:
     si bastara con entenderlo, no existiría mi trabajo y tú habrías
     salido de esto hace años leyendo.
   </p>
@@ -311,17 +320,17 @@
   <div class="faq">
     <details>
       <summary>¿Tengo que dar el correo?</summary>
-      <p>Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. La cuenta y la hoja <strong>no piden nada</strong>. Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic.</p>
+      <p>Solo en el mapa, y al final, cuando ya lo has hecho: el resultado se ve en pantalla aunque no lo des. <strong>La cuenta y la hoja no piden nada.</strong> Si dejas el correo en el mapa, te llegan cuatro cartas en tres semanas y te das de baja de un clic.</p>
     </details>
 
     <details>
       <summary>¿Se guarda lo que escribo?</summary>
-      <p>No sale de tu navegador. No se envía a <strong>ningún servidor</strong> y no queda registro de tus respuestas: el cálculo se hace en tu propio móvil u ordenador.</p>
+      <p>No sale de tu navegador. <strong>No se envía a ningún servidor y no queda registro de tus respuestas</strong>: el cálculo se hace en tu propio móvil u ordenador.</p>
     </details>
 
     <details>
       <summary>¿Sirven si no voy a ir a terapia?</summary>
-      <p>Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, <strong>han servido</strong>.</p>
+      <p>Sí, y están pensadas para eso. Si de cada cien personas que las usan noventa y nueve no piden cita nunca y aun así entienden mejor lo que les pasa, <strong>han servido para algo</strong>.</p>
     </details>
 
     <details>
@@ -345,7 +354,7 @@
     <p>Treinta minutos, <strong>gratis</strong>, para mirar lo que te haya salido y ver qué eslabón de ahí se puede mover primero.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Trae lo que hayas hecho si quieres. Es exactamente con lo que se empieza a trabajar.</p>
@@ -416,6 +425,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -435,6 +448,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

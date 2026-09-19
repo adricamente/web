@@ -16,8 +16,13 @@
 #     la URL y se vuelven a pedir. El HTML, nada: tiene que
 #     poder cambiar hoy y verse hoy.
 #
-#  3. Cuatro cabeceras de seguridad que no cuestan nada y que
-#     los verificadores buscan.
+#  3. Seis cabeceras de seguridad. Cuatro son las baratas que
+#     busca cualquier verificador. Las otras dos son las que de
+#     verdad protegen algo aquí: HSTS, para que este dominio no se
+#     visite nunca en claro, y una CSP con form-action, que fija a
+#     dónde puede enviar el único formulario de la web. Sin esa
+#     directiva, una inyección podría cambiarle el destino al
+#     formulario del mapa y llevarse los correos a otro sitio.
 # ============================================================
 
 # --- 1. Compresión ------------------------------------------
@@ -66,6 +71,56 @@
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   # Que nadie pida cámara, micrófono ni ubicación desde aquí.
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+  # HSTS: durante dos años, este dominio SOLO se visita por https,
+  # y el navegador lo recuerda sin preguntar. Sin esto, la primera
+  # visita de alguien que teclea «adricamente.com» sale en claro y
+  # la redirección de más abajo llega tarde.
+  #
+  # Dos años y no seis meses porque el plazo corto no aporta nada:
+  # el riesgo de HSTS no es la duración, es activarlo sin tener
+  # https en todos los subdominios. Aquí no hay subdominios, y el
+  # certificado de Hostinger se renueva solo.
+  #
+  # No lleva «preload». Entrar en la lista de precarga de Chrome es
+  # fácil y salir tarda meses: eso se hace cuando el dominio lleva
+  # años estable, no ahora.
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+
+  # CSP. Esta web es HTML estático con dos guiones propios en línea
+  # y un medidor externo, así que la política puede ser casi tan
+  # estricta como se quiera. Lo que hay:
+  #
+  #   default-src 'self'   — todo, de aquí, salvo lo que se abra.
+  #   script-src           — los guiones en línea (el tema, el año,
+  #                          el contador, el mapa) obligan a
+  #                          'unsafe-inline'. La alternativa, un
+  #                          hash por guion, se rompe cada vez que
+  #                          se toca una coma y esto se genera con
+  #                          un script de Python: quedaría roto sin
+  #                          que nadie se enterase. Y cloud.umami.is,
+  #                          que es el medidor sin cookies.
+  #   style-src            — los style="left:56%" de los rótulos de
+  #                          las láminas son atributos en línea.
+  #   img-src              — propias y data: para los SVG en línea.
+  #   font-src 'self'      — las cinco fuentes están servidas aquí.
+  #   connect-src          — Umami manda los eventos a su dominio.
+  #   form-action          — el ÚNICO formulario de la web manda a
+  #                          Brevo. Sin esta directiva, cualquier
+  #                          inyección podría reescribir el destino
+  #                          del formulario del mapa y llevarse los
+  #                          correos a otro sitio. Es la línea que
+  #                          faltaba y la que más protege.
+  #   frame-src            — el iframe invisible al que apunta ese
+  #                          formulario: nace vacío (about:blank, o
+  #                          sea 'self') y acaba con la respuesta de
+  #                          Brevo dentro. Sin esto, el envío del
+  #                          mapa deja de funcionar.
+  #   frame-ancestors      — igual que X-Frame-Options, pero es la
+  #                          que respetan los navegadores modernos.
+  #   base-uri / object-src — cerrados. No hay <base> ni plugins.
+  #   upgrade-insecure-requests — por si se cuela un http:// suelto.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev; form-action 'self' https://d6a8aed2.sibforms.com https://sibforms.com; frame-src 'self' https://d6a8aed2.sibforms.com https://sibforms.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
 </IfModule>
 
 # --- 4. Tipos correctos -------------------------------------

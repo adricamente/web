@@ -60,7 +60,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -86,91 +98,25 @@
   "@context": "https://schema.org",
   "@type": "Service",
   "name": "Terapia psicológica online",
-  "serviceType": "Psicoterapia",
+  "serviceType": "Atención psicológica",
   "description": "Sesiones de psicoterapia por videollamada, de 60 minutos, desde el centro sanitario Neurococos. La primera sesión informativa, de 30 minutos, es gratuita.",
   "provider": {
-    "@type": "Person",
-    "name": "Adrián Cuñat Andrés",
-    "url": "https://adricamente.com/sobre-mi/",
-    "email": "hola@adricamente.com",
-    "jobTitle": "Psicólogo colegiado, cursando el Máster en Psicología General Sanitaria",
-    "identifier": {
-      "@type": "PropertyValue",
-      "name": "Número de colegiado",
-      "value": "CM03836"
-    },
-    "memberOf": {
-      "@type": "Organization",
-      "name": "Colegio Oficial de Psicología de Castilla-La Mancha",
-      "url": "https://www.copclm.com/"
-    },
-    "hasCredential": [
-      {
-        "@type": "EducationalOccupationalCredential",
-        "credentialCategory": "degree",
-        "name": "Grado en Psicología",
-        "recognizedBy": {
-          "@type": "CollegeOrUniversity",
-          "name": "UNED"
-        }
-      },
-      {
-        "@type": "EducationalOccupationalCredential",
-        "credentialCategory": "Colegiación profesional",
-        "name": "Psicólogo colegiado nº CM03836",
-        "recognizedBy": {
-          "@type": "Organization",
-          "name": "Colegio Oficial de Psicología de Castilla-La Mancha"
-        }
-      }
-    ],
-    "alumniOf": {
-      "@type": "CollegeOrUniversity",
-      "name": "Universidad Nacional de Educación a Distancia (UNED)"
-    },
-    "affiliation": {
-      "@type": "CollegeOrUniversity",
-      "name": "Universidad Internacional de La Rioja (UNIR)"
-    },
-    "description": "Psicólogo colegiado nº CM03836. No tiene el título de Psicólogo General Sanitario: cursa el Máster en Psicología General Sanitaria y atiende en prácticas supervisadas dentro del centro sanitario Neurococos.",
-    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
-    "homeLocation": {
-      "@type": "Place",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Albacete",
-        "addressRegion": "Castilla-La Mancha",
-        "addressCountry": "ES"
-      }
-    },
-    "worksFor": {
-      "@type": "MedicalClinic",
-      "name": "Neurococos",
-      "url": "https://www.doctoralia.es/clinicas/neurococos",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Raconada del Pare Leandro Calvo, 2",
-        "postalCode": "46701",
-        "addressLocality": "Gandia",
-        "addressRegion": "Valencia",
-        "addressCountry": "ES"
-      }
-    },
-    "knowsAbout": [
-      "Ansiedad",
-      "Procrastinación",
-      "Autoestima",
-      "Estado de ánimo bajo",
-      "Terapias contextuales",
-      "Terapia cognitivo-conductual"
-    ],
-    "knowsLanguage": "es",
-    "sameAs": [
-      "https://www.copclm.com/",
-      "https://www.instagram.com/adricamente",
-      "https://www.tiktok.com/@adricamente",
-      "https://www.youtube.com/@adricamente"
-    ]
+    "@type": "MedicalClinic",
+    "name": "Neurococos",
+    "url": "https://www.doctoralia.es/clinicas/neurococos",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Raconada del Pare Leandro Calvo, 2",
+      "postalCode": "46701",
+      "addressLocality": "Gandia",
+      "addressRegion": "Valencia",
+      "addressCountry": "ES"
+    }
+  },
+  "providerMobility": "static",
+  "serviceOutput": {
+    "@type": "Thing",
+    "name": "Sesión de psicología por videollamada"
   },
   "areaServed": {
     "@type": "Country",
@@ -319,7 +265,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -350,11 +296,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -368,7 +314,9 @@
 
   <p class="grande">
     Sesiones de una hora, por videollamada, desde el centro sanitario
-    Neurococos. La primera conversación es <strong>gratuita</strong>, dura <strong>treinta minutos</strong> y sirve exactamente para una cosa: <strong>saber</strong> si te sirve.
+    Neurococos. La primera conversación es <strong>gratuita y dura treinta
+    minutos</strong>, y sirve exactamente para una cosa: <strong>saber si te
+    sirve</strong>.
   </p>
 
   <div class="presentacion">
@@ -377,7 +325,9 @@
          alt="Adrián Cuñat Andrés de tres cuartos, con polo verde, mirando a cámara y sonriendo">
     <div class="texto">
   <p>
-    Al otro lado de la pantalla estoy yo, y ya está. Ni una <strong>plataforma con turnos</strong>, ni un <strong>profesional distinto</strong> cada semana, ni un <strong>chat</strong>. El mismo psicólogo, la misma hora y el mismo plan,
+    Al otro lado de la pantalla estoy yo, y ya está. Ni una plataforma con turnos, ni un profesional distinto cada semana,
+    ni un chat. <strong>El mismo psicólogo, la misma hora y el mismo
+    plan</strong>,
     hasta que dejes de necesitarlo.
   </p>
   <p>
@@ -390,7 +340,8 @@
 
   <h2>Qué vas a encontrar</h2>
   <p>
-    Trabajo desde terapias contextuales y cognitivo-conductuales. En la
+    Trabajo desde <strong>terapias contextuales y
+    cognitivo-conductuales</strong>. En la
     práctica eso significa que no vamos a dedicar los meses a buscar por
     qué eres así, sino a mirar qué haces cuando aparece el malestar, qué
     consigues con ello a corto plazo y qué te está costando a largo.
@@ -433,30 +384,33 @@
   </ol>
 
   <h2>En qué puedo ayudarte</h2>
-  <div class="rejilla cuatro">
+  <div class="rejilla cinco">
     <a class="tarjeta" href="/areas/ansiedad/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg>
-      <h3>Ansiedad</h3>
-      <p>Preocupación que no para, tensión en el cuerpo, evitar lo que la dispara. La evitación <strong>calma hoy</strong> y <strong>agranda el problema</strong> mañana.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg><h3>Ansiedad</h3></span>
+      <p>Preocupación que no para, tensión en el cuerpo, evitar lo que la dispara. La evitación <strong>calma hoy y agranda el problema mañana</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
     </a>
     <a class="tarjeta" href="/areas/procrastinacion/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M6.5 3h11M6.5 21h11"/><path pathLength="1" d="M7 3c0 4.2 5 5.6 5 9s-5 4.8-5 9"/><path pathLength="1" d="M17 3c0 4.2-5 5.6-5 9s5 4.8 5 9"/><path pathLength="1" d="M8.9 5.6h6.2c-.5 1.7-3.1 2.9-3.1 2.9S9.4 7.3 8.9 5.6z" fill="currentColor" stroke="none"/></svg>
-      <h3>Procrastinación y bloqueo</h3>
-      <p>Saber qué tienes que hacer y no hacerlo. No es <strong>pereza</strong> ni <strong>falta de organización</strong>: es un mecanismo de alivio que funciona demasiado bien.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M6.5 3h11M6.5 21h11"/><path pathLength="1" d="M7 3c0 4.2 5 5.6 5 9s-5 4.8-5 9"/><path pathLength="1" d="M17 3c0 4.2-5 5.6-5 9s5 4.8 5 9"/><path pathLength="1" d="M8.9 5.6h6.2c-.5 1.7-3.1 2.9-3.1 2.9S9.4 7.3 8.9 5.6z" fill="currentColor" stroke="none"/></svg><h3>Procrastinación y bloqueo</h3></span>
+      <p>Saber qué tienes que hacer y no hacerlo. <strong>No es pereza ni falta de organización</strong>: es un mecanismo de alivio que funciona demasiado bien.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
     </a>
     <a class="tarjeta" href="/areas/autoestima/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.5" y="2.8" width="15" height="18.4" rx="7.5"/><circle pathLength="1" cx="12" cy="10.2" r="2.5"/><path pathLength="1" d="M7.8 17.6a4.4 4.4 0 0 1 8.4 0"/></svg>
-      <h3>Autoestima e inseguridad</h3>
-      <p>Hablarte a ti mismo como no le hablarías a nadie, y organizar la vida alrededor de <strong>no quedar mal</strong>.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.5" y="2.8" width="15" height="18.4" rx="7.5"/><circle pathLength="1" cx="12" cy="10.2" r="2.5"/><path pathLength="1" d="M7.8 17.6a4.4 4.4 0 0 1 8.4 0"/></svg><h3>Autoestima e inseguridad</h3></span>
+      <p>Hablarte a ti mismo como no le hablarías a nadie, y <strong>organizar la vida alrededor de no quedar mal</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
     </a>
     <a class="tarjeta" href="/areas/estado-de-animo/">
-      <svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.5 20.5h17"/><path pathLength="1" d="M3.5 7l4.2 3.4 3.8-1.6 3.6 4.6 5.4 3.4"/></svg>
-      <h3>Estado de ánimo bajo</h3>
-      <p>Desgana, cansancio, cosas que antes te gustaban y ya no. La vida <strong>se va encogiendo</strong> poco a poco.</p>
+      <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.5 20.5h17"/><path pathLength="1" d="M3.5 7l4.2 3.4 3.8-1.6 3.6 4.6 5.4 3.4"/></svg><h3>Estado de ánimo bajo</h3></span>
+      <p>Desgana, cansancio, cosas que antes te gustaban y ya no. <strong>La vida se va encogiendo</strong> poco a poco.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
+    </a>
+    <a class="tarjeta abierta" href="/areas/#tambien">
+      <span class="cabeza-tarjeta"><h3>¿Y si lo tuyo no está aquí?</h3></span>
+      <p>Duelo, sueño, relaciones, trabajo, un cambio que se ha
+      atascado. <strong>Estas cuatro son las consultas más frecuentes,
+      no las únicas</strong>, y todas se trabajan igual.</p>
+      <span class="mas">Lo que también llevo &rarr;</span>
     </a>
   </div>
 
@@ -472,7 +426,7 @@
     </div>
     <div>
       <dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M18.2 6.9A7.6 7.6 0 1 0 18.2 17.1"/><path pathLength="1" d="M4.6 10.4h9.2M4.6 13.6h7.8"/></svg>Precio</dt>
-      <dd>30&nbsp;€ la sesión. La informativa no se cobra. <a href="/tarifas/">Al detalle</a></dd>
+      <dd>30&nbsp;€ la sesión. La informativa no se cobra. <a href="/tarifas/">Al detalle</a> o <a href="/cuanto-cuesta-un-psicologo-online/">comparado con el resto</a></dd>
     </div>
     <div>
       <dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="2.6" y="6" width="12.6" height="12" rx="2.4"/><path pathLength="1" d="M15.2 10.6 21.4 7v10l-6.2-3.6z"/></svg>Dónde</dt>
@@ -495,7 +449,7 @@
   </p>  <div class="faq">
     <details>
       <summary>¿Qué plataforma se usa y tengo que instalar algo?</summary>
-      <p>No hay que instalar nada. Te llega un enlace por correo y se abre en el navegador del móvil o del ordenador. La videollamada va por <strong>Google Meet</strong>, con cifrado en tránsito.</p>
+      <p>No hay que instalar nada. Te llega un enlace por correo y se abre en el navegador del móvil o del ordenador. La videollamada va por <strong>Google Meet, con cifrado en tránsito</strong>.</p>
     </details>
 
     <details>
@@ -505,7 +459,7 @@
 
     <details>
       <summary>¿Qué necesito por mi parte?</summary>
-      <p>Poco: una conexión que aguante una hora, auriculares —mejor que el altavoz, por tu intimidad más que por el sonido— y un sitio donde puedas hablar <strong>sin que te oigan</strong>. Esto último es lo único difícil de verdad, y hay quien lo resuelve en el coche aparcado. Vale.</p>
+      <p>Poco: una conexión que aguante una hora, auriculares —mejor que el altavoz, por tu intimidad más que por el sonido— y <strong>un sitio donde puedas hablar sin que te oigan</strong>. Esto último es lo único difícil de verdad, y hay quien lo resuelve en el coche aparcado. Vale.</p>
     </details>
 
     <details>
@@ -515,7 +469,7 @@
 
     <details>
       <summary>¿Funciona igual que ir presencialmente?</summary>
-      <p>Para la mayoría de motivos por los que se pide cita, la investigación no encuentra diferencias relevantes de eficacia entre el formato online y el presencial. El metaanálisis más reciente (<a href="https://doi.org/10.2196/89177" rel="noopener">Meyer-Keirath y cols., <em>J Med Internet Res</em>, 2026</a>) reúne <strong>doce</strong> ensayos aleatorizados y novecientas personas y no encuentra diferencia en la reducción de síntomas. Lo que sí cambia es la logística, y a favor: no hay desplazamiento, es más fácil sostener la frecuencia y se abandona menos.</p>
+      <p>Para la mayoría de motivos por los que se pide cita, la investigación no encuentra diferencias relevantes de eficacia entre el formato online y el presencial. El metaanálisis más reciente (<a href="https://doi.org/10.2196/89177" rel="noopener">Meyer-Keirath y cols., <em>J Med Internet Res</em>, 2026</a>) reúne <strong>doce ensayos aleatorizados y novecientas personas</strong> y <strong>no encuentra diferencia en la reducción de síntomas</strong>. Lo que sí cambia es la logística, y a favor: no hay desplazamiento, es más fácil sostener la frecuencia y se abandona menos.</p>
     </details>
   </div>
 
@@ -523,14 +477,14 @@
     <p>Si has llegado hasta aquí es que la duda ya no es cómo funciona. Treinta minutos, y de ahí sales sabiendo si esto te sirve o no.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
 
   <div class="caja">
     <p style="margin-bottom:0">
-      En la sesión estamos <strong>tú y yo</strong>, nadie más. La
+      En la sesión <strong>estamos tú y yo, nadie más</strong>. La
       supervisión ocurre entre sesiones: reviso el caso con un profesional
       colegiado del centro, que por tanto conoce la información clínica y
       está sujeto al mismo secreto profesional que yo. No es un trámite
@@ -608,7 +562,7 @@
     <p>Treinta minutos por videollamada, <strong>gratis</strong>, para comprobar si esto se te hace raro o no. Mucha gente descubre ahí que se le hace menos raro de lo que temía.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">¿Prefieres empezar tú solo? <a href="/mapa/">El mapa de lo que evitas</a> son seis preguntas y diez minutos, y no tienes que dar tu correo.</p>
@@ -679,6 +633,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -698,6 +656,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>

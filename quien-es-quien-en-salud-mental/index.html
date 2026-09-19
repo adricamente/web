@@ -68,7 +68,19 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=29">
+  <link rel="stylesheet" href="/estilos.min.css?v=30">
+
+  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
+       único de esta web que bloquea el pintado. Si se hiciera al final
+       del body, quien ha elegido tema oscuro vería un fogonazo blanco
+       a pantalla completa antes de que se aplicara. De noche, eso
+       deslumbra de verdad.
+
+       Sin JavaScript no pasa nada: manda la preferencia del sistema,
+       que es el comportamiento por defecto y el bueno. -->
+  <script>try{var _t=localStorage.getItem('tema');
+    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
+  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -158,7 +170,7 @@
 <div class="barra-cita">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
 </div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -189,11 +201,11 @@
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
   </header>
   </div>
 </div>
@@ -209,10 +221,9 @@
 
   <p class="grande">
     La primera barrera para pedir ayuda no suele ser el síntoma: es no
-    saber a quién estás llamando. Cinco palabras que suenan parecido,
-    <strong>dos</strong> de ellas tituladas y reguladas por ley,
-    <strong>dos</strong> sin ninguna regulación, y casi ninguna web del
-    sector explicando la diferencia.
+    saber a quién estás llamando. Cinco palabras que suenan parecido: <strong>dos de ellas tituladas y
+    reguladas por ley, dos sin ninguna regulación</strong>, y casi ninguna
+    web del sector explicando la diferencia.
   </p>
   <p>
     Esta página la escribe alguien que está en la primera casilla de la
@@ -299,15 +310,15 @@
   </p>
   <p class="apunte">
     Un detalle que casi todo el mundo cuenta mal: se lee por ahí que el
-    máster son «180 créditos». No. El máster son <strong>90</strong>.
+    máster son «180 créditos». No. <strong>El máster son 90 créditos.</strong>
     Los 180 que menciona la ley se cuentan sobre el conjunto de las
     enseñanzas universitarias cursadas, grado incluido.
   </p>
 
   <h3>Dónde está la frontera de verdad, y dónde no está</h3>
   <p>
-    La frontera que la ley sí traza es <strong>dónde</strong> se puede
-    trabajar. Para atender como psicólogo dentro del sistema nacional de
+    <strong>La frontera que la ley sí traza es dónde se puede
+    trabajar.</strong> Para atender como psicólogo dentro del sistema nacional de
     salud o de un centro concertado con él, hace falta el título de
     especialista en Psicología Clínica. Y para inscribir una consulta de
     psicología en el registro de centros sanitarios hace falta el máster
@@ -327,8 +338,8 @@
       Y hay una sentencia al respecto. En 2016 la Audiencia Nacional
       desestimó un recurso que pretendía recortar las competencias del
       general sanitario, y dijo que la diferencia entre las dos figuras
-      <strong>«únicamente»</strong> afecta a los ámbitos de actuación
-      profesional, no a la formación ni a los conocimientos
+      <strong>«únicamente» afecta a los ámbitos de actuación profesional,
+      no a la formación ni a los conocimientos</strong>
       (<a href="https://www.infocoponline.es/pdf/SENTENCIA.pdf"
       target="_blank" rel="noopener">recurso 361/2013, 3 de octubre de
       2016</a>). Quien te diga que la ley traza esa línea te está
@@ -351,7 +362,7 @@
     target="_blank" rel="noopener">Real Decreto 1907/1996</a> prohíbe la
     publicidad que prometa <strong>alivio o curación cierta</strong>,
     la que atribuya efectos terapéuticos sin pruebas científicas
-    acreditadas, la que pretenda <strong>sustituir</strong> la consulta
+    acreditadas, la que pretenda <strong>sustituir la consulta de un profesional</strong>
     con un profesional sanitario y la que use testimonios de pacientes
     como reclamo. Si encuentras alguna de esas cuatro cosas en una web,
     ya sabes algo importante sobre quien la ha escrito.
@@ -395,9 +406,9 @@
     <li>
       <strong>El truco que casi nadie conoce</strong>
       En la ficha del centro, mira el código de la oferta asistencial.
-      <strong>U.70</strong> es «Psicología clínica» y significa que al
-      frente hay un especialista vía PIR. <strong>U.900</strong> es
-      «Otras unidades asistenciales», que es donde se registran las
+      <strong>U.70 es «Psicología clínica»</strong> y significa que al
+      frente hay un especialista vía PIR. <strong>U.900 es «Otras unidades
+      asistenciales»</strong>, que es donde se registran las
       consultas de psicólogos generales sanitarios. Es la forma más
       objetiva que existe de distinguirlos, y sale de un registro
       público.
@@ -417,16 +428,16 @@
 
   <h2>Y yo, en qué casilla estoy</h2>
   <p>
-    En la primera, y a mitad de camino de la segunda. Soy psicólogo
-    <strong>colegiado</strong> —número CM03836, en el Colegio Oficial de
-    Psicología de Castilla-La Mancha, y puedes comprobarlo en el enlace
-    de arriba— y estoy cursando el Máster en Psicología General
-    Sanitaria.
+    En la primera, y a mitad de camino de la segunda. Soy <strong>psicólogo colegiado nº CM03836</strong> —en el Colegio Oficial
+    de Psicología de Castilla-La Mancha, y puedes comprobarlo en el enlace
+    de arriba— y estoy cursando el <strong>Máster en Psicología General
+    Sanitaria</strong>.
   </p>
   <p>
     Eso significa, con las palabras de esta misma página, que
-    <strong>todavía no</strong> tengo el título que habilita para
-    ejercer la psicología sanitaria por mi cuenta. Por eso no atiendo por
+    <strong>todavía no tengo el título que habilita para ejercer la
+    psicología sanitaria por mi cuenta</strong>, y
+    <a href="/cuanto-cuesta-un-psicologo-online/">el precio lo refleja</a>. Por eso no atiendo por
     mi cuenta: atiendo dentro del centro sanitario Neurococos, al amparo
     de su autorización, y un profesional colegiado del centro revisa los
     casos conmigo entre sesiones.
@@ -473,10 +484,10 @@
   </p>
 
   <div class="llamada">
-    <p>Si después de esto sigues sin saber qué te hace falta, media hora gratis también sirve para <strong>eso</strong>: te digo qué veo y a dónde ir, aunque no sea aquí.</p>
+    <p>Si después de esto sigues sin saber qué te hace falta, media hora gratis también sirve para eso: <strong>te digo qué veo y a dónde ir, aunque no sea aquí</strong>.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -485,12 +496,12 @@
   <div class="faq">
     <details>
       <summary>¿Un psicólogo general sanitario es peor que un clínico?</summary>
-      <p>Son formaciones distintas y una es mucho más larga. Lo que dice la sentencia de la Audiencia Nacional de 2016 es que la diferencia está en <strong>dónde</strong> puede trabajar cada uno, no en sus conocimientos. Lo honesto es esto: el PIR son cuatro años dentro del sistema público y eso se nota; y a la vez, la ley no le prohíbe al general sanitario lo que mucha gente cree que le prohíbe.</p>
+      <p>Son formaciones distintas y una es mucho más larga. Lo que dice la sentencia de la Audiencia Nacional de 2016 es que <strong>la diferencia está en dónde puede trabajar cada uno, no en sus conocimientos</strong>. Lo honesto es esto: el PIR son cuatro años dentro del sistema público y eso se nota; y a la vez, la ley no le prohíbe al general sanitario lo que mucha gente cree que le prohíbe.</p>
     </details>
 
     <details>
       <summary>¿Necesito un psiquiatra o un psicólogo?</summary>
-      <p>Si lo que necesitas es medicación, un psiquiatra: es el único que la receta. Si lo que necesitas es cambiar algo de lo que haces o de cómo te relacionas con lo que sientes, un psicólogo. Y muchas veces <strong>las dos cosas</strong> a la vez, que no compiten: la medicación y la psicoterapia se coordinan sin problema.</p>
+      <p>Si lo que necesitas es medicación, un psiquiatra: es el único que la receta. Si lo que necesitas es cambiar algo de lo que haces o de cómo te relacionas con lo que sientes, un psicólogo. Y muchas veces <strong>las dos cosas a la vez, que no compiten</strong>: la medicación y la psicoterapia se coordinan sin problema.</p>
     </details>
 
     <details>
@@ -500,7 +511,7 @@
 
     <details>
       <summary>¿Cómo sé si una web de psicología es de fiar?</summary>
-      <p>Cuatro señales que están en la ley y no en mi opinión: promete <strong>alivio o curación</strong>; atribuye efectos sin decir en qué se basa; sugiere que no hace falta ir a un profesional sanitario; o usa testimonios de pacientes. Las cuatro están prohibidas por el Real Decreto 1907/1996. Y una señal más, esta sí de cosecha propia: si no encuentras un número de colegiado en ninguna parte, ya has terminado de mirar.</p>
+      <p>Cuatro señales que están en la ley y no en mi opinión: <strong>promete alivio o curación</strong>; atribuye efectos sin decir en qué se basa; sugiere que no hace falta ir a un profesional sanitario; o usa testimonios de pacientes. Las cuatro están prohibidas por el Real Decreto 1907/1996. Y una señal más, esta sí de cosecha propia: si no encuentras un número de colegiado en ninguna parte, ya has terminado de mirar.</p>
     </details>
 
     <details>
@@ -524,7 +535,7 @@
     <p>Media hora por videollamada, <strong>gratis</strong>, para que me cuentes qué te pasa y salgas sabiendo qué haría yo con ello.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Y si no encaja, te digo a dónde ir. Que es la otra mitad de lo que sirve esta página.</p>
@@ -595,6 +606,10 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
+    <p class="tema" id="tema" hidden>
+      <b>Tema</b>
+      <span>Automático</span>
+    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -614,6 +629,105 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El selector de tema. Se construye desde JavaScript a propósito:
+     si no hay JavaScript, tampoco hay forma de recordar la elección,
+     así que tres botones que no hacen nada serían peor que nada. Por
+     eso el <p> nace con hidden y solo se muestra aquí.
+
+     Tres estados y no dos. «Automático» es el de salida y el correcto
+     para casi todo el mundo: el sistema operativo sabe si es de día o
+     de noche mejor que esta web. Los otros dos existen para la persona
+     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
+     claro, o al revés. */
+  (function(){
+    var caja = document.getElementById('tema');
+    if(!caja) return;
+    var guardado = null;
+    try{ guardado = localStorage.getItem('tema'); }catch(_){}
+    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
+
+    caja.innerHTML = '<b>Tema</b><div></div>';
+    var grupo = caja.querySelector('div');
+    grupo.setAttribute('role','group');
+    grupo.setAttribute('aria-label','Tema de color de la web');
+
+    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = par[1];
+      b.setAttribute('aria-pressed', String(par[0] === guardado));
+      b.addEventListener('click', function(){
+        guardado = par[0];
+        if(par[0] === 'auto'){
+          delete document.documentElement.dataset.theme;
+          try{ localStorage.removeItem('tema'); }catch(_){}
+        }else{
+          document.documentElement.dataset.theme = par[0];
+          try{ localStorage.setItem('tema', par[0]); }catch(_){}
+        }
+        grupo.querySelectorAll('button').forEach(function(otro, i){
+          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
+        });
+        pintaBarra();
+      });
+      grupo.appendChild(b);
+    });
+    caja.hidden = false;
+
+    /* theme-color manda en el color de la barra del navegador en
+       iOS y Android. Si no se actualiza, quien elija oscuro se queda
+       con una franja crema arriba, que es justo lo que chirría. */
+    function pintaBarra(){
+      var oscuro = getComputedStyle(document.documentElement)
+                     .getPropertyValue('--bg').trim();
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if(meta && oscuro) meta.setAttribute('content', oscuro);
+    }
+    pintaBarra();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)')
+            .addEventListener('change', pintaBarra);
+    }
+  })();
+
+  /* La cifra del precio, contando. Se hace con JavaScript y no con
+     CSS a propósito: la versión de CSS —@property + counter-reset—
+     sustituye el texto por el contenido de un ::after, así que el día
+     que un navegador no la entienda del todo el precio desaparece.
+     Aquí el 30 está escrito en el HTML y lo único que hace el guion
+     es contar hasta él. Si el guion no se ejecuta, se lee 30.
+
+     Y no se anima para quien ha pedido menos movimiento: un número
+     saltando es justo la clase de cosa que molesta ahí. */
+  (function(){
+    var cifras = document.querySelectorAll('.precio .cifra[data-hasta]');
+    if(!cifras.length || !window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    var ojo = new IntersectionObserver(function(entradas){
+      entradas.forEach(function(e){
+        if(!e.isIntersecting) return;
+        ojo.unobserve(e.target);
+        var fin = parseInt(e.target.dataset.hasta, 10);
+        var t0 = null, dur = 900;
+        e.target.style.fontVariantNumeric = 'tabular-nums';
+        function paso(ahora){
+          if(t0 === null) t0 = ahora;
+          var k = Math.min(1, (ahora - t0) / dur);
+          /* Desacelera al final: un contador lineal parece un
+             marcador de gasolinera, y este número no es eso. */
+          var suave = 1 - Math.pow(1 - k, 3);
+          e.target.textContent = String(Math.round(fin * suave));
+          if(k < 1) requestAnimationFrame(paso);
+          else e.target.textContent = String(fin);
+        }
+        requestAnimationFrame(paso);
+      });
+    }, { threshold: .6 });
+    cifras.forEach(function(c){ ojo.observe(c); });
+  })();
 </script>
 </body>
 </html>
