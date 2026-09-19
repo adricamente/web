@@ -211,190 +211,34 @@
   --tinta-papel:#25231F;
 }
 
-/* --- 1 bis. El tema oscuro, y por qué vuelve --------------------
-   Esta web tuvo tema oscuro, se quitó con tres razones escritas, y
-   ahora vuelve. Las tres razones siguen aquí porque dos eran buenas
-   y merecen respuesta, no borrado:
+/* --- 1 bis. El tema oscuro (retirado) ---------------------------
+   Aquí vivió un tema oscuro completo: la paleta duplicada, los diez
+   ratios recalculados sobre papel negro, el ajuste de brillo de las
+   fotos y un selector de tres estados en el pie.
 
-   1. «La versión oscura era un fondo casi negro con una línea
-      naranja encima, el idioma visual de una aplicación de bolsa.
-      Dos de cada tres dijeron que parecía de trading.»
-      → Eso era un problema de PALETA, no de tema oscuro. El fondo
-        de ahora es un negro cálido, no un negro de terminal, y no
-        hay naranja en ninguna parte: es la misma tinta hueso y el
-        mismo azul, aclarado lo justo para que cumpla.
+   Se retira entero, a petición suya y sin discusión: «ahora mismo no
+   me interesa». La razón que daba es buena y conviene dejarla escrita
+   para el día que se reabra: una web de psicología no se juega nada
+   en tener tema oscuro, y sí se juega algo en que el primer contacto
+   con ella sea el que él ha elegido, uno solo y controlado.
 
-   2. «De quince webs de psicólogos españoles, ninguna lo tiene.»
-      → Cierto, y no es un argumento. De esas quince, ninguna dibuja
-        un mecanismo tampoco.
+   Lo que había y lo que costaría volver a montarlo:
+     · la paleta oscura eran veintiséis tokens y diez ratios medidos;
+     · iba por dos vías, @media prefers-color-scheme para quien lo
+       pide en su sistema y :root[data-theme] para quien lo elegía a
+       mano;
+     · el selector eran tres botones en el pie, con aria-pressed, y
+       dos guiones: uno en el <head> sin defer para que no hubiera
+       fogonazo blanco, y otro al final para construir los botones.
+   Está todo en el historial de git, en el commit «Las negritas, el
+   grafismo propio y el selector de tema».
 
-   3. «Mantener dos temas es mantener dos juegos de contrastes.»
-      → Esta sí es real, y el precio se paga una vez: los diez
-        ratios están calculados y escritos justo debajo, en la
-        sección 1 quater. El día que se toque un color, se recalculan.
+   color-scheme se queda en light y solo en light: así el navegador
+   no invierte por su cuenta los campos de formulario ni las barras
+   de desplazamiento de quien tiene el móvil en oscuro, que es
+   exactamente el estropicio que provoca no decir nada. */
 
-   Lo que ha cambiado y decide: el público de esta web tiene entre
-   veinte y cuarenta y tantos, y una parte de lo que se lee aquí se
-   lee de noche, en la cama, con el móvil en oscuro. A esa persona,
-   a las dos de la mañana, se le estaba dando un #FAF9F5 a pantalla
-   completa. Eso no es una preferencia estética.
-
-   Y la duda razonable —«¿el modo oscuro pega en una web de
-   psicología?»— se resuelve sin apostar: hay un selector en el pie
-   con tres estados, y el de salida es «automático». Quien quiera
-   verla clara con el móvil en oscuro, puede; quien quiera verla
-   oscura con el móvil en claro, también. La preferencia se guarda en
-   el propio navegador y no sale de ahí.
-
-   color-scheme: light dark le dice al navegador que esta web sabe
-   pintarse de las dos maneras, para que no invierta por su cuenta
-   los campos de formulario ni las barras de desplazamiento. */
-
-:root{ color-scheme: light dark; }
-
-/* --- 1 quater. La paleta oscura, medida ------------------------
-   Aquí había una decisión razonada de no tenerlo. La decisión era
-   correcta cuando se tomó y ha dejado de serlo por una razón
-   concreta: el público de esta web tiene entre veinte y cuarenta y
-   tantos años, y la mitad de lo que se lee aquí se lee de noche,
-   desde la cama, con el móvil en oscuro. A esa persona, a las dos de
-   la mañana, esta web le daba un #FAF9F5 a pantalla completa.
-
-   No es un tema nuevo: es la misma paleta, medida otra vez. Papel
-   negro cálido en vez de papel crema —#171614 y no #000, porque el
-   negro puro sobre pantalla OLED produce halo alrededor del texto—,
-   tinta hueso, y el azul de marca aclarado hasta que vuelve a
-   cumplir sobre fondo oscuro: el #1F5474 sobre negro da 2,4:1 y es
-   ilegible, así que los enlaces pasan a #7FB2D6, que da 7,96:1.
-
-   Los diez ratios, calculados con la misma fórmula que el resto:
-     tinta sobre papel            15,17:1
-     tinta sobre superficie       13,83:1
-     tinta secundaria             9,53:1
-     tinta terciaria              5,97:1
-     enlace sobre papel           7,96:1
-     enlace sobre superficie      7,25:1
-     texto del botón sobre azul   7,16:1
-     contorno de botón secundario 4,37:1
-     borde de campo               3,18:1  (mínimo exigido: 3)
-     separador fuerte             1,83:1  (decorativo, sin exigencia)
-
-   Y las fotos bajan de brillo. Una fotografía de estudio con fondo
-   claro sobre papel negro deslumbra, y en una web que se lee de
-   noche eso no es un detalle estético. */
-
-/* El tema oscuro llega por dos caminos, y por eso el cuerpo está
-   escrito dos veces.
-
-   Uno: el sistema lo pide y la persona no ha dicho lo contrario. De
-   ahí el :not([data-theme="light"]).
-   Dos: la persona lo ha elegido a mano en el selector del pie.
-
-   Sin el segundo camino, quien tiene el móvil en claro no puede ver
-   esta web en oscuro ni queriendo, y quien lo tiene en oscuro no
-   puede salir. Un tema se decide por la luz que hay en la habitación,
-   y eso el sistema operativo lo acierta casi siempre, pero no
-   siempre.
-
-   Duplicar los tokens no gusta. La alternativa era anidar un @media
-   dentro de un selector con :is(), que en 2026 todavía se comporta
-   distinto según la versión de Safari, y esta web se lee sobre todo
-   en iPhone. Se duplica. */
-
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#171614;
-    --surface:#201F1C;
-    --surface-2:#1B1A18;
-    --ink:#EDEBE5;
-    --ink-2:#BFBCB4;
-    --muted:#97948C;
-    --line:#302E2A;
-    --line-strong:#454340;
-    --borde-campo:#78756D;
-
-    --accent:#7FB2D6;
-    --accent-2:#7FB2D6;
-    --accent-3:#A6CCE6;
-    --accent-borde:#5E8199;
-    --sobre-accent:#10222E;
-    --accent-soft:#1D2A34;
-
-    --error:#F0A29E;        /* sobre papel oscuro — 8,1:1 */
-    --error-soft:#2E1A19;
-    --exito:#7FC3A0;
-    --exito-soft:#17241A;
-    --aviso:#E0B270;
-    --aviso-soft:#2A2016;
-    --info:#7FB2D6;
-    --info-soft:#1D2A34;
-
-    /* En oscuro una sombra no separa: lo que separa es que la
-       superficie sea más clara que el papel. Se deja casi plana. */
-    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 32px -18px rgba(0,0,0,.6);
-  }
-  /* Una foto de estudio con fondo claro sobre papel negro deslumbra. */
-  .banda img,.tarjeta.con-foto .ficha,.retrato{
-    filter:brightness(.86) contrast(.96);
-  }
-  /* El gris del hueco de la foto, un punto más oscuro que el papel. */
-  .retrato{background:#3A3833}
-}
-
-:root[data-theme="dark"]{
-    --bg:#171614;
-    --surface:#201F1C;
-    --surface-2:#1B1A18;
-    --ink:#EDEBE5;
-    --ink-2:#BFBCB4;
-    --muted:#97948C;
-    --line:#302E2A;
-    --line-strong:#454340;
-    --borde-campo:#78756D;
-
-    --accent:#7FB2D6;
-    --accent-2:#7FB2D6;
-    --accent-3:#A6CCE6;
-    --accent-borde:#5E8199;
-    --sobre-accent:#10222E;
-    --accent-soft:#1D2A34;
-
-    --error:#F0A29E;        /* sobre papel oscuro — 8,1:1 */
-    --error-soft:#2E1A19;
-    --exito:#7FC3A0;
-    --exito-soft:#17241A;
-    --aviso:#E0B270;
-    --aviso-soft:#2A2016;
-    --info:#7FB2D6;
-    --info-soft:#1D2A34;
-
-    /* En oscuro una sombra no separa: lo que separa es que la
-       superficie sea más clara que el papel. Se deja casi plana. */
-    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 32px -18px rgba(0,0,0,.6);
-}
-:root[data-theme="dark"] .banda img,
-:root[data-theme="dark"] .tarjeta.con-foto .ficha,
-:root[data-theme="dark"] .retrato{filter:brightness(.86) contrast(.96)}
-:root[data-theme="dark"] .retrato{background:#3A3833}
-
-/* El selector de tema del pie. Tres botones, uno marcado.
-   aria-pressed es lo que le dice a un lector de pantalla cuál está
-   activo; el color por sí solo no se lo dice a nadie. */
-.tema{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  margin:18px 0 0;font-size:14px;color:var(--muted);
-}
-.tema b{font-weight:600;color:var(--ink-2)}
-.tema div{display:flex;border:1px solid var(--line-strong);border-radius:var(--r-s);overflow:hidden}
-.tema button{
-  font:inherit;font-size:14px;padding:7px 12px;min-height:34px;
-  background:transparent;color:var(--ink-2);border:0;cursor:pointer;
-  border-left:1px solid var(--line-strong);
-}
-.tema button:first-child{border-left:0}
-.tema button:hover{background:var(--surface)}
-.tema button[aria-pressed="true"]{background:var(--accent);color:var(--sobre-accent);font-weight:600}
-.tema button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+:root{ color-scheme: light; }
 
 /* --- 2. Reglas base --------------------------------------------
    border-box hace que el padding no sume al ancho. Es la primera
@@ -451,6 +295,64 @@ img{max-width:100%;height:auto}
   padding-inline:20px;
 }
 .contenedor.ancho{max-width:var(--ancho-pagina)}
+
+/* --- 2 bis. Las franjas ------------------------------------------
+   El problema, dicho por él: «ahora que no hay fotos no veo vida».
+   Tiene razón y la causa es medible: quitadas las nueve fotografías,
+   la página entera es un solo color de fondo de arriba abajo, y lo
+   único que la separa en secciones son los titulares. Antes eran las
+   fotos las que marcaban el ritmo.
+
+   La solución no es devolver las fotos. Es que el fondo cambie: una
+   franja de color a ancho completo, cada pocas secciones, que corta
+   la página en bloques visibles desde lejos. Es lo que hace que un
+   periódico no parezca un documento de Word.
+
+   Tres reglas para que esto no se vuelva un arcoíris:
+     1. Solo dos fondos además del papel: el gris cálido de las cajas
+        y el azul suavísimo del acento. Nada nuevo en la paleta.
+     2. La franja va a ancho completo de la ventana, no de la caja:
+        una banda que acaba a novecientos veinte píxeles no es una
+        banda, es un rectángulo.
+     3. Nunca dos franjas seguidas. El papel tiene que volver entre
+        una y otra o deja de haber contraste.
+
+   Se hace con un pseudoelemento y no con un <div> envolvente porque
+   el HTML lo escriben diez generadores distintos y meter un div de
+   ancho completo a media página obligaría a tocarlos todos. */
+
+.franja{
+  position:relative;
+  padding:38px 0 32px;
+  margin:44px 0;
+}
+.franja::before{
+  content:"";
+  position:absolute;
+  /* El truco de la banda a sangre: se sale de su caja hasta los
+     bordes de la ventana usando la mitad del ancho de la ventana
+     menos la mitad del ancho del bloque. 50vw incluye la barra de
+     desplazamiento, así que se resta con un margen de seguridad. */
+  left:50%;right:50%;
+  margin-left:-50vw;margin-right:-50vw;
+  top:0;bottom:0;
+  background:var(--surface-2);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  z-index:-1;
+}
+.franja.azul::before{
+  background:var(--accent-soft);
+  border-color:color-mix(in srgb,var(--accent-borde) 30%,transparent);
+}
+.franja > :first-child{margin-top:0}
+.franja > :last-child{margin-bottom:0}
+/* Sobre la franja gris, una tarjeta blanca sigue destacando; sobre la
+   azul, una caja del mismo azul desaparece. Se sube un escalón. */
+.franja.azul .caja,.franja.azul .tarifa{background:var(--surface)}
+@media (max-width:620px){
+  .franja{padding:28px 0 24px;margin:34px 0}
+}
 
 /* --- 3. Tipografía ---------------------------------------------
    Dos familias y ninguna más: Archivo para títulos y rótulos,
@@ -652,20 +554,23 @@ p strong, li strong, dd strong, .tarjeta strong{
 .nav-movil > summary::-webkit-details-marker{display:none}
 .nav-movil > summary::after{content:"\00a0\00a0+";color:var(--muted)}
 .nav-movil[open] > summary::after{content:"\00a0\00a0\2212"}
-/* En escritorio la cabecera tiene que caber en UNA fila. Con
-   ciento veintidós de logotipo, siete enlaces y un botón de
-   doscientos diecinueve no cabía en ochocientos ochenta y se partía
-   en dos, así que medía ciento veinte píxeles de alto en todas las
-   páginas. Se recorta el hueco entre enlaces y un punto el cuerpo:
-   ahora entra con margen y la cabecera baja a unos setenta. */
+/* En escritorio la cabecera tiene que caber en UNA fila. Con el
+   logotipo, siete enlaces y el botón de reservar, la fila mide casi
+   novecientos veinte píxeles exactos, que es el ancho de la caja: por
+   eso el corte está ahí y por eso el menú tiene siete enlaces y no
+   ocho. Cuando entró «Primera sesión» salió «Contacto», que es el que
+   menos hace falta habiendo un botón de reservar al lado y el pie
+   entero debajo. */
 .cabecera nav{display:flex;flex-wrap:wrap;gap:6px 14px;margin-left:auto;align-items:center}
-@media (min-width:860px){.cabecera nav{flex-wrap:nowrap}}
+@media (min-width:921px){.cabecera nav{flex-wrap:nowrap}}
 
-/* El corte del menú va en 880 y no en 720: es el ancho a partir del
-   cual los siete enlaces y el botón caben en una fila. Entre 721 y
-   880 la cabecera se queda pegada arriba Y lleva el menú plegado, que
-   es lo que hace falta en un portátil pequeño. */
-@media (max-width:880px){
+/* El corte del menú va en 920 y no en 720: es el ancho a partir del
+   cual los siete enlaces y el botón caben en una fila. Medido: a 900
+   la cabecera se parte en dos y mide ciento diecinueve píxeles; a 940
+   entra en una y mide setenta y siete. Entre 721 y 920 la cabecera se
+   queda pegada arriba Y lleva el menú plegado, que es lo que hace
+   falta en un portátil pequeño. */
+@media (max-width:920px){
   .cabecera .nav-escritorio{display:none}
   .nav-movil{display:block}
   .nav-movil[open]{width:100%;order:9}
@@ -965,6 +870,29 @@ p strong, li strong, dd strong, .tarjeta strong{
 .doble ul{margin:0;padding-left:20px}
 .doble li{font-size:16px;color:var(--ink-2)}
 
+/* --- La escena ---------------------------------------------------
+   Lo primero que se lee en cada página de área, antes que ninguna
+   explicación: un momento concreto en el que alguien se reconozca.
+
+   Se distingue del cuerpo sin gritar. No es una cita —no lo ha dicho
+   nadie— así que no lleva comillas ni cursiva de cita: lleva un
+   cuerpo mayor, la tinta principal y una línea de acento a la
+   izquierda, que es lo mismo que usa .idea en los artículos. Que
+   compartan forma no es descuido: las dos hacen lo mismo, sacar del
+   muro la frase que alguien se va a llevar.
+
+   Va sin negritas a propósito. Una escena con una palabra en negrita
+   deja de ser una escena y pasa a ser un argumento. */
+.escena{
+  margin:0 0 26px;
+  padding:2px 0 2px 20px;
+  border-left:3px solid var(--accent-2);
+  font-size:clamp(1.05rem,2.6vw,1.22rem);
+  line-height:1.55;
+  color:var(--ink);
+  max-width:40rem;
+}
+
 /* La idea del artículo, sacada a la vista.
    Mil palabras en párrafos iguales se abandonan por la mitad. Este
    bloque hace dos cosas a la vez: le da al ojo un sitio donde
@@ -1245,6 +1173,75 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 .hero .acciones .boton{width:auto;max-width:none}
 
 .hero.con-foto{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+
+/* --- 9.1 bis. La primera pantalla con retrato -------------------
+   El titular, la escena, el precio y el botón a la izquierda; la cara
+   a la derecha, abarcando los cuatro.
+
+   Dos decisiones, y las dos vienen de una queja concreta.
+
+   La primera: la foto es 4:5, vertical, como se tomó. Estuvo
+   recortada a 4:3 en el móvil para que no ocupara media pantalla, y
+   el recorte le cortaba por el cuello. No hay object-position que
+   arregle eso: lo que falta en un recorte horizontal de una foto
+   vertical es hombro, y el hombro no está en el archivo.
+
+   La segunda: en el móvil la foto NO va al lado del texto. Iba, y
+   dejaba «un hueco enorme» a su derecha, porque una columna de
+   ciento sesenta píxeles al lado de otra de doscientos no es una
+   rejilla, es un descuadre. Va centrada, entre el titular y la
+   escena, con el texto entero por encima y por debajo. Ahí no hay
+   hueco que dejar. */
+
+.hero.con-retrato .retrato-hero{
+  display:block;
+  /* Cincuenta y cuatro por ciento y no sesenta y dos: con la foto más
+     grande, la línea del precio caía por debajo del primer pliegue en
+     un iPhone, y el precio en la primera pantalla es medio motivo de
+     este cambio. */
+  width:min(54%,215px);
+  margin:14px auto 18px;
+  aspect-ratio:4/5;
+  height:auto;
+  object-fit:cover;
+  object-position:50% 22%;
+  border-radius:var(--r-m);
+  box-shadow:var(--shadow);
+  background:#A9A194;
+}
+/* La línea del precio, en la primera pantalla y no dos pantallas más
+   abajo. De las trece preguntas que hace la gente antes de pedir cita,
+   la primera es cuánto cuesta una sesión y la segunda cuánto cuesta el
+   tratamiento entero. Contestar la primera aquí arriba no es vender:
+   es dejar de hacerle perder el tiempo a quien no puede pagarlo. */
+.precio-linea{
+  font-size:17.5px;color:var(--ink-2);
+  margin:0 0 22px;max-width:38rem;
+}
+.precio-linea strong{color:var(--ink)}
+
+@media (min-width:760px){
+  .hero.con-retrato{
+    display:grid;
+    grid-template-columns:1fr 268px;
+    column-gap:40px;
+    align-items:start;
+  }
+  .hero.con-retrato > *{grid-column:1}
+  .hero.con-retrato .retrato-hero{
+    /* span 50 y no «1 / -1». Sin filas explícitas declaradas, la
+       línea -1 apunta al final de la rejilla EXPLÍCITA, que aquí es
+       la línea 1: «1 / -1» se resuelve como «solo la primera fila»,
+       y entonces el titular quedaba con trescientos píxeles de aire
+       debajo porque la fila se estiraba al alto de la foto. */
+    grid-column:2;grid-row:1 / span 50;
+    width:100%;max-width:none;margin:4px 0 0;
+    align-self:start;
+  }
+}
+@media (min-width:1000px){
+  .hero.con-retrato{grid-template-columns:1fr 310px}
+}
 /* En dos columnas el titular tiene la mitad de sitio, así que baja
    de tamaño. Si no, se parte en cinco líneas y deja de leerse de
    un golpe, que es justo lo único que tiene que hacer. */
@@ -1937,15 +1934,21 @@ a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
    intentar, que sea con una foto hecha a propósito para eso, no
    decorando una de estudio. */
 
-/* En el móvil la foto pasaba a ciento sesenta píxeles encima del
-   texto y dejaba un hueco enorme a su derecha: una columna de una
-   sola columna con la foto encogida en una esquina. Ahora ocupa el
-   ancho entero, recortada a tres por dos y encuadrada un poco por
-   encima del centro, que es donde está la cara en las cinco fotos. */
+/* En el móvil la foto iba al lado del texto, a ciento sesenta
+   píxeles, y dejaba «un hueco enorme» a su derecha. Se probó a
+   estirarla al ancho entero recortándola a tres por dos, y salió
+   peor: el recorte horizontal de una foto vertical le corta por el
+   cuello.
+
+   La solución es la de cualquier revista: cuando no cabe al lado, no
+   se pone al lado. La foto se centra, en su proporción de siempre, y
+   el texto va entero por encima y por debajo. No hay hueco porque no
+   hay dos columnas. */
 @media (max-width:620px){
-  .presentacion{grid-template-columns:1fr;gap:16px}
+  .presentacion{grid-template-columns:1fr;gap:16px;justify-items:center}
+  .presentacion .texto{width:100%}
   .retrato,.retrato.grande{
-    width:100%;aspect-ratio:4/3;object-position:50% 14%;
+    width:min(62%,240px);aspect-ratio:4/5;object-position:50% 22%;
   }
   .retrato.pequeno{width:88px;aspect-ratio:1;object-position:50% 50%}
 }
@@ -2528,16 +2531,22 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
       animation-range:entry 22% cover 44%;
     }
     .rejilla .tarjeta:nth-child(2n){animation-range:entry 16% cover 50%}
-    /* Ocho píxeles y no dieciséis. Con dieciséis, la tarjeta invadía
-       durante la animación los once píxeles de hueco que la separan
-       del enlace de debajo y le tapaba cinco de su área pulsable: axe
-       lo cazó como incumplimiento de 2.5.8 en dos enlaces de la
-       portada. Un objetivo táctil que se encoge mientras algo entra
-       en pantalla es un objetivo táctil que falla, y falla justo en
-       el móvil, que es donde se navega con el pulgar mientras se
-       baja. */
+    /* Encoge, no se desplaza. Y es una decisión, no un capricho.
+       Esta animación era translateY: la tarjeta entraba subiendo
+       desde abajo, lo que durante el recorrido la mete dentro del
+       hueco del elemento que tiene debajo. Con dieciséis píxeles
+       tapaba parte del enlace siguiente; con ocho seguía tapando
+       parte de una pregunta de la FAQ. Las dos veces lo cazó axe
+       como incumplimiento de 2.5.8, «objetivo parcialmente tapado»,
+       y las dos veces tenía razón: un objetivo táctil que se encoge
+       mientras la página entra es un objetivo que falla justo cuando
+       alguien navega con el pulgar mientras baja.
+
+       Un escalado del 1,5 % mueve los bordes hacia DENTRO de la
+       propia caja. No puede invadir nada, pase lo que pase debajo, y
+       se nota lo mismo. */
     @keyframes subir-tarjeta{
-      from{transform:translateY(8px)}
+      from{transform:scale(.985)}
       to{transform:none}
     }
 

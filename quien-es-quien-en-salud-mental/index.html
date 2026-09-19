@@ -68,19 +68,9 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=30">
+  <link rel="stylesheet" href="/estilos.min.css?v=31">
 
-  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
-       único de esta web que bloquea el pintado. Si se hiciera al final
-       del body, quien ha elegido tema oscuro vería un fogonazo blanco
-       a pantalla completa antes de que se aplicara. De noche, eso
-       deslumbra de verdad.
 
-       Sin JavaScript no pasa nada: manda la preferencia del sistema,
-       que es el comportamiento por defecto y el bueno. -->
-  <script>try{var _t=localStorage.getItem('tema');
-    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
-  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -183,23 +173,23 @@
     <p class="marca"><a href="/">adricamente</a></p>
     <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/primera-sesion/">Primera sesión</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
       <a href="/tarifas/">Tarifas</a>
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
-      <a href="/contacto/">Contacto</a>
     </nav>
     <details class="nav-movil">
       <summary>Menú</summary>
       <nav aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/primera-sesion/">Primera sesión</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
       <a href="/tarifas/">Tarifas</a>
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
-      <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
            href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
@@ -426,6 +416,53 @@
     </p>
   </div>
 
+  <h2 id="elegir">Cómo elegir un buen psicólogo, más allá del título</h2>
+  <p>
+    Los registros de arriba te dicen si alguien puede ejercer. No te
+    dicen si te va a ir bien con esa persona, que es otra pregunta y
+    es la que de verdad importa. Lo que sí predice el resultado, y
+    está medido desde hace décadas, es la relación que se establece
+    entre las dos personas de la sala. Así que estas cinco cosas se
+    miran en la primera conversación, y son gratis de comprobar:
+  </p>
+  <ol class="pasos">
+    <li>
+      <strong>Que te pregunte más de lo que te explica</strong>
+      Una primera conversación en la que habla el profesional el
+      ochenta por ciento del tiempo es una mala señal. Todavía no sabe
+      nada de ti.
+    </li>
+    <li>
+      <strong>Que te diga cuánto y cada cuánto, con números</strong>
+      Precio por sesión, duración, frecuencia y qué pasa si cancelas.
+      Si eso no está claro antes de empezar, no va a estar más claro
+      dentro de tres meses.
+    </li>
+    <li>
+      <strong>Que te explique qué va a hacer y por qué</strong>
+      No hace falta que te dé una clase. Sí que puedas repetirle a
+      alguien, con tus palabras, en qué consiste el plan.
+    </li>
+    <li>
+      <strong>Que te diga que no cuando toca</strong>
+      Quien lleva de todo, no lleva de todo. Un profesional que te
+      deriva cuando tu caso no es lo suyo te está haciendo el mayor
+      favor de la primera sesión.
+    </li>
+    <li>
+      <strong>Que se pueda revisar y se pueda dejar</strong>
+      Sin bonos que te aten, sin permanencia y con una conversación
+      cada pocas semanas sobre si esto se está moviendo. Y esa
+      conversación la tiene que abrir quien cobra, no tú.
+    </li>
+  </ol>
+  <p class="apunte">
+    Y una cosa más, que no es un criterio de calidad pero decide
+    mucho: si al salir de la primera conversación te apetece volver a
+    hablar con esa persona, cuenta. No es rigor científico, es que la
+    alianza terapéutica empieza ahí.
+  </p>
+
   <h2>Y yo, en qué casilla estoy</h2>
   <p>
     En la primera, y a mitad de camino de la segunda. Soy <strong>psicólogo colegiado nº CM03836</strong> —en el Colegio Oficial
@@ -449,6 +486,8 @@
     el día que tenga el título esta página lo dirá y se podrá comparar
     con lo que decía antes.
   </p>
+
+{retrato("adrian-perfil", "Adrián Cuñat Andrés de perfil, con polo verde, mirando hacia un lado", TXT_QUIENSOY)}
 
   <h2>Y si quieres ir por la pública</h2>
   <p>
@@ -606,10 +645,6 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
-    <p class="tema" id="tema" hidden>
-      <b>Tema</b>
-      <span>Automático</span>
-    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -629,67 +664,6 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
-
-  /* El selector de tema. Se construye desde JavaScript a propósito:
-     si no hay JavaScript, tampoco hay forma de recordar la elección,
-     así que tres botones que no hacen nada serían peor que nada. Por
-     eso el <p> nace con hidden y solo se muestra aquí.
-
-     Tres estados y no dos. «Automático» es el de salida y el correcto
-     para casi todo el mundo: el sistema operativo sabe si es de día o
-     de noche mejor que esta web. Los otros dos existen para la persona
-     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
-     claro, o al revés. */
-  (function(){
-    var caja = document.getElementById('tema');
-    if(!caja) return;
-    var guardado = null;
-    try{ guardado = localStorage.getItem('tema'); }catch(_){}
-    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
-
-    caja.innerHTML = '<b>Tema</b><div></div>';
-    var grupo = caja.querySelector('div');
-    grupo.setAttribute('role','group');
-    grupo.setAttribute('aria-label','Tema de color de la web');
-
-    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = par[1];
-      b.setAttribute('aria-pressed', String(par[0] === guardado));
-      b.addEventListener('click', function(){
-        guardado = par[0];
-        if(par[0] === 'auto'){
-          delete document.documentElement.dataset.theme;
-          try{ localStorage.removeItem('tema'); }catch(_){}
-        }else{
-          document.documentElement.dataset.theme = par[0];
-          try{ localStorage.setItem('tema', par[0]); }catch(_){}
-        }
-        grupo.querySelectorAll('button').forEach(function(otro, i){
-          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
-        });
-        pintaBarra();
-      });
-      grupo.appendChild(b);
-    });
-    caja.hidden = false;
-
-    /* theme-color manda en el color de la barra del navegador en
-       iOS y Android. Si no se actualiza, quien elija oscuro se queda
-       con una franja crema arriba, que es justo lo que chirría. */
-    function pintaBarra(){
-      var oscuro = getComputedStyle(document.documentElement)
-                     .getPropertyValue('--bg').trim();
-      var meta = document.querySelector('meta[name="theme-color"]');
-      if(meta && oscuro) meta.setAttribute('content', oscuro);
-    }
-    pintaBarra();
-    if(window.matchMedia){
-      window.matchMedia('(prefers-color-scheme:dark)')
-            .addEventListener('change', pintaBarra);
-    }
-  })();
 
   /* La cifra del precio, contando. Se hace con JavaScript y no con
      CSS a propósito: la versión de CSS —@property + counter-reset—

@@ -54,7 +54,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="estilos.min.css?v=30">
+  <link rel="stylesheet" href="estilos.min.css?v=31">
   <!-- Aplica el tema guardado antes de pintar. Sin esto, quien ha
        elegido oscuro ve un fogonazo crema a pantalla completa. -->
   <script>try{var _t=localStorage.getItem('tema');
@@ -187,7 +187,6 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
-    <p class="tema" id="tema" hidden><b>Tema</b><span>Automático</span></p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -195,49 +194,5 @@
 <script>document.getElementById('anyo').textContent = new Date().getFullYear();</script>
 
 
-<script>
-  (function(){
-    var caja = document.getElementById('tema');
-    if(!caja) return;
-    var guardado = null;
-    try{ guardado = localStorage.getItem('tema'); }catch(_){}
-    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
-    caja.innerHTML = '<b>Tema</b><div></div>';
-    var grupo = caja.querySelector('div');
-    grupo.setAttribute('role','group');
-    grupo.setAttribute('aria-label','Tema de color de la web');
-    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = par[1];
-      b.setAttribute('aria-pressed', String(par[0] === guardado));
-      b.addEventListener('click', function(){
-        guardado = par[0];
-        if(par[0] === 'auto'){
-          delete document.documentElement.dataset.theme;
-          try{ localStorage.removeItem('tema'); }catch(_){}
-        }else{
-          document.documentElement.dataset.theme = par[0];
-          try{ localStorage.setItem('tema', par[0]); }catch(_){}
-        }
-        grupo.querySelectorAll('button').forEach(function(otro, i){
-          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
-        });
-        pintaBarra();
-      });
-      grupo.appendChild(b);
-    });
-    caja.hidden = false;
-    function pintaBarra(){
-      var c = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
-      var meta = document.querySelector('meta[name="theme-color"]');
-      if(meta && c) meta.setAttribute('content', c);
-    }
-    pintaBarra();
-    if(window.matchMedia){
-      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', pintaBarra);
-    }
-  })();
-</script>
 </body>
 </html>

@@ -64,19 +64,9 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=30">
+  <link rel="stylesheet" href="/estilos.min.css?v=31">
 
-  <!-- Esto tiene que ir aquí, en el head y sin defer, y por eso es lo
-       único de esta web que bloquea el pintado. Si se hiciera al final
-       del body, quien ha elegido tema oscuro vería un fogonazo blanco
-       a pantalla completa antes de que se aplicara. De noche, eso
-       deslumbra de verdad.
 
-       Sin JavaScript no pasa nada: manda la preferencia del sistema,
-       que es el comportamiento por defecto y el bueno. -->
-  <script>try{var _t=localStorage.getItem('tema');
-    if(_t==='dark'||_t==='light')document.documentElement.dataset.theme=_t;
-  }catch(_){}</script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -131,23 +121,23 @@
     <p class="marca"><a href="/">adricamente</a></p>
     <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/primera-sesion/">Primera sesión</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
       <a href="/tarifas/">Tarifas</a>
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
-      <a href="/contacto/">Contacto</a>
     </nav>
     <details class="nav-movil">
       <summary>Menú</summary>
       <nav aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/primera-sesion/">Primera sesión</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
       <a href="/tarifas/">Tarifas</a>
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
-      <a href="/contacto/">Contacto</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
            href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
@@ -379,10 +369,6 @@
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
     </p>
-    <p class="tema" id="tema" hidden>
-      <b>Tema</b>
-      <span>Automático</span>
-    </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>
 
@@ -402,67 +388,6 @@
 
 <script>
   document.getElementById('anyo').textContent = new Date().getFullYear();
-
-  /* El selector de tema. Se construye desde JavaScript a propósito:
-     si no hay JavaScript, tampoco hay forma de recordar la elección,
-     así que tres botones que no hacen nada serían peor que nada. Por
-     eso el <p> nace con hidden y solo se muestra aquí.
-
-     Tres estados y no dos. «Automático» es el de salida y el correcto
-     para casi todo el mundo: el sistema operativo sabe si es de día o
-     de noche mejor que esta web. Los otros dos existen para la persona
-     cuyo móvil está en oscuro permanente y aun así quiere leer esto en
-     claro, o al revés. */
-  (function(){
-    var caja = document.getElementById('tema');
-    if(!caja) return;
-    var guardado = null;
-    try{ guardado = localStorage.getItem('tema'); }catch(_){}
-    if(guardado !== 'dark' && guardado !== 'light') guardado = 'auto';
-
-    caja.innerHTML = '<b>Tema</b><div></div>';
-    var grupo = caja.querySelector('div');
-    grupo.setAttribute('role','group');
-    grupo.setAttribute('aria-label','Tema de color de la web');
-
-    [['auto','Automático'],['light','Claro'],['dark','Oscuro']].forEach(function(par){
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = par[1];
-      b.setAttribute('aria-pressed', String(par[0] === guardado));
-      b.addEventListener('click', function(){
-        guardado = par[0];
-        if(par[0] === 'auto'){
-          delete document.documentElement.dataset.theme;
-          try{ localStorage.removeItem('tema'); }catch(_){}
-        }else{
-          document.documentElement.dataset.theme = par[0];
-          try{ localStorage.setItem('tema', par[0]); }catch(_){}
-        }
-        grupo.querySelectorAll('button').forEach(function(otro, i){
-          otro.setAttribute('aria-pressed', String(['auto','light','dark'][i] === guardado));
-        });
-        pintaBarra();
-      });
-      grupo.appendChild(b);
-    });
-    caja.hidden = false;
-
-    /* theme-color manda en el color de la barra del navegador en
-       iOS y Android. Si no se actualiza, quien elija oscuro se queda
-       con una franja crema arriba, que es justo lo que chirría. */
-    function pintaBarra(){
-      var oscuro = getComputedStyle(document.documentElement)
-                     .getPropertyValue('--bg').trim();
-      var meta = document.querySelector('meta[name="theme-color"]');
-      if(meta && oscuro) meta.setAttribute('content', oscuro);
-    }
-    pintaBarra();
-    if(window.matchMedia){
-      window.matchMedia('(prefers-color-scheme:dark)')
-            .addEventListener('change', pintaBarra);
-    }
-  })();
 
   /* La cifra del precio, contando. Se hace con JavaScript y no con
      CSS a propósito: la versión de CSS —@property + counter-reset—
