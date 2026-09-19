@@ -6,10 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Terapia psicológica online en España | adricamente</title>
-  <meta name="description" content="Terapia psicológica online desde el centro sanitario Neurococos. Sesiones de 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita de 30 minutos.">
+  <meta name="description" content="Terapia psicológica online desde el centro sanitario Neurococos. Sesiones de 60 minutos por 30 €, semanal o quincenal. Primera consulta gratuita gratuita de 30 minutos.">
 
   <meta property="og:title" content="Terapia psicológica online en España | adricamente">
-  <meta property="og:description" content="Terapia psicológica online desde el centro sanitario Neurococos. Sesiones de 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita de 30 minutos.">
+  <meta property="og:description" content="Terapia psicológica online desde el centro sanitario Neurococos. Sesiones de 60 minutos por 30 €, semanal o quincenal. Primera consulta gratuita gratuita de 30 minutos.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/terapia-online/">
   <link rel="canonical" href="https://adricamente.com/terapia-online/">
@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=28">
+  <link rel="stylesheet" href="/estilos.min.css?v=29">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -191,7 +191,7 @@
   "offers": [
     {
       "@type": "Offer",
-      "name": "Sesión informativa",
+      "name": "Primera consulta gratuita de 30 minutos",
       "price": "0",
       "priceCurrency": "EUR",
       "description": "Primera conversación de 30 minutos, sin coste y sin compromiso.",
@@ -292,7 +292,7 @@
       "name": "¿Puedo probar y ya veré?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Es exactamente lo que es la sesión informativa: treinta minutos, gratis, sin compromiso y sin que nadie te llame después para insistir. Si sales de ahí y decides que no, no pasa nada."
+        "text": "Es exactamente lo que es esa media hora: gratis, sin compromiso y sin que nadie te llame después para insistir. Si sales de ahí y decides que no, no pasa nada."
       }
     }
   ]
@@ -306,6 +306,21 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
+<!-- La barra de cita, solo en móvil. En escritorio la cabecera se
+     queda pegada arriba y ya hay acción visible todo el rato; en
+     móvil la cabecera mide ciento ochenta píxeles y no se puede
+     pegar, así que se desliza esta, que mide cincuenta y seis.
+
+     Va ARRIBA y no abajo a propósito. La que había antes estaba
+     abajo y se comía la animación de los iconos justo donde Safari
+     pone su barra de direcciones en el iPhone. Arriba no estorba a
+     nada y aparece a los trescientos píxeles de scroll, que es
+     cuando la cabecera de verdad ya no se ve. -->
+<div class="barra-cita">
+  <a class="marca-mini" href="/">adricamente</a>
+  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+</div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
      en las páginas de área, así que medía 120 px en unas y 151 en
@@ -315,7 +330,7 @@
   <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
-    <nav>
+    <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
       <a href="/terapia-online/" aria-current="page">Terapia online</a>
       <a href="/areas/">Áreas</a>
@@ -323,9 +338,23 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
+    <details class="nav-movil">
+      <summary>Menú</summary>
+      <nav aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/" aria-current="page">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+      </nav>
+    </details>
+    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -378,10 +407,11 @@
   <h2>Cómo funciona</h2>
   <ol class="pasos">
     <li>
-      <strong>Sesión informativa · 30 minutos · gratis</strong>
-      Me cuentas qué te pasa y te digo con franqueza si creo que puedo
-      ayudarte. Si creo que no, te oriento a dónde ir. No es terapia y no
-      tienes que decidir nada ese día.
+      <strong>Media hora para contarlo · gratis</strong>
+      Me cuentas qué te pasa, te pregunto lo que necesite preguntar y te
+      digo con franqueza si creo que puedo ayudarte. Si creo que no, te
+      oriento a dónde ir. No es una sesión de tratamiento y no tienes
+      que decidir nada ese día.
     </li>
     <li>
       <strong>Dos o tres sesiones de evaluación</strong>
@@ -493,7 +523,7 @@
     <p>Si has llegado hasta aquí es que la duda ya no es cómo funciona. Treinta minutos, y de ahí sales sabiendo si esto te sirve o no.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -559,13 +589,13 @@
 
     <details>
       <summary>¿Puedo probar y ya veré?</summary>
-      <p>Es exactamente lo que es la sesión informativa: treinta minutos, gratis, sin compromiso y sin que nadie te llame después para insistir. Si sales de ahí y decides que no, no pasa nada.</p>
+      <p>Es exactamente lo que es esa media hora: gratis, sin compromiso y sin que nadie te llame después para insistir. Si sales de ahí y decides que no, no pasa nada.</p>
     </details>
   </div>
 
   <div class="disponibilidad">
     <p>
-      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      <strong>Dos huecos a la semana.</strong> Las primeras consultas
       las hago en dos ratos fijos, porque el resto del horario es de
       pacientes. Si esta semana ya no queda ninguno, el calendario te
       ofrece el siguiente: no hay lista de espera ni hay que escribir
@@ -578,7 +608,7 @@
     <p>Treinta minutos por videollamada, <strong>gratis</strong>, para comprobar si esto se te hace raro o no. Mucha gente descubre ahí que se le hace menos raro de lo que temía.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">¿Prefieres empezar tú solo? <a href="/mapa/">El mapa de lo que evitas</a> son seis preguntas y diez minutos, y no tienes que dar tu correo.</p>
@@ -614,6 +644,8 @@
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/herramientas/">Herramientas gratis</a></li>
+          <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
+          <li><a href="/reservar/">¿Ya eres paciente? Reserva sesión</a></li>
         </ul>
       </div>
       <div>

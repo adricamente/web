@@ -211,35 +211,110 @@
   --tinta-papel:#25231F;
 }
 
-/* --- 1 bis. Por qué esta web NO tiene tema oscuro ---------------
-   Lo tuvo, y se ha quitado a propósito.
+/* --- 1 bis. El tema oscuro, y por qué vuelve --------------------
+   Esta web tuvo tema oscuro, se quitó con tres razones escritas, y
+   ahora vuelve. Las tres razones siguen aquí porque dos eran buenas
+   y merecen respuesta, no borrado:
 
-   Tres razones, y la primera es la que pesa:
+   1. «La versión oscura era un fondo casi negro con una línea
+      naranja encima, el idioma visual de una aplicación de bolsa.
+      Dos de cada tres dijeron que parecía de trading.»
+      → Eso era un problema de PALETA, no de tema oscuro. El fondo
+        de ahora es un negro cálido, no un negro de terminal, y no
+        hay naranja en ninguna parte: es la misma tinta hueso y el
+        mismo azul, aclarado lo justo para que cumpla.
 
-   1. La mayoría de la gente joven lleva el móvil en oscuro, así
-      que el tema oscuro no era "una opción para quien la quiera":
-      era LA versión que veía casi todo el mundo. Y esa versión
-      era un fondo casi negro con una línea naranja encima, que
-      es literalmente el idioma visual de una aplicación de bolsa.
-      Dos de cada tres personas a las que se les enseñó dijeron
-      alguna variante de "parece de trading" o "es triste".
+   2. «De quince webs de psicólogos españoles, ninguna lo tiene.»
+      → Cierto, y no es un argumento. De esas quince, ninguna dibuja
+        un mecanismo tampoco.
 
-   2. De quince webs de psicólogos españoles que se revisaron
-      para montar esta, ninguna tiene tema oscuro. No es
-      casualidad: el sector entero vive en fondos claros.
+   3. «Mantener dos temas es mantener dos juegos de contrastes.»
+      → Esta sí es real, y el precio se paga una vez: los diez
+        ratios están calculados y escritos justo debajo, en la
+        sección 1 ter. El día que se toque un color, se recalculan.
 
-   3. Mantener dos temas es mantener dos juegos de contrastes,
-      y cada cambio hay que comprobarlo dos veces.
+   Lo que ha cambiado y decide: el público de esta web tiene entre
+   veinte y cuarenta y tantos, y una parte de lo que se lee aquí se
+   lee de noche, en la cama, con el móvil en oscuro. A esa persona,
+   a las dos de la mañana, se le estaba dando un #FAF9F5 a pantalla
+   completa. Eso no es una preferencia estética.
 
-   Si algún día se recupera, que no sea un negro: un tostado
-   oscuro cálido, y comprobando contraste otra vez.
+   color-scheme: light dark le dice al navegador que esta web sabe
+   pintarse de las dos maneras, para que no invierta por su cuenta
+   los campos de formulario ni las barras de desplazamiento. */
 
-   color-scheme: light le dice al navegador que no invierta por su
-   cuenta los campos de formulario ni las barras de desplazamiento
-   cuando el sistema está en oscuro. Sin esta línea, el móvil pinta
-   los <input> en gris oscuro sobre nuestro fondo claro. */
+:root{ color-scheme: light dark; }
 
-:root{ color-scheme: light; }
+/* --- 1 ter. El tema oscuro ---------------------------------------
+   Aquí había una decisión razonada de no tenerlo. La decisión era
+   correcta cuando se tomó y ha dejado de serlo por una razón
+   concreta: el público de esta web tiene entre veinte y cuarenta y
+   tantos años, y la mitad de lo que se lee aquí se lee de noche,
+   desde la cama, con el móvil en oscuro. A esa persona, a las dos de
+   la mañana, esta web le daba un #FAF9F5 a pantalla completa.
+
+   No es un tema nuevo: es la misma paleta, medida otra vez. Papel
+   negro cálido en vez de papel crema —#171614 y no #000, porque el
+   negro puro sobre pantalla OLED produce halo alrededor del texto—,
+   tinta hueso, y el azul de marca aclarado hasta que vuelve a
+   cumplir sobre fondo oscuro: el #1F5474 sobre negro da 2,4:1 y es
+   ilegible, así que los enlaces pasan a #7FB2D6, que da 7,96:1.
+
+   Los diez ratios, calculados con la misma fórmula que el resto:
+     tinta sobre papel            15,17:1
+     tinta sobre superficie       13,83:1
+     tinta secundaria             9,53:1
+     tinta terciaria              5,97:1
+     enlace sobre papel           7,96:1
+     enlace sobre superficie      7,25:1
+     texto del botón sobre azul   7,16:1
+     contorno de botón secundario 4,37:1
+     borde de campo               3,18:1  (mínimo exigido: 3)
+     separador fuerte             1,83:1  (decorativo, sin exigencia)
+
+   Y las fotos bajan de brillo. Una fotografía de estudio con fondo
+   claro sobre papel negro deslumbra, y en una web que se lee de
+   noche eso no es un detalle estético. */
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#171614;
+    --surface:#201F1C;
+    --surface-2:#1B1A18;
+    --ink:#EDEBE5;
+    --ink-2:#BFBCB4;
+    --muted:#97948C;
+    --line:#302E2A;
+    --line-strong:#454340;
+    --borde-campo:#78756D;
+
+    --accent:#7FB2D6;
+    --accent-2:#7FB2D6;
+    --accent-3:#A6CCE6;
+    --accent-borde:#5E8199;
+    --sobre-accent:#10222E;
+    --accent-soft:#1D2A34;
+
+    --error:#F0A29E;        /* sobre papel oscuro — 8.1:1 */
+    --error-soft:#2E1A19;
+    --exito:#7FC3A0;
+    --exito-soft:#17241A;
+    --aviso:#E0B270;
+    --aviso-soft:#2A2016;
+    --info:#7FB2D6;
+    --info-soft:#1D2A34;
+
+    /* En oscuro una sombra no separa: lo que separa es que la
+       superficie sea más clara que el papel. Se deja casi plana. */
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 12px 32px -18px rgba(0,0,0,.6);
+  }
+  /* Una foto de estudio con fondo claro sobre papel negro deslumbra. */
+  .banda img,.tarjeta.con-foto .ficha,.retrato{
+    filter:brightness(.86) contrast(.96);
+  }
+  /* El gris del hueco de la foto, un punto más oscuro que el papel. */
+  .retrato{background:#3A3833}
+}
 
 /* --- 2. Reglas base --------------------------------------------
    border-box hace que el padding no sume al ancho. Es la primera
@@ -266,13 +341,36 @@ img{max-width:100%;height:auto}
 
 /* .contenedor centra el contenido y le pone aire a los lados.
    El padding lateral de 20px es lo que evita que en el móvil
-   el texto se pegue al borde de la pantalla. */
+   el texto se pegue al borde de la pantalla.
+
+   Aquí había DOS anchos: 680 para las páginas de lectura y 820 para
+   las de tarjetas. La cabecera usaba el de 820 siempre. Resultado:
+   al pasar de Inicio a Contacto el logotipo se quedaba quieto y la
+   página entera saltaba setenta píxeles a la derecha y se estrechaba
+   ciento cuarenta. Nadie lo ve conscientemente y todo el mundo lo
+   nota, que es la peor clase de fallo.
+
+   Ahora hay un solo ancho de página, y dentro la medida de lectura
+   es más corta que la caja. Eso es lo normal en cualquier cosa
+   impresa: la columna de texto no llena el papel, pero la ilustración
+   y la tabla sí. La clase .ancho se conserva porque la usan veinte
+   archivos, pero ya no cambia nada. */
+:root{
+  --ancho-pagina:920px;   /* la caja: cabecera, tarjetas, figuras, pie */
+  /* Había ocho radios distintos —2, 6, 7, 10, 11, 12, 14 y 20—
+     que no son una escala: son valores que se fueron
+     acumulando. Tres, y todo lo demás que se acoja a uno. */
+  --r-s:8px;   /* botones, muestras, celdas */
+  --r-m:12px;  /* cajas, tarjetas, fotos */
+  --r-l:16px;  /* piezas grandes: tarifa, cinta, llamada */
+  --medida:40rem;         /* la columna de lectura: 640 px, ~67 caracteres */
+}
 .contenedor{
-  max-width:680px;
+  max-width:var(--ancho-pagina);
   margin:0 auto;
   padding-inline:20px;
 }
-.contenedor.ancho{max-width:820px}
+.contenedor.ancho{max-width:var(--ancho-pagina)}
 
 /* --- 3. Tipografía ---------------------------------------------
    Dos familias y ninguna más: Archivo para títulos y rótulos,
@@ -281,16 +379,25 @@ img{max-width:100%;height:auto}
 
 h1,h2,h3{
   font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
-  letter-spacing:-.025em;
   text-wrap:balance;
   margin:0 0 14px;
+  word-spacing:.06em;
 }
-h1{font-weight:800;font-size:clamp(2rem,7vw,3rem);line-height:1.02}
-h2{font-weight:700;font-size:clamp(1.4rem,4.6vw,1.9rem);line-height:1.12;margin-top:40px}
-h3{font-weight:700;font-size:1.3rem;line-height:1.25;margin:26px 0 8px}
+/* 1.02 aguantaba, pero en español es frágil: una mayúscula acentuada
+   al principio de la segunda línea choca con los descendentes de la
+   primera en cuanto se cambia un titular. 1.06 no se nota. */
+h1{font-weight:800;font-size:clamp(2rem,7vw,3rem);line-height:1.06;letter-spacing:-.02em}
+h2{font-weight:700;font-size:clamp(1.4rem,4.6vw,1.9rem);line-height:1.12;
+   letter-spacing:-.015em;margin-top:clamp(52px,6.5vw,84px)}
+h3{font-weight:700;font-size:1.3rem;line-height:1.25;letter-spacing:-.008em;margin:26px 0 8px}
+.marca,.faq summary,.boton,.cabecera .cita,.titulo-pie,.etiqueta,
+.tarjeta h3,.paso-ciclo p,.anota{word-spacing:.06em}
 
-p{margin:0 0 15px;max-width:60ch;text-wrap:pretty}
-ul,ol{margin:0 0 15px;padding-left:22px;max-width:60ch}
+/* La medida en una variable y no en ch: en ch depende de la
+   fuente que haya cargado, así que el ancho de la columna
+   cambiaba entre el primer pintado y el segundo. */
+p{margin:0 0 15px;max-width:var(--medida);text-wrap:pretty}
+ul,ol{margin:0 0 15px;padding-left:22px;max-width:var(--medida)}
 li{margin-bottom:7px}
 
 a{color:var(--accent-2);text-underline-offset:3px}
@@ -330,7 +437,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
   font-size:20px;
   font-weight:800;
-  letter-spacing:-.035em;
+  letter-spacing:-.025em;
   color:var(--accent);
   margin:0 0 26px;
 }
@@ -350,7 +457,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
   font-size:13px;
   font-weight:700;
-  letter-spacing:-.005em;
+  letter-spacing:0;
   color:var(--muted);
   margin:0 0 26px;
 }
@@ -385,25 +492,153 @@ p strong, li strong, dd strong, .tarjeta strong{
   gap:10px 22px;
   padding:18px 0;
 }
-.cabecera .marca{margin:0;flex:0 0 auto}
-.cabecera nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-left:auto;align-items:center}
+
+/* --- 4.1 La barra de cita del móvil ------------------------------
+   Aquí hubo una barra fija y se quitó, con razón: estaba ABAJO, y
+   abajo es donde Safari pone la barra de direcciones en el iPhone,
+   así que se comía la animación de los iconos justo en el punto en
+   el que se dibujan.
+
+   Vuelve, pero arriba y solo en móvil. El motivo es geométrico: en
+   escritorio la cabecera entera se queda pegada y ya hay acción
+   visible todo el rato; en móvil la cabecera mide ciento ochenta y
+   dos píxeles —el veintiuno por ciento de la pantalla— y pegarla
+   sería regalar la primera pantalla. Esta mide cincuenta y seis.
+
+   Aparece a los trescientos píxeles, que es cuando la cabecera de
+   verdad ya no está. Y quien pide menos movimiento no la ve en
+   absoluto: sin la animación se queda fuera de pantalla, que es su
+   estado de reposo. */
+
+.barra-cita{display:none}
+
+@media (max-width:720px){
+  .barra-cita{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;position:fixed;inset:0 0 auto 0;z-index:60;
+    padding:9px 16px;
+    background:var(--bg);border-bottom:1px solid var(--line);
+    box-shadow:0 1px 10px rgba(37,35,31,.06);
+    transform:translateY(-100%);visibility:hidden;
+  }
+  .barra-cita .marca-mini{
+    font-family:Archivo,"Archivo reserva",sans-serif;
+    font-size:16px;font-weight:800;letter-spacing:0;
+    color:var(--accent-2);text-decoration:none;
+  }
+  .barra-cita .cita{
+    font-family:Archivo,"Archivo reserva",sans-serif;
+    font-size:14px;font-weight:700;letter-spacing:0;
+    background:var(--accent-2);color:var(--sobre-accent);
+    padding:9px 15px;border-radius:var(--r-s);text-decoration:none;
+    border:1px solid transparent;
+  }
+  /* Sin soporte de animaciones por scroll no hay forma de saber
+     dónde está el lector, así que no se enseña nada: una barra fija
+     permanente en un móvil es justo lo que se quitó. */
+  @supports not (animation-timeline:scroll()){
+    .barra-cita{display:none}
+  }
+  @supports (animation-timeline:scroll()){
+    @media (prefers-reduced-motion:no-preference){
+      .barra-cita{
+        animation:asomar linear both;
+        animation-timeline:scroll(root);
+        animation-range:300px 380px;
+      }
+    }
+  }
+}
+@keyframes asomar{
+  from{transform:translateY(-100%);visibility:hidden}
+  to{transform:translateY(0);visibility:visible}
+}
+.cabecera .marca{margin:0;flex:0 0 auto;margin-right:auto}
+
+/* --- 4.0 bis. El menú plegado del móvil --------------------------
+   El <details> nativo hace todo el trabajo sin una línea de
+   JavaScript: se abre, se cierra, se anuncia como «contraído» y
+   funciona con teclado. Cerrado es una pastilla al lado del
+   logotipo; abierto se lleva su propia fila entera, y eso sí se
+   puede seleccionar en CSS con [open]. */
+.nav-movil{display:none}
+.nav-movil > summary{
+  list-style:none;cursor:pointer;
+  font-family:Archivo,"Archivo reserva",sans-serif;
+  font-size:14px;font-weight:700;color:var(--ink-2);
+  padding:9px 13px;border:1px solid var(--borde-campo);
+  border-radius:var(--r-s);white-space:nowrap;
+}
+.nav-movil > summary::-webkit-details-marker{display:none}
+.nav-movil > summary::after{content:"\00a0\00a0+";color:var(--muted)}
+.nav-movil[open] > summary::after{content:"\00a0\00a0\2212"}
+/* En escritorio la cabecera tiene que caber en UNA fila. Con
+   ciento veintidós de logotipo, siete enlaces y un botón de
+   doscientos diecinueve no cabía en ochocientos ochenta y se partía
+   en dos, así que medía ciento veinte píxeles de alto en todas las
+   páginas. Se recorta el hueco entre enlaces y un punto el cuerpo:
+   ahora entra con margen y la cabecera baja a unos setenta. */
+.cabecera nav{display:flex;flex-wrap:wrap;gap:6px 14px;margin-left:auto;align-items:center}
+@media (min-width:860px){.cabecera nav{flex-wrap:nowrap}}
+
+/* El corte del menú va en 880 y no en 720: es el ancho a partir del
+   cual los siete enlaces y el botón caben en una fila. Entre 721 y
+   880 la cabecera se queda pegada arriba Y lleva el menú plegado, que
+   es lo que hace falta en un portátil pequeño. */
+@media (max-width:880px){
+  .cabecera .nav-escritorio{display:none}
+  .nav-movil{display:block}
+  .nav-movil[open]{width:100%;order:9}
+  /* Abierto, el <details> ocupa la fila entera, pero la pastilla no
+     tiene por qué estirarse con él. */
+  .nav-movil[open] > summary{width:max-content}
+  .nav-movil > nav{
+    display:grid;gap:0;padding:12px 0 2px;
+    border-top:1px solid var(--line);margin-top:12px;
+  }
+  /* Objetivo táctil de verdad: 24 px es el mínimo que pide la norma
+     y 44 es el que pide un pulgar. */
+  .nav-movil > nav a{padding:11px 2px;font-size:16px;min-height:44px;
+    display:flex;align-items:center}
+  /* Y la cita, al final de la lista: por debajo de 520 no está en la
+     cabecera, y quien abre el menú está buscando dónde ir. */
+  .nav-movil > nav .cita-menu{
+    margin-top:10px;background:var(--accent-2);color:var(--sobre-accent);
+    border-radius:var(--r-s);justify-content:center;font-weight:700;
+    font-family:Archivo,"Archivo reserva",sans-serif;
+  }
+}
+
+/* Por debajo de 520 el logotipo, la pastilla del menú y el botón no
+   caben en una fila y la cabecera se parte: ciento treinta píxeles
+   otra vez. Aquí el botón de la cabecera sale, y no se pierde nada:
+   a doscientos treinta píxeles está el botón grande del héroe, a
+   partir de trescientos aparece la barra de cita, y al final de cada
+   página está la cinta. Cuatro llamadas en un móvil, y una de ellas
+   empujando el titular sesenta y ocho píxeles hacia abajo, es un mal
+   negocio. */
+@media (max-width:520px){
+  .cabecera .cita{display:none}
+}
 
 /* El botón de cita vive dentro del menú y va siempre a la derecha.
    Es el patrón que usa casi todo el sector: una sola acción visible
    en todo momento, sin tener que buscarla. */
 .cabecera .cita{
   font-family:Archivo,"Archivo reserva",sans-serif;
-  font-size:14.5px;font-weight:700;letter-spacing:-.01em;
+  font-size:14.5px;font-weight:700;letter-spacing:0;
   background:var(--accent-2);color:var(--sobre-accent);
-  padding:9px 16px;border-radius:6px;text-decoration:none;
+  padding:9px 14px;border-radius:var(--r-s);text-decoration:none;
+  white-space:nowrap;
 }
 .cabecera .cita:hover{background:var(--accent-3);color:var(--sobre-accent);text-decoration:none}
 .cabecera nav a{
   font-family:"Source Sans 3","Source reserva",sans-serif;
-  font-size:15.5px;
+  font-size:15px;
   font-weight:600;
   color:var(--ink-2);
   text-decoration:none;
+  white-space:nowrap;
 }
 .cabecera nav a:hover{color:var(--accent-2);text-decoration:underline}
 /* aria-current="page" lo pone el HTML de cada página en su propio
@@ -416,7 +651,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 .saltar{
   position:absolute;left:-9999px;
   background:var(--surface);color:var(--ink);
-  padding:12px 18px;border-radius:7px;z-index:9;
+  padding:12px 18px;border-radius:var(--r-s);z-index:9;
 }
 .saltar:focus{left:20px;top:12px}
 
@@ -438,7 +673,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:17px;
   font-weight:700;
-  letter-spacing:-.01em;
+  letter-spacing:0;
   text-align:center;
   text-decoration:none;
   cursor:pointer;
@@ -448,7 +683,7 @@ p strong, li strong, dd strong, .tarjeta strong{
      Windows el sistema lo pinta, y es lo único que distingue el
      botón de un enlace suelto cuando se descarta el fondo. */
   border:1px solid transparent;
-  border-radius:7px;
+  border-radius:var(--r-s);
   padding:14px 27px;
   width:100%;
   max-width:340px;
@@ -502,7 +737,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   overflow-x:auto;
   margin:22px 0 10px;
   border:1px solid var(--line);
-  border-radius:10px;
+  border-radius:var(--r-m);
   background:var(--surface);
 }
 .tabla-precios{
@@ -527,12 +762,37 @@ p strong, li strong, dd strong, .tarjeta strong{
 }
 .tabla-precios thead th{
   font-family:Archivo,"Archivo reserva",sans-serif;
-  font-size:13px;font-weight:700;letter-spacing:-.005em;
+  font-size:13px;font-weight:700;letter-spacing:0;
   color:var(--ink-2);
   border-bottom:1.5px solid var(--line-strong);
   white-space:nowrap;
 }
 .tabla-precios tbody th{font-weight:600;color:var(--ink)}
+
+/* La barra detrás del precio. Seis cifras en una columna se
+   comparan a mano; con la barra detrás el orden de magnitud se ve
+   antes de leer ningún número. Y no es un gráfico aparte: es la
+   propia tabla, que es lo que evita contar el mismo dato dos veces
+   en la misma página. La escala es de 0 a 60 €. */
+.tabla-precios td.con-barra{position:relative;isolation:isolate}
+.tabla-precios td.con-barra::before{
+  content:"";position:absolute;z-index:-1;
+  inset:5px auto 5px 0;width:var(--p);
+  background:var(--accent-soft);
+  border-radius:0 var(--r-s) var(--r-s) 0;
+}
+.tabla-precios td.con-barra span{
+  position:relative;font-variant-numeric:tabular-nums;font-weight:600;
+}
+/* La tabla de figuras es la misma pieza con cinco columnas de texto
+   en vez de cifras: se ensancha, se alinea arriba y la última
+   columna va en gris, que es dónde mirar y no qué es. */
+.tabla-figuras{min-width:760px}
+.tabla-figuras th,.tabla-figuras td{vertical-align:top;font-size:15px;line-height:1.45}
+.tabla-figuras tbody th{width:19%;color:var(--ink)}
+.tabla-figuras td.donde{color:var(--muted);font-size:14px}
+.tabla-precios tr.propia td.con-barra::before{background:var(--accent-2)}
+.tabla-precios tr.propia td.con-barra span{color:var(--sobre-accent)}
 .tabla-precios tbody tr:last-child th,
 .tabla-precios tbody tr:last-child td{border-bottom:0}
 /* La fila propia se marca, pero con el fondo de acento suave y no
@@ -547,7 +807,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 .caja{
   background:var(--surface-2);
   border:1px solid var(--line);
-  border-radius:10px;
+  border-radius:var(--r-m);
   padding:24px;
   margin:0 0 20px;
 }
@@ -575,7 +835,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   color:var(--ink-2);
   background:var(--surface);
   border:1px solid var(--line);
-  border-radius:20px;
+  border-radius:var(--r-l);
   padding:6px 14px;
 }
 
@@ -593,7 +853,14 @@ p strong, li strong, dd strong, .tarjeta strong{
 /* Lista numerada grande, para procesos de tres o cuatro pasos.
    Los números los pone el CSS con un contador, así que puedes
    añadir o quitar pasos sin renumerar nada a mano. */
-.pasos{list-style:none;counter-reset:paso;padding:0;margin:26px 0;max-width:60ch}
+.pasos{list-style:none;counter-reset:paso;padding:0;margin:26px 0;max-width:var(--medida)}
+/* Dentro de un paso, la línea de enlaces de comprobación: es un dato
+   de consulta, no parte del argumento, así que va más pequeña y
+   separada. */
+.pasos .dato{
+  display:block;margin-top:9px;font-size:14px;color:var(--muted);
+  line-height:1.6;
+}
 .pasos li{
   counter-increment:paso;
   position:relative;
@@ -627,7 +894,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 .idea{
   margin:34px 0;padding:22px 24px 24px;
   background:var(--accent-soft);
-  border-radius:14px;
+  border-radius:var(--r-l);
   border-left:4px solid var(--accent-2);
   border-radius:0 14px 14px 0;
 }
@@ -639,7 +906,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 .idea p:not(.rotulo-idea){
   font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:clamp(1.05rem,2.7vw,1.3rem);
-  font-weight:600;line-height:1.32;letter-spacing:-.017em;
+  font-weight:600;line-height:1.32;letter-spacing:0;
   color:var(--ink);margin:0;max-width:34ch;text-wrap:balance;
 }
 @media (max-width:520px){.idea{padding:18px 19px 20px}}
@@ -655,7 +922,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   gap:1px;
   background:var(--line);
   border:1px solid var(--line);
-  border-radius:12px;overflow:hidden;
+  border-radius:var(--r-m);overflow:hidden;
   margin:26px 0 20px;
 }
 .ficha-tecnica > div{background:var(--surface);padding:16px 17px}
@@ -697,7 +964,7 @@ p strong, li strong, dd strong, .tarjeta strong{
 @media (max-width:640px){.dos-columnas{grid-template-columns:1fr}}
 .dos-columnas .columna{
   background:var(--surface);border:1px solid var(--line);
-  border-radius:12px;padding:19px 20px;
+  border-radius:var(--r-m);padding:19px 20px;
 }
 .dos-columnas .columna h3{margin:0 0 12px}
 .dos-columnas .columna.si h3{color:var(--exito)}
@@ -722,7 +989,7 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
   color:var(--accent);
   margin:0 0 6px;
 }
-.precio span{font-size:1.05rem;font-weight:700;color:var(--ink-2);letter-spacing:-.01em}
+.precio span{font-size:1.05rem;font-weight:700;color:var(--ink-2);letter-spacing:0}
 
 /* Preguntas frecuentes con <details>. Se abren sin una línea de
    JavaScript y el buscador lee el contenido aunque estén cerradas. */
@@ -730,7 +997,7 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{
   font-family:Archivo,"Archivo reserva",sans-serif;
-  font-size:1.02rem;font-weight:700;letter-spacing:-.015em;
+  font-size:1.02rem;font-weight:700;letter-spacing:0;
   color:var(--ink);
   cursor:pointer;list-style:none;
   padding:17px 34px 17px 0;position:relative;
@@ -748,7 +1015,7 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
 .cinta{
   background:var(--surface);
   border:1px solid var(--line);
-  border-radius:12px;
+  border-radius:var(--r-m);
   padding:30px 26px;
   margin:48px 0 0;
   box-shadow:var(--shadow);
@@ -773,7 +1040,7 @@ input[type=text],input[type=email],textarea{
   color:var(--ink);
   background:var(--surface);
   border:1px solid var(--borde-campo);
-  border-radius:7px;
+  border-radius:var(--r-s);
   padding:12px 14px;
   width:100%;
 }
@@ -832,7 +1099,7 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
    Quien navega con teclado tiene que ver dónde está. Nunca quites
    el outline sin poner otro en su lugar. */
 
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--r-s)}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -893,7 +1160,7 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 
 .hero{padding:6px 0 10px}
 .hero h1{margin-bottom:18px}
-.hero .entradilla{font-size:1.2rem;line-height:1.5;color:var(--ink-2);max-width:54ch;margin-bottom:26px}
+.hero .entradilla{font-size:1.2rem;line-height:1.5;color:var(--ink-2);max-width:38rem;margin-bottom:26px}
 .hero .acciones{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;margin-bottom:8px}
 .hero .acciones .boton{width:auto;max-width:none}
 
@@ -902,7 +1169,7 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
    de tamaño. Si no, se parte en cinco líneas y deja de leerse de
    un golpe, que es justo lo único que tiene que hacer. */
 .hero.con-foto h1{font-size:clamp(1.85rem,3.4vw,2.5rem);line-height:1.06}
-.hero.con-foto img{border-radius:14px;box-shadow:var(--shadow)}
+.hero.con-foto img{border-radius:var(--r-l);box-shadow:var(--shadow)}
 @media (max-width:760px){
   .hero.con-foto{grid-template-columns:1fr;gap:24px}
 }
@@ -925,10 +1192,14 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 .tranquiliza{
   font-size:14.5px;line-height:1.5;color:var(--muted);
   font-variant-numeric:tabular-nums;
-  margin:12px 0 0;max-width:46ch;
+  margin:12px 0 0;max-width:var(--medida);
 }
 .cinta .tranquiliza{margin:-8px 0 0}
 .apunte .separa{color:var(--line-strong);margin:0 7px}
+/* El punto medio se quedaba solo al final de la línea cuando el
+   segundo enlace bajaba. Metido en la misma caja que ese enlace,
+   baja con él. */
+.apunte .par{display:inline-block}
 
 /* El botón del hero, un punto más grande que el resto. Es la única
    acción de la primera pantalla desde que el mapa pasó a ser un
@@ -951,14 +1222,14 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 
 .llamada{
   background:var(--accent-soft);
-  border-radius:14px;
+  border-radius:var(--r-l);
   padding:24px 26px 22px;
   margin:38px 0;
 }
 .llamada > p:first-child{
   font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:clamp(1.02rem,2.5vw,1.2rem);font-weight:600;
-  letter-spacing:-.015em;line-height:1.35;
+  letter-spacing:0;line-height:1.35;
   color:var(--ink);margin:0 0 16px;max-width:42ch;text-wrap:balance;
 }
 .llamada .accion{margin:0 0 10px}
@@ -993,16 +1264,17 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
   gap:1px;
   background:var(--line);
   border:1px solid var(--line);
-  border-radius:10px;
+  border-radius:var(--r-m);
   overflow:hidden;
   margin:30px 0 8px;
 }
 .confianza div{background:var(--surface);padding:15px 16px}
 .confianza dt{
   font-family:Archivo,"Archivo reserva",sans-serif;font-size:13px;font-weight:700;
-  letter-spacing:-.01em;color:var(--accent-2);margin-bottom:2px;
+  letter-spacing:0;color:var(--accent-2);margin-bottom:2px;
 }
 .confianza dd{margin:0;font-size:14.5px;line-height:1.4;color:var(--ink-2)}
+.confianza dd a{color:inherit;text-decoration-color:var(--line-strong)}
 @media (max-width:760px){.confianza{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:380px){.confianza{grid-template-columns:1fr}}
 
@@ -1030,13 +1302,17 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 .tarjeta{
   background:var(--surface);
   border:1px solid var(--line);
-  border-radius:11px;
+  border-radius:var(--r-m);
   padding:22px;
   display:flex;flex-direction:column;
   text-decoration:none;color:inherit;
 }
 a.tarjeta:hover{border-color:var(--line-strong);box-shadow:var(--shadow);color:inherit}
-.tarjeta h3{margin:0 0 8px}
+/* Un título de una línea y otro de dos dejaban el cuerpo de la
+   tercera tarjeta veintiséis píxeles más arriba que el de las
+   otras dos, y la fila se leía torcida. */
+.tarjeta h3{margin:0 0 8px;min-height:2.5em}
+@media (max-width:640px){.tarjeta h3{min-height:0}}
 .tarjeta p{font-size:15.5px;color:var(--ink-2);margin:0 0 14px;max-width:none}
 .tarjeta .mas{
   margin-top:auto;
@@ -1086,10 +1362,12 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 }
 .pie-columnas .titulo-pie{
   font-family:Archivo,"Archivo reserva",sans-serif;font-size:13.5px;font-weight:700;
-  letter-spacing:-.005em;color:var(--ink);margin:0 0 10px;
+  letter-spacing:0;color:var(--ink);margin:0 0 10px;
 }
 .pie-columnas ul{list-style:none;padding:0;margin:0}
-.pie-columnas li{margin-bottom:7px}
+/* 2.5.8 de WCAG 2.2 pide 24 px de objetivo. Estaban en 21. */
+.pie-columnas li{margin-bottom:2px}
+.pie-columnas li a{display:inline-flex;align-items:center;min-height:26px}
 .pie-columnas a{font-size:14.5px;color:var(--muted);text-decoration:none}
 .pie-columnas a:hover{color:var(--accent-2);text-decoration:underline}
 .pie-columnas p{font-size:14px;color:var(--muted);line-height:1.5;margin:0 0 10px}
@@ -1115,7 +1393,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 
 .insignia{
   display:inline-grid;place-items:center;
-  width:52px;height:52px;border-radius:14px;
+  width:52px;height:52px;border-radius:var(--r-l);
   background:var(--accent-soft);
   border:1px solid var(--line);
   color:var(--accent-2);
@@ -1141,13 +1419,35 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 
 /* --- 10.1 El dibujo del mecanismo ------------------------------- */
 
-.figura{margin:26px 0 10px;padding:0}
-.figura .dibujo{
-  display:block;width:100%;height:auto;
-  background:var(--surface);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:6px 4px 0;
+.figura{margin:30px 0 14px;padding:0}
+
+/* La caja blanca con borde redondeado convertía cada dibujo en un
+   gráfico de panel de dashboard. Un diagrama que explica un
+   mecanismo no es un widget: es una lámina, y una lámina va sobre
+   el papel. Sin fondo, sin borde, sin esquinas. */
+.figura .dibujo{display:block;width:100%;height:auto}
+
+/* El envoltorio de la lámina existe para poder poner los rótulos
+   ENCIMA del dibujo como HTML de verdad. Dentro del SVG no se
+   puede: el lienzo escala, así que un texto de 11 unidades se
+   renderiza a 7,4 px en un móvil de 320 y deja de leerse. Como HTML
+   posicionado en porcentajes, el texto mide lo que dice que mide en
+   cualquier pantalla, es seleccionable y sale en Archivo de verdad. */
+.lamina{position:relative}
+.anota{
+  position:absolute;transform:translate(-50%,-50%);
+  font-family:Archivo,"Archivo reserva",sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:0;
+  color:var(--ink-2);background:var(--bg);
+  padding:1px 5px;border-radius:var(--r-s);
+  white-space:nowrap;pointer-events:none;
+}
+/* Los rótulos que caen en un borde no se pueden centrar sobre su
+   punto: se salen de la lámina y el navegador los recorta. */
+.anota.izq{transform:translate(0,-50%)}
+.anota.der{transform:translate(-100%,-50%)}
+@media (max-width:430px){
+  .anota{font-size:11px;padding:1px 3px}
 }
 .figura .leyenda{
   list-style:none;display:flex;flex-wrap:wrap;gap:6px 20px;
@@ -1157,9 +1457,9 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   display:flex;align-items:center;gap:8px;margin:0;
   font-size:14.5px;color:var(--ink-2);
 }
-.figura .muestra{width:18px;height:3px;border-radius:2px;flex:0 0 auto}
-.figura .muestra.alivio{background:var(--accent)}
-.figura .muestra.coste{background:var(--ink-2)}
+.figura .muestra{width:18px;height:3px;border-radius:var(--r-s);flex:0 0 auto}
+.figura .muestra.alivio{background:var(--accent-borde)}
+.figura .muestra.coste{background:var(--ink);height:5px}
 /* La muestra tiene que ser del color de la línea que rotula. Estaba
    en --ink y el trazo en --ink-2: la clave de la leyenda señalaba a
    un color que no estaba en el dibujo. */
@@ -1169,26 +1469,60 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   margin-top:11px;max-width:52ch;
 }
 
-.dibujo .eje{stroke:var(--line-strong);stroke-width:1.2;fill:none}
+/* Tres pesos, y separados de verdad. Antes eran 1,2 / 2,2 / 2,9:
+   una proporción de 1,3x que, al escalar el lienzo, colapsaba en
+   0,8 / 1,5 / 2,0 px en un móvil —tres grises indistinguibles—. Y
+   al revés en escritorio: 1,9 / 3,5 / 4,6, el doble de lo que se
+   pensó. La proporción ahora es 1,8x y los valores son píxeles
+   reales, porque todo lo que es trazo lleva
+   vector-effect="non-scaling-stroke": lo que se declara es lo que
+   se ve, a 320 y a 1440. */
+.dibujo .eje{stroke:var(--borde-campo);stroke-width:1.25;fill:none}
+/* La retícula del fondo. No significa nada y no tiene que
+   significarlo: da métrica y separa el frente del fondo en un
+   dibujo que tenía todos sus elementos en el mismo plano. */
+.dibujo .reticula{stroke:var(--line);stroke-width:1;fill:none;vector-effect:non-scaling-stroke}
+/* El peine del tiempo a lo largo del eje. */
+.dibujo .regla{stroke:var(--line-strong);stroke-width:1;fill:none}
+/* Las líneas que llevan del rótulo a su punto del dibujo. */
+.dibujo .llamada{stroke:var(--borde-campo);stroke-width:1.25;fill:none}
+/* El rayado de las áreas y los huecos. Gris liso dice «vacío»;
+   rayado dice «esto estuvo aquí», que es lo que se quiere decir. */
+.dibujo .raya{stroke:var(--accent-borde);stroke-width:1;opacity:.5}
+/* Las masas. La línea que sube deja de ser una línea y pasa a ser
+   una superficie que crece: el mismo dibujo, el triple de presencia,
+   cero elementos nuevos. */
+.dibujo .area-coste{fill:var(--accent-soft);stroke:none}
+.dibujo .area-coste.trama{fill-opacity:1}
+.dibujo .area-alivio{fill:var(--accent-soft);stroke:none}
 /* Las marcas estaban en --line-strong: 1,61:1 sobre el papel. El pie
    de figura dice "cada marca de abajo es una vez que lo evitas" y
    señalaba a algo que el ojo no encuentra. --borde-campo da 3,4:1,
    que es lo que pide 1.4.11 para un objeto gráfico necesario. */
-.dibujo .marca-evento{stroke:var(--borde-campo);stroke-width:1.6}
+.dibujo .marca-evento{stroke:var(--ink-2);stroke-width:2.75}
 /* El peso visual estaba al revés del argumento: el alivio, que es el
    ruido, iba en el azul de marca y más grueso; el coste, que es la
    tesis entera del sitio, en gris medio y más fino. */
 .dibujo .trazo-alivio{
-  stroke:var(--accent-borde);stroke-width:2.2;fill:none;
+  stroke:var(--accent-borde);stroke-width:2.75;fill:none;
   stroke-linecap:round;stroke-linejoin:round;
 }
 .dibujo .trazo-coste{
-  stroke:var(--ink);stroke-width:2.9;fill:none;
+  stroke:var(--ink);stroke-width:5;fill:none;
   stroke-linecap:round;stroke-linejoin:round;
 }
+/* La salida de la espiral. Va en el azul de marca y más fina que la
+   espiral: el camino de vuelta existe, pero cuesta más que el de
+   ida, y el dibujo tiene que decir eso sin una sola palabra. */
+.dibujo .trazo-salida{
+  stroke:var(--accent-2);stroke-width:2.75;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.dibujo .punta{stroke:var(--accent-2);stroke-width:2.75;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;}
 .dibujo .rotulo{
   font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
-  font-size:12px;font-weight:700;letter-spacing:-.01em;
+  font-size:12px;font-weight:700;letter-spacing:0;
 }
 .dibujo .rotulo.alivio{fill:var(--accent-2)}
 .dibujo .rotulo.coste{fill:var(--ink-2)}
@@ -1210,10 +1544,16 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   stroke-dasharray:.004 .011;stroke-linecap:round;
 }
 
-/* Las barras de la vida que se estrecha. La hueca es el sitio que
-   ocupaba antes; la llena, lo que queda. */
-.dibujo .barra-fantasma{fill:var(--surface-2);stroke:var(--line);stroke-width:1}
-.dibujo .barra-llena{fill:var(--accent-soft);stroke:var(--accent-borde);stroke-width:1.2}
+/* La malla de la vida que se estrecha. Eran cinco barras, que es
+   exactamente lo que se ve como «una línea»: no había nada que
+   mirar. Ahora son ciento veinte celdas, y cada una es una cosa
+   concreta que se hace o que se ha dejado de hacer. La repetición
+   es la forma más barata que existe de que un dibujo tenga materia,
+   y aquí además dice la verdad: lo que se pierde son cosas
+   contables, no una cantidad abstracta que baja. */
+.dibujo .celda-llena{fill:var(--accent-2);stroke:none}
+.dibujo .celda-hueca{stroke:var(--accent-borde);stroke-width:.8;
+  vector-effect:non-scaling-stroke}
 
 /* Los nodos de la espiral. Van rellenos del acento con la cifra
    encima en el papel, que es la misma pareja que usan los pasos
@@ -1225,8 +1565,11 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   background:none;border-top:2px dashed var(--line-strong);
   height:0;width:20px;border-radius:0;
 }
-.figura .muestra.llena{background:var(--accent-soft);border:1px solid var(--accent-borde);height:11px;border-radius:3px}
-.figura .muestra.hueca{background:var(--surface-2);border:1px solid var(--line);height:11px;border-radius:3px}
+.figura .muestra.llena{background:var(--accent-2);border:0;width:11px;height:11px;border-radius:var(--r-s)}
+.figura .muestra.hueca{
+  background:repeating-linear-gradient(45deg,var(--accent-borde) 0 1px,transparent 1px 5px);
+  border:1px solid var(--accent-borde);width:11px;height:11px;border-radius:var(--r-s);
+}
 
 /* Leyenda numerada: cuando el dibujo tiene estaciones y no capas,
    la leyenda deja de ser una fila de muestras y pasa a ser una lista
@@ -1245,6 +1588,13 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   background:var(--accent-2);color:var(--sobre-accent);
   display:grid;place-items:center;margin-top:1px;
 }
+/* La cuarta entrada de la espiral no es una estación más: es la
+   salida. Se marca en hueco para que no se cuente como cuarta
+   vuelta del círculo. */
+.figura .leyenda.numerada .cifra.salida{
+  background:none;color:var(--accent-2);
+  border:1.5px solid var(--accent-2);font-size:13px;
+}
 
 /* --- 10.2 El ciclo ----------------------------------------------
    Cuatro casillas con flechas. Está hecho con cajas de HTML y no
@@ -1262,7 +1612,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .paso-ciclo{
   background:var(--surface);
   border:1px solid var(--line);
-  border-radius:10px;
+  border-radius:var(--r-m);
   padding:14px 13px;
   display:flex;flex-direction:column;gap:7px;
 }
@@ -1283,7 +1633,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .ciclo .vuelta,.ciclo .fuga{
   grid-column:1 / -1;margin:0;max-width:none;
   font-size:14.5px;line-height:1.45;
-  padding:9px 13px;border-radius:8px;
+  padding:9px 13px;border-radius:var(--r-s);
 }
 .ciclo .vuelta{
   color:var(--accent-2);background:var(--accent-soft);
@@ -1347,7 +1697,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   aspect-ratio:4/5;
   height:auto;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:var(--r-m);
   /* Sin borde. Las fotos traen ahora su propio fondo de estudio, que ya
      es más oscuro que el papel de la página: la silueta se recorta sola
      y una línea alrededor solo añadía ruido. */
@@ -1357,6 +1707,62 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   background:#A9A194;
 }
 .retrato.grande{width:230px}
+
+/* --- 13.1 El retrato dentro del dibujo --------------------------
+   El encargo era «utilizar mi imagen con algún diseño». De las
+   cinco formas que existen de juntar una foto con un dibujo, tres
+   están descartadas y conviene dejar escrito por qué:
+
+   · Recortar la silueta y pegarla sobre el papel necesita canal
+     alfa, y el borde del pelo es donde se ve si el recorte lo hizo
+     una persona o un algoritmo. Ya se probó aquí y se quitó.
+   · El duotono sobre una cara es el lenguaje del cartel de
+     festival. En una consulta de psicología, «esta persona ha sido
+     procesada» juega en contra.
+   · El semitono real de la foto hay que renderizarlo en un editor;
+     aproximarlo con filtros SVG sale caro y sale mal.
+
+   Lo que sí: no tocar la fotografía y usarla. La curva del alivio
+   —la misma que está en el diagrama, no una decoración— entra por
+   el borde, cruza el retrato a la altura del pecho y sale por el
+   otro lado. Y detrás, un campo de puntos que sangra hacia el
+   papel, que es el gesto de imprenta sin poner un dedo en la foto.
+
+   La línea cruza el pecho y nunca la cara: una línea sobre los ojos
+   convierte a la persona en objeto de estudio. */
+
+.retrato-marco{
+  position:relative;margin:0;
+  width:190px;flex:0 0 auto;
+  isolation:isolate;
+}
+.retrato-marco .retrato{display:block;position:relative;z-index:1}
+/* El campo de puntos, desplazado hacia abajo y a la izquierda para
+   que asome por dos lados y se lea como una capa y no como un
+   marco. Va por detrás de la foto. */
+.retrato-marco::before{
+  content:"";position:absolute;z-index:0;
+  left:-16px;bottom:-16px;width:140px;height:140px;
+  background-image:radial-gradient(var(--accent-borde) 1.4px,transparent 1.4px);
+  background-size:7px 7px;
+  opacity:.55;
+}
+.retrato-marco .cruce{
+  position:absolute;inset:0;z-index:2;
+  width:100%;height:100%;pointer-events:none;
+}
+/* Papel sobre la foto: la línea parece abierta en la imagen, no
+   pintada encima. El mismo grosor que la tesis del diagrama. */
+.retrato-marco .cruce-linea{
+  stroke:var(--bg);stroke-width:5;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+/* El de "sobre mí" es el grande. */
+.retrato-marco:has(.retrato.grande){width:230px}
+@media (max-width:620px){
+  .retrato-marco,.retrato-marco:has(.retrato.grande){width:160px}
+  .retrato-marco::before{width:96px;height:96px;left:-11px;bottom:-11px}
+}
 
 /* El de contacto es otro papel: acompana a "quien responde", va
    redondo, sin sombra y con el borde un punto mas marcado para que
@@ -1386,7 +1792,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 
 .dia{
   border:1px solid var(--line);
-  border-radius:10px;
+  border-radius:var(--r-m);
   padding:16px 18px;
   margin:0 0 14px;
   background:var(--surface);
@@ -1486,7 +1892,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   width:100%;height:auto;
   aspect-ratio:8/3;
   object-fit:cover;
-  border-radius:14px;
+  border-radius:var(--r-l);
   background:var(--surface-2);
 }
 .banda figcaption{
@@ -1498,7 +1904,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    de ochenta píxeles que no se ve. Se le da más alto. */
 @media (max-width:620px){
   .banda{margin:26px 0 24px}
-  .banda img{aspect-ratio:2/1;border-radius:12px}
+  .banda img{aspect-ratio:2/1;border-radius:var(--r-m)}
 }
 
 /* La foto de un artículo va pegada al borde superior de la
@@ -1517,15 +1923,8 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 }
 .tarjeta.con-foto .cuerpo .mas{margin-top:auto}
 
-/* El tema oscuro no existe en esta web (sección 1 bis), pero si
-   algún día existe, una foto clara sobre papel oscuro deslumbra.
-   Se deja bajada de brillo preparada y desactivada. */
-@media (prefers-color-scheme:dark){
-  :root[data-tema="oscuro"] .banda img,
-  :root[data-tema="oscuro"] .tarjeta.con-foto .ficha{
-    filter:brightness(.88);
-  }
-}
+/* La bajada de brillo de las fotos en oscuro está en la sección
+   1 ter, junto con el resto de la paleta. */
 
 
 /* ============================================================
@@ -1598,7 +1997,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 :where(a,button,summary,input,textarea,select,[tabindex]):focus-visible{
   outline:2px solid var(--accent-2);
   outline-offset:3px;
-  border-radius:4px;
+  border-radius:var(--r-s);
 }
 
 /* La tarjeta entera reacciona cuando el foco cae en su enlace. */
@@ -1776,29 +2175,25 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
   }
 }
 
-/* --- 16.2 La cabecera que se asienta ----------------------------
-   Al empezar a bajar, la cabecera pierde altura y gana una línea
-   inferior: deja de ser parte de la portada y pasa a ser una barra
-   de navegación. Son ocho píxeles de diferencia; no se ve moverse,
-   se nota que ha cambiado.
+/* --- 16.2 (retirada) --------------------------------------------
+   Aquí había una animación que, según su propio comentario, hacía
+   que la cabecera «perdiera altura y ganara una línea inferior» al
+   bajar. No hacía ninguna de las dos cosas: solo animaba box-shadow,
+   y la sombra iba en .cabecera —880 px— mientras .franja-cabecera
+   tiene su propio borde a ancho completo. Lo que se veía al bajar
+   eran dos líneas, una corta y otra larga, y un rectángulo flotando.
 
-   `animation-range` en los primeros 120 px: la transición ocurre
-   entera antes de que nadie se dé cuenta de que está ocurriendo. */
+   Se retira entera. La cabecera ya se queda pegada arriba por
+   position:sticky, que es lo que se quería, y eso no necesita
+   animarse.
 
-@supports (animation-timeline:scroll()){
-  @media (prefers-reduced-motion:no-preference){
-    .cabecera{
-      animation:asentar linear both;
-      animation-timeline:scroll(root block);
-      animation-range:0 120px;
-      will-change:padding-block,box-shadow;
-    }
-    @keyframes asentar{
-      from{box-shadow:0 1px 0 transparent}
-      to{box-shadow:0 1px 0 var(--line), 0 6px 20px -14px rgba(37,35,31,.5)}
-    }
-  }
-}
+   Y queda dicho lo otro, que es más importante: cuando un comentario
+   describe algo que el código ya no hace, deja de proteger la
+   decisión y empieza a esconder el fallo. Tres sitios de esta hoja
+   estaban así —esta animación, «no hace falta menú para tres
+   enlaces» cuando ya eran siete, y la leyenda del gráfico «ya
+   corregida» cuando estaba corregida al revés—. Los tres, arreglados
+   en la misma pasada. */
 
 /* --- 16.3 Los diagramas se dibujan solos ------------------------
    Esta es la buena, y es la única que además significa algo.
@@ -1837,13 +2232,16 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
     /* El recorrido terminaba con la figura todavía en el cuarto
        inferior de la pantalla: cuando el lector la tenía delante,
        ya estaba dibujada. Ahora ocurre mientras cruza el centro. */
-    .dibujo .eje{animation-range:entry 85% cover 35%}
-    .dibujo .trazo-coste{animation-range:cover 30% cover 55%}
-    .dibujo .trazo-alivio{animation-range:cover 40% cover 68%}
-    .dibujo .trazo-flojo{animation-range:cover 26% cover 50%}
+    /* Terminan antes: con el rango anterior la figura entraba en
+       pantalla vacía y se quedaba así durante bastante scroll, que
+       en un móvil es una caja en blanco a media lectura. */
+    .dibujo .eje{animation-range:entry 70% entry 100%}
+    .dibujo .trazo-coste{animation-range:entry 88% cover 22%}
+    .dibujo .trazo-alivio{animation-range:cover 6% cover 38%}
+    .dibujo .trazo-flojo{animation-range:entry 88% cover 18%}
     /* Las barras y los nodos no se pueden "trazar": aparecen, y en
        orden, que es lo que cuenta la pieza. */
-    .dibujo .barra-llena,.dibujo .nodo,.dibujo .nodo-txt{
+    .dibujo .celda-llena,.dibujo .nodo,.dibujo .nodo-txt{
       animation:marcar linear both;
       animation-timeline:view();
       animation-range:entry 70% entry 95%;
@@ -1874,7 +2272,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    Es deliberadamente poco: tiene que notarse que la foto está viva,
    no que se está moviendo. */
 
-.banda{overflow:hidden;border-radius:14px}
+.banda{overflow:hidden;border-radius:var(--r-l)}
 @supports (animation-timeline:view()){
   @media (prefers-reduced-motion:no-preference){
     .banda img{
@@ -1982,7 +2380,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .pasos::before,
 .pasos::after{
   content:"";position:absolute;left:15px;top:14px;bottom:14px;width:2px;
-  border-radius:2px;
+  border-radius:var(--r-s);
 }
 .pasos::before{background:var(--line)}
 .pasos::after{background:var(--accent-2);transform-origin:50% 0;transform:scaleY(0)}
@@ -2028,13 +2426,13 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .cuenta .campo{
   background:var(--surface);
   border:1px solid var(--line);
-  border-radius:13px;
+  border-radius:var(--r-m);
   padding:19px 21px 21px;
 }
 .cuenta label{
   display:block;
   font-family:Archivo,"Archivo reserva",sans-serif;
-  font-size:1.06rem;font-weight:700;letter-spacing:-.015em;
+  font-size:1.06rem;font-weight:700;letter-spacing:0;
   color:var(--ink);margin:0 0 5px;
 }
 .cuenta .pista{font-size:14.5px;line-height:1.5;color:var(--muted);margin:0 0 15px;max-width:54ch}
@@ -2051,7 +2449,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 }
 .cuenta output strong{
   font-family:Archivo,"Archivo reserva",sans-serif;
-  font-size:22px;font-weight:800;letter-spacing:-.02em;
+  font-size:22px;font-weight:800;letter-spacing:0;
   color:var(--accent-2);
 }
 
@@ -2067,7 +2465,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .resultado .cifra{
   font-family:Archivo,"Archivo reserva",sans-serif;
   font-size:clamp(3.2rem,13vw,5.4rem);
-  font-weight:800;letter-spacing:-.045em;line-height:.95;
+  font-weight:800;letter-spacing:0;line-height:.95;
   color:var(--accent-2);
   font-variant-numeric:tabular-nums;
   margin:0 0 10px;
@@ -2084,7 +2482,7 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
    malinterpretar ahí mismo, no seis párrafos más abajo. */
 .aviso-cuenta{
   border:1px solid var(--line-strong);
-  border-radius:12px;
+  border-radius:var(--r-m);
   padding:17px 19px;
   margin:22px 0 10px;
   background:var(--surface-2);

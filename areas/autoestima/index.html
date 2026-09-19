@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=28">
+  <link rel="stylesheet" href="/estilos.min.css?v=29">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -135,6 +135,21 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
+<!-- La barra de cita, solo en móvil. En escritorio la cabecera se
+     queda pegada arriba y ya hay acción visible todo el rato; en
+     móvil la cabecera mide ciento ochenta píxeles y no se puede
+     pegar, así que se desliza esta, que mide cincuenta y seis.
+
+     Va ARRIBA y no abajo a propósito. La que había antes estaba
+     abajo y se comía la animación de los iconos justo donde Safari
+     pone su barra de direcciones en el iPhone. Arriba no estorba a
+     nada y aparece a los trescientos píxeles de scroll, que es
+     cuando la cabecera de verdad ya no se ve. -->
+<div class="barra-cita">
+  <a class="marca-mini" href="/">adricamente</a>
+  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+</div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
      en las páginas de área, así que medía 120 px en unas y 151 en
@@ -144,7 +159,7 @@
   <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
-    <nav>
+    <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
@@ -152,9 +167,23 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
+    <details class="nav-movil">
+      <summary>Menú</summary>
+      <nav aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+      </nav>
+    </details>
+    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -213,28 +242,32 @@
     <p class="fuga">Mientras tanto, el coste: nunca aparece una prueba de que podías</p>
   </div>
   <figure class="figura">
-    <svg viewBox="0 0 400 156" role="img" aria-labelledby="est-t est-d" class="dibujo"
+    <div class="lamina">
+    <svg viewBox="0 0 400 121" role="img" aria-labelledby="est-t est-d" class="dibujo"
          fill="none" stroke-linecap="round" stroke-linejoin="round">
       <title id="est-t">Lo que te vas permitiendo</title>
       <desc id="est-d">
-        Cinco barras, una por cada temporada. La parte llena de cada
-        barra es más corta que la de la anterior: lo que sigues
-        haciendo se reduce, y lo que queda en hueco es lo que has ido
-        dejando para no quedar mal.
+        Cinco filas de veinticuatro cuadraditos, una fila por
+        temporada. En la primera están llenos veinticuatro; en la
+        última, nueve. Los que faltan no desaparecen: se quedan
+        rayados, porque son cosas que antes hacías y has ido dejando.
       </desc>
-      <rect class="barra-fantasma" x="62" y="18" width="302" height="17" rx="4"/><rect class="barra-llena" x="62" y="18" width="302" height="17" rx="4"/><rect class="barra-fantasma" x="62" y="44" width="302" height="17" rx="4"/><rect class="barra-llena" x="62" y="44" width="266" height="17" rx="4"/><rect class="barra-fantasma" x="62" y="70" width="302" height="17" rx="4"/><rect class="barra-llena" x="62" y="70" width="217" height="17" rx="4"/><rect class="barra-fantasma" x="62" y="96" width="302" height="17" rx="4"/><rect class="barra-llena" x="62" y="96" width="166" height="17" rx="4"/><rect class="barra-fantasma" x="62" y="122" width="302" height="17" rx="4"/><rect class="barra-llena" x="62" y="122" width="109" height="17" rx="4"/>
-      <text class="rotulo eje-txt" x="52" y="29.560000000000002" text-anchor="end">antes</text>
-      <text class="rotulo eje-txt" x="52" y="133.56" text-anchor="end">ahora</text>
+      <defs><pattern id="est-rayas" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="raya" x1="0" y1="0" x2="0" y2="7"/></pattern></defs>
+      <rect class="celda-llena" x="62" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="75" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="88" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="101" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="114" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="127" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="140" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="153" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="166" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="179" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="192" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="205" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="218" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="231" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="244" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="257" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="270" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="283" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="296" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="309" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="322" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="335" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="348" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="361" y="16" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="62" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="75" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="88" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="101" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="114" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="127" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="140" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="153" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="166" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="179" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="192" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="205" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="218" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="231" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="244" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="257" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="270" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="283" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="296" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="309" y="37" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="322" y="37" width="9" height="9" rx="1.5"/><rect class="celda-hueca" x="335" y="37" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="348" y="37" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="361" y="37" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-llena" x="62" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="75" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="88" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="101" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="114" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="127" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="140" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="153" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="166" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="179" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="192" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="205" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="218" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="231" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="244" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="257" y="58" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="270" y="58" width="9" height="9" rx="1.5"/><rect class="celda-hueca" x="283" y="58" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="296" y="58" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="309" y="58" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="322" y="58" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="335" y="58" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="348" y="58" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="361" y="58" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-llena" x="62" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="75" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="88" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="101" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="114" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="127" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="140" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="153" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="166" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="179" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="192" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="205" y="79" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="218" y="79" width="9" height="9" rx="1.5"/><rect class="celda-hueca" x="231" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="244" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="257" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="270" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="283" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="296" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="309" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="322" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="335" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="348" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="361" y="79" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-llena" x="62" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="75" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="88" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="101" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="114" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="127" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="140" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="153" y="100" width="9" height="9" rx="1.5"/><rect class="celda-llena" x="166" y="100" width="9" height="9" rx="1.5"/><rect class="celda-hueca" x="179" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="192" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="205" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="218" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="231" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="244" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="257" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="270" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="283" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="296" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="309" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="322" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="335" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="348" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/><rect class="celda-hueca" x="361" y="100" width="9" height="9" rx="1.5" style="fill:url(#est-rayas)"/>
     </svg>
+    <span class="anota izq" style="left:0;top:8%">antes</span>
+    <span class="anota izq" style="left:0;top:84%">ahora</span>
+    </div>
 
     <ul class="leyenda">
       <li><span class="muestra llena" aria-hidden="true"></span>Lo que sigues haciendo</li>
       <li><span class="muestra hueca" aria-hidden="true"></span>Lo que has dejado de hacer</li>
     </ul>
     <figcaption>
-      Cada renuncia por separado es razonable y pequeña: no ir, no
-      pedirlo, no decirlo. El problema no es ninguna de ellas: es que
-      se suman y nadie las suma.
+      Cada cuadradito es una cosa concreta: ir, pedirlo, decirlo,
+      proponer. Cada renuncia por separado es razonable y pequeña. El
+      problema no es ninguna de ellas: es que se suman y nadie las
+      suma.
     </figcaption>
   </figure>
 
@@ -255,7 +288,7 @@
   </ul>
   <p>
     Todo esto ocurre dentro del mismo proceso:
-    <a href="/terapia-online/">sesión informativa gratuita, dos o tres
+    <a href="/terapia-online/">media hora gratis, dos o tres
     sesiones de evaluación, un plan acordado y revisiones</a>. Sesiones
     de 60 minutos, 30&nbsp;€, semanal o quincenal.
   </p>
@@ -287,7 +320,7 @@
     <p>Si te has reconocido en casi todo lo de arriba, lo siguiente no es leer más: es contarlo en voz alta durante treinta minutos.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -298,7 +331,7 @@
     presente o pasada, o una relación en la que hoy no estás a salvo, eso
     tiene prioridad y hay recursos específicos: el <a href="tel:016">016</a>
     atiende las 24 horas, es gratuito y no deja rastro en la factura.
-    Dímelo en la sesión informativa y te oriento.
+    Dímelo en la media hora y te oriento.
   </p>
   <div class="caja">
     <p style="margin-bottom:0">
@@ -311,7 +344,7 @@
 
   <div class="disponibilidad">
     <p>
-      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      <strong>Dos huecos a la semana.</strong> Las primeras consultas
       las hago en dos ratos fijos, porque el resto del horario es de
       pacientes. Si esta semana ya no queda ninguno, el calendario te
       ofrece el siguiente: no hay lista de espera ni hay que escribir
@@ -324,7 +357,7 @@
     <p>Treinta minutos, <strong>gratis</strong>, para ponerle nombre a esto en voz alta. Sales con una idea de qué lo mantiene y de qué haría falta para moverlo. Y si esto no es lo mío, <strong>te oriento</strong> a dónde ir.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Y si prefieres empezar por tu cuenta, <a href="/mapa/">el mapa</a> son seis preguntas y diez minutos.</p>
@@ -360,6 +393,8 @@
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/herramientas/">Herramientas gratis</a></li>
+          <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
+          <li><a href="/reservar/">¿Ya eres paciente? Reserva sesión</a></li>
         </ul>
       </div>
       <div>

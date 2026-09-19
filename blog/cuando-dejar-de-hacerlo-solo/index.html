@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=28">
+  <link rel="stylesheet" href="/estilos.min.css?v=29">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -205,6 +205,21 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
+<!-- La barra de cita, solo en móvil. En escritorio la cabecera se
+     queda pegada arriba y ya hay acción visible todo el rato; en
+     móvil la cabecera mide ciento ochenta píxeles y no se puede
+     pegar, así que se desliza esta, que mide cincuenta y seis.
+
+     Va ARRIBA y no abajo a propósito. La que había antes estaba
+     abajo y se comía la animación de los iconos justo donde Safari
+     pone su barra de direcciones en el iPhone. Arriba no estorba a
+     nada y aparece a los trescientos píxeles de scroll, que es
+     cuando la cabecera de verdad ya no se ve. -->
+<div class="barra-cita">
+  <a class="marca-mini" href="/">adricamente</a>
+  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+</div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
      en las páginas de área, así que medía 120 px en unas y 151 en
@@ -214,7 +229,7 @@
   <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
-    <nav>
+    <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
@@ -222,9 +237,23 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
+    <details class="nav-movil">
+      <summary>Menú</summary>
+      <nav aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+      </nav>
+    </details>
+    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -280,8 +309,8 @@
 
     <h2>Se ha extendido</h2>
     <p>
-      Empezó en un sitio —el trabajo, una relación, el sueño— y ahora toca
-      cosas que antes no tocaba. Si te has quedado en cómo funciona esto
+      Empezó en un sitio —el trabajo, una relación, el sueño— y ahora
+      <strong>toca cosas</strong> que antes no tocaba. Si te has quedado en cómo funciona esto
       por videollamada, está contado entero en
       <a href="/terapia-online/">la página de terapia online</a>. Cuando el malestar se generaliza, cada
       semana que pasa amplía el terreno que hay que recuperar después.
@@ -302,7 +331,7 @@
     <p>Treinta minutos por videollamada, <strong>gratis</strong>, y sales sabiendo si esto que acabas de leer es lo tuyo y qué se haría con ello.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">O empieza por tu cuenta con <a href="/mapa/">el mapa de lo que evitas</a>: seis preguntas, diez minutos y no sale de tu móvil.</p>
@@ -338,6 +367,8 @@
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/herramientas/">Herramientas gratis</a></li>
+          <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
+          <li><a href="/reservar/">¿Ya eres paciente? Reserva sesión</a></li>
         </ul>
       </div>
       <div>

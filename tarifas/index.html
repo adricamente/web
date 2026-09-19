@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=28">
+  <link rel="stylesheet" href="/estilos.min.css?v=29">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -191,7 +191,7 @@
   "offers": [
     {
       "@type": "Offer",
-      "name": "Sesión informativa",
+      "name": "Primera consulta gratuita de 30 minutos",
       "price": "0",
       "priceCurrency": "EUR",
       "description": "Primera conversación de 30 minutos, sin coste y sin compromiso.",
@@ -252,7 +252,7 @@
       "name": "¿Hay alguna ayuda si no me lo puedo permitir?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Por 30 € ya estoy en la parte baja del mercado — aquí está la comparación — y no puedo bajar más. Lo que sí puedo hacer es orientarte: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la sesión informativa y te digo qué hay en tu zona."
+        "text": "Por 30 € ya estoy en la parte baja del mercado — aquí está la comparación — y no puedo bajar más. Lo que sí puedo hacer es orientarte: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la media hora y te digo qué hay en tu zona."
       }
     }
   ]
@@ -266,6 +266,21 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
+<!-- La barra de cita, solo en móvil. En escritorio la cabecera se
+     queda pegada arriba y ya hay acción visible todo el rato; en
+     móvil la cabecera mide ciento ochenta píxeles y no se puede
+     pegar, así que se desliza esta, que mide cincuenta y seis.
+
+     Va ARRIBA y no abajo a propósito. La que había antes estaba
+     abajo y se comía la animación de los iconos justo donde Safari
+     pone su barra de direcciones en el iPhone. Arriba no estorba a
+     nada y aparece a los trescientos píxeles de scroll, que es
+     cuando la cabecera de verdad ya no se ve. -->
+<div class="barra-cita">
+  <a class="marca-mini" href="/">adricamente</a>
+  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+</div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
      en las páginas de área, así que medía 120 px en unas y 151 en
@@ -275,7 +290,7 @@
   <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
-    <nav>
+    <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
@@ -283,9 +298,23 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
+    <details class="nav-movil">
+      <summary>Menú</summary>
+      <nav aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/" aria-current="page">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+      </nav>
+    </details>
+    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -311,7 +340,7 @@
   <div class="tarifa">
     <p class="precio">30&nbsp;€ <span>por sesión de 60 minutos</span></p>
     <p>
-      La sesión informativa de treinta minutos, la primera, <strong>no se cobra</strong>.
+      La primera, la <strong>media hora</strong> de la videollamada, no se cobra.
     </p>
     <ul>
       <li>Sesión de una hora por videollamada.</li>
@@ -331,7 +360,7 @@
     <p>Treinta euros es lo que cuesta cada sesión. La primera, la de treinta minutos, no cuesta nada y sirve justo para lo que estás haciendo ahora: <strong>decidir</strong> con información.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -358,6 +387,16 @@
     No hay bonos ni descuentos por comprometerte a un número de sesiones.
     Un descuento por comprar varias sesiones por adelantado es un <strong>incentivo para seguir</strong> en terapia decidido <strong>antes de haberte evaluado</strong>, y eso no me parece que deba venderse.
   </p>
+
+  <div class="caja">
+    <h3>Si ya estás en tratamiento</h3>
+    <p style="margin-bottom:0">
+      La sesión de <strong>60 minutos</strong> tiene su propia página
+      de reserva, con las mismas condiciones de cancelación:
+      <a href="/reservar/">reservar la siguiente sesión</a>. La media
+      hora gratis es solo la primera vez.
+    </p>
+  </div>
 
   <h2>Cancelaciones</h2>
   <p>
@@ -394,13 +433,13 @@
 
     <details>
       <summary>¿Hay alguna ayuda si no me lo puedo permitir?</summary>
-      <p>Por 30 € ya estoy en la parte baja del mercado —<a href="/cuanto-cuesta-un-psicologo-online/">aquí está la comparación</a>— y no puedo bajar más. Lo que sí puedo hacer es <strong>orientarte</strong>: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la sesión informativa y te digo qué hay en tu zona.</p>
+      <p>Por 30 € ya estoy en la parte baja del mercado —<a href="/cuanto-cuesta-un-psicologo-online/">aquí está la comparación</a>— y no puedo bajar más. Lo que sí puedo hacer es <strong>orientarte</strong>: la sanidad pública tiene psicología en algunos centros de salud, muchos ayuntamientos y universidades ofrecen atención gratuita, y hay colegios profesionales con servicios a precio reducido. Pregúntamelo en la media hora y te digo qué hay en tu zona.</p>
     </details>
   </div>
 
   <div class="disponibilidad">
     <p>
-      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      <strong>Dos huecos a la semana.</strong> Las primeras consultas
       las hago en dos ratos fijos, porque el resto del horario es de
       pacientes. Si esta semana ya no queda ninguno, el calendario te
       ofrece el siguiente: no hay lista de espera ni hay que escribir
@@ -413,7 +452,7 @@
     <p>Treinta minutos para contarme qué te trae. Si después decides que no, <strong>no pasa nada</strong> y no te va a <strong>llamar nadie</strong>.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
   </section>
@@ -448,6 +487,8 @@
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/herramientas/">Herramientas gratis</a></li>
+          <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
+          <li><a href="/reservar/">¿Ya eres paciente? Reserva sesión</a></li>
         </ul>
       </div>
       <div>

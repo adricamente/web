@@ -20,10 +20,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Psicólogo online, 30 € la sesión | adricamente</title>
-  <meta name="description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
+  <meta name="description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera consulta gratuita de 30 minutos. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
 
   <meta property="og:title" content="Psicólogo online, 30 € la sesión | adricamente">
-  <meta property="og:description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera sesión informativa gratuita. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
+  <meta property="og:description" content="Terapia psicológica online para adultos jóvenes. 60 minutos por 30 €, semanal o quincenal. Primera consulta gratuita de 30 minutos. Adrián Cuñat, Psicólogo colegiado CM03836, cursando el Máster en Psicología General Sanitaria.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/">
   <link rel="canonical" href="https://adricamente.com/">
@@ -74,7 +74,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=28">
+  <link rel="stylesheet" href="/estilos.min.css?v=29">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -185,7 +185,7 @@
   "offers": [
     {
       "@type": "Offer",
-      "name": "Sesión informativa",
+      "name": "Primera consulta gratuita de 30 minutos",
       "price": "0",
       "priceCurrency": "EUR",
       "description": "Primera conversación de 30 minutos, sin coste y sin compromiso.",
@@ -373,6 +373,21 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
+<!-- La barra de cita, solo en móvil. En escritorio la cabecera se
+     queda pegada arriba y ya hay acción visible todo el rato; en
+     móvil la cabecera mide ciento ochenta píxeles y no se puede
+     pegar, así que se desliza esta, que mide cincuenta y seis.
+
+     Va ARRIBA y no abajo a propósito. La que había antes estaba
+     abajo y se comía la animación de los iconos justo donde Safari
+     pone su barra de direcciones en el iPhone. Arriba no estorba a
+     nada y aparece a los trescientos píxeles de scroll, que es
+     cuando la cabecera de verdad ya no se ve. -->
+<div class="barra-cita">
+  <a class="marca-mini" href="/">adricamente</a>
+  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+</div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
      en las páginas de área, así que medía 120 px en unas y 151 en
@@ -382,7 +397,7 @@
   <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
-    <nav>
+    <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
@@ -390,9 +405,23 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
+    <details class="nav-movil">
+      <summary>Menú</summary>
+      <nav aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+      </nav>
+    </details>
+    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -416,31 +445,36 @@
     </p>
     <div class="acciones">
       <a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_portada')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </div>
     <p class="tranquiliza">
       30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta
     </p>
     <p class="apunte" style="margin-top:16px">
       <a href="/primera-sesion/">Qué pasa exactamente en esos treinta minutos &rarr;</a>
-      <span class="separa">&middot;</span>
-      <a onclick="window.medir&&window.medir('clic_mapa')" href="/mapa/">O empieza tú solo con el mapa</a>
+      <span class="par"><span class="separa">&middot;</span> <a onclick="window.medir&&window.medir('clic_mapa')" href="/mapa/">O empieza tú solo con el mapa</a></span>
     </p>
   </section>
 
   <dl class="confianza">
-    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M2.8 8.6 12 4.4l9.2 4.2-9.2 4.2z"/><path pathLength="1" d="M6.8 10.6v4.6c0 1.6 2.3 2.9 5.2 2.9s5.2-1.3 5.2-2.9v-4.6"/><path pathLength="1" d="M21.2 8.6v5"/></svg>Formación</dt><dd>Graduado en Psicología (UNED), colegiado nº CM03836. Cursando el Máster en Psicología General Sanitaria (UNIR)</dd></div>
+    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M2.8 8.6 12 4.4l9.2 4.2-9.2 4.2z"/><path pathLength="1" d="M6.8 10.6v4.6c0 1.6 2.3 2.9 5.2 2.9s5.2-1.3 5.2-2.9v-4.6"/><path pathLength="1" d="M21.2 8.6v5"/></svg>Formación</dt><dd>Psicólogo colegiado <a href="https://www.copclm.com/" target="_blank" rel="noopener">nº CM03836</a>, cursando el Máster en Psicología General Sanitaria</dd></div>
     <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M8 7V3.8h8V7"/><rect pathLength="1" x="3.8" y="7" width="16.4" height="13.2" rx="2.2"/><path pathLength="1" d="M12 11v5.2M9.4 13.6h5.2"/></svg>Dónde</dt><dd>Centro sanitario Neurococos, con supervisión colegiada</dd></div>
-    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="2.6" y="6" width="12.6" height="12" rx="2.4"/><path pathLength="1" d="M15.2 10.6 21.4 7v10l-6.2-3.6z"/></svg>Modalidad</dt><dd>100&nbsp;% online, para residentes en España</dd></div>
-    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="8.4"/><path pathLength="1" d="M12 6.8V12l3.4 2"/></svg>Sesión</dt><dd>60 minutos, 30&nbsp;€. La primera es gratuita</dd></div>
+    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="2.6" y="6" width="12.6" height="12" rx="2.4"/><path pathLength="1" d="M15.2 10.6 21.4 7v10l-6.2-3.6z"/></svg>Modalidad</dt><dd>100&nbsp;% online, para quien reside en España</dd></div>
+    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="8.4"/><path pathLength="1" d="M12 6.8V12l3.4 2"/></svg>Sesión</dt><dd>60 minutos, 30&nbsp;€. La primera, gratis</dd></div>
   </dl>
 
   <!-- ===== Presentación ===================================== -->
   <h2>Hola, soy Adrián</h2>
   <div class="presentacion">
-    <img class="retrato" src="/fotos/adrian-retrato.webp?v=8192c5"
+    <figure class="retrato-marco">
+      <img class="retrato" src="/fotos/adrian-retrato.webp?v=8192c5"
          width="200" height="250" loading="lazy" decoding="async"
          alt="Adrián Cuñat Andrés, de frente, con camisa azul claro y gafas de pasta, sonriendo">
+      <svg class="cruce" viewBox="0 0 400 500" aria-hidden="true" fill="none">
+        <path class="cruce-linea" vector-effect="non-scaling-stroke"
+              d="M-6 456 L96 456 C132 456 132 400 168 400 C204 400 204 456 240 456 L406 456"/>
+      </svg>
+    </figure>
     <div class="texto">
   <p>
     Adrián Cuñat Andrés. Graduado en Psicología por la UNED, colegiado
@@ -495,19 +529,32 @@
     rápido. Lo que no se nota es lo otro: que cada vez deja <strong>factura</strong>, y esa factura no baja sola.
   </p>
   <figure class="figura">
+    <div class="lamina">
     <svg viewBox="0 0 400 176" role="img" aria-labelledby="mec-t mec-d" class="dibujo"
          fill="none" stroke-linecap="round" stroke-linejoin="round">
       <title id="mec-t">Las dos curvas del mecanismo</title>
       <desc id="mec-d">
         Una línea da un pico cada vez que se evita algo y enseguida
         vuelve a cero: es el alivio. Otra línea sube un escalón en cada
-        una de esas veces y nunca baja: es el coste.
+        una de esas veces y nunca baja: es el coste, dibujado como un
+        área que crece y que al final es más alta que el alivio.
       </desc>
-      <path class="eje" pathLength="1" d="M30 12 V164 M30 164 H392"/>
-      <line class="marca-evento" x1="90" y1="168" x2="90" y2="156"/><line class="marca-evento" x1="162" y1="168" x2="162" y2="156"/><line class="marca-evento" x1="234" y1="168" x2="234" y2="156"/><line class="marca-evento" x1="306" y1="168" x2="306" y2="156"/>
-      <path class="trazo-coste" pathLength="1" d="M30 152 L88 152 L95 139 L160 139 L167 126 L232 126 L239 113 L304 113 L311 100 L386 100"/>
-      <path class="trazo-alivio" pathLength="1" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
+      <defs><pattern id="mec-rayas" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="raya" x1="0" y1="0" x2="0" y2="7"/></pattern></defs>
+      <path class="reticula" d="M30 12 V164 M70 12 V164 M110 12 V164 M150 12 V164 M190 12 V164 M230 12 V164 M270 12 V164 M310 12 V164 M350 12 V164 M30 12 H386 M30 38 H386 M30 64 H386 M30 90 H386 M30 116 H386 M30 142 H386"/>
+      <path class="area-coste" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60 L386 164 L30 164 Z"/>
+      <path class="area-coste trama" style="fill:url(#mec-rayas)" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60 L386 164 L30 164 Z"/>
+      <path class="regla" vector-effect="non-scaling-stroke" d="M42 164 V160 M54 164 V160 M66 164 V160 M78 164 V160 M90 164 V160 M102 164 V160 M114 164 V160 M126 164 V160 M138 164 V160 M150 164 V160 M162 164 V160 M174 164 V160 M186 164 V160 M198 164 V160 M210 164 V160 M222 164 V160 M234 164 V160 M246 164 V160 M258 164 V160 M270 164 V160 M282 164 V160 M294 164 V160 M306 164 V160 M318 164 V160 M330 164 V160 M342 164 V160 M354 164 V160 M366 164 V160 M378 164 V160"/>
+      <path class="eje" vector-effect="non-scaling-stroke" pathLength="1" d="M30 12 V164 M30 164 H392"/>
+      <line class="marca-evento" vector-effect="non-scaling-stroke" x1="90" y1="168" x2="90" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" x1="162" y1="168" x2="162" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" x1="234" y1="168" x2="234" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" x1="306" y1="168" x2="306" y2="152"/>
+      <path class="llamada" vector-effect="non-scaling-stroke" d="M104 34 L134 22"/>
+      <path class="llamada" vector-effect="non-scaling-stroke" d="M244 122 L244 146"/>
+      <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60"/>
+      <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
     </svg>
+    <span class="anota" style="left:34%;top:13%">sube en segundos</span>
+    <span class="anota" style="left:60%;top:80%">y este no baja</span>
+    <span class="anota der" style="left:99%;top:30%">aquí ya cuesta más que alivia</span>
+    </div>
 
     <ul class="leyenda">
       <li><span class="muestra alivio"></span>Lo que notas: el alivio</li>
@@ -515,9 +562,12 @@
     </ul>
 
     <figcaption>
-      Cada marca de abajo es una vez que lo evitas. Esto no son datos:
-      es el mecanismo. El alivio pega un pico y se desinfla en segundos;
-      el coste sube un escalón y ya no vuelve a bajar solo.
+      Cada marca alta de abajo es una vez que lo evitas; la regla fina
+      es el tiempo pasando entre una y otra. Esto no son datos: es el
+      mecanismo. El alivio pega un pico y se desinfla en segundos; el
+      coste sube un escalón y ya no vuelve a bajar solo. Fíjate en el
+      final: llega un punto en el que el coste pasa por encima del
+      alivio y ya no vuelve.
     </figcaption>
   </figure>
   <p class="apunte">
@@ -529,10 +579,11 @@
   <h2>Cómo funciona un proceso, paso a paso</h2>
   <ol class="pasos">
     <li>
-      <strong>Sesión informativa · 30 minutos · gratis</strong>
-      Me cuentas qué te pasa y te digo con franqueza si creo que puedo
-      ayudarte. Si creo que no, te oriento a dónde ir. No es terapia y no
-      tienes que decidir nada ese día.
+      <strong>Media hora para contarlo · gratis</strong>
+      Me cuentas qué te pasa, te pregunto lo que necesite preguntar y te
+      digo con franqueza si creo que puedo ayudarte. Si creo que no, te
+      oriento a dónde ir. No es una sesión de tratamiento y no tienes
+      que decidir nada ese día.
     </li>
     <li>
       <strong>Dos o tres sesiones de evaluación</strong>
@@ -566,9 +617,9 @@
     <p>Ya sabes cómo funciona. El siguiente paso son treinta minutos hablando, para ver si esto te sirve.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
-    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso <span class="separa">&middot;</span> <a href="/primera-sesion/">Qué pasa exactamente en esos treinta minutos</a></p>
+    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso <span class="par"><span class="separa">&middot;</span> <a href="/primera-sesion/">Qué pasa exactamente en esos treinta minutos</a></span></p>
   </div>
 
   <!-- ===== Tarifas =========================================== -->
@@ -637,27 +688,23 @@
     no aparecen solas.
   </p>
   <p>
-    Así que lo que puedo darte en su lugar es esto: treinta minutos <strong>gratis</strong> para que me escuches y <strong>lo juzgues tú</strong>, y un ejercicio que
-    puedes hacer ahora mismo sin darme ni tu correo.
+    Así que lo que puedo darte en su lugar es esto: <strong>media hora</strong>
+    gratis para que me escuches y <strong>lo juzgues tú</strong>, y tres
+    ejercicios que puedes hacer ahora mismo sin darme ni tu correo.
   </p>
 
-  <!-- ===== El mapa =========================================== -->
-  <div class="caja destacada">
-    <svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.4 6.4 9 4.2v13.4l-5.6 2.2z"/><path pathLength="1" d="M9 4.2l6 2.2v13.4L9 17.6"/><path pathLength="1" d="M15 6.4l5.6-2.2v13.4L15 19.8"/></svg>
-    <h3>El mapa de lo que evitas</h3>
-    <p>
-      Seis preguntas para ver, en diez minutos, qué estás esquivando, qué
-      te alivia hacerlo y qué te está costando de verdad. Es <strong>la primera mitad</strong> del análisis que hago en consulta el primer día, hecha por ti. La otra mitad es qué se hace con eso.
+  <!-- El mapa tenía aquí una caja propia y ya estaba dos pantallas
+       más arriba, en las tres herramientas. Se quita la repetición y
+       el sitio se lo queda la acción que el párrafo acaba de
+       prometer: que me escuches y lo juzgues tú. Este es el único
+       punto de la portada donde la frase de al lado pide un botón. -->
+  <div class="llamada">
+    <p>Es la única prueba que te puedo dar: media hora, escucharme, y <strong>juzgar</strong> tú.</p>
+    <p class="accion">
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
-    <ul class="datos">
-      <li>6 preguntas</li>
-      <li>~10 minutos</li>
-      <li>Gratis</li>
-      <li>No sale de tu móvil</li>
-    </ul>
-    <p style="margin-bottom:0">
-      <a class="boton" onclick="window.medir&&window.medir('clic_mapa')" href="/mapa/">Hacer el mapa</a>
-    </p>
+    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
 
   <!-- ===== Preguntas frecuentes =============================== -->
@@ -735,7 +782,7 @@
 
   <div class="disponibilidad">
     <p>
-      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      <strong>Dos huecos a la semana.</strong> Las primeras consultas
       las hago en dos ratos fijos, porque el resto del horario es de
       pacientes. Si esta semana ya no queda ninguno, el calendario te
       ofrece el siguiente: no hay lista de espera ni hay que escribir
@@ -745,10 +792,10 @@
 
   <section class="cinta">
     <h2>El siguiente paso son treinta minutos</h2>
-    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y salgas sabiendo qué haría yo con ello. <strong>No es terapia</strong> y no tienes que <strong>decidir</strong> nada ese día.</p>
+    <p>Treinta minutos, <strong>gratis</strong>, para que me cuentes qué te trae y salgas sabiendo qué haría yo con ello. No es una <strong>sesión de tratamiento</strong> y no tienes que <strong>decidir</strong> nada ese día.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Las sesiones son online y solo para residentes en España, en el centro sanitario Neurococos.</p>
@@ -784,6 +831,8 @@
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/herramientas/">Herramientas gratis</a></li>
+          <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
+          <li><a href="/reservar/">¿Ya eres paciente? Reserva sesión</a></li>
         </ul>
       </div>
       <div>

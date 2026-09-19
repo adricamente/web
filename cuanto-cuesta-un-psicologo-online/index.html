@@ -70,7 +70,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=28">
+  <link rel="stylesheet" href="/estilos.min.css?v=29">
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -133,7 +133,7 @@
       "name": "¿Y si no me lo puedo permitir?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero orientarte sí puedo: en la sesión informativa te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página."
+        "text": "Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero orientarte sí puedo: en la media hora te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página."
       }
     }
   ]
@@ -147,6 +147,21 @@
      color que el CSS estira con el scroll, sin JavaScript y sin
      contenido que un lector de pantalla tenga que anunciar. -->
 <div class="barra-lectura" aria-hidden="true"></div>
+<!-- La barra de cita, solo en móvil. En escritorio la cabecera se
+     queda pegada arriba y ya hay acción visible todo el rato; en
+     móvil la cabecera mide ciento ochenta píxeles y no se puede
+     pegar, así que se desliza esta, que mide cincuenta y seis.
+
+     Va ARRIBA y no abajo a propósito. La que había antes estaba
+     abajo y se comía la animación de los iconos justo donde Safari
+     pone su barra de direcciones en el iPhone. Arriba no estorba a
+     nada y aparece a los trescientos píxeles de scroll, que es
+     cuando la cabecera de verdad ya no se ve. -->
+<div class="barra-cita">
+  <a class="marca-mini" href="/">adricamente</a>
+  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora</a>
+</div>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
      en las páginas de área, así que medía 120 px en unas y 151 en
@@ -156,7 +171,7 @@
   <div class="contenedor ancho">
   <header class="cabecera">
     <p class="marca"><a href="/">adricamente</a></p>
-    <nav>
+    <nav class="nav-escritorio" aria-label="Principal">
       <a href="/sobre-mi/">Sobre mí</a>
       <a href="/terapia-online/">Terapia online</a>
       <a href="/areas/">Áreas</a>
@@ -164,9 +179,23 @@
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
       <a href="/contacto/">Contacto</a>
-      <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </nav>
+    <details class="nav-movil">
+      <summary>Menú</summary>
+      <nav aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contacto/">Contacto</a>
+        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
+      </nav>
+    </details>
+    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -247,12 +276,12 @@
             <th scope="col">Primera</th></tr>
       </thead>
       <tbody>
-      <tr><th scope="row"><a href="https://mundopsicosalud.com/" target="_blank" rel="noopener nofollow">Mundo Psicosalud</a></th><td>25 €</td><td>99,99 € al mes por cuatro sesiones</td><td>—</td></tr>
-      <tr class="propia"><th scope="row"><strong>adricamente</strong> (esta web)</th><td>30 €</td><td>no hay bonos</td><td>gratis, 30 min</td></tr>
-      <tr><th scope="row"><a href="https://www.psiko.es/" target="_blank" rel="noopener nofollow">Psiko</a></th><td>39 €</td><td>—</td><td>—</td></tr>
-      <tr><th scope="row"><a href="https://www.unobravo.com/es" target="_blank" rel="noopener nofollow">Unobravo</a></th><td>45 €</td><td>—</td><td>gratis</td></tr>
-      <tr><th scope="row"><a href="https://mentesanapsicologia.com/" target="_blank" rel="noopener nofollow">Mente Sana</a></th><td>50 €</td><td>28,75 € por sesión en el bono de ocho</td><td>9,99 €</td></tr>
-      <tr><th scope="row"><a href="https://www.siquia.com/" target="_blank" rel="noopener nofollow">Siquia</a></th><td>55 €</td><td>45 € por sesión en el bono de cinco</td><td>gratis, 20 min</td></tr>
+      <tr><th scope="row"><a href="https://mundopsicosalud.com/" target="_blank" rel="noopener nofollow">Mundo Psicosalud</a></th><td class="con-barra" style="--p:42%"><span>25 €</span></td><td>99,99 € al mes por cuatro sesiones</td><td>—</td></tr>
+      <tr class="propia"><th scope="row"><strong>adricamente</strong> (esta web)</th><td class="con-barra" style="--p:50%"><span>30 €</span></td><td>no hay bonos</td><td>gratis, 30 min</td></tr>
+      <tr><th scope="row"><a href="https://www.psiko.es/" target="_blank" rel="noopener nofollow">Psiko</a></th><td class="con-barra" style="--p:65%"><span>39 €</span></td><td>—</td><td>—</td></tr>
+      <tr><th scope="row"><a href="https://www.unobravo.com/es" target="_blank" rel="noopener nofollow">Unobravo</a></th><td class="con-barra" style="--p:75%"><span>45 €</span></td><td>—</td><td>gratis</td></tr>
+      <tr><th scope="row"><a href="https://mentesanapsicologia.com/" target="_blank" rel="noopener nofollow">Mente Sana</a></th><td class="con-barra" style="--p:83%"><span>50 €</span></td><td>28,75 € por sesión en el bono de ocho</td><td>9,99 €</td></tr>
+      <tr><th scope="row"><a href="https://www.siquia.com/" target="_blank" rel="noopener nofollow">Siquia</a></th><td class="con-barra" style="--p:92%"><span>55 €</span></td><td>45 € por sesión en el bono de cinco</td><td>gratis, 20 min</td></tr>
       </tbody>
     </table>
   </div>
@@ -275,7 +304,9 @@
     mi cuenta: atiendo dentro del centro sanitario Neurococos, con
     supervisión de un profesional colegiado del centro que revisa el
     caso entre sesiones. <a href="/sobre-mi/">Está contado entero
-    aquí</a>, con los enlaces para comprobarlo.
+    aquí</a>, y en
+    <a href="/quien-es-quien-en-salud-mental/">quién es quién</a> está
+    qué significa cada título, con la norma al lado.
   </p>
   <p>
     Eso tiene una consecuencia incómoda y una ventaja, y las dos son
@@ -315,10 +346,10 @@
   </ol>
 
   <div class="llamada">
-    <p>La sesión informativa de treinta minutos no cuesta nada y sirve justo para esto: <strong>decidir</strong> con información, incluida la de si te conviene ir a otro sitio.</p>
+    <p>La media hora no cuesta nada y sirve justo para esto: <strong>decidir</strong> con información, incluida la de si te conviene ir a otro sitio.</p>
     <p class="accion">
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso</p>
   </div>
@@ -347,13 +378,13 @@
 
     <details>
       <summary>¿Y si no me lo puedo permitir?</summary>
-      <p>Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero <strong>orientarte</strong> sí puedo: en la sesión informativa te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página.</p>
+      <p>Dímelo. Por 30 € estoy en la parte baja del mercado y no puedo bajar más, pero <strong>orientarte</strong> sí puedo: en la media hora te digo qué hay gratis en tu zona, que es lo que está arriba del todo de esta página.</p>
     </details>
   </div>
 
   <div class="disponibilidad">
     <p>
-      <strong>Dos huecos a la semana.</strong> Las sesiones informativas
+      <strong>Dos huecos a la semana.</strong> Las primeras consultas
       las hago en dos ratos fijos, porque el resto del horario es de
       pacientes. Si esta semana ya no queda ninguno, el calendario te
       ofrece el siguiente: no hay lista de espera ni hay que escribir
@@ -366,7 +397,7 @@
     <p>Treinta minutos por videollamada, <strong>gratis</strong>, para contarme qué te trae y saber qué haría yo con ello antes de gastarte un euro.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
     <p class="apunte" style="margin-bottom:0">Todo lo demás —pago, cancelaciones y qué incluye— está en <a href="/tarifas/">la página de tarifas</a>.</p>
@@ -402,6 +433,8 @@
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/herramientas/">Herramientas gratis</a></li>
+          <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
+          <li><a href="/reservar/">¿Ya eres paciente? Reserva sesión</a></li>
         </ul>
       </div>
       <div>
