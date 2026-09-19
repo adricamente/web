@@ -865,10 +865,6 @@ p strong, li strong, dd strong, .tarjeta strong{
 
 /* Dos columnas que se apilan solas en el móvil. Sirve para
    "esto sí / esto no", que es la pieza que más filtra. */
-.doble{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
-@media (max-width:620px){.doble{grid-template-columns:1fr}}
-.doble ul{margin:0;padding-left:20px}
-.doble li{font-size:16px;color:var(--ink-2)}
 
 /* --- La escena ---------------------------------------------------
    Lo primero que se lee en cada página de área, antes que ninguna
@@ -1086,9 +1082,6 @@ footer{
   border-top:1px solid var(--line);
 }
 footer p{font-size:13.5px;color:var(--muted);line-height:1.55;max-width:62ch}
-footer nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:14px}
-footer nav a{font-size:14px;color:var(--muted);text-decoration:none}
-footer nav a:hover{color:var(--accent-2);text-decoration:underline}
 
 /* --- 7 bis. La última línea del pie ------------------------------
    Aquí había un bloque grande con los teléfonos de urgencia y otro
@@ -1170,17 +1163,20 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
    ============================================================ */
 
 /* --- 9.1 La primera pantalla ------------------------------------
-   Sin foto todavía: una sola columna, con la promesa grande y el
-   botón enseguida. Cuando haya retrato, .hero pasa a dos columnas
-   solo (y siempre) con la clase .con-foto. */
+   Una columna: la promesa grande y el botón enseguida. Cuando lleva
+   retrato, .hero pasa a dos columnas con .con-retrato, que está en
+   la sección siguiente.
+
+   Aquí vivía además una variante .con-foto, escrita antes de que
+   hubiera retratos y nunca usada por ninguna página. El comentario
+   decía «cuando haya retrato»: el retrato llegó hace tres semanas y
+   llegó por otro sitio. Fuera. */
 
 .hero{padding:6px 0 10px}
 .hero h1{margin-bottom:18px}
 .hero .entradilla{font-size:1.2rem;line-height:1.5;color:var(--ink-2);max-width:38rem;margin-bottom:26px}
 .hero .acciones{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;margin-bottom:8px}
 .hero .acciones .boton{width:auto;max-width:none}
-
-.hero.con-foto{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
 
 /* --- 9.1 bis. La primera pantalla con retrato -------------------
    El titular, la escena, el precio y el botón a la izquierda; la cara
@@ -1251,13 +1247,9 @@ footer nav a:hover{color:var(--accent-2);text-decoration:underline}
   .hero.con-retrato{grid-template-columns:1fr 310px}
 }
 /* En dos columnas el titular tiene la mitad de sitio, así que baja
-   de tamaño. Si no, se parte en cinco líneas y deja de leerse de
-   un golpe, que es justo lo único que tiene que hacer. */
-.hero.con-foto h1{font-size:clamp(1.85rem,3.4vw,2.5rem);line-height:1.06}
-.hero.con-foto img{border-radius:var(--r-l);box-shadow:var(--shadow)}
-@media (max-width:760px){
-  .hero.con-foto{grid-template-columns:1fr;gap:24px}
-}
+   de tamaño. Si no, se parte en cinco líneas y deja de leerse de un
+   golpe, que es justo lo único que tiene que hacer. */
+.hero.con-retrato h1{font-size:clamp(1.85rem,3.4vw,2.5rem);line-height:1.06}
 
 /* Enlace secundario al lado del botón: la segunda puerta, sin
    competir con la primera. */
@@ -1688,8 +1680,6 @@ a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
   font-family:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
   font-size:12px;font-weight:700;letter-spacing:0;
 }
-.dibujo .rotulo.alivio{fill:var(--accent-2)}
-.dibujo .rotulo.coste{fill:var(--ink-2)}
 .dibujo .rotulo.eje-txt{fill:var(--muted);font-weight:600;font-size:8.5px}
 
 /* --- 10.1 bis. Piezas de los diagramas de mecanismo --------------
@@ -2066,37 +2056,15 @@ a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
    ilustrar el malestar con gente angustiada, y una foto de banco
    de alguien con la cabeza entre las manos es exactamente eso.
 
-   Las reglas de .banda y .ficha se quedan escritas abajo porque el
-   estilo de .ficha lo reutiliza la tarjeta con sello, y porque las
-   únicas fotografías que quedan —los cinco retratos— siguen
-   necesitando su hueco reservado para no mover el texto al cargar.
+   Lo único que queda aquí es el hueco reservado de los retratos,
+   para que el texto no salte al cargar la imagen. Las reglas de
+   .banda —la franja de 8:3— se han ido con las fotos: una regla de
+   CSS que no encuentra nada en ninguna de las veintiocho páginas
+   no es una reserva para el futuro, es un comentario que miente
+   sobre lo que hace el archivo.
    ============================================================ */
 
-.banda{
-  margin:34px 0 30px;
-  padding:0;
-}
-.banda img{
-  display:block;
-  width:100%;height:auto;
-  aspect-ratio:8/3;
-  object-fit:cover;
-  border-radius:var(--r-l);
-  background:var(--surface-2);
-}
-.banda figcaption{
-  font-size:14px;line-height:1.5;color:var(--muted);
-  margin-top:10px;max-width:56ch;
-}
-
-/* En pantallas estrechas una franja de 8:3 se queda en una tira
-   de ochenta píxeles que no se ve. Se le da más alto. */
-@media (max-width:620px){
-  .banda{margin:26px 0 24px}
-  .banda img{aspect-ratio:2/1;border-radius:var(--r-m)}
-}
-
-/* La foto de un artículo va pegada al borde superior de la
+/* La foto de un artículo va pegada al borde superior de la/* La foto de un artículo va pegada al borde superior de la
    tarjeta, sin separación: la tarjeta tiene overflow oculto y la
    imagen hereda su esquina redondeada. */
 /* Las tarjetas del blog con sello: el dibujo va arriba, a sangre, con
@@ -2120,19 +2088,6 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
 
 /* Piezas propias de los sellos. */
 .dibujo .anillo{stroke:var(--accent-borde);stroke-width:1.25;fill:none}
-
-.tarjeta.con-foto{padding:0;overflow:hidden}
-.tarjeta.con-foto .ficha{
-  display:block;width:100%;height:auto;
-  aspect-ratio:16/9;object-fit:cover;
-  background:var(--surface-2);
-  border-bottom:1px solid var(--line);
-}
-.tarjeta.con-foto .cuerpo{
-  padding:20px 22px 22px;
-  display:flex;flex-direction:column;flex:1;
-}
-.tarjeta.con-foto .cuerpo .mas{margin-top:auto}
 
 /* La bajada de brillo de las fotos en oscuro está en la sección
    1 ter, junto con el resto de la paleta. */
@@ -2253,7 +2208,7 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
 
 @supports (animation-timeline:view()){
   @media (prefers-reduced-motion:no-preference){
-    .banda,.presentacion,.rejilla,.tarifa,.cinta,.caja.destacada,.ciclo,.figura{
+    .presentacion,.rejilla,.tarifa,.cinta,.caja.destacada,.ciclo,.figura{
       animation:aparecer linear both;
       animation-timeline:view();
       /* Empieza en cuanto el bloque asoma y termina cuando ya ha
@@ -2305,16 +2260,33 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
 /* --- 14.5 No renderizar lo que no se ve -------------------------
    El navegador se salta el trabajo de maquetar lo que queda muy por
    debajo hasta que hace falta. `contain-intrinsic-size` es
-   obligatorio: sin él la barra de desplazamiento pega saltos. */
+   obligatorio: sin él la barra de desplazamiento pega saltos.
 
-.faq,.ciclo{content-visibility:auto;contain-intrinsic-size:auto 380px}
+   Y la FAQ SALE de aquí, que es el hallazgo de esta auditoría.
+   Mientras estuvo entera plegada, los 380 px reservados se parecían
+   bastante a su altura real. Desde que las tres primeras preguntas
+   nacen abiertas, la FAQ de la portada mide casi dos mil píxeles: el
+   navegador reservaba 380 y colocaba «Últimos artículos» encima de
+   las respuestas hasta que le tocaba maquetarla de verdad.
+
+   No se ve mal navegando —cuando llegas, ya está bien puesta—, pero
+   cualquier cosa que mida la página antes de tiempo la mide mal: un
+   enlace a un ancla de más abajo, la barra de desplazamiento, un
+   robot, y axe, que es quien lo cazó. Un ahorro de maquetado que se
+   paga con la posición de todo lo que viene detrás no sale a cuenta
+   en una página de cuarenta y cinco kilobytes.
+
+   .ciclo sí se queda: mide 374 px en móvil y 200 en escritorio, no
+   cambia de altura nunca y el valor reservado es el real. */
+
+.ciclo{content-visibility:auto;contain-intrinsic-size:auto 380px}
 
 /* En papel no hay scroll, así que no hay nada que revelar: todo
    entero y opaco. Y sin `content-visibility`, que en impresión deja
    secciones fuera. */
 @media print{
   *{animation:none !important;animation-timeline:none !important;opacity:1 !important;transform:none !important}
-  .faq,.ciclo{content-visibility:visible}
+  .ciclo{content-visibility:visible}
 }
 
 /* --- 14.6 El interruptor general --------------------------------
@@ -2451,119 +2423,16 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
   }
 }
 
-/* --- 16.4 La foto que respira dentro de su marco ----------------
-   La imagen es un 12 % más alta que el hueco y se desliza dentro
-   mientras pasa por pantalla. No es parallax de página —eso mueve
-   el fondo respecto al texto y es lo que marean las guías de
-   accesibilidad—: aquí no se mueve nada de la página, solo el
-   contenido dentro de un marco que sigue quieto.
+/* --- 16.4 (retirada) La foto que respiraba dentro de su marco ---
+   Aquí estaba la imagen que se deslizaba veinticuatro píxeles dentro
+   de su marco mientras cruzaba la pantalla. Animaba `.banda img`, y
+   `.banda` era la franja de fotografía de banco: se fue con las nueve
+   fotos y esta animación llevaba desde entonces apuntando a nada.
 
-   El recorrido total es de 24 px a lo largo de toda la pantalla.
-   Es deliberadamente poco: tiene que notarse que la foto está viva,
-   no que se está moviendo. */
-
-.banda{overflow:hidden;border-radius:var(--r-l)}
-@supports (animation-timeline:view()){
-  @media (prefers-reduced-motion:no-preference){
-    .banda img{
-      animation:respirar linear both;
-      animation-timeline:view();
-      animation-range:cover;
-      will-change:transform;
-    }
-    @keyframes respirar{
-      from{transform:scale(1.06) translateY(-12px)}
-      to{transform:scale(1.06) translateY(12px)}
-    }
-  }
-}
-
-/* --- 16.4 bis. Más movimiento, y donde se ve --------------------
-   La queja era doble: que había poco y que lo poco que había ocurría
-   demasiado abajo. Lo segundo se arregla con los rangos de la sección
-   anterior. Esto es lo primero.
-
-   Cuatro piezas más, todas con la misma disciplina que el resto: cero
-   JavaScript, cero opacidad de partida en nada que lleve texto, y todo
-   dentro del doble candado de @supports y prefers-reduced-motion.
-   Si el navegador no lo entiende o la persona pide menos movimiento,
-   la página se ve exactamente igual, quieta. */
-
-@supports (animation-timeline:view()){
-  @media (prefers-reduced-motion:no-preference){
-
-    /* 1. Las tarjetas entran de una en una. El escalonado no necesita
-       retardos: cada tarjeta tiene su propia línea de tiempo, y
-       desplazando un poco el rango de la segunda y la cuarta se
-       consigue que la fila no entre de golpe. */
-    .rejilla .tarjeta{
-      animation:subir-tarjeta linear both;
-      animation-timeline:view();
-      animation-range:entry 22% cover 44%;
-    }
-    .rejilla .tarjeta:nth-child(2n){animation-range:entry 16% cover 50%}
-    /* Encoge, no se desplaza. Y es una decisión, no un capricho.
-       Esta animación era translateY: la tarjeta entraba subiendo
-       desde abajo, lo que durante el recorrido la mete dentro del
-       hueco del elemento que tiene debajo. Con dieciséis píxeles
-       tapaba parte del enlace siguiente; con ocho seguía tapando
-       parte de una pregunta de la FAQ. Las dos veces lo cazó axe
-       como incumplimiento de 2.5.8, «objetivo parcialmente tapado»,
-       y las dos veces tenía razón: un objetivo táctil que se encoge
-       mientras la página entra es un objetivo que falla justo cuando
-       alguien navega con el pulgar mientras baja.
-
-       Un escalado del 1,5 % mueve los bordes hacia DENTRO de la
-       propia caja. No puede invadir nada, pase lo que pase debajo, y
-       se nota lo mismo. */
-    @keyframes subir-tarjeta{
-      from{transform:scale(.985)}
-      to{transform:none}
-    }
-
-    /* 2. Cada celda de la franja de credenciales. Son cuatro datos y
-       entrar los cuatro a la vez los convierte en un bloque; entrando
-       en orden se leen como lo que son, cuatro cosas distintas. */
-    .confianza div{
-      animation:subir-tarjeta linear both;
-      animation-timeline:view();
-      animation-range:entry 26% cover 42%;
-    }
-    .confianza div:nth-child(2){animation-range:entry 22% cover 46%}
-    .confianza div:nth-child(3){animation-range:entry 18% cover 50%}
-    .confianza div:nth-child(4){animation-range:entry 14% cover 54%}
-
-    /* 3. El subrayado del titular de sección. Es la pieza que da la
-       sensación de «sigue bajando»: un trazo corto que se dibuja de
-       izquierda a derecha justo cuando el titular llega a la altura
-       de lectura. */
-    h2{position:relative}
-    .contenedor main h2::after{
-      /* Decorativo y, sobre todo, transparente al ratón: sin esto el
-         subrayado se coloca por encima del enlace que queda justo
-         encima del titular y le come parte del área pulsable. Lo
-         cazó axe como incumplimiento de 2.5.8, «objetivo
-         parcialmente tapado», en dos enlaces de la portada. */
-      pointer-events:none;
-      content:"";position:absolute;left:0;bottom:-10px;
-      width:58px;height:3px;border-radius:99px;
-      background:var(--accent-2);
-      transform:scaleX(0);transform-origin:0 50%;
-      animation:trazar-subrayado linear both;
-      animation-timeline:view();
-      animation-range:entry 38% cover 44%;
-    }
-    @keyframes trazar-subrayado{to{transform:scaleX(1)}}
-
-    /* 4. Las muestras de la leyenda de cada figura, que entran
-       después del dibujo y no antes. */
-    .figura .leyenda li,.figura .leyenda.numerada li{
-      animation:subir-tarjeta linear both;
-      animation-timeline:view();
-      animation-range:cover 30% cover 50%;
-    }
-  }
-}
+   Se retira en vez de dejarla «por si vuelven las fotos». Una regla
+   que no encuentra nada no avisa de que no encuentra nada: se queda
+   ahí, con su comentario explicando algo que ya no ocurre, hasta que
+   alguien la lee y se cree que la web hace eso. */
 
 /* --- 16.3 bis. Los dibujos se dibujan, y se terminan -------------
    Esto estaba atado al scroll con animation-timeline y ha habido que
@@ -2749,8 +2618,8 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
   a.tarjeta:hover{transform:translateY(-2px)}
   a.tarjeta:hover .icono{transform:translateX(3px)}
   a.tarjeta:hover .ficha{transform:scale(1.03)}
-  .tarjeta.con-foto{overflow:hidden}
-  .tarjeta.con-foto .ficha{transition:transform 420ms var(--entra)}
+  .tarjeta.con-sello{overflow:hidden}
+  .tarjeta.con-sello .ficha{transition:background var(--t-corto) var(--entra)}
 }
 
 /* --- 16.6 El interruptor, otra vez ------------------------------
@@ -2840,7 +2709,7 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
 }
 @media print{
   .pasos::after{transform:scaleY(1)}
-  .tarjeta > .icono *,.insignia .icono *{stroke-dasharray:none !important}
+  .cabeza-tarjeta .icono *,.insignia .icono *{stroke-dasharray:none !important}
 }
 
 /* ============================================================
