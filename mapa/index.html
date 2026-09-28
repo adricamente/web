@@ -1,30 +1,42 @@
 <!doctype html>
 <!-- ============================================================
-     adricamente.com/mapa — el recurso gratuito
+     adricamente.com/mapa — el ejercicio de seis pasos
      ------------------------------------------------------------
-     Seis pasos y un resultado. Todo ocurre en el navegador de la
-     persona: las respuestas NO se envían a ningún sitio. Eso no es
-     solo una promesa de la página, es cómo está construida — no hay
-     ni una línea que mande las respuestas fuera. Por eso esta web
-     no trata datos de salud y nos ahorramos el artículo 9 del RGPD.
+     Todo ocurre en el navegador de la persona: las respuestas NO se
+     envían a ningún sitio. Eso no es solo una promesa de la página,
+     es cómo está construida — no hay ni una línea que mande las
+     respuestas fuera. Por eso esta web no trata datos de salud y nos
+     ahorramos el artículo 9 del RGPD.
+
+     Desde septiembre de 2026 las respuestas se recuerdan en el
+     propio navegador y se pueden descargar. Eso no cambia nada de lo
+     anterior: el almacenamiento local tampoco sale del dispositivo,
+     y el correo del formulario de Brevo NO se guarda nunca junto a
+     las respuestas.
+
+     Sin menú y sin pie a propósito: quien está contestando a la
+     quinta pregunta no necesita siete enlaces invitándole a irse.
      ============================================================ -->
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>El mapa de lo que evitas | adricamente</title>
   <meta name="description" content="Seis preguntas para ver, en diez minutos, qué estás evitando, qué te alivia hacerlo y qué te está costando.">
+
   <meta property="og:title" content="El mapa de lo que evitas">
   <meta property="og:description" content="Seis preguntas, diez minutos, y sales con tu propio patrón escrito en una frase.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/mapa/">
   <link rel="canonical" href="https://adricamente.com/mapa/">
 
-  <!-- Icono y previsualización al compartir. Las rutas empiezan
-       por / para que valgan igual desde /mapa/ que desde la raíz. -->
+  <!-- El ?v=2 es porque el navegador se guarda el icono durante días.
+       Sin él, quien ya haya entrado seguiría viendo el naranja. -->
   <link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
   <link rel="icon" href="/favicon-512.png?v=2" type="image/png" sizes="512x512">
+  <link rel="icon" href="/marca/adricamente-baldosa.svg?v=2" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
   <meta name="theme-color" content="#FAF9F5">
   <meta property="og:image" content="https://adricamente.com/og.jpg">
@@ -35,20 +47,26 @@
   <meta property="og:locale" content="es_ES">
   <meta name="twitter:card" content="summary_large_image">
 
-  <!-- Umami. Sin cookies y sin datos personales, así que no hace
-       falta banner de consentimiento ni tocar cookies.html. -->
+  <!-- Umami: medición sin cookies y sin datos personales. Por eso
+       esta web no necesita banner de consentimiento. -->
   <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
-
-  <!-- Medición. Hoy no sale nada de aquí: la función solo da nombre
-       a los cuatro momentos del embudo. El día que contrates un
-       proveedor sin cookies (Plausible o Umami), pegas su script
-       encima de esta línea y los cuatro eventos empiezan a contar
-       solos, sin tocar nada más. -->
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
   }catch(_){}};</script>
 
+  <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
+       de leer el CSS. Sin esto el navegador no sabe que existen hasta
+       que ha descargado y parseado la hoja entera, y el titular se
+       pinta con la fuente del sistema y luego salta.
+
+       Aquí había solo dos, con el argumento de que precargar las cinco
+       le quitaba ancho de banda a lo que sí se ve. La premisa era
+       falsa: midiendo qué pesos se pintan dentro de la primera pantalla
+       salen los cinco, en todas las páginas. Los tres que faltaban no
+       se descubrían hasta tener el CSS descargado y parseado —tres
+       niveles de dependencia— y eran la causa nombrada del único
+       desplazamiento de diseño que quedaba. -->
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-latin-800-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
@@ -60,9 +78,31 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="../estilos.min.css?v=35">
+  <link rel="stylesheet" href="/estilos.min.css?v=35">
 
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "https://adricamente.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "El mapa de lo que evitas",
+      "item": "https://adricamente.com/mapa/"
+    }
+  ]
+}
+  </script>
   <style>
+
   /* Estilos que solo existen en esta página. Todo lo compartido
      está en estilos.css; aquí solo lo propio del ejercicio. */
 
@@ -127,6 +167,7 @@
   /* usa el rojo de la paleta, no uno suelto; y ya no hay tema
      oscuro que anular */
   .aviso.mal{color:var(--error)}
+  
   </style>
 </head>
 
@@ -135,9 +176,22 @@
 <div class="barra-lectura" aria-hidden="true"></div>
 <div class="contenedor" style="padding-block:32px 0">
 
-  <p class="marca"><a href="/">adricamente</a></p>
+  <!-- La marca va dentro de un <header> y no suelta en el
+       contenedor. Suelta era exactamente lo que hacía la versión
+       escrita a mano de /mapa/, y arrastraba un incumplimiento de
+       axe —regla `region`: contenido fuera de toda zona con
+       papel— que nadie vio en meses porque esa página no entraba
+       en la auditoría, precisamente por no estar generada.
+
+       Un lector de pantalla que salta de zona en zona se encontraba
+       un enlace huérfano antes del contenido. Ahora es la cabecera
+       de la página, que es lo que es. -->
+  <header>
+    <p class="marca"><a href="/">adricamente</a></p>
+  </header>
 
   <main id="principal">
+
   <!-- El anunciador de paso. Sin esto, quien usa lector de
        pantalla pulsaba «Siguiente» y no oía absolutamente nada:
        ni que había cambiado de pregunta, ni cuál era. -->
@@ -162,6 +216,11 @@
       un poco.
     </p>
     <div class="navegacion"><button class="boton" type="button" data-ir="1">Empezar</button></div>
+
+    <p class="apunte" id="hay-guardado" hidden style="margin-top:18px">
+      <span id="hay-guardado-texto"></span>
+      <button type="button" class="boton-texto" id="seguir-guardado">Ver lo que tenía</button>
+    </p>
   </div>
 
   <!-- ===== PASO 1 ============================================ -->
@@ -343,10 +402,24 @@
       <p><strong>Ponle día y hora ahora mismo</strong>, antes de cerrar esto. Un plan sin momento concreto es un deseo.</p>
     </div>
 
-    <div class="navegacion" style="margin-bottom:30px">
+    <div class="navegacion" style="margin-bottom:18px">
       <button class="boton-texto" type="button" id="guardar">Guardar mi mapa</button>
       <button class="boton-texto" type="button" id="copiar">Copiar mi mapa</button>
       <button class="boton-texto" type="button" data-ir="1">Volver a hacerlo con otra cosa</button>
+    </div>
+
+    <div class="guardado" id="memoria-mapa" hidden style="margin-bottom:30px">
+      <p class="apunte" id="memoria-texto"></p>
+      <p>
+        <button type="button" class="boton secundario" id="exportar-mapa">Descargar para traerlo</button>
+        <button type="button" class="enlace-boton" id="olvidar-mapa">Borrar mis respuestas</button>
+      </p>
+      <p class="apunte">
+        Lo de arriba te lo llevas para leerlo. Esto otro es el mismo mapa
+        en un archivo, por si acabas reservando y quieres traerlo: se abre
+        en la primera sesión y nos ahorra media hora de preguntas.
+        <strong>Tu correo no se guarda nunca junto a las respuestas.</strong>
+      </p>
     </div>
 
     <!-- ===== Captura de correo ==============================
@@ -528,9 +601,87 @@
           aria-hidden="true" tabindex="-1"
           style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
 
+  
   </main>
 </div>
 
+<script>
+// ── Memoria local de las herramientas ─────────────────────────────
+// No sale un byte de este dispositivo. Sin peticiones, sin cuenta y
+// sin identificadores. Todo envuelto: si el almacenamiento falla o
+// está bloqueado, la herramienta sigue funcionando sin recordar.
+(function(){
+  var PRE = 'adr.';
+
+  function hay(){
+    try {
+      var k = PRE + 'prueba';
+      localStorage.setItem(k, '1');
+      localStorage.removeItem(k);
+      return true;
+    } catch(_) { return false; }
+  }
+
+  function guarda(clave, obj){
+    try { localStorage.setItem(PRE + clave, JSON.stringify(obj)); return true; }
+    catch(_) { return false; }
+  }
+
+  function lee(clave){
+    try {
+      var s = localStorage.getItem(PRE + clave);
+      return s ? JSON.parse(s) : null;
+    } catch(_) { return null; }
+  }
+
+  function olvida(clave){
+    try { localStorage.removeItem(PRE + clave); return true; }
+    catch(_) { return false; }
+  }
+
+  // Fecha local con desfase escrito. toISOString() da UTC, y un
+  // registro de las 00:30 en Madrid quedaria fechado el dia anterior.
+  function ahora(){
+    var d = new Date();
+    function dd(n){ return (n < 10 ? '0' : '') + n; }
+    var off = -d.getTimezoneOffset();
+    var signo = off >= 0 ? '+' : '-';
+    off = Math.abs(off);
+    return d.getFullYear() + '-' + dd(d.getMonth() + 1) + '-' + dd(d.getDate()) +
+           'T' + dd(d.getHours()) + ':' + dd(d.getMinutes()) + ':' + dd(d.getSeconds()) +
+           signo + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
+  }
+
+  function exporta(instrumento, version, respuestas){
+    var sobre = {
+      v: 1,
+      tipo: 'instrumento_propio',
+      instrumento: instrumento,
+      version: version,
+      completado_en: ahora(),
+      origen: 'web-publica',
+      respuestas: respuestas,
+      nota: 'Este fichero es el original. Lo que guarda el navegador es una copia que puede desaparecer.'
+    };
+    try {
+      var blob = new Blob([JSON.stringify(sobre, null, 2)],
+                          {type: 'application/json;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = instrumento + '-' + sobre.completado_en.slice(0, 10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      return true;
+    } catch(_) { return false; }
+  }
+
+  window.memoria = { hay: hay, guarda: guarda, lee: lee,
+                     olvida: olvida, exporta: exporta };
+})();
+</script>
 <script>
 /* ============================================================
    La lógica del ejercicio.
@@ -767,7 +918,154 @@
   });
 })();
 </script>
+<script>
+// ── El mapa se acuerda ────────────────────────────────────────────
+// Seis respuestas escritas a mano que hasta hoy desaparecian de un F5.
+// Quien volvia al dia siguiente no volvia a lo suyo: volvia a la
+// pagina en blanco.
+//
+// Sigue sin salir un byte del dispositivo, que es lo que permite que
+// esta web no trate datos de salud. El almacenamiento local tampoco
+// sale de aqui.
+(function(){
+  // Los seis campos del ejercicio. El nombre y el correo del
+  // formulario de Brevo NO estan en esta lista y no pueden estarlo:
+  // un identificador al lado de las respuestas convierte un cuaderno
+  // anonimo en un dato de salud identificado, y el dispositivo puede
+  // ser compartido.
+  var CAMPOS = [['c1','situacion'], ['c2','emocion'], ['c3','conducta'],
+                ['c5','coste'], ['c6','paso']];
 
+  var caja  = document.getElementById('memoria-mapa');
+  var texto = document.getElementById('memoria-texto');
+  if(!caja || !window.memoria || !window.memoria.hay()) return;
 
+  function alivio(){
+    var m = document.querySelector('input[name=alivio]:checked');
+    return m ? m.value : '';
+  }
+
+  function lee(){
+    var out = {};
+    CAMPOS.forEach(function(par){
+      var el = document.getElementById(par[0]);
+      out[par[1]] = el ? el.value.trim() : '';
+    });
+    out.alivio = alivio();
+    return out;
+  }
+
+  function lleno(d){
+    var n = 0;
+    for(var k in d){ if(d[k]) n++; }
+    return n;
+  }
+
+  // Rellenar .value por programa NO dispara 'input', y el guion del
+  // ejercicio guarda las respuestas en su propio objeto escuchando
+  // ese evento. Sin avisarle, los campos salian rellenos y el mapa
+  // final se pintaba con los textos de ejemplo: la herramienta
+  // "recordaba" y aun asi devolvia el resultado de otra persona.
+  //
+  // Se avisa con el evento en lugar de tocar sus variables: su flujo
+  // de datos sigue siendo suyo y esto no se entera de como funciona
+  // por dentro.
+  function pinta(d){
+    CAMPOS.forEach(function(par){
+      var el = document.getElementById(par[0]);
+      if(el && d[par[1]]){
+        el.value = d[par[1]];
+        el.dispatchEvent(new Event('input', {bubbles: true}));
+      }
+    });
+    if(d.alivio){
+      var r = document.querySelector('input[name=alivio][value="' + d.alivio + '"]');
+      if(r){
+        r.checked = true;
+        r.dispatchEvent(new Event('change', {bubbles: true}));
+      }
+    }
+  }
+
+  function dilo(n){
+    texto.textContent = n === 0
+      ? 'Lo que escribas se queda guardado en este navegador.'
+      : (n === 6 ? 'Mapa completo, guardado en este navegador.'
+                 : n + ' de 6 respuestas guardadas en este navegador.');
+  }
+
+  caja.hidden = false;
+  var previo = window.memoria.lee('mapa');
+  if(previo){ pinta(previo); dilo(lleno(previo)); } else { dilo(0); }
+
+  // Recordar las respuestas no basta: al recargar, el ejercicio
+  // vuelve al paso cero y quien escribio seis respuestas ayer no ve
+  // ninguna senal de que siguen ahi. Tendria que volver a pulsar
+  // seis veces para llegar a su propio mapa, y no lo va a hacer.
+  //
+  // Esto lo dice en la primera pantalla, que es donde esta mirando.
+  var n0 = lleno(previo || {});
+  if(n0 > 0){
+    var aviso = document.getElementById('hay-guardado');
+    var frase = document.getElementById('hay-guardado-texto');
+    if(aviso && frase){
+      frase.textContent = n0 === 6
+        ? 'Ya hiciste el mapa en este navegador y sigue guardado. '
+        : 'Lo dejaste a medias en este navegador, con ' + n0 + ' de 6 respuestas. ';
+      aviso.hidden = false;
+      document.getElementById('seguir-guardado').addEventListener('click', function(){
+        // Al mapa entero si esta completo; si no, al primer hueco.
+        if(n0 === 6){ document.querySelector('[data-ir="7"]').click(); return; }
+        var orden = ['c1','c2','c3',null,'c5','c6'];
+        for(var i = 0; i < orden.length; i++){
+          var id = orden[i];
+          var vacio = id ? !document.getElementById(id).value.trim()
+                         : !document.querySelector('input[name=alivio]:checked');
+          if(vacio){ document.querySelector('[data-ir="' + (i + 1) + '"]').click(); return; }
+        }
+      });
+    }
+  }
+
+  var espera;
+  function recuerda(){
+    clearTimeout(espera);
+    espera = setTimeout(function(){
+      var d = lee();
+      window.memoria.guarda('mapa', d);
+      dilo(lleno(d));
+    }, 600);
+  }
+
+  CAMPOS.forEach(function(par){
+    var el = document.getElementById(par[0]);
+    if(el) el.addEventListener('input', recuerda);
+  });
+  Array.prototype.forEach.call(
+    document.querySelectorAll('input[name=alivio]'),
+    function(r){ r.addEventListener('change', recuerda); });
+
+  document.getElementById('exportar-mapa').addEventListener('click', function(){
+    var ok = window.memoria.exporta('mapa-de-lo-que-evitas', 1, lee());
+    this.textContent = ok ? 'Descargado' : 'No se pudo descargar';
+    var b = this;
+    setTimeout(function(){ b.textContent = 'Descargar para traerlo'; }, 2500);
+    if(window.medir) window.medir('mapa_exportado');
+  });
+
+  document.getElementById('olvidar-mapa').addEventListener('click', function(){
+    if(!window.confirm('Se borran las seis respuestas de este navegador. No se puede deshacer.')) return;
+    window.memoria.olvida('mapa');
+    CAMPOS.forEach(function(par){
+      var el = document.getElementById(par[0]);
+      if(el) el.value = '';
+    });
+    Array.prototype.forEach.call(
+      document.querySelectorAll('input[name=alivio]'),
+      function(r){ r.checked = false; });
+    dilo(0);
+  });
+})();
+</script>
 </body>
 </html>
