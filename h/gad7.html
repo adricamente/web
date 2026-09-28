@@ -276,6 +276,34 @@ function ahora() {
     signo + dd(Math.floor(off/60)) + ':' + dd(off%60);
 }
 
+/* El codigo del paciente, si el enlace lo trae.
+
+   Va en el FRAGMENTO de la URL —.../phq9.html#a7f3— y eso no es un
+   detalle de estilo: el fragmento es la unica parte de una direccion
+   que el navegador NO manda al servidor. Nunca aparece en un registro
+   de Hostinger, ni en un Referer, ni en ningun sitio que no sea la
+   barra de direcciones de quien abre el enlace.
+
+   Y desde ahi entra DENTRO del sobre sellado, o sea que viaja cifrado.
+   Sirve para una cosa concreta y util: que al abrirlo en el Mac no
+   haya que acordarse de quien lo mando. Pegar un cuestionario en la
+   carpeta del paciente equivocado a la una de la manana es un error
+   facil y feo, y esto lo quita.
+
+   Lo que NO es: autenticacion. Quien tenga el enlace con el codigo
+   puede rellenarlo. Es una etiqueta, no una credencial, y el sistema
+   clinico tiene que tratarla asi.
+
+   Se valida el formato antes de meterlo: si alguien juega con el
+   fragmento, lo que entra en el sobre es null y no una cadena
+   arbitraria. */
+function codigo() {
+  try {
+    const c = decodeURIComponent((location.hash || '').slice(1)).trim();
+    return /^[a-z0-9-]{3,24}$/i.test(c) ? c : null;
+  } catch (_) { return null; }
+}
+
 document.getElementById('form').addEventListener('submit', (ev) => {
   ev.preventDefault();
   const momento = ahora();
@@ -288,6 +316,7 @@ document.getElementById('form').addEventListener('submit', (ev) => {
     respuestas: respuestas(),
     no_contestados: noContestados(),
     riesgo: bloqueRiesgo(),
+    cod: codigo(),
     origen: 'hoja-sellada',
   };
   const cifrado = b64(s.crypto_box_seal(
