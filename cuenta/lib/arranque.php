@@ -39,7 +39,8 @@ const ADR_RAIZ = __DIR__ . '/..';
    arranca a medias: se para y lo dice. Un portal que arranca sin
    secreto arranca inseguro. */
 $_candidatos = [
-    ADR_RAIZ . '/../adr-config.php',      // lo normal: un nivel arriba
+    ADR_RAIZ . '/../adr-config.php',      // public_html/adr-config.php
+    ADR_RAIZ . '/../../adr-config.php',   // mejor aun: fuera de public_html
     ADR_RAIZ . '/config.php',             // solo para pruebas locales
 ];
 $ADR = null;

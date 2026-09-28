@@ -10,14 +10,19 @@ declare(strict_types=1);
 ini_set('display_errors', '0');
 
 $problemas = [];
-$config = dirname(__DIR__) . '/adr-config.php';
-$ADR = is_file($config) ? require $config : null;
+$config = null;
+foreach ([dirname(__DIR__) . '/adr-config.php',
+          dirname(__DIR__, 2) . '/adr-config.php'] as $c) {
+    if (is_file($c)) { $config = $c; break; }
+}
+$ADR = $config ? require $config : null;
 
 if (!is_array($ADR)) {
     $problemas[] = ['No está <code>adr-config.php</code>',
-     'why' => 'Tiene que estar en <code>' . htmlspecialchars(dirname(__DIR__))
-     . '/adr-config.php</code>, o sea un nivel POR ENCIMA de esta carpeta. '
-     . 'Copia <code>config-ejemplo.php</code> ahí y rellénalo.'];
+     'why' => 'Vale en cualquiera de estos dos sitios, y el segundo es mejor:'
+     . '<br><code>' . htmlspecialchars(dirname(__DIR__)) . '/adr-config.php</code>'
+     . '<br><code>' . htmlspecialchars(dirname(__DIR__, 2)) . '/adr-config.php</code>'
+     . '<br>Copia ahí <code>config-ejemplo.php</code> y rellénalo.'];
 } else {
     foreach (['secreto' => 'el secreto del servidor',
               'mac'     => 'la clave del Mac',
