@@ -15,9 +15,11 @@ Allow: /
 # etiqueta noindex, y si se prohíbe el rastreo Google no puede leerla.
 # Las dos instrucciones juntas se anulan y la URL acaba indexada sin
 # descripción. El noindex solo funciona si se deja entrar al robot.
-# La carpeta temporal con las cuatro cartas —para cargarlas en Brevo
-# sin reescribirlas a mano— tampoco se bloquea aquí: cada archivo
-# lleva noindex, nofollow, y prohibir el rastreo impediría leerlo.
+# La carpeta /correos/ con las cuatro cartas ya no está. Era temporal
+# —estaba ahí para poder pegarlas en Brevo sin reescribirlas— y
+# llevaba noindex, pero seguía siendo pública: cualquiera con la URL
+# leía cuatro correos en borrador dirigidos a pacientes. Un archivo
+# que no está es más seguro que un archivo con noindex.
 # Se borra en cuanto estén las plantillas cargadas.
 
 # --- Los que NO se pueden bloquear -------------------------------
