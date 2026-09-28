@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<!-- Ni el titulo ni el nombre del fichero dicen de que va esto. Una
+     pestaña abierta o una descarga en la carpeta compartida de un
+     portatil no tienen por que contarle a nadie que alguien esta en
+     terapia. -->
+<title>Cuestionario</title>
+<style>@font-face{font-family:Archivo;src:local("Arial"),local("Helvetica Neue");font-weight:700}
+:root{
+  color-scheme:light;
+  --bg:#FAF9F5;--surface:#FFFFFF;--surface-2:#F5F3EF;
+  --ink:#25231F;--ink-2:#52504A;--muted:#6C6963;
+  --line:#E6E4DF;--line-strong:#CECCC6;--borde-campo:#8E8B85;
+  --accent:#1F5474;--accent-3:#173F58;--accent-soft:#E5EDF5;
+  --aviso-soft:#FCEAD2;--aviso:#7B4D13;
+  --r-s:8px;--r-m:12px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
+  font-size:17px;line-height:1.6}
+main{max-width:660px;margin:0 auto;padding:28px 20px 70px}
+h1{font-size:clamp(27px,5vw,34px);font-weight:800;letter-spacing:-.02em;margin:0 0 12px}
+h2{font-size:22px;font-weight:700;margin:0 0 10px}
+p{margin:0 0 14px;max-width:62ch}
+.etiqueta{font-size:12px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.intro{color:var(--ink-2)}
+.apunte{font-size:15px;color:var(--ink-2)}
+.pie{font-size:13.5px;color:var(--muted);margin-top:42px;
+  padding-top:16px;border-top:1px solid var(--line)}
+
+.nota{background:var(--accent-soft);border:1px solid #B9CDDC;
+  border-radius:var(--r-s);padding:14px 16px;margin:0 0 20px}
+.nota p{margin:0;font-size:15.5px;max-width:none}
+
+.progreso{height:4px;background:var(--line);border-radius:99px;
+  overflow:hidden;margin:22px 0 4px}
+.progreso i{display:block;height:100%;background:var(--accent);
+  width:0;transition:width .2s}
+
+.auxilio{background:var(--aviso-soft);border:1px solid #E7C89A;
+  border-left:5px solid var(--aviso);border-radius:var(--r-s);
+  padding:16px 18px;margin:0 0 18px}
+.auxilio p{margin:0;max-width:none;color:#5C390E}
+.auxilio p+p{margin-top:9px}
+
+.item{border-bottom:1px solid var(--line);padding:18px 0}
+.item fieldset{border:0;padding:0;margin:0}
+.item legend{font-weight:600;font-size:16.5px;padding:0;margin-bottom:10px}
+.opciones{display:flex;flex-direction:column;gap:2px}
+.opcion{display:flex;align-items:center;gap:11px;padding:9px 11px;
+  border-radius:var(--r-s);cursor:pointer}
+.opcion:hover{background:var(--surface-2)}
+.opcion input{width:19px;height:19px;margin:0;accent-color:var(--accent);flex:none}
+
+.acciones{margin-top:24px}
+.boton{display:inline-block;border:0;cursor:pointer;background:var(--accent);
+  color:#fff;font-weight:700;font-size:16.5px;padding:14px 24px;
+  border-radius:var(--r-s);font-family:inherit}
+.boton:hover{background:var(--accent-3)}
+input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+
+.boton.suave{background:transparent;color:var(--accent);
+  box-shadow:inset 0 0 0 1.5px var(--accent);padding:11px 18px;font-size:15.5px}
+.boton.suave:hover{background:var(--surface-2)}
+
+.hecho{background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-m);padding:22px 24px}
+
+/* El rescate de la descarga. Cerrado por defecto: quien ha visto su
+   archivo no tiene que ver un muro de letras raras y preguntarse si
+   algo ha fallado. */
+.rescate{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.rescate summary{cursor:pointer;font-weight:700;font-size:15.5px;
+  color:var(--accent);padding:4px 0}
+.rescate summary:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.rescate textarea{width:100%;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:13px;line-height:1.45;padding:10px 12px;border:1px solid var(--borde-campo);
+  border-radius:var(--r-s);background:var(--surface-2);color:var(--ink);
+  resize:vertical;word-break:break-all}
+
+@media (max-width:560px){main{padding:22px 16px 60px}}
+</style>
+</head>
+<body>
+<main id="principal">
+  <p class="etiqueta">Cuestionario</p>
+  <h1>PHQ-9</h1>
+  <p class="intro">Durante las <strong>últimas dos semanas</strong>, ¿con qué frecuencia te han molestado los siguientes problemas? Si alguna no sabes contestarla,
+  déjala en blanco.</p>
+
+  <div class="nota">
+    <p><strong>Esto no se envía a ningún sitio solo.</strong> Se queda
+    en tu dispositivo hasta que pulses el botón del final. Entonces se
+    cifra con mi clave y te descargas un archivo que solo puedo abrir
+    yo. Me lo mandas por donde hablemos normalmente.</p>
+  </div>
+
+  <div class="progreso" role="progressbar" aria-label="Contestadas"
+       aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="barra">
+    <i id="barra-i"></i>
+  </div>
+  <p class="apunte" id="cuenta"></p>
+
+  <div class="auxilio" id="auxilio" role="status" hidden>
+    <p><strong>Antes de seguir.</strong> Has marcado algo que quiero que
+    sepas que voy a leer. Pero esto no es un canal de urgencias: lo leo
+    cuando reviso, y puede que no sea hoy.</p>
+    <p><strong>Si ahora mismo estás en peligro, llama al 024</strong>
+    (atención a la conducta suicida, 24 horas, gratuito)
+    <strong>o al 112</strong>. Si puedes, díselo a alguien que tengas
+    cerca.</p>
+  </div>
+
+  <form id="form">
+    <div id="items"></div>
+    <p class="acciones">
+      <button class="boton" type="submit" id="enviar">Cifrar y descargar</button>
+    </p>
+    <p class="apunte" id="estado">Lo que marcas se guarda en este
+    dispositivo por si cierras sin terminar.</p>
+  </form>
+
+  <div class="hecho" id="hecho" hidden>
+    <h2>Listo</h2>
+    <p>Se ha descargado un archivo. <strong>Mándamelo</strong> por donde
+    hablemos: correo, WhatsApp, lo que uses.</p>
+    <p class="apunte">Da igual por dónde lo mandes: va cifrado y no lo
+    puede abrir nadie más que yo, ni siquiera quien lleve la aplicación
+    por la que me lo envíes.</p>
+    <p class="apunte">Ya puedes cerrar esta página. Se ha borrado lo que
+    quedaba guardado aquí.</p>
+
+    <!-- La red de seguridad de la descarga.
+
+         El boton de arriba fabrica un fichero con Blob + a.download.
+         Eso funciona en todos los navegadores de escritorio y en
+         Chrome de Android, pero en Safari de iPhone hay versiones que
+         en vez de descargar abren el contenido en una pestaña, o no
+         hacen nada visible. Si eso pasa, la persona ha contestado
+         nueve preguntas incomodas para nada y no sabe por que.
+
+         Asi que el sobre cifrado esta TAMBIEN aqui, en texto, para
+         copiarlo y pegarlo. Es el mismo sellado: pegarlo en WhatsApp
+         no lo hace menos seguro, solo mas feo.
+
+         Va dentro de un <details> cerrado para que quien haya visto su
+         descarga no se encuentre un muro de letras raras y piense que
+         algo ha ido mal. -->
+    <details class="rescate">
+      <summary>¿No ha aparecido ningún archivo?</summary>
+      <p class="apunte">Pasa en algunos iPhone. No has perdido nada:
+      copia este texto y mándamelo tal cual. Es exactamente lo mismo
+      que el archivo, y va igual de cifrado.</p>
+      <textarea id="sobre-texto" readonly rows="4"
+                aria-label="El cuestionario cifrado, para copiar"></textarea>
+      <p><button class="boton suave" type="button" id="copiar">Copiar</button>
+      <span class="apunte" id="copiado" role="status"></span></p>
+    </details>
+  </div>
+
+  <p class="pie">
+    Adrián Cuñat Andrés · Psicólogo colegiado nº CM03836 · Cursando el
+    Máster en Psicología General Sanitaria, en prácticas supervisadas en
+    el centro sanitario Neurococos.
+  </p>
+</main>
+
+  <script src="/h/sodio.js"></script>
+  <script src="/h/sodio-env.js"></script>
+<script>
+
+const PLANTILLA = {"instrumento": "PHQ-9", "version_items": "es-2017-munoz-navarro", "opciones": [[0, "Ningún día"], [1, "Varios días"], [2, "Más de la mitad de los días"], [3, "Casi todos los días"]], "items": ["Poco interés o placer en hacer las cosas", "Sentirte decaído, deprimido o sin esperanza", "Problemas para dormirte, para seguir durmiendo o dormir demasiado", "Sentirte cansado o con poca energía", "Poco apetito o comer en exceso", "Sentirte mal contigo mismo, o que eres un fracaso, o que te has fallado a ti o a tu familia", "Problemas para concentrarte en cosas como leer o ver la televisión", "Moverte o hablar tan despacio que otros podrían haberlo notado; o al revés, estar tan inquieto que te has movido mucho más de lo normal", "Pensar que estarías mejor muerto o que te harías daño de alguna forma"], "riesgo": {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"}};
+const PUBLICA = "wHlYCXKYXtIN2cWtSilEor5ZBQ9tXhbef6zmF0MQNV8=";
+const RIESGO = {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"};
+
+sodium.ready.then(function(){
+const s = sodium;
+const b64 = (u) => s.to_base64(u, s.base64_variants.ORIGINAL);
+const deB64 = (x) => s.from_base64(x, s.base64_variants.ORIGINAL);
+
+const CLAVE = 'adr.hoja.' + PLANTILLA.instrumento;
+const cont = document.getElementById('items');
+const aux = document.getElementById('auxilio');
+const barra = document.getElementById('barra');
+const barraI = document.getElementById('barra-i');
+const cuenta = document.getElementById('cuenta');
+
+PLANTILLA.items.forEach((texto, i) => {
+  const n = i + 1;
+  const ops = PLANTILLA.opciones.map(o =>
+    `<label class="opcion"><input type="radio" name="i${n}" value="${o[0]}">` +
+    `<span>${o[1]}</span></label>`).join('');
+  const d = document.createElement('div');
+  d.className = 'item';
+  d.innerHTML = `<fieldset><legend>${n}. ${texto}</legend>` +
+                `<div class="opciones">${ops}</div></fieldset>`;
+  cont.appendChild(d);
+});
+
+function respuestas() {
+  const out = [];
+  for (let n = 1; n <= PLANTILLA.items.length; n++) {
+    const m = document.querySelector(`input[name=i${n}]:checked`);
+    if (m) out.push({ item: n, valor: Number(m.value) });
+  }
+  return out;
+}
+
+function noContestados() {
+  const out = [];
+  for (let n = 1; n <= PLANTILLA.items.length; n++) {
+    if (!document.querySelector(`input[name=i${n}]:checked`)) out.push(n);
+  }
+  return out;
+}
+
+/* El bloque de riesgo, izado. Si el instrumento no declara ninguno,
+   viaja null y no es un hueco: es "este instrumento no tiene". */
+function bloqueRiesgo() {
+  if (!RIESGO) return null;
+  const m = document.querySelector(`input[name=i${RIESGO.item}]:checked`);
+  if (!m) return null;
+  const v = Number(m.value);
+  return { item: RIESGO.item, valor: v, umbral: RIESGO.umbral,
+           superado: v >= RIESGO.umbral, bandera: RIESGO.bandera };
+}
+
+function repintar() {
+  const n = respuestas().length, t = PLANTILLA.items.length;
+  barra.setAttribute('aria-valuenow', n);
+  barraI.style.width = (n / t * 100) + '%';
+  cuenta.textContent = n + ' de ' + t + ' contestadas';
+  const r = bloqueRiesgo();
+  const toca = !!(r && r.superado);
+  /* Debajo del item que lo dispara, que es donde esta mirando quien
+     acaba de marcarlo. Arriba del todo no lo ve. */
+  if (toca && aux.hidden) {
+    document.querySelector(`input[name=i${RIESGO.item}]`)
+      .closest('.item').insertAdjacentElement('afterend', aux);
+  }
+  aux.hidden = !toca;
+}
+
+/* Lo contestado a medias se queda aqui, sin cifrar, porque no sale del
+   dispositivo. Se borra al descargar. */
+function guardar() {
+  try { localStorage.setItem(CLAVE, JSON.stringify(respuestas())); } catch (_) {}
+}
+try {
+  const p = localStorage.getItem(CLAVE);
+  if (p) JSON.parse(p).forEach(r => {
+    const el = document.querySelector(`input[name=i${r.item}][value="${r.valor}"]`);
+    if (el) el.checked = true;
+  });
+} catch (_) {}
+
+cont.addEventListener('change', () => { guardar(); repintar(); });
+
+/* Fecha local con el desfase escrito. toISOString() da UTC, y un
+   cuestionario de las 00:30 en Madrid quedaria fechado el dia
+   anterior: con la deduplicacion por fecha, eso son dos registros
+   donde hay uno. */
+function ahora() {
+  const d = new Date(), dd = (n) => (n < 10 ? '0' : '') + n;
+  let off = -d.getTimezoneOffset();
+  const signo = off >= 0 ? '+' : '-';
+  off = Math.abs(off);
+  return d.getFullYear() + '-' + dd(d.getMonth()+1) + '-' + dd(d.getDate()) +
+    'T' + dd(d.getHours()) + ':' + dd(d.getMinutes()) + ':' + dd(d.getSeconds()) +
+    signo + dd(Math.floor(off/60)) + ':' + dd(off%60);
+}
+
+document.getElementById('form').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const momento = ahora();
+  const sobre = {
+    v: 1,
+    tipo: 'instrumento_estandarizado',
+    instrumento: PLANTILLA.instrumento,
+    version_items: PLANTILLA.version_items,
+    completado_en: momento,
+    respuestas: respuestas(),
+    no_contestados: noContestados(),
+    riesgo: bloqueRiesgo(),
+    origen: 'hoja-sellada',
+  };
+  const cifrado = b64(s.crypto_box_seal(
+    s.from_string(JSON.stringify(sobre)), deB64(PUBLICA)));
+  /* Lo que viaja: el sobre cifrado y nada mas. Ni el nombre del
+     instrumento va en claro, porque el nombre del fichero se ve en la
+     carpeta de descargas de un movil que puede no ser solo suyo. */
+  const fichero = JSON.stringify({ v: 1, formato: 'adr-sobre', cifrado }, null, 1);
+  const url = URL.createObjectURL(new Blob([fichero], {type: 'application/json'}));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cuestionario-' + momento.slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  /* El mismo sobre, en texto, por si la descarga no se ve. Se rellena
+     SIEMPRE, no solo cuando falla: no hay forma fiable de enterarse de
+     que a.click() no ha descargado nada. */
+  document.getElementById('sobre-texto').value = fichero;
+
+  try { localStorage.removeItem(CLAVE); } catch (_) {}
+  document.getElementById('form').hidden = true;
+  document.getElementById('hecho').hidden = false;
+  window.scrollTo(0, 0);
+});
+
+document.getElementById('copiar').addEventListener('click', () => {
+  const caja = document.getElementById('sobre-texto');
+  const di = (t) => { document.getElementById('copiado').textContent = t; };
+  /* navigator.clipboard necesita contexto seguro y permiso; si no lo
+     hay, se cae al metodo viejo, que en iOS necesita ademas el
+     setSelectionRange. Y si los dos fallan, se dice: mejor "copialo a
+     mano" que un boton que no hace nada. */
+  const viejo = () => {
+    caja.focus(); caja.select(); caja.setSelectionRange(0, 999999);
+    try { di(document.execCommand('copy') ? 'Copiado' : 'Selecciónalo y cópialo a mano'); }
+    catch (_) { di('Selecciónalo y cópialo a mano'); }
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(caja.value).then(() => di('Copiado'), viejo);
+  } else { viejo(); }
+});
+
+repintar();
+});
+</script>
+</body>
+</html>

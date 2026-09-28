@@ -1,0 +1,59 @@
+# ===================================================================
+# Las hojas selladas: su propia política de seguridad
+# -------------------------------------------------------------------
+# Hace falta una aparte por una razón concreta: libsodium compila
+# WebAssembly, y el `script-src` del sitio no lleva 'wasm-unsafe-eval'.
+# Sin esto la página carga, no pinta ni una pregunta, y el navegador
+# solo lo dice en la consola. Se descubrió probando con la cabecera de
+# producción puesta; en local, sin CSP, funcionaba perfectamente.
+#
+# Y ya que hay que escribir una, se escribe MÁS ESTRICTA que la del
+# sitio, no más laxa. Aquí el CSP no es decoración: es lo que OBLIGA a
+# que la promesa se cumpla.
+#
+#   connect-src 'none'   la página no puede hacer NINGUNA petición.
+#                        Si alguien añade un fetch dentro de dos años,
+#                        el navegador lo bloquea. La promesa de que las
+#                        respuestas no salen deja de depender de que
+#                        nadie se equivoque.
+#   form-action 'none'   el formulario no puede enviarse a ningún sitio.
+#   default-src 'none'   nada por defecto. Se permite lo justo.
+#   img-src / font-src   'none': no hay imágenes y las fuentes son
+#                        locales del sistema.
+# ===================================================================
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'none'; img-src 'none'; font-src 'none'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests"
+
+  # Que no se indexe ni se archive, además del meta de la propia página.
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+
+  # Una respuesta de cuestionario no se cachea en ningún intermediario.
+  #
+  # Aquí va `Header set` y NO `Header always set`, al revés que las dos
+  # de arriba, y la diferencia importa. mod_headers tiene dos tablas: la
+  # normal y la «always». Una directiva solo reemplaza a otra de LA
+  # MISMA tabla. El .htaccess de la raíz pone el Cache-Control del HTML
+  # con `Header set` —tabla normal—, así que si aquí se pusiera en la
+  # tabla «always» no reemplazaría nada: saldrían las DOS cabeceras,
+  # una diciendo «revalida» y otra «no guardes». Con `set` se sustituye
+  # limpiamente y sale una sola.
+  #
+  # Y ExpiresActive Off porque mod_expires también escribe Cache-Control
+  # por su cuenta: la raíz le dice «text/html, 0 segundos». Apagado
+  # aquí, no hay nadie más opinando.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-store"
+  </FilesMatch>
+
+  # libsodium son 1 MB entre los dos ficheros y no cambian nunca. Si no
+  # se cachean, cada paciente se los baja enteros cada vez que abre un
+  # cuestionario, y eso en un móvil con mala cobertura es la diferencia
+  # entre contestar y cerrar la pestaña. Un año, como las fuentes.
+  <FilesMatch "\.js$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>
