@@ -1,0 +1,4 @@
+# Aquí no entra nadie por la web. La base de datos de verdad vive un
+# nivel por encima de la carpeta pública; esta carpeta existe solo
+# para que una configuración despistada no deje el fichero servido.
+Require all denied

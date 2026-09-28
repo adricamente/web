@@ -1,0 +1,49 @@
+# ============================================================
+#  cuenta.adricamente.com — el portal del paciente
+#  ------------------------------------------------------------
+#  Más estricto que el de la web, igual que /h/. Aquí no hay
+#  nada que vender: hay bloques cifrados y una puerta.
+# ============================================================
+
+# --- Solo por https, y que el navegador lo recuerde -----------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^(.*)$ https://cuenta.adricamente.com/$1 [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=63072000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "no-referrer"
+  Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests"
+
+  # Nada de este portal se cachea en ningún intermediario, salvo
+  # libsodium, que es un megabyte que no cambia nunca.
+  <FilesMatch "\.(php|html)$">
+    Header set Cache-Control "no-store"
+  </FilesMatch>
+  <FilesMatch "^(sodio|sodio-env)\.js$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive Off
+</IfModule>
+
+# --- Nada de listar carpetas ----------------------------------
+Options -Indexes
+
+# --- Lo que no se sirve nunca ---------------------------------
+#  La configuración vive un nivel por encima, así que no debería
+#  estar aquí. Esto es el cinturón por si algún día alguien la
+#  copia «un momento» a esta carpeta y se le olvida.
+<FilesMatch "^(config.*\.php|.*\.sqlite.*|.*\.db|.*\.key)$">
+  Require all denied
+</FilesMatch>
+RedirectMatch 404 ^/(lib|datos)/
+
+ErrorDocument 404 /index.php
