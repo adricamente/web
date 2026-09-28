@@ -2793,6 +2793,45 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
 }
 .aviso-cuenta p{margin:0;font-size:15.5px;line-height:1.55;color:var(--ink-2);max-width:62ch}
 
+/* La caja de guardado de las herramientas.
+   Va oculta en el HTML y solo la enseña el guion si el
+   almacenamiento del navegador responde. Ese orden es deliberado: en
+   sesion privada, con la cuota llena o con el almacenamiento
+   bloqueado, no aparece una caja que promete recordar algo que no se
+   va a recordar. Recordar es una comodidad, nunca un requisito.
+
+   Y el parrafo largo del final no es letra pequena por accidente: es
+   la frase que sostiene toda la pieza —el archivo descargado es el
+   original— y por eso va dentro de la caja y no en un pie. */
+.guardado{
+  border:1px dashed var(--line-strong);
+  border-radius:var(--r-m);
+  padding:16px 19px 18px;
+  margin:14px 0 10px;
+}
+.guardado p{margin:0 0 11px;max-width:62ch}
+.guardado p:last-child{margin-bottom:0}
+.guardado .boton{margin-right:10px}
+
+/* Un boton que no parece un boton, para la accion destructiva. No
+   compite con el de descargar, que es el que cierra el ciclo. */
+.enlace-boton{
+  background:none;
+  border:0;
+  padding:4px 2px;
+  font:inherit;
+  font-size:15px;
+  color:var(--ink-2);
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:pointer;
+}
+.enlace-boton:hover{color:var(--ink)}
+
+@media (max-width:520px){
+  .guardado .boton{display:block;margin:0 0 10px}
+}
+
 @media (max-width:520px){
   .cuenta .campo{padding:16px 17px 18px}
   .resultado{padding:20px 21px 22px}

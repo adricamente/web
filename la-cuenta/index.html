@@ -66,7 +66,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=33">
+  <link rel="stylesheet" href="/estilos.min.css?v=34">
 
 
   <script type="application/ld+json">
@@ -277,6 +277,21 @@
     </p>
   </div>
 
+  <div class="guardado" id="guardado" hidden>
+    <p class="apunte" id="guardado-texto"></p>
+    <p>
+      <button type="button" class="boton secundario" id="exportar">Descargar mi cuenta</button>
+      <button type="button" class="enlace-boton" id="olvidar">Borrar lo guardado</button>
+    </p>
+    <p class="apunte">
+      <strong>El archivo que descargas es el original.</strong> Lo que
+      recuerda este navegador es una copia y puede desaparecer sola: al
+      limpiar el historial, al cambiar de móvil o si pasas unos días sin
+      volver. Nada de esto sale de tu dispositivo, así que si se pierde
+      aquí, se pierde del todo.
+    </p>
+  </div>
+
   <h2>Por qué la cuenta no se hace sola</h2>
   <p>
     Porque el alivio y el coste no llegan a la vez. <strong>El alivio llega en segundos y se nota</strong>; el coste llega en
@@ -375,6 +390,83 @@
   </section>
 
 <script>
+// ── Memoria local de las herramientas ─────────────────────────────
+// No sale un byte de este dispositivo. Sin peticiones, sin cuenta y
+// sin identificadores. Todo envuelto: si el almacenamiento falla o
+// está bloqueado, la herramienta sigue funcionando sin recordar.
+(function(){
+  var PRE = 'adr.';
+
+  function hay(){
+    try {
+      var k = PRE + 'prueba';
+      localStorage.setItem(k, '1');
+      localStorage.removeItem(k);
+      return true;
+    } catch(_) { return false; }
+  }
+
+  function guarda(clave, obj){
+    try { localStorage.setItem(PRE + clave, JSON.stringify(obj)); return true; }
+    catch(_) { return false; }
+  }
+
+  function lee(clave){
+    try {
+      var s = localStorage.getItem(PRE + clave);
+      return s ? JSON.parse(s) : null;
+    } catch(_) { return null; }
+  }
+
+  function olvida(clave){
+    try { localStorage.removeItem(PRE + clave); return true; }
+    catch(_) { return false; }
+  }
+
+  // Fecha local con desfase escrito. toISOString() da UTC, y un
+  // registro de las 00:30 en Madrid quedaria fechado el dia anterior.
+  function ahora(){
+    var d = new Date();
+    function dd(n){ return (n < 10 ? '0' : '') + n; }
+    var off = -d.getTimezoneOffset();
+    var signo = off >= 0 ? '+' : '-';
+    off = Math.abs(off);
+    return d.getFullYear() + '-' + dd(d.getMonth() + 1) + '-' + dd(d.getDate()) +
+           'T' + dd(d.getHours()) + ':' + dd(d.getMinutes()) + ':' + dd(d.getSeconds()) +
+           signo + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
+  }
+
+  function exporta(instrumento, version, respuestas){
+    var sobre = {
+      v: 1,
+      tipo: 'instrumento_propio',
+      instrumento: instrumento,
+      version: version,
+      completado_en: ahora(),
+      origen: 'web-publica',
+      respuestas: respuestas,
+      nota: 'Este fichero es el original. Lo que guarda el navegador es una copia que puede desaparecer.'
+    };
+    try {
+      var blob = new Blob([JSON.stringify(sobre, null, 2)],
+                          {type: 'application/json;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = instrumento + '-' + sobre.completado_en.slice(0, 10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      return true;
+    } catch(_) { return false; }
+  }
+
+  window.memoria = { hay: hay, guarda: guarda, lee: lee,
+                     olvida: olvida, exporta: exporta };
+})();
+</script>
+<script>
 // ── La cuenta ─────────────────────────────────────────────────────
 // Sin librerías, sin peticiones y sin guardar nada. Si este script no
 // llega a ejecutarse, la página se queda con los valores de ejemplo
@@ -445,8 +537,56 @@
       ' pasaron igual, una a una, sin que nadie las sumara.';
   }
 
+  // ── Memoria ─────────────────────────────────────────────────────
+  // Recordar es una comodidad, nunca un requisito: si el
+  // almacenamiento esta bloqueado, la herramienta funciona igual y el
+  // bloque de guardado no aparece. Se guarda un objeto con dos
+  // numeros y nada mas: ni nombre, ni correo, ni nada que pegue esto
+  // a una persona, porque el dispositivo puede ser compartido.
+  var caja  = document.getElementById('guardado');
+  var texto = document.getElementById('guardado-texto');
+  var hayMemoria = window.memoria && window.memoria.hay();
+
+  function respuestas(){
+    return { veces_por_semana: +veces.value, anios: +anios.value,
+             total: (+veces.value) * 52 * (+anios.value) };
+  }
+
+  function recuerda(){
+    if(!hayMemoria) return;
+    window.memoria.guarda('cuenta', respuestas());
+    texto.textContent = 'Guardado en este navegador. Cuando vuelvas estara aqui.';
+  }
+
+  if(hayMemoria){
+    caja.hidden = false;
+    var previo = window.memoria.lee('cuenta');
+    if(previo && previo.veces_por_semana && previo.anios){
+      veces.value = previo.veces_por_semana;
+      anios.value = previo.anios;
+      texto.textContent = 'Esto es lo que pusiste la ultima vez.';
+    } else {
+      texto.textContent = 'Lo que pongas se queda guardado en este navegador.';
+    }
+
+    document.getElementById('exportar').addEventListener('click', function(){
+      var ok = window.memoria.exporta('la-cuenta', 1, respuestas());
+      this.textContent = ok ? 'Descargada' : 'No se pudo descargar';
+      var b = this;
+      setTimeout(function(){ b.textContent = 'Descargar mi cuenta'; }, 2500);
+      if(window.medir) window.medir('cuenta_exportada');
+    });
+
+    document.getElementById('olvidar').addEventListener('click', function(){
+      window.memoria.olvida('cuenta');
+      texto.textContent = 'Borrado. Este navegador ya no recuerda nada de aqui.';
+    });
+  }
+
   veces.addEventListener('input', actualiza);
   anios.addEventListener('input', actualiza);
+  veces.addEventListener('change', recuerda);
+  anios.addEventListener('change', recuerda);
   actualiza();
 })();
 </script>
