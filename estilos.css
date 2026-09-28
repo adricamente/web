@@ -1982,7 +1982,7 @@ a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
 .rejilla-dia{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
 .campo-hoja.ancho{grid-column:1 / -1}
 .campo-hoja.corto{max-width:160px}
-.campo-hoja span{
+.campo-hoja span,.campo-hoja label{
   display:block;
   font-family:"Source Sans 3","Source reserva",sans-serif;
   font-size:13px;font-weight:600;color:var(--muted);
@@ -1993,6 +1993,48 @@ a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
   height:22px;
 }
 .campo-hoja .linea + .linea{margin-top:9px}
+
+/* La hoja se rellena, y sigue siendo una hoja.
+   Los seis apartados de cada dia eran rayas para escribir encima con
+   un boligrafo. Ahora son campos de verdad, pero se dibujan igual:
+   una sola linea abajo y nada mas. Quien la imprime en blanco la ve
+   como siempre; quien la rellena en el movil ya no tiene que
+   copiarla a las notas.
+
+   Por eso no llevan caja ni fondo: un recuadro de formulario
+   convertiria una hoja de papel en un tramite, y la pagina entera
+   esta escrita para que rellenarla cueste dos minutos. */
+.campo-hoja .escribible{
+  display:block;
+  width:100%;
+  box-sizing:border-box;
+  background:transparent;
+  border:0;
+  border-bottom:1px solid var(--line-strong);
+  border-radius:0;
+  padding:2px 2px 4px;
+  font:inherit;
+  font-size:15.5px;
+  line-height:1.5;
+  color:var(--ink);
+  resize:none;
+}
+textarea.campo-hoja .escribible,.campo-hoja textarea.escribible{height:52px}
+.campo-hoja .escribible:focus{
+  outline:0;
+  border-bottom-color:var(--accent);
+  border-bottom-width:2px;
+  padding-bottom:3px;
+}
+.campo-hoja .escribible.corto-n{max-width:5.5ch;text-align:center}
+/* Las flechitas del input numerico ocupan mas que el propio numero
+   en un campo de dos caracteres, y ademas invitan a pulsar en vez de
+   escribir, que es mas lento. */
+.campo-hoja input[type=number].escribible::-webkit-outer-spin-button,
+.campo-hoja input[type=number].escribible::-webkit-inner-spin-button{
+  -webkit-appearance:none;margin:0;
+}
+.campo-hoja input[type=number].escribible{-moz-appearance:textfield;appearance:textfield}
 @media (max-width:560px){
   .rejilla-dia{grid-template-columns:1fr}
   .campo-hoja.corto{max-width:none}
@@ -2012,8 +2054,17 @@ a.tarjeta.abierta:hover{background:var(--surface-2);border-style:solid}
   .grande{font-size:11pt;color:#333}
   .dia{border:1px solid #999;background:#fff;padding:8pt 10pt;margin-bottom:8pt}
   .dia h3{color:#000;font-size:11pt;margin-bottom:8pt}
-  .campo-hoja span{color:#555;font-size:8.5pt;margin-bottom:6pt}
+  .campo-hoja span,.campo-hoja label{color:#555;font-size:8.5pt;margin-bottom:6pt}
   .campo-hoja .linea{border-bottom:1px solid #999;height:16pt}
+  /* Impresa se comporta como siempre: raya fina y sin recuadro,
+     este o no rellenada. Altura fija para que una hoja llena y una
+     vacia ocupen lo mismo y las dos quepan en las mismas paginas. */
+  .campo-hoja .escribible{
+    border:0;border-bottom:1px solid #999;border-radius:0;
+    background:transparent;color:#000;font-size:9.5pt;
+    height:16pt;padding:0;resize:none;overflow:hidden;
+  }
+  .campo-hoja textarea.escribible{height:34pt}
 
   /* La hoja existe para imprimirse, así que el salto de página no
      puede partir un día por la mitad. Sin esto, la tercera o la

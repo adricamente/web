@@ -64,7 +64,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=34">
+  <link rel="stylesheet" href="/estilos.min.css?v=35">
 
 
   <script type="application/ld+json">
@@ -176,87 +176,105 @@
     <button class="boton" type="button" onclick="window.print()">Imprimir esta hoja</button>
   </p>
   <p class="apunte">
-    Si no tienes impresora, sirve igual: ve rellenándola en el móvil en
-    las notas, con estos mismos seis apartados por día.
+    Si no tienes impresora, <strong>se rellena aquí mismo</strong>. Lo que
+    escribas se queda guardado en este navegador y no sale de tu
+    dispositivo: no hay cuenta, no hay correo y no se envía a ningún
+    sitio.
   </p>
+
+  <div class="guardado al-imprimir-oculto" id="guardado" hidden>
+    <p class="apunte" id="guardado-texto"></p>
+    <p>
+      <button type="button" class="boton secundario" id="exportar">Descargar mi semana</button>
+      <button type="button" class="enlace-boton" id="olvidar">Borrar lo escrito</button>
+    </p>
+    <p class="apunte">
+      <strong>El archivo que descargas es el original.</strong> Lo que
+      recuerda este navegador es una copia y puede desaparecer sola: al
+      limpiar el historial, al cambiar de móvil o si pasas unos días sin
+      volver. Nada de esto sale de tu dispositivo, así que si se pierde
+      aquí, se pierde del todo. <strong>Si has llenado la semana entera,
+      descárgala.</strong>
+    </p>
+  </div>
 
   <h2>La semana</h2>
 
     <section class="dia">
       <h3>Lunes</h3>
       <div class="rejilla-dia">
-        <div class="campo-hoja"><span>¿Qué pasó?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué notaste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Del 0 al 10</span><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué hiciste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Alivio 0-10</span><div class="linea"></div></div>
-        <div class="campo-hoja ancho"><span>¿Qué te costó? (aunque sea pequeño)</span><div class="linea"></div></div>
+        <div class="campo-hoja"><label for="r0-paso">¿Qué pasó?</label><textarea class="linea escribible" id="r0-paso" rows="2"></textarea></div>
+        <div class="campo-hoja"><label for="r0-notaste">¿Qué notaste?</label><textarea class="linea escribible" id="r0-notaste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r0-malestar">Del 0 al 10</label><input class="linea escribible corto-n" id="r0-malestar" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja"><label for="r0-hiciste">¿Qué hiciste?</label><textarea class="linea escribible" id="r0-hiciste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r0-alivio">Alivio 0-10</label><input class="linea escribible corto-n" id="r0-alivio" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja ancho"><label for="r0-coste">¿Qué te costó? (aunque sea pequeño)</label><input class="linea escribible" id="r0-coste" type="text"></div>
       </div>
     </section>
     <section class="dia">
       <h3>Martes</h3>
       <div class="rejilla-dia">
-        <div class="campo-hoja"><span>¿Qué pasó?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué notaste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Del 0 al 10</span><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué hiciste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Alivio 0-10</span><div class="linea"></div></div>
-        <div class="campo-hoja ancho"><span>¿Qué te costó? (aunque sea pequeño)</span><div class="linea"></div></div>
+        <div class="campo-hoja"><label for="r1-paso">¿Qué pasó?</label><textarea class="linea escribible" id="r1-paso" rows="2"></textarea></div>
+        <div class="campo-hoja"><label for="r1-notaste">¿Qué notaste?</label><textarea class="linea escribible" id="r1-notaste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r1-malestar">Del 0 al 10</label><input class="linea escribible corto-n" id="r1-malestar" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja"><label for="r1-hiciste">¿Qué hiciste?</label><textarea class="linea escribible" id="r1-hiciste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r1-alivio">Alivio 0-10</label><input class="linea escribible corto-n" id="r1-alivio" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja ancho"><label for="r1-coste">¿Qué te costó? (aunque sea pequeño)</label><input class="linea escribible" id="r1-coste" type="text"></div>
       </div>
     </section>
     <section class="dia">
       <h3>Miércoles</h3>
       <div class="rejilla-dia">
-        <div class="campo-hoja"><span>¿Qué pasó?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué notaste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Del 0 al 10</span><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué hiciste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Alivio 0-10</span><div class="linea"></div></div>
-        <div class="campo-hoja ancho"><span>¿Qué te costó? (aunque sea pequeño)</span><div class="linea"></div></div>
+        <div class="campo-hoja"><label for="r2-paso">¿Qué pasó?</label><textarea class="linea escribible" id="r2-paso" rows="2"></textarea></div>
+        <div class="campo-hoja"><label for="r2-notaste">¿Qué notaste?</label><textarea class="linea escribible" id="r2-notaste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r2-malestar">Del 0 al 10</label><input class="linea escribible corto-n" id="r2-malestar" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja"><label for="r2-hiciste">¿Qué hiciste?</label><textarea class="linea escribible" id="r2-hiciste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r2-alivio">Alivio 0-10</label><input class="linea escribible corto-n" id="r2-alivio" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja ancho"><label for="r2-coste">¿Qué te costó? (aunque sea pequeño)</label><input class="linea escribible" id="r2-coste" type="text"></div>
       </div>
     </section>
     <section class="dia">
       <h3>Jueves</h3>
       <div class="rejilla-dia">
-        <div class="campo-hoja"><span>¿Qué pasó?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué notaste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Del 0 al 10</span><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué hiciste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Alivio 0-10</span><div class="linea"></div></div>
-        <div class="campo-hoja ancho"><span>¿Qué te costó? (aunque sea pequeño)</span><div class="linea"></div></div>
+        <div class="campo-hoja"><label for="r3-paso">¿Qué pasó?</label><textarea class="linea escribible" id="r3-paso" rows="2"></textarea></div>
+        <div class="campo-hoja"><label for="r3-notaste">¿Qué notaste?</label><textarea class="linea escribible" id="r3-notaste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r3-malestar">Del 0 al 10</label><input class="linea escribible corto-n" id="r3-malestar" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja"><label for="r3-hiciste">¿Qué hiciste?</label><textarea class="linea escribible" id="r3-hiciste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r3-alivio">Alivio 0-10</label><input class="linea escribible corto-n" id="r3-alivio" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja ancho"><label for="r3-coste">¿Qué te costó? (aunque sea pequeño)</label><input class="linea escribible" id="r3-coste" type="text"></div>
       </div>
     </section>
     <section class="dia">
       <h3>Viernes</h3>
       <div class="rejilla-dia">
-        <div class="campo-hoja"><span>¿Qué pasó?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué notaste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Del 0 al 10</span><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué hiciste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Alivio 0-10</span><div class="linea"></div></div>
-        <div class="campo-hoja ancho"><span>¿Qué te costó? (aunque sea pequeño)</span><div class="linea"></div></div>
+        <div class="campo-hoja"><label for="r4-paso">¿Qué pasó?</label><textarea class="linea escribible" id="r4-paso" rows="2"></textarea></div>
+        <div class="campo-hoja"><label for="r4-notaste">¿Qué notaste?</label><textarea class="linea escribible" id="r4-notaste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r4-malestar">Del 0 al 10</label><input class="linea escribible corto-n" id="r4-malestar" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja"><label for="r4-hiciste">¿Qué hiciste?</label><textarea class="linea escribible" id="r4-hiciste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r4-alivio">Alivio 0-10</label><input class="linea escribible corto-n" id="r4-alivio" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja ancho"><label for="r4-coste">¿Qué te costó? (aunque sea pequeño)</label><input class="linea escribible" id="r4-coste" type="text"></div>
       </div>
     </section>
     <section class="dia">
       <h3>Sábado</h3>
       <div class="rejilla-dia">
-        <div class="campo-hoja"><span>¿Qué pasó?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué notaste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Del 0 al 10</span><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué hiciste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Alivio 0-10</span><div class="linea"></div></div>
-        <div class="campo-hoja ancho"><span>¿Qué te costó? (aunque sea pequeño)</span><div class="linea"></div></div>
+        <div class="campo-hoja"><label for="r5-paso">¿Qué pasó?</label><textarea class="linea escribible" id="r5-paso" rows="2"></textarea></div>
+        <div class="campo-hoja"><label for="r5-notaste">¿Qué notaste?</label><textarea class="linea escribible" id="r5-notaste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r5-malestar">Del 0 al 10</label><input class="linea escribible corto-n" id="r5-malestar" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja"><label for="r5-hiciste">¿Qué hiciste?</label><textarea class="linea escribible" id="r5-hiciste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r5-alivio">Alivio 0-10</label><input class="linea escribible corto-n" id="r5-alivio" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja ancho"><label for="r5-coste">¿Qué te costó? (aunque sea pequeño)</label><input class="linea escribible" id="r5-coste" type="text"></div>
       </div>
     </section>
     <section class="dia">
       <h3>Domingo</h3>
       <div class="rejilla-dia">
-        <div class="campo-hoja"><span>¿Qué pasó?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué notaste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Del 0 al 10</span><div class="linea"></div></div>
-        <div class="campo-hoja"><span>¿Qué hiciste?</span><div class="linea"></div><div class="linea"></div></div>
-        <div class="campo-hoja corto"><span>Alivio 0-10</span><div class="linea"></div></div>
-        <div class="campo-hoja ancho"><span>¿Qué te costó? (aunque sea pequeño)</span><div class="linea"></div></div>
+        <div class="campo-hoja"><label for="r6-paso">¿Qué pasó?</label><textarea class="linea escribible" id="r6-paso" rows="2"></textarea></div>
+        <div class="campo-hoja"><label for="r6-notaste">¿Qué notaste?</label><textarea class="linea escribible" id="r6-notaste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r6-malestar">Del 0 al 10</label><input class="linea escribible corto-n" id="r6-malestar" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja"><label for="r6-hiciste">¿Qué hiciste?</label><textarea class="linea escribible" id="r6-hiciste" rows="2"></textarea></div>
+        <div class="campo-hoja corto"><label for="r6-alivio">Alivio 0-10</label><input class="linea escribible corto-n" id="r6-alivio" type="number" min="0" max="10" step="1" inputmode="numeric"></div>
+        <div class="campo-hoja ancho"><label for="r6-coste">¿Qué te costó? (aunque sea pequeño)</label><input class="linea escribible" id="r6-coste" type="text"></div>
       </div>
     </section>
 
@@ -303,6 +321,189 @@
       Trae la hoja. Es exactamente con lo que se empieza a trabajar.
     </p>
   </section>
+
+<script>
+// ── Memoria local de las herramientas ─────────────────────────────
+// No sale un byte de este dispositivo. Sin peticiones, sin cuenta y
+// sin identificadores. Todo envuelto: si el almacenamiento falla o
+// está bloqueado, la herramienta sigue funcionando sin recordar.
+(function(){
+  var PRE = 'adr.';
+
+  function hay(){
+    try {
+      var k = PRE + 'prueba';
+      localStorage.setItem(k, '1');
+      localStorage.removeItem(k);
+      return true;
+    } catch(_) { return false; }
+  }
+
+  function guarda(clave, obj){
+    try { localStorage.setItem(PRE + clave, JSON.stringify(obj)); return true; }
+    catch(_) { return false; }
+  }
+
+  function lee(clave){
+    try {
+      var s = localStorage.getItem(PRE + clave);
+      return s ? JSON.parse(s) : null;
+    } catch(_) { return null; }
+  }
+
+  function olvida(clave){
+    try { localStorage.removeItem(PRE + clave); return true; }
+    catch(_) { return false; }
+  }
+
+  // Fecha local con desfase escrito. toISOString() da UTC, y un
+  // registro de las 00:30 en Madrid quedaria fechado el dia anterior.
+  function ahora(){
+    var d = new Date();
+    function dd(n){ return (n < 10 ? '0' : '') + n; }
+    var off = -d.getTimezoneOffset();
+    var signo = off >= 0 ? '+' : '-';
+    off = Math.abs(off);
+    return d.getFullYear() + '-' + dd(d.getMonth() + 1) + '-' + dd(d.getDate()) +
+           'T' + dd(d.getHours()) + ':' + dd(d.getMinutes()) + ':' + dd(d.getSeconds()) +
+           signo + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
+  }
+
+  function exporta(instrumento, version, respuestas){
+    var sobre = {
+      v: 1,
+      tipo: 'instrumento_propio',
+      instrumento: instrumento,
+      version: version,
+      completado_en: ahora(),
+      origen: 'web-publica',
+      respuestas: respuestas,
+      nota: 'Este fichero es el original. Lo que guarda el navegador es una copia que puede desaparecer.'
+    };
+    try {
+      var blob = new Blob([JSON.stringify(sobre, null, 2)],
+                          {type: 'application/json;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = instrumento + '-' + sobre.completado_en.slice(0, 10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+      return true;
+    } catch(_) { return false; }
+  }
+
+  window.memoria = { hay: hay, guarda: guarda, lee: lee,
+                     olvida: olvida, exporta: exporta };
+})();
+</script>
+<script>
+// ── La hoja de registro ───────────────────────────────────────────
+// Siete dias por seis campos. Se guarda entero como un objeto y no
+// campo a campo: una escritura por cambio en vez de cuarenta y dos
+// claves sueltas, y asi el export y el guardado leen exactamente lo
+// mismo. No sale un byte del dispositivo.
+(function(){
+  var DIAS   = ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"];
+  var CAMPOS = ["paso","notaste","malestar","hiciste","alivio","coste"];
+  var NUMS   = { malestar: 1, alivio: 1 };
+
+  var caja  = document.getElementById('guardado');
+  var texto = document.getElementById('guardado-texto');
+  if(!caja || !window.memoria || !window.memoria.hay()) return;
+
+  function campo(i, c){ return document.getElementById('r' + i + '-' + c); }
+
+  function lee(){
+    var out = {};
+    DIAS.forEach(function(d, i){
+      var fila = {}, algo = false;
+      CAMPOS.forEach(function(c){
+        var el = campo(i, c);
+        var v = el ? el.value.trim() : '';
+        if(v) algo = true;
+        // Las dos casillas de 0 a 10 viajan como numero, no como
+        // texto. Y vacio es null, nunca 0: un 0 en la casilla de
+        // alivio significa que no alivio nada, que es un dato; una
+        // casilla sin rellenar no significa nada y no puede acabar
+        // pareciendose a un cero.
+        if(NUMS[c]) fila[c] = v === '' ? null : Number(v);
+        else        fila[c] = v;
+      });
+      // Un dia sin nada escrito no viaja: el fichero exportado tiene
+      // que enseñar la semana que hubo, no siete plantillas vacias.
+      if(algo) out[d] = fila;
+    });
+    return out;
+  }
+
+  function pinta(datos){
+    DIAS.forEach(function(d, i){
+      if(!datos[d]) return;
+      CAMPOS.forEach(function(c){
+        var el = campo(i, c);
+        var v = datos[d][c];
+        if(el && v !== null && v !== undefined && v !== '') el.value = v;
+      });
+    });
+  }
+
+  function cuenta(datos){ return Object.keys(datos).length; }
+
+  function dilo(n){
+    if(n === 0){ texto.textContent = 'Lo que escribas se guarda en este navegador.'; return; }
+    if(n === 7){ texto.textContent = 'Semana completa. Este es el momento de descargarla.'; return; }
+    texto.textContent = n === 1 ? 'Un dia guardado. Quedan seis.'
+                                : n + ' dias guardados. Quedan ' + (7 - n) + '.';
+  }
+
+  caja.hidden = false;
+  var previo = window.memoria.lee('registro');
+  if(previo){ pinta(previo); dilo(cuenta(previo)); } else { dilo(0); }
+
+  var espera;
+  function recuerda(){
+    // Se escribe con un respiro: teclear en un textarea dispara input
+    // en cada letra, y guardar cuarenta veces por frase no aporta nada
+    // y puede llenar la cuota antes de tiempo.
+    clearTimeout(espera);
+    espera = setTimeout(function(){
+      var datos = lee();
+      window.memoria.guarda('registro', datos);
+      dilo(cuenta(datos));
+    }, 600);
+  }
+
+  DIAS.forEach(function(d, i){
+    CAMPOS.forEach(function(c){
+      var el = campo(i, c);
+      if(el) el.addEventListener('input', recuerda);
+    });
+  });
+
+  document.getElementById('exportar').addEventListener('click', function(){
+    var ok = window.memoria.exporta('hoja-de-registro', 1, { dias: lee() });
+    this.textContent = ok ? 'Descargada' : 'No se pudo descargar';
+    var b = this;
+    setTimeout(function(){ b.textContent = 'Descargar mi semana'; }, 2500);
+    if(window.medir) window.medir('registro_exportado');
+  });
+
+  document.getElementById('olvidar').addEventListener('click', function(){
+    if(!window.confirm('Se borra la semana entera de este navegador. No se puede deshacer.')) return;
+    window.memoria.olvida('registro');
+    DIAS.forEach(function(d, i){
+      CAMPOS.forEach(function(c){
+        var el = campo(i, c);
+        if(el) el.value = '';
+      });
+    });
+    dilo(0);
+  });
+})();
+</script>
 
   </main>
 
