@@ -25,7 +25,7 @@
   <FilesMatch "\.(php|html)$">
     Header set Cache-Control "no-store"
   </FilesMatch>
-  <FilesMatch "^(sodio|sodio-env)\.js$">
+  <FilesMatch "^sodio-sumo(-env)?\.js$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 </IfModule>

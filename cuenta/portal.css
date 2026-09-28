@@ -1,0 +1,182 @@
+/* ===================================================================
+   portal.css — la hoja del portal del paciente
+   -------------------------------------------------------------------
+   Los mismos tokens que adricamente.com, pero hoja propia: la de la
+   web son 120 kB pensados para paginas de venta —laminas, retratos,
+   animaciones— y aqui no hay nada de eso.
+
+   Sin fuentes propias, y no por peso: la CSP de esta carpeta lleva
+   `default-src 'none'` y no abre `font-src`. Una @font-face aqui no
+   falla con un error, simplemente no carga, y la pagina se ve con la
+   fuente por defecto sin que nadie se entere. Antes que una fuente
+   que a veces esta, la del sistema siempre.
+   =================================================================== */
+:root{
+  color-scheme:light;
+  --bg:#FAF9F5; --surface:#FFFFFF; --surface-2:#F5F3EF;
+  --ink:#25231F; --ink-2:#52504A; --muted:#6C6963;
+  --line:#E6E4DF; --line-strong:#CECCC6; --borde-campo:#8E8B85;
+  --accent:#1F5474; --accent-3:#173F58; --accent-soft:#E5EDF5;
+  --error:#A12C2E; --error-soft:#FFE6E3;
+  --exito:#2C632B; --exito-soft:#E2F0E0;
+  --aviso:#7B4D13; --aviso-soft:#FCEAD2;
+  --shadow:0 1px 2px rgba(37,35,31,.05), 0 12px 32px -16px rgba(37,35,31,.28);
+  --r-s:8px; --r-m:12px; --r-l:16px;
+  --ancho:720px;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
+  font-size:17px; line-height:1.6;
+}
+h1,h2,h3{font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0 0 14px}
+h1{font-size:clamp(28px,5vw,38px);font-weight:800}
+h2{font-size:clamp(21px,3vw,25px);font-weight:700;margin-top:34px}
+h3{font-size:18px;font-weight:700;margin-bottom:8px}
+p{margin:0 0 15px;max-width:62ch}
+a{color:var(--accent);text-underline-offset:3px}
+
+.saltar{position:absolute;left:-9999px;background:var(--surface);padding:12px 18px;border-radius:var(--r-s)}
+.saltar:focus{left:12px;top:12px;z-index:10}
+
+/* --- El armazón -------------------------------------------------- */
+.barra{
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+  position:sticky; top:0; z-index:5;
+}
+.barra .dentro{
+  max-width:var(--ancho); margin:0 auto;
+  padding:13px 20px;
+  display:flex; align-items:center; gap:14px;
+}
+.marca{
+  font-family:-apple-system,system-ui,sans-serif; font-weight:800; font-size:17px;
+  color:var(--accent); text-decoration:none; margin-right:auto;
+}
+.barra nav{display:flex;gap:4px;flex-wrap:wrap}
+.barra nav a{
+  color:var(--ink-2); text-decoration:none; font-size:15px; font-weight:600;
+  padding:7px 11px; border-radius:var(--r-s);
+}
+.barra nav a:hover{background:var(--surface-2);color:var(--ink)}
+.barra nav a[aria-current=page]{background:var(--accent-soft);color:var(--accent-3)}
+
+main{max-width:var(--ancho);margin:0 auto;padding:30px 20px 70px}
+.centrado{max-width:430px;margin:min(9vh,70px) auto;padding:0 20px 60px}
+
+/* --- Piezas ------------------------------------------------------ */
+.caja{
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--r-m); padding:20px 22px; margin-bottom:16px;
+}
+.caja.plana{background:var(--surface-2);border-color:transparent}
+.apunte{font-size:15px;color:var(--ink-2)}
+.etiqueta{
+  font-family:-apple-system,system-ui,sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 7px;
+}
+
+.boton{
+  display:inline-block; border:0; cursor:pointer;
+  background:var(--accent); color:#fff;
+  font-family:-apple-system,system-ui,sans-serif; font-weight:700; font-size:16px;
+  padding:13px 22px; border-radius:var(--r-s);
+  text-decoration:none; text-align:center;
+}
+.boton:hover{background:var(--accent-3)}
+.boton:disabled{background:var(--line-strong);cursor:not-allowed}
+.boton.ancho{width:100%}
+.boton.suave{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.boton.suave:hover{background:var(--accent-soft)}
+.enlace-boton{
+  background:none;border:0;padding:5px 2px;font:inherit;font-size:15px;
+  color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;
+}
+
+label{display:block;font-weight:600;font-size:15px;margin-bottom:6px}
+input[type=text],input[type=email],input[type=password],input[type=number],textarea,select{
+  width:100%; padding:11px 13px; font:inherit;
+  background:var(--surface); color:var(--ink);
+  border:1px solid var(--borde-campo); border-radius:var(--r-s);
+}
+input:focus-visible,textarea:focus-visible,select:focus-visible,
+.boton:focus-visible,a:focus-visible,button:focus-visible{
+  outline:2.5px solid var(--accent); outline-offset:2px;
+}
+.campo{margin-bottom:17px}
+.pista{font-size:14px;color:var(--muted);margin:5px 0 0}
+
+/* --- Avisos ------------------------------------------------------ */
+.nota{border-radius:var(--r-s);padding:13px 16px;margin:0 0 16px;font-size:15.5px}
+.nota p{margin:0;max-width:none}
+.nota p + p{margin-top:8px}
+.nota.mal{background:var(--error-soft);color:#6E1E20;border:1px solid #E9B7B4}
+.nota.bien{background:var(--exito-soft);color:#1E4A1D;border:1px solid #B6D4B4}
+.nota.ojo{background:var(--aviso-soft);color:#5C390E;border:1px solid #E7C89A}
+
+/* El bloque de crisis. Aparece cuando alguien acaba de marcar el item
+   de riesgo, y dice la verdad sobre los plazos: esto lo lee una
+   persona, pero no necesariamente hoy. Nunca un "gracias, enviado". */
+.auxilio{
+  background:var(--aviso-soft); border:1px solid #E7C89A;
+  border-left:5px solid var(--aviso);
+  border-radius:var(--r-s); padding:16px 18px; margin:0 0 18px;
+}
+.auxilio strong{color:#5C390E}
+.auxilio p{margin:0;max-width:none;color:#5C390E}
+.auxilio p + p{margin-top:9px}
+
+/* --- Listas del panel -------------------------------------------- */
+.fila{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:15px 0; border-bottom:1px solid var(--line);
+}
+.fila:last-child{border-bottom:0;padding-bottom:0}
+.fila:first-child{padding-top:0}
+.fila .texto{flex:1;min-width:190px}
+.fila .texto p{margin:2px 0 0;font-size:14.5px;color:var(--muted)}
+.fila strong{font-size:16.5px}
+
+.vacio{text-align:center;padding:26px 10px;color:var(--ink-2)}
+.vacio p{margin:0 auto;max-width:36ch}
+
+.sello{
+  display:inline-block;font-size:12.5px;font-weight:700;
+  padding:3px 9px;border-radius:99px;
+  background:var(--accent-soft);color:var(--accent-3);
+}
+.sello.caduca{background:var(--aviso-soft);color:#5C390E}
+
+/* --- Cuestionario ------------------------------------------------ */
+.item{border-bottom:1px solid var(--line);padding:18px 0}
+.item:first-of-type{padding-top:4px}
+.item legend{font-weight:600;font-size:16.5px;padding:0;margin-bottom:11px}
+.item fieldset{border:0;padding:0;margin:0}
+.opciones{display:flex;flex-direction:column;gap:2px}
+.opcion{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 11px;border-radius:var(--r-s);cursor:pointer;
+}
+.opcion:hover{background:var(--surface-2)}
+.opcion input{width:19px;height:19px;margin:0;accent-color:var(--accent);flex:none}
+.progreso-barra{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin:0 0 4px}
+.progreso-barra i{display:block;height:100%;background:var(--accent);transition:width .2s}
+
+/* --- Gráfica ----------------------------------------------------- */
+.grafica{width:100%;height:auto;display:block}
+.leyenda{list-style:none;padding:0;margin:12px 0 0;display:flex;gap:18px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2)}
+.leyenda li{display:flex;align-items:center;gap:7px}
+.muestra{width:22px;height:3px;border-radius:2px;background:var(--accent);flex:none}
+.muestra.corte{background:var(--error);height:0;border-top:2px dashed var(--error)}
+
+@media (max-width:560px){
+  main{padding:22px 16px 60px}
+  .barra .dentro{padding:11px 16px}
+  .caja{padding:17px 17px}
+}
