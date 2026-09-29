@@ -296,6 +296,64 @@ case 'alta': {
     adr_json(['ok' => true, 'enlace' => $ADR['sitio'] . '/activar.php?p=' . $papel]);
 }
 
+/* Todo lo que la consola del Mac necesita para pintar su pantalla, en
+   una sola llamada.
+   -------------------------------------------------------------------
+   Una consola que pide cinco cosas para dibujarse se dibuja a trozos y
+   parece rota en una conexión mala. Y aquí no sale ni un dato clínico:
+   quién tiene cuenta, si la ha activado, con qué versión de clave, y
+   CUÁNTOS sobres y tareas hay pendientes. Cuántos, no qué. */
+case 'panel_mac': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+
+    $ps = $db->query('SELECT cod, correo, alta, activado, publica_v, ultimo
+                      FROM pacientes ORDER BY alta')->fetchAll();
+    $pend = [];
+    foreach ($db->query('SELECT cod, COUNT(*) n FROM sobres
+                         WHERE direccion = 1 AND recogido IS NULL
+                         GROUP BY cod')->fetchAll() as $r) $pend[$r['cod']] = (int)$r['n'];
+    $tar = [];
+    foreach ($db->query('SELECT cod, COUNT(*) n FROM tareas
+                         WHERE hecho IS NULL GROUP BY cod')->fetchAll() as $r) $tar[$r['cod']] = (int)$r['n'];
+    $viejos = [];
+    foreach ($db->query('SELECT s.cod, COUNT(*) n FROM sobres s
+                         JOIN pacientes p ON p.cod = s.cod
+                         WHERE s.direccion = 2 AND s.para_v <> p.publica_v
+                         GROUP BY s.cod')->fetchAll() as $r) $viejos[$r['cod']] = (int)$r['n'];
+
+    $out = [];
+    foreach ($ps as $p) {
+        $out[] = [
+            'cod' => $p['cod'], 'correo' => $p['correo'],
+            'alta' => $p['alta'], 'activado' => $p['activado'],
+            'v' => (int)$p['publica_v'], 'ultimo' => $p['ultimo'],
+            'por_recoger' => $pend[$p['cod']] ?? 0,
+            'tareas' => $tar[$p['cod']] ?? 0,
+            /* Cuántos documentos suyos quedaron sellados a una clave
+               anterior. Es lo que hay que reenviar después de que
+               alguien restablezca la contraseña, y si no se enseña en
+               algún sitio no se entera nadie. */
+            'por_reenviar' => $viejos[$p['cod']] ?? 0,
+        ];
+    }
+    $m = $db->query("SELECT valor FROM ajustes WHERE clave = 'mac_publica'")->fetch();
+    adr_json(['pacientes' => $out, 'mac_publica' => $m ? $m['valor'] : null]);
+}
+
+/* Los documentos de un paciente que hay que volver a sellar, con su
+   texto NO: solo el id y el título. El texto está cifrado a una clave
+   que ya nadie tiene — por eso hay que reenviarlo desde el original
+   del Mac. */
+case 'por_reenviar': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->prepare('SELECT s.id, s.titulo, s.clase, s.creado, s.para_v
+                       FROM sobres s JOIN pacientes p ON p.cod = s.cod
+                       WHERE s.cod = ? AND s.direccion = 2 AND s.para_v <> p.publica_v
+                       ORDER BY s.id');
+    $q->execute([(string)($_GET['cod'] ?? '')]);
+    adr_json(['sobres' => $q->fetchAll()]);
+}
+
 /* El Mac deja aquí su clave PÚBLICA. La sube él, no se copia a mano a
    un fichero de configuración: así la clave que usa el portal sale
    forzosamente del mismo sitio donde está la privada. Pegar a mano la
