@@ -202,6 +202,7 @@ import { listo, entrarConServidor, abrirDelMac, sellarHaciaElMac, vigilarSesion 
 let privada = null;
 let miPublica = null;
 let macPublica = null;
+let miCod = null;
 
 const $ = (id) => document.getElementById(id);
 const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea'];
@@ -324,6 +325,7 @@ async function panel() {
   ver('v-panel');
   miPublica = r.j.publica || null;
   macPublica = r.j.mac_publica || null;
+  miCod = r.j.cod || null;
 
   /* Pendiente */
   const ts = r.j.tareas || [];
@@ -560,6 +562,12 @@ $('t-form').addEventListener('submit', async (ev) => {
     no_contestados: noContestados(),
     riesgo: bloqueRiesgo(),
     tarea: TAREA.id,
+    /* El código va DENTRO del sobre. El servidor sabe de quién es esta
+       entrega, pero el Mac que la descifra no — y sin esto no sabría en
+       qué historia archivarla. Es lo mismo que hace la hoja suelta de
+       /h/ con el fragmento de la URL: un solo formato de sobre para los
+       dos caminos. */
+    cod: miCod,
     origen: 'cuenta',
   };
 

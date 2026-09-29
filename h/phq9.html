@@ -296,11 +296,14 @@ function ahora() {
 
    Se valida el formato antes de meterlo: si alguien juega con el
    fragmento, lo que entra en el sobre es null y no una cadena
-   arbitraria. */
+   arbitraria. El alfabeto es el de base64url —letras, cifras, guion y
+   guion BAJO— porque asi es como el sistema clinico genera sus
+   invitaciones opacas. El patron de antes se dejaba el `_` fuera y
+   habria rechazado una de cada dos sin que nadie supiera por que. */
 function codigo() {
   try {
     const c = decodeURIComponent((location.hash || '').slice(1)).trim();
-    return /^[a-z0-9-]{3,24}$/i.test(c) ? c : null;
+    return /^[A-Za-z0-9_-]{3,64}$/.test(c) ? c : null;
   } catch (_) { return null; }
 }
 

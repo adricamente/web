@@ -176,7 +176,16 @@ case 'mios': {
        entrega. Es pública: va aquí y no en una petición aparte. */
     $m = $db->query("SELECT valor FROM ajustes WHERE clave = 'mac_publica'")->fetch();
 
+    /* Y su propio código de cuenta. No es un secreto —es suyo y ya está
+       autenticado— y hace falta para meterlo DENTRO del sobre sellado:
+       el servidor sabe de quién es cada entrega, pero el Mac que lo
+       descifra no, y sin el código no sabría en qué historia archivarlo.
+
+       Con esto los dos caminos son idénticos: la hoja suelta de /h/ lo
+       saca del fragmento de la URL, y la cuenta de aquí. El Mac abre
+       los dos igual. */
     adr_json(['v' => (int)$f['publica_v'], 'publica' => adr_b64($f['publica']),
+              'cod' => $cod,
               'mac_publica' => $m ? $m['valor'] : null,
               'documentos' => $q->fetchAll(), 'tareas' => $t->fetchAll()]);
 }
@@ -287,7 +296,15 @@ case 'alta': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $cod = (string)($in['cod'] ?? '');
     $correo = adr_correo_normal((string)($in['correo'] ?? ''));
-    if (!preg_match('/^[a-z0-9-]{3,24}$/i', $cod) || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+    /* base64url: letras, cifras, guion y guion BAJO.
+       -------------------------------------------------------------------
+       El patrón de antes era `[a-z0-9-]{3,24}` y habría rechazado en
+       silencio la mitad de los códigos que genera el sistema clínico,
+       porque su invitación opaca es base64url y ahí el `_` es una
+       letra más. No habría fallado con «carácter no válido»: habría
+       fallado con «cod no válido» en un alta suelta, cada varias
+       altas, sin patrón aparente. */
+    if (!preg_match('/^[A-Za-z0-9_-]{3,64}$/', $cod) || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
         adr_json(['error' => 'cod o correo no válidos'], 400);
     }
     $db->prepare('INSERT OR IGNORE INTO pacientes (cod, correo, alta) VALUES (?,?,?)')
