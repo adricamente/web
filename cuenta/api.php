@@ -155,9 +155,18 @@ case 'salir': {
 case 'mios': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare('SELECT id, titulo, creado, para_v, clase FROM sobres
-                       WHERE cod = ? AND direccion = 2 ORDER BY id DESC LIMIT 200');
+    $q = $db->prepare("SELECT id, titulo, creado, para_v, clase FROM sobres
+                       WHERE cod = ? AND direccion = 2 AND clase <> 'progreso'
+                       ORDER BY id DESC LIMIT 200");
     $q->execute([$cod]);
+
+    /* El progreso va aparte: no es una fila de una lista, es una
+       gráfica en su propia caja. */
+    $g = $db->prepare("SELECT id, para_v FROM sobres
+                       WHERE cod = ? AND direccion = 2 AND clase = 'progreso'
+                       ORDER BY id DESC LIMIT 1");
+    $g->execute([$cod]);
+    $grafica = $g->fetch() ?: null;
     /* Se devuelve también su propia clave pública: crypto_box_seal_open
        la necesita, y el navegador no la tiene guardada en ningún sitio
        —lo que guarda es la privada envuelta—. No es un secreto: es
@@ -187,6 +196,8 @@ case 'mios': {
     adr_json(['v' => (int)$f['publica_v'], 'publica' => adr_b64($f['publica']),
               'cod' => $cod,
               'mac_publica' => $m ? $m['valor'] : null,
+              'progreso' => $grafica ? ['id' => (int)$grafica['id'],
+                                        'para_v' => (int)$grafica['para_v']] : null,
               'documentos' => $q->fetchAll(), 'tareas' => $t->fetchAll()]);
 }
 
@@ -314,7 +325,17 @@ case 'publicar': {
     }
 
     $clase = (string)($in['clase'] ?? 'documento');
-    if (!in_array($clase, ['sesion', 'documento'], true)) $clase = 'documento';
+    if (!in_array($clase, ['sesion', 'documento', 'progreso'], true)) $clase = 'documento';
+
+    /* El progreso es UNO y el último. No es un documento que se
+       colecciona: es una foto de cómo va, y tener cinco fotos viejas en
+       la lista no ayuda a nadie. Se borra el anterior al publicar el
+       nuevo — y se borra de verdad, porque el contenido que sustituye
+       es el mismo dato desactualizado. */
+    if ($clase === 'progreso') {
+        $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = 'progreso'")
+           ->execute([$cod]);
+    }
 
     $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase)
                   VALUES (?,2,?,?,?,?,?)')

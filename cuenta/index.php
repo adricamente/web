@@ -104,6 +104,14 @@ $cuerpo .= <<<'HTML'
 <section id="v-panel" class="vista" hidden>
   <p class="etiqueta">Tu cuenta</p>
   <h1>Tu espacio</h1>
+  <!-- Salir. No estaba, y se vio mirando la captura: la barra de
+       navegación de las maquetas no se pinta en el portal de una sola
+       página, así que `salir.php` existía sin que nada llevara a él.
+       Alguien en un portátil compartido tiene que poder cerrar su
+       cuenta sin buscar la URL. -->
+  <p class="apunte" style="margin:-6px 0 18px">
+    <a href="salir.php">Salir de mi cuenta</a>
+  </p>
 
   <div class="nota ojo" id="reenviando" hidden>
     <p><strong>Tus documentos están volviendo.</strong> Cambiaste la
@@ -115,6 +123,13 @@ $cuerpo .= <<<'HTML'
   <!-- Tres estantes, no una lista.
        Lo pendiente arriba del todo porque es lo único que pide algo de
        quien entra; lo demás está para cuando lo busque. -->
+  <!-- La gráfica. Va antes que los estantes porque es la respuesta a
+       la pregunta con la que entra la mayoría: «¿voy mejor?». -->
+  <div class="caja" id="c-progreso" hidden>
+    <h2 style="margin-top:0">Mi progreso</h2>
+    <div id="progreso"></div>
+  </div>
+
   <div class="caja" id="c-tareas" hidden>
     <h2 style="margin-top:0">Pendiente de hacer</h2>
     <div id="tareas"></div>
@@ -326,6 +341,7 @@ async function panel() {
   miPublica = r.j.publica || null;
   macPublica = r.j.mac_publica || null;
   miCod = r.j.cod || null;
+  pintaProgreso(r.j.progreso, r.j.v);
 
   /* Pendiente */
   const ts = r.j.tareas || [];
@@ -401,6 +417,182 @@ async function abrir(id, titulo, clase) {
   }
 }
 $('doc-volver').addEventListener('click', panel);
+
+/* --- La gráfica -------------------------------------------------------
+   La dibuja el navegador con lo que el Mac ha sellado. El servidor
+   transporta un bloque que no puede leer: no sabe ni qué instrumento es
+   ni qué puntuación tiene nadie.
+
+   Decisiones, y cada una con su motivo:
+
+   · UNA serie por gráfica, nunca dos instrumentos en los mismos ejes.
+     Tienen escalas distintas y superponerlos es el error de gráfica más
+     común que hay.
+   · El eje empieza en CERO siempre. Recortarlo haría que dos puntos
+     parecidos se vieran como un desplome o un milagro, y esto lo mira
+     alguien que está mal.
+   · Etiqueta en el primero y el último, y nada más. Un número encima de
+     cada punto convierte la gráfica en una tabla fea.
+   · Las cifras van también en texto debajo: para quien la lea con un
+     lector de pantalla, para quien no distinga la línea, y porque los
+     números exactos importan.
+   · Y la frase de debajo NO RESTA: usa el cambio fiable del
+     instrumento. Decir «has bajado dos» como si fuera un logro es
+     prometer algo que el cuestionario no sostiene, y obliga a explicar
+     un retroceso falso la semana que sube dos. */
+
+const MESES = ['', 'ene', 'feb', 'mar', 'abr', 'may', 'jun',
+               'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+function dia(iso) {
+  const p = (iso || '').slice(0, 10).split('-');
+  return p.length === 3 ? (Number(p[2]) + ' ' + MESES[Number(p[1])]) : iso;
+}
+
+function svgSerie(m) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const pts = m.puntos || [];
+  if (!pts.length) return null;
+  const An = 640, Al = 158, izq = 34, der = 58, arr = 18, aba = 28;
+  const w = An - izq - der, h = Al - arr - aba, maxv = m.maximo || 27;
+  const x = (i) => izq + (pts.length === 1 ? w : w * i / (pts.length - 1));
+  const y = (v) => arr + h - (v / maxv) * h;
+
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + An + ' ' + Al);
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', m.instrumento + ': ' +
+    pts.map(p => dia(p.fecha) + ' ' + p.valor).join(', '));
+
+  const linea = (x1, y1, x2, y2, color, ancho, guion) => {
+    const l = document.createElementNS(NS, 'line');
+    l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+    l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+    l.setAttribute('stroke', color); l.setAttribute('stroke-width', ancho);
+    if (guion) l.setAttribute('stroke-dasharray', guion);
+    return l;
+  };
+  const texto = (tx, ty, t, tam, color, anclaje, peso) => {
+    const e = document.createElementNS(NS, 'text');
+    e.setAttribute('x', tx); e.setAttribute('y', ty);
+    e.setAttribute('font-size', tam); e.setAttribute('fill', color);
+    if (anclaje) e.setAttribute('text-anchor', anclaje);
+    if (peso) e.setAttribute('font-weight', peso);
+    e.textContent = t;
+    return e;
+  };
+
+  svg.appendChild(linea(izq, arr + h, izq + w, arr + h, '#CECCC6', 1));
+  svg.appendChild(texto(izq - 8, y(0) + 4, '0', 10, '#6C6963', 'end'));
+  svg.appendChild(texto(izq - 8, y(maxv) + 4, String(maxv), 10, '#6C6963', 'end'));
+
+  if (m.corte != null) {
+    const yc = y(m.corte);
+    svg.appendChild(linea(izq, yc, izq + w, yc, '#7B4D13', 1.5, '5 4'));
+    svg.appendChild(texto(izq + w + 6, yc + 3.5, 'corte (' + m.corte + ')', 9.5, '#7B4D13'));
+  }
+
+  const d = pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.valor).toFixed(1)).join(' ');
+  const path = document.createElementNS(NS, 'path');
+  path.setAttribute('d', d); path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', '#1F5474'); path.setAttribute('stroke-width', '2');
+  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
+  svg.appendChild(path);
+
+  pts.forEach((p, i) => {
+    const c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', x(i).toFixed(1)); c.setAttribute('cy', y(p.valor).toFixed(1));
+    c.setAttribute('r', '4.5'); c.setAttribute('fill', '#1F5474');
+    /* Anillo blanco para que el punto no se pegue a la línea de corte
+       cuando la cruza. */
+    c.setAttribute('stroke', '#FFFFFF'); c.setAttribute('stroke-width', '2');
+    svg.appendChild(c);
+    svg.appendChild(texto(x(i).toFixed(1), Al - 10, dia(p.fecha), 9.5, '#6C6963', 'middle'));
+  });
+  [0, pts.length - 1].forEach(i => {
+    const p = pts[i], cy = y(p.valor);
+    svg.appendChild(texto(x(i).toFixed(1), (cy > arr + 22 ? cy - 12 : cy + 19).toFixed(1),
+                          String(p.valor), 12, '#25231F', 'middle', '700'));
+  });
+  return svg;
+}
+
+function lectura(m) {
+  const pts = m.puntos || [];
+  if (pts.length < 2) {
+    return 'Es la primera medida, así que todavía no hay nada que comparar. ' +
+           'Sirve como punto de partida.';
+  }
+  const a = pts[0].valor, z = pts[pts.length - 1].valor, dif = a - z;
+  const cf = m.cambio_fiable;
+  if (cf == null) {
+    return 'De ' + a + ' a ' + z + '. Lo que dice una sola medida es poco; ' +
+           'lo que importa es hacia dónde va la línea.';
+  }
+  if (Math.abs(dif) < cf) {
+    return 'De ' + a + ' a ' + z + '. Es un cambio más pequeño que lo que este ' +
+           'cuestionario puede medir con seguridad (hacen falta ' + cf + ' puntos), ' +
+           'así que de momento se lee como «parecido», ni mejor ni peor.';
+  }
+  if (dif > 0) {
+    return 'De ' + a + ' a ' + z + ': ' + dif + ' puntos menos, y eso ya pasa de lo ' +
+           'que el cuestionario puede confundir con ruido (' + cf + ' puntos). ' +
+           'Es un cambio real en lo que mide.';
+  }
+  return 'De ' + a + ' a ' + z + ': ha subido ' + Math.abs(dif) + ', y es más de lo ' +
+         'que se explica por el propio cuestionario (' + cf + ' puntos). Lo hablamos.';
+}
+
+async function pintaProgreso(meta, v) {
+  const caja = $('c-progreso');
+  if (!meta) { caja.hidden = true; return; }
+  caja.hidden = false;
+  const dentro = $('progreso');
+  dentro.textContent = 'Abriendo…';
+
+  if (Number(meta.para_v) !== Number(v)) {
+    dentro.textContent = 'Tu gráfica está cerrada con una llave anterior a tu ' +
+      'contraseña actual. La vuelvo a mandar y reaparece aquí.';
+    return;
+  }
+  const r = await api('abrir&id=' + encodeURIComponent(meta.id));
+  if (!r.ok || !r.j.cifrado) { dentro.textContent = 'No se ha podido traer.'; return; }
+  let d;
+  try { d = abrirDelMac(r.j.cifrado, miPublica, privada); }
+  catch (_) { dentro.textContent = 'No se ha podido abrir.'; return; }
+
+  dentro.innerHTML = '';
+  (d.series || []).forEach(m => {
+    const fig = document.createElement('figure');
+    fig.className = 'grafica';
+    fig.style.margin = '0 0 18px';
+    const cap = document.createElement('figcaption');
+    cap.style.fontWeight = '700';
+    cap.textContent = m.instrumento;
+    fig.appendChild(cap);
+    const g = svgSerie(m);
+    if (g) fig.appendChild(g);
+    const cifras = document.createElement('p');
+    cifras.className = 'apunte';
+    cifras.style.borderTop = '1px solid var(--line)';
+    cifras.style.paddingTop = '6px';
+    cifras.textContent = (m.puntos || []).map(p => dia(p.fecha) + ' ' + p.valor).join(' · ');
+    fig.appendChild(cifras);
+    const l = document.createElement('p');
+    l.className = 'apunte';
+    l.textContent = lectura(m);
+    fig.appendChild(l);
+    dentro.appendChild(fig);
+  });
+
+  const nota = document.createElement('p');
+  nota.className = 'apunte';
+  nota.textContent = 'Un cuestionario mide una parte de lo que te pasa, no todo, ' +
+    'y no es una nota ni un diagnóstico. Está aquí porque ver la línea entre los ' +
+    'dos ayuda a decidir qué hacemos a continuación.';
+  dentro.appendChild(nota);
+}
 
 /* --- Rellenar un cuestionario ----------------------------------------
    Esta vista no sabe nada de ningún instrumento. Los ítems, las
