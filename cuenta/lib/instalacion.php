@@ -8,6 +8,19 @@
 declare(strict_types=1);
 ini_set('display_errors', '0');
 
+/* Este fichero es código, no una página. Sale 404 si alguien lo pide
+   por URL.
+   -------------------------------------------------------------------
+   Y no sobra por tener `Require all denied` en lib/.htaccess: se probó
+   contra el servidor de verdad y LiteSpeed NO lo estaba aplicando —
+   /lib/arranque.php contestaba 503, que es PHP ejecutándose, no el
+   servidor negando el paso. Una defensa que depende de que el
+   alojamiento respete una directiva es una defensa que se cae el día
+   que cambian de alojamiento, y no avisa. Ésta está dentro del propio
+   fichero y viaja con él. */
+if (!defined('ADR_DENTRO')) { http_response_code(404); exit; }
+
+
 $problemas = [];
 $config = null;
 foreach ([dirname(__DIR__, 2) . '/adr-config.php',

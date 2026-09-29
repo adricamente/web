@@ -11,6 +11,9 @@
    cuál pusiste — y aquí eso no es un fastidio, es perder la llave.
    ------------------------------------------------------------------- */
 declare(strict_types=1);
+
+/* La llave que abre lib/. Ver el comentario de lib/arranque.php. */
+const ADR_DENTRO = true;
 require __DIR__ . '/lib/arranque.php';
 require __DIR__ . '/lib/sesion.php';
 require __DIR__ . '/lib/pagina.php';

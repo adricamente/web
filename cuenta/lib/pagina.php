@@ -3,6 +3,19 @@
    plantilla: hay cuatro pantallas y media, y un motor de plantillas
    aquí sería más código del que ahorra. */
 
+/* Este fichero es código, no una página. Sale 404 si alguien lo pide
+   por URL.
+   -------------------------------------------------------------------
+   Y no sobra por tener `Require all denied` en lib/.htaccess: se probó
+   contra el servidor de verdad y LiteSpeed NO lo estaba aplicando —
+   /lib/arranque.php contestaba 503, que es PHP ejecutándose, no el
+   servidor negando el paso. Una defensa que depende de que el
+   alojamiento respete una directiva es una defensa que se cae el día
+   que cambian de alojamiento, y no avisa. Ésta está dentro del propio
+   fichero y viaja con él. */
+if (!defined('ADR_DENTRO')) { http_response_code(404); exit; }
+
+
 /**
  * @param string $titulo   Lo que va en la pestaña. NUNCA nada clínico:
  *                         una pestaña abierta en un portátil

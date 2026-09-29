@@ -18,6 +18,9 @@
    ------------------------------------------------------------------- */
 declare(strict_types=1);
 
+/* La llave que abre lib/. Ver el comentario de lib/arranque.php. */
+const ADR_DENTRO = true;
+
 /* Si falta la configuración, la portada es la pantalla de
    instalación. Se mira antes de cargar nada, porque arranque.php se
    para en seco —y con razón— cuando no hay secreto. */
