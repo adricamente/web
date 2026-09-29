@@ -126,6 +126,68 @@ function adr_db(array $ADR): PDO {
       )');
     $pdo->exec('CREATE INDEX IF NOT EXISTS i_tareas ON tareas(cod, hecho)');
 
+    /* --- Lo que se fue añadiendo después ---------------------------
+       Columnas nuevas sobre tablas que ya tienen datos. Se añaden una a
+       una comprobando si están, que es la forma de que actualizar el
+       portal no sea nunca «borra la base de datos y empieza». */
+    $columnas = [
+        'sobres' => [
+            /* Cuándo lo firmó el paciente. El servidor no sabe QUÉ
+               firmó —va cifrado— pero sí que lo firmó y cuándo, que es
+               justo lo que un consentimiento necesita poder demostrar. */
+            'requiere_firma' => 'INTEGER NOT NULL DEFAULT 0',
+            'firmado'        => 'TEXT',
+        ],
+        'tareas' => [
+            /* cuestionario | deber. El cuestionario lleva su plantilla
+               en claro (el PHQ-9 es público). El deber lleva su texto
+               CIFRADO: «registra tres domingos seguidos qué hiciste»
+               sí dice algo de alguien. */
+            'tipo'    => "TEXT NOT NULL DEFAULT 'cuestionario'",
+            'cifrado' => 'BLOB',
+            'para_v'  => 'INTEGER NOT NULL DEFAULT 0',
+        ],
+        'pacientes' => [
+            /* Cuándo se le avisó por última vez de que tiene algo
+               pendiente. Sirve para no mandarle cuatro correos seguidos
+               cuando se le asignan cuatro cosas en un minuto. */
+            'ultimo_aviso' => 'TEXT',
+        ],
+    ];
+    foreach ($columnas as $tabla => $cols) {
+        $hay = [];
+        foreach ($pdo->query("PRAGMA table_info($tabla)")->fetchAll() as $c) $hay[] = $c['name'];
+        foreach ($cols as $col => $tipo) {
+            if (!in_array($col, $hay, true)) $pdo->exec("ALTER TABLE $tabla ADD COLUMN $col $tipo");
+        }
+    }
+
+    /* Las medidas que se repiten solas.
+       -------------------------------------------------------------
+       Ésta es la pieza que hace que medir ocurra de verdad. La
+       evidencia sobre seguimiento de resultados es modesta —d≈0,15, y
+       llega a 0,29 en quien va mal— pero toda esa evidencia asume que
+       la medida SE TOMA. Un cuestionario que hay que acordarse de
+       mandar cada dos semanas se manda tres veces y se deja.
+
+       No hay tarea programada en el alojamiento, así que esto no se
+       dispara solo: se materializa cuando el Mac sincroniza, que es
+       varias veces al día. Un día de retraso en un cuestionario
+       quincenal no cambia nada; depender de un cron que el alojamiento
+       compartido no garantiza, sí. */
+    $pdo->exec('
+      CREATE TABLE IF NOT EXISTS recurrencias (
+        id        INTEGER PRIMARY KEY AUTOINCREMENT,
+        cod       TEXT NOT NULL REFERENCES pacientes(cod),
+        titulo    TEXT NOT NULL,
+        plantilla TEXT NOT NULL,
+        cada_dias INTEGER NOT NULL,
+        proxima   TEXT NOT NULL,
+        creada    TEXT NOT NULL,
+        activa    INTEGER NOT NULL DEFAULT 1
+      )');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS i_recu ON recurrencias(activa, proxima)');
+
     /* Cuatro cosas sueltas. Ahora mismo una: la clave PÚBLICA del Mac,
        que es a la que el navegador sella los cuestionarios.
 

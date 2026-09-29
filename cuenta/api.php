@@ -15,6 +15,51 @@ const ADR_DENTRO = true;
 require __DIR__ . '/lib/arranque.php';
 
 $db = adr_db($ADR);
+
+/** Avisa por correo de que hay algo pendiente, como mucho una vez cada
+ *  N horas. Sin esto, asignar un cuestionario es hablarle a una pared:
+ *  el paciente no entra «por si acaso». */
+function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 6): void {
+    $q = $db->prepare('SELECT correo, ultimo_aviso FROM pacientes
+                       WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $p = $q->fetch();
+    if (!$p) return;
+    if ($p['ultimo_aviso'] && strtotime($p['ultimo_aviso']) > time() - $horas * 3600) return;
+    require_once __DIR__ . '/lib/correo.php';
+    adr_correo_aviso($ADR, $p['correo']);
+    $db->prepare('UPDATE pacientes SET ultimo_aviso = ? WHERE cod = ?')
+       ->execute([adr_ahora(), $cod]);
+}
+
+/** Materializa las medidas periódicas que ya tocan.
+ *
+ *  No hay tarea programada en el alojamiento compartido, así que esto
+ *  se llama cuando el Mac sincroniza. Un día de retraso en algo
+ *  quincenal no cambia nada; depender de un cron que el alojamiento no
+ *  garantiza, sí. */
+function adr_vencen(PDO $db, array $ADR): int {
+    $q = $db->query("SELECT * FROM recurrencias
+                     WHERE activa = 1 AND proxima <= date('now')");
+    $n = 0;
+    foreach ($q->fetchAll() as $r) {
+        /* Si la anterior sigue sin hacerse, NO se manda otra. Tres
+           cuestionarios pendientes del mismo instrumento no miden mejor:
+           agobian y se abandonan los tres. */
+        $y = $db->prepare('SELECT 1 FROM tareas WHERE cod = ? AND titulo = ? AND hecho IS NULL');
+        $y->execute([$r['cod'], $r['titulo']]);
+        if (!$y->fetch()) {
+            $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, tipo)
+                          VALUES (?,?,?,?,'cuestionario')")
+               ->execute([$r['cod'], $r['titulo'], $r['plantilla'], adr_ahora()]);
+            adr_avisa($db, $ADR, $r['cod']);
+            $n++;
+        }
+        $db->prepare("UPDATE recurrencias SET proxima = date(proxima, ?) WHERE id = ?")
+           ->execute(['+' . (int)$r['cada_dias'] . ' days', $r['id']]);
+    }
+    return $n;
+}
 $a  = $_GET['a'] ?? '';
 $in = adr_entrada();
 
@@ -155,8 +200,10 @@ case 'salir': {
 case 'mios': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare("SELECT id, titulo, creado, para_v, clase FROM sobres
-                       WHERE cod = ? AND direccion = 2 AND clase <> 'progreso'
+    $q = $db->prepare("SELECT id, titulo, creado, para_v, clase, requiere_firma, firmado
+                       FROM sobres
+                       WHERE cod = ? AND direccion = 2
+                         AND clase NOT IN ('progreso','mensaje')
                        ORDER BY id DESC LIMIT 200");
     $q->execute([$cod]);
 
@@ -177,9 +224,15 @@ case 'mios': {
     /* Y lo que tiene pendiente. Va aquí y no en otra llamada porque
        el panel las enseña juntas: dos peticiones para pintar una
        pantalla es una pantalla que se dibuja a trozos. */
-    $t = $db->prepare('SELECT id, titulo, creado, caduca FROM tareas
+    $t = $db->prepare('SELECT id, titulo, creado, caduca, tipo, para_v FROM tareas
                        WHERE cod = ? AND hecho IS NULL ORDER BY id');
     $t->execute([$cod]);
+
+    /* Los mensajes, en su propio hilo y en las dos direcciones. */
+    $ms = $db->prepare("SELECT id, direccion, para_v, creado FROM sobres
+                        WHERE cod = ? AND clase = 'mensaje'
+                        ORDER BY id DESC LIMIT 60");
+    $ms->execute([$cod]);
 
     /* Y la pública del Mac, que es a la que el navegador sella lo que
        entrega. Es pública: va aquí y no en una petición aparte. */
@@ -198,7 +251,8 @@ case 'mios': {
               'mac_publica' => $m ? $m['valor'] : null,
               'progreso' => $grafica ? ['id' => (int)$grafica['id'],
                                         'para_v' => (int)$grafica['para_v']] : null,
-              'documentos' => $q->fetchAll(), 'tareas' => $t->fetchAll()]);
+              'documentos' => $q->fetchAll(), 'tareas' => $t->fetchAll(),
+              'mensajes' => array_reverse($ms->fetchAll())]);
 }
 
 case 'abrir': {
@@ -224,10 +278,87 @@ case 'subir': {
     adr_json(['ok' => true]);
 }
 
+/* --- Mensajes y firmas, del lado del paciente ------------------------ */
+
+/* Escribirle a Adrián. El mensaje va sellado a la clave del Mac, igual
+   que un cuestionario: el servidor transporta y no lee.
+
+   Y la pantalla dice lo que esto NO es. Un canal de mensajes dentro de
+   una consulta es la cosa que más fácil se confunde con un timbre de
+   urgencias, y la confusión aquí no se paga con una queja. */
+case 'escribir': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $cifrado = adr_deb64($in['cifrado'] ?? null);
+    if (!$cifrado || strlen($cifrado) > 65536) adr_json(['error' => 'mensaje no válido'], 400);
+    if (!adr_freno($db, 'msg:' . $cod, 30, 3600)) adr_json(['error' => 'despacio'], 429);
+    $db->prepare("INSERT INTO sobres (cod, direccion, cifrado, creado, clase)
+                  VALUES (?,1,?,?,'mensaje')")
+       ->execute([$cod, $cifrado, adr_ahora()]);
+    adr_json(['ok' => true]);
+}
+
+/* Firmar un documento.
+   -------------------------------------------------------------------
+   El servidor no sabe QUÉ se ha firmado —va cifrado— pero sí que se
+   firmó y cuándo. Eso es exactamente lo que un consentimiento
+   informado necesita poder demostrar, y lo único que puede guardar sin
+   romper la promesa.
+
+   Y se guarda además un sobre sellado con lo que el paciente teclea
+   como firma, para que el Mac tenga la prueba completa. */
+case 'firmar': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $id = (int)($in['id'] ?? 0);
+    $cifrado = adr_deb64($in['cifrado'] ?? null);
+    if (!$cifrado) adr_json(['error' => 'falta la firma'], 400);
+
+    $q = $db->prepare("SELECT requiere_firma, firmado FROM sobres
+                       WHERE id = ? AND cod = ? AND direccion = 2");
+    $q->execute([$id, $cod]);
+    $f = $q->fetch();
+    if (!$f || !(int)$f['requiere_firma']) adr_json(['error' => 'ese documento no se firma'], 400);
+    if ($f['firmado']) adr_json(['error' => 'ya estaba firmado'], 409);
+
+    $db->beginTransaction();
+    try {
+        $db->prepare('UPDATE sobres SET firmado = ? WHERE id = ?')
+           ->execute([adr_ahora(), $id]);
+        $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase)
+                      VALUES (?,1,?,?,?,'firma')")
+           ->execute([$cod, 'Firma del documento ' . $id, $cifrado, adr_ahora()]);
+        $db->commit();
+    } catch (Throwable $e) {
+        $db->rollBack();
+        adr_json(['error' => 'no se ha podido guardar'], 500);
+    }
+    adr_json(['ok' => true, 'firmado' => adr_ahora()]);
+}
+
+/* Marcar un deber como hecho. Sin nota: la nota, si la hay, se manda
+   como mensaje, que ya va sellado. */
+case 'hecho': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $q = $db->prepare("SELECT tipo, hecho FROM tareas WHERE id = ? AND cod = ?");
+    $q->execute([(int)($in['id'] ?? 0), $cod]);
+    $t = $q->fetch();
+    if (!$t || $t['tipo'] !== 'deber') adr_json(['error' => 'no existe'], 404);
+    if ($t['hecho']) adr_json(['error' => 'ya estaba'], 409);
+    $db->prepare('UPDATE tareas SET hecho = ? WHERE id = ? AND cod = ?')
+       ->execute([adr_ahora(), (int)$in['id'], $cod]);
+    adr_json(['ok' => true]);
+}
+
 /* --- Lo que hace el Mac ---------------------------------------------- */
 
 case 'recoger': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    /* Cada vez que el Mac pasa por aquí se materializan las medidas que
+       ya tocaban. Es el sustituto honesto de un cron que este
+       alojamiento no garantiza. */
+    adr_vencen($db, $ADR);
     $q = $db->query('SELECT id, cod, cifrado, creado FROM sobres
                      WHERE direccion = 1 AND recogido IS NULL ORDER BY id LIMIT 50');
     $out = [];
@@ -337,9 +468,93 @@ case 'publicar': {
            ->execute([$cod]);
     }
 
-    $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase)
-                  VALUES (?,2,?,?,?,?,?)')
-       ->execute([$cod, $titulo, $cifrado, $para_v, adr_ahora(), $clase]);
+    $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase,
+                                    requiere_firma)
+                  VALUES (?,2,?,?,?,?,?,?)')
+       ->execute([$cod, $titulo, $cifrado, $para_v, adr_ahora(), $clase,
+                  (int)!empty($in['requiere_firma'])]);
+    /* La gráfica no se avisa: se republica cada vez que él recoge algo
+       y avisaría cada dos por tres de algo que el paciente no ha
+       pedido. Lo demás sí. */
+    if ($clase !== 'progreso') adr_avisa($db, $ADR, $cod);
+    adr_json(['ok' => true]);
+}
+
+/* Adrián le escribe al paciente. Sellado a la clave del paciente, con
+   su versión: si ha cambiado la contraseña, el portal lo rechaza en vez
+   de dejarle un mensaje que no puede abrir. */
+case 'mensaje': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $cifrado = adr_deb64($in['cifrado'] ?? null);
+    $para_v = (int)($in['para_v'] ?? 0);
+    if (!$cifrado || strlen($cifrado) > 65536) adr_json(['error' => 'mensaje no válido'], 400);
+    $q = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $p = $q->fetch();
+    if (!$p) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
+    if ($para_v !== (int)$p['publica_v']) {
+        adr_json(['error' => 'clave caducada', 'v_actual' => (int)$p['publica_v']], 409);
+    }
+    $db->prepare("INSERT INTO sobres (cod, direccion, cifrado, para_v, creado, clase)
+                  VALUES (?,2,?,?,?,'mensaje')")
+       ->execute([$cod, $cifrado, $para_v, adr_ahora()]);
+    adr_avisa($db, $ADR, $cod);
+    adr_json(['ok' => true]);
+}
+
+/* Un deber: texto CIFRADO con lo que hay que hacer. «Registra tres
+   domingos seguidos qué hiciste» dice algo de alguien, así que va
+   sellado como todo lo demás. */
+case 'deber': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $cifrado = adr_deb64($in['cifrado'] ?? null);
+    $para_v = (int)($in['para_v'] ?? 0);
+    $titulo = mb_substr(trim(preg_replace('/\s+/u', ' ', (string)($in['titulo'] ?? 'Tarea'))), 0, 80, 'UTF-8');
+    if (!$cifrado) adr_json(['error' => 'falta el contenido'], 400);
+    $q = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $p = $q->fetch();
+    if (!$p) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
+    if ($para_v !== (int)$p['publica_v']) {
+        adr_json(['error' => 'clave caducada', 'v_actual' => (int)$p['publica_v']], 409);
+    }
+    $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, cifrado, para_v)
+                  VALUES (?,?,'',?,?,'deber',?,?)")
+       ->execute([$cod, $titulo ?: 'Tarea', adr_ahora(), $in['caduca'] ?? null, $cifrado, $para_v]);
+    adr_avisa($db, $ADR, $cod);
+    adr_json(['ok' => true, 'id' => (int)$db->lastInsertId()]);
+}
+
+/* Programar una medida para que se repita sola. */
+case 'programar': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $cada = max(1, min(365, (int)($in['cada_dias'] ?? 14)));
+    $plantilla = $in['plantilla'] ?? null;
+    if (!is_array($plantilla) || empty($plantilla['items'])) {
+        adr_json(['error' => 'la plantilla no tiene items'], 400);
+    }
+    $titulo = mb_substr((string)($in['titulo'] ?? ($plantilla['instrumento'] ?? 'Cuestionario')), 0, 80, 'UTF-8');
+    $q = $db->prepare('SELECT 1 FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    if (!$q->fetch()) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
+
+    /* Una recurrencia por instrumento y paciente. Dos iguales mandarían
+       el mismo cuestionario dos veces cada quincena. */
+    $db->prepare('DELETE FROM recurrencias WHERE cod = ? AND titulo = ?')->execute([$cod, $titulo]);
+    $db->prepare("INSERT INTO recurrencias (cod, titulo, plantilla, cada_dias, proxima, creada)
+                  VALUES (?,?,?,?,date('now'),?)")
+       ->execute([$cod, $titulo, json_encode($plantilla, JSON_UNESCAPED_UNICODE), $cada, adr_ahora()]);
+    adr_vencen($db, $ADR);
+    adr_json(['ok' => true]);
+}
+
+case 'desprogramar': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $db->prepare('UPDATE recurrencias SET activa = 0 WHERE cod = ? AND titulo = ?')
+       ->execute([(string)($in['cod'] ?? ''), (string)($in['titulo'] ?? '')]);
     adr_json(['ok' => true]);
 }
 
@@ -477,20 +692,31 @@ case 'asignar': {
        ->execute([$cod, mb_substr($titulo ?: 'Cuestionario', 0, 80, 'UTF-8'),
                   json_encode($plantilla, JSON_UNESCAPED_UNICODE),
                   adr_ahora(), $in['caduca'] ?? null]);
-    adr_json(['ok' => true, 'id' => (int)$db->lastInsertId()]);
+    $id = (int)$db->lastInsertId();
+    adr_avisa($db, $ADR, $cod);
+    adr_json(['ok' => true, 'id' => $id]);
 }
 
 /* El paciente pide la plantilla de UNA tarea suya. */
 case 'tarea': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare('SELECT id, titulo, plantilla, hecho FROM tareas
-                       WHERE id = ? AND cod = ?');
+    $q = $db->prepare('SELECT id, titulo, plantilla, hecho, tipo, cifrado, para_v
+                       FROM tareas WHERE id = ? AND cod = ?');
     $q->execute([(int)($_GET['id'] ?? 0), $cod]);
     $t = $q->fetch();
     if (!$t) adr_json(['error' => 'no existe'], 404);
     if ($t['hecho'] !== null) adr_json(['error' => 'ya la habías entregado'], 409);
-    adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'],
+
+    /* Un deber lleva su texto CIFRADO; un cuestionario, su plantilla en
+       claro. No es incoherencia: el PHQ-9 es público y el mismo para
+       todo el mundo, y «registra tres domingos seguidos qué hiciste»
+       dice algo de alguien. Se cifra lo que dice algo. */
+    if ($t['tipo'] === 'deber') {
+        adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'], 'tipo' => 'deber',
+                  'cifrado' => adr_b64($t['cifrado']), 'para_v' => (int)$t['para_v']]);
+    }
+    adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'], 'tipo' => 'cuestionario',
               'plantilla' => json_decode($t['plantilla'], true)]);
 }
 

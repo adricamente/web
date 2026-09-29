@@ -14,6 +14,31 @@
    sepa qué es, y nada para quien no lo espera.
    =================================================================== */
 
+/** El aviso de «tienes algo pendiente».
+ *
+ *  Es la pieza más aburrida y la que más cambia si las cosas se hacen
+ *  o no. Un cuestionario asignado del que nadie se entera es un
+ *  cuestionario que no existe: hasta hoy, el portal avisaba a nadie.
+ *
+ *  Y NO DICE QUÉ. Ni el instrumento, ni el título del documento, ni
+ *  una palabra de clínica. Un correo se previsualiza en la pantalla
+ *  bloqueada de un móvil que a veces mira otra persona. Dice que hay
+ *  algo y dónde verlo; el qué está detrás de su contraseña.
+ */
+function adr_correo_aviso(array $ADR, string $a): bool {
+    $texto = "Tienes algo esperándote en tu cuenta de adricamente.\n\n"
+        . $ADR['sitio'] . "\n\n"
+        . "Si te viene mal ahora, no pasa nada: se queda ahí.\n\n"
+        . "Esto no es un canal de urgencias. Si estás en peligro ahora "
+        . "mismo, llama al 024 o al 112.\n";
+    return adr_manda($ADR, $a, 'Tienes algo en tu cuenta', $texto,
+        '<p>Tienes algo esperándote en tu cuenta de adricamente.</p>'
+        . '<p><a href="' . htmlspecialchars($ADR['sitio'], ENT_QUOTES) . '">Entrar en mi cuenta</a></p>'
+        . '<p>Si te viene mal ahora, no pasa nada: se queda ahí.</p>'
+        . '<p>Esto no es un canal de urgencias. Si estás en peligro ahora '
+        . 'mismo, llama al <strong>024</strong> o al <strong>112</strong>.</p>');
+}
+
 function adr_correo_reset(array $ADR, string $a, string $enlace): bool {
     $texto = "Has pedido una contraseña nueva para tu cuenta en "
         . "adricamente.com.\n\n$enlace\n\n"
@@ -35,6 +60,11 @@ function adr_correo_reset(array $ADR, string $a, string $enlace): bool {
         . 'nueva, los documentos que ya tuvieras dentro tardan un rato en '
         . 'volver a aparecer. No se pierden.</p>';
 
+    return adr_manda($ADR, $a, 'Tu contraseña de adricamente', $texto, $html);
+}
+
+function adr_manda(array $ADR, string $a, string $asunto,
+                   string $texto, string $html): bool {
     /* --- Sin Brevo también funciona ---------------------------------
        Brevo NO es obligatorio. Si no hay clave, esto sale por el
        `mail()` del propio alojamiento y el portal funciona igual.
@@ -53,8 +83,7 @@ function adr_correo_reset(array $ADR, string $a, string $enlace): bool {
                    . "Reply-To: {$ADR['remite']}\r\n"
                    . "Content-Type: text/plain; charset=UTF-8\r\n"
                    . "MIME-Version: 1.0\r\n";
-        $ok = @mail($a, '=?UTF-8?B?' . base64_encode('Tu contraseña de adricamente') . '?=',
-                    $texto, $cabeceras);
+        $ok = @mail($a, '=?UTF-8?B?' . base64_encode($asunto) . '?=', $texto, $cabeceras);
         if (!$ok) error_log('adr: mail() ha fallado y no hay Brevo configurado');
         return $ok;
     }
@@ -62,7 +91,7 @@ function adr_correo_reset(array $ADR, string $a, string $enlace): bool {
     $cuerpo = json_encode([
         'sender'      => ['name' => 'adricamente', 'email' => $ADR['remite']],
         'to'          => [['email' => $a]],
-        'subject'     => 'Tu contraseña de adricamente',
+        'subject'     => $asunto,
         'textContent' => $texto,
         'htmlContent' => $html,
     ], JSON_UNESCAPED_UNICODE);

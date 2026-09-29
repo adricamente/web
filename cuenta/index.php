@@ -145,6 +145,27 @@ $cuerpo .= <<<'HTML'
     <div id="documentos"></div>
   </div>
 
+  <!-- Los mensajes van los ÚLTIMOS a propósito. Es lo que más engancha
+       y lo que menos urge; arriba haría que lo primero de cada visita
+       fuera mirar si hay respuesta, y esto no es una aplicación de
+       mensajería. -->
+  <div class="caja">
+    <h2 style="margin-top:0">Escribirme</h2>
+    <div class="nota ojo" style="margin-bottom:14px">
+      <p><strong>Esto no es un canal de urgencias.</strong> Lo leo cuando
+      reviso, y puede que no sea hoy. Si estás en peligro ahora mismo,
+      llama al <strong>024</strong> (atención a la conducta suicida, 24
+      horas, gratuito) o al <strong>112</strong>.</p>
+    </div>
+    <div id="hilo"></div>
+    <div class="campo" style="margin-top:14px">
+      <label for="m-texto">Lo que quieras contarme</label>
+      <textarea id="m-texto" rows="4"></textarea>
+    </div>
+    <p><button class="boton" id="m-enviar" type="button">Enviar</button>
+    <span class="apunte" id="m-estado" role="status"></span></p>
+  </div>
+
   <p>
     <button class="enlace-boton" id="refrescar" type="button">Actualizar</button>
     <span class="apunte" id="panel-estado" role="status"></span>
@@ -156,6 +177,33 @@ $cuerpo .= <<<'HTML'
   <h1 id="doc-titulo">…</h1>
   <div class="caja"><div id="doc-cuerpo"></div></div>
   <p><button class="enlace-boton" id="doc-volver" type="button">← Volver</button></p>
+</section>
+
+<section id="v-deber" class="vista" hidden>
+  <p class="etiqueta">Tarea</p>
+  <h1 id="d-titulo">…</h1>
+  <div class="caja"><div id="d-cuerpo"></div></div>
+  <p>
+    <button class="boton" id="d-hecho" type="button">Marcar como hecha</button>
+    <button class="enlace-boton" id="d-volver" type="button">← Volver</button>
+  </p>
+</section>
+
+<section id="v-firmar" class="vista" hidden>
+  <p class="etiqueta">Documento para firmar</p>
+  <h1 id="s-titulo">…</h1>
+  <div class="caja"><div id="s-cuerpo"></div></div>
+  <div class="caja">
+    <p class="apunte">Para firmarlo, escribe tu nombre y apellidos tal
+    como aparecen en tu DNI. Queda registrada la fecha y la hora.</p>
+    <div class="campo">
+      <label for="s-nombre">Nombre y apellidos</label>
+      <input id="s-nombre" autocomplete="name">
+    </div>
+    <p><button class="boton" id="s-firmar" type="button">Firmar</button>
+    <button class="enlace-boton" id="s-volver" type="button">← Volver</button></p>
+    <p class="apunte" id="s-estado" role="status"></p>
+  </div>
 </section>
 
 <section id="v-tarea" class="vista" hidden>
@@ -220,7 +268,7 @@ let macPublica = null;
 let miCod = null;
 
 const $ = (id) => document.getElementById(id);
-const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea'];
+const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar'];
 function ver(cual) {
   VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
   window.scrollTo(0, 0);
@@ -348,10 +396,12 @@ async function panel() {
   $('c-tareas').hidden = (ts.length === 0);
   const ct = $('tareas'); ct.innerHTML = '';
   ts.forEach(t => {
+    const esDeber = (t.tipo === 'deber');
     const f = fila(t.titulo, t.caduca ? ('antes del ' + fecha(t.caduca)) : null);
     const b = document.createElement('button');
-    b.className = 'boton'; b.type = 'button'; b.textContent = 'Rellenar';
-    b.addEventListener('click', () => abrirTarea(t.id));
+    b.className = 'boton'; b.type = 'button';
+    b.textContent = esDeber ? 'Ver' : 'Rellenar';
+    b.addEventListener('click', () => esDeber ? abrirDeber(t) : abrirTarea(t.id));
     f.appendChild(b);
     ct.appendChild(f);
   });
@@ -375,7 +425,24 @@ async function panel() {
         const e = document.createElement('span');
         e.className = 'sello caduca'; e.textContent = 'volviendo';
         f.appendChild(e);
+      } else if (Number(d.requiere_firma) && !d.firmado) {
+        /* Pendiente de firma: el botón lo dice y lleva a la pantalla de
+           firmar, no a la de leer. Un documento que hay que firmar y se
+           abre como cualquier otro se lee y se cierra. */
+        const e = document.createElement('span');
+        e.className = 'sello ojo'; e.textContent = 'sin firmar';
+        f.appendChild(e);
+        const b = document.createElement('button');
+        b.className = 'boton'; b.type = 'button'; b.textContent = 'Leer y firmar';
+        b.addEventListener('click', () => abrirFirma(d.id, d.titulo));
+        f.appendChild(b);
       } else {
+        if (d.firmado) {
+          const e = document.createElement('span');
+          e.className = 'sello ok'; e.textContent = 'firmado';
+          e.title = 'Firmado el ' + fecha(d.firmado);
+          f.appendChild(e);
+        }
         const b = document.createElement('button');
         b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
         b.addEventListener('click', () => abrir(d.id, d.titulo, clase));
@@ -385,6 +452,144 @@ async function panel() {
     });
   });
   $('reenviando').hidden = (viejos === 0);
+  pintaHilo(r.j.mensajes || [], r.j.v);
+}
+
+/* --- Los mensajes ----------------------------------------------------
+   Los suyos se descifran aquí; los que él ha escrito no se pueden
+   volver a leer —fueron sellados a la clave del Mac y esa privada no
+   está aquí—, así que se marcan como enviados y punto. Eso es una
+   consecuencia del diseño, no una carencia: si su navegador pudiera
+   releerlos, el sobre no estaría sellado de verdad. */
+async function pintaHilo(ms, v) {
+  const caja = $('hilo');
+  caja.innerHTML = '';
+  if (!ms.length) {
+    caja.appendChild(vacio('Todavía no hay mensajes.'));
+    return;
+  }
+  for (const m of ms) {
+    const d = document.createElement('div');
+    d.className = 'fila';
+    const t = document.createElement('div');
+    t.className = 'texto';
+    const quien = document.createElement('strong');
+    quien.textContent = (Number(m.direccion) === 2) ? 'Adrián' : 'Tú';
+    const cuerpo = document.createElement('p');
+    cuerpo.style.whiteSpace = 'pre-wrap';
+    cuerpo.style.color = 'var(--ink)';
+    cuerpo.style.fontSize = '15.5px';
+    if (Number(m.direccion) === 1) {
+      cuerpo.textContent = '(enviado el ' + fecha(m.creado) + ')';
+      cuerpo.style.color = 'var(--muted)';
+    } else if (Number(m.para_v) !== Number(v)) {
+      cuerpo.textContent = 'Este mensaje está cerrado con una llave anterior. Te lo reenvío.';
+      cuerpo.style.color = 'var(--muted)';
+    } else {
+      const r = await api('abrir&id=' + encodeURIComponent(m.id));
+      try { const x = abrirDelMac(r.j.cifrado, miPublica, privada);
+            cuerpo.textContent = (typeof x === 'string') ? x : (x.texto || ''); }
+      catch (_) { cuerpo.textContent = 'No se ha podido abrir.'; }
+    }
+    const f = document.createElement('p');
+    f.textContent = fecha(m.creado);
+    t.appendChild(quien); t.appendChild(cuerpo); t.appendChild(f);
+    d.appendChild(t);
+    caja.appendChild(d);
+  }
+}
+
+$('m-enviar').addEventListener('click', async () => {
+  const texto = $('m-texto').value.trim();
+  if (!texto) return;
+  $('m-enviar').disabled = true;
+  $('m-estado').textContent = '';
+  try {
+    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'mensaje', texto,
+                                       escrito_en: ahoraLocal(), origen: 'cuenta' },
+                                     macPublica);
+    const r = await api('escribir', { cifrado });
+    if (!r.ok) { $('m-estado').textContent = 'No se ha podido enviar.'; return; }
+    $('m-texto').value = '';
+    $('m-estado').textContent = 'Enviado.';
+    await panel();
+  } finally { $('m-enviar').disabled = false; }
+});
+
+/* --- Los deberes ------------------------------------------------------ */
+let DEBER = null;
+async function abrirDeber(t) {
+  DEBER = t;
+  $('d-titulo').textContent = t.titulo;
+  $('d-cuerpo').textContent = 'Abriendo…';
+  ver('v-deber');
+  const r = await api('tarea&id=' + encodeURIComponent(t.id));
+  if (!r.ok) { $('d-cuerpo').textContent = 'No se ha podido traer.'; return; }
+  try {
+    const x = abrirDelMac(r.j.cifrado, miPublica, privada);
+    $('d-cuerpo').textContent = (typeof x === 'string') ? x : (x.texto || '');
+  } catch (_) {
+    $('d-cuerpo').textContent = 'Esta tarea está cerrada con una llave anterior a tu ' +
+      'contraseña actual. Te la vuelvo a mandar.';
+  }
+}
+$('d-volver').addEventListener('click', panel);
+$('d-hecho').addEventListener('click', async () => {
+  $('d-hecho').disabled = true;
+  try { await api('hecho', { id: DEBER.id }); await panel(); }
+  finally { $('d-hecho').disabled = false; }
+});
+
+/* --- Firmar ---------------------------------------------------------- */
+let FIRMA = null;
+async function abrirFirma(id, titulo) {
+  FIRMA = { id, titulo };
+  $('s-titulo').textContent = titulo || 'Documento';
+  $('s-cuerpo').textContent = 'Abriendo…';
+  $('s-estado').textContent = '';
+  $('s-nombre').value = '';
+  ver('v-firmar');
+  const r = await api('abrir&id=' + encodeURIComponent(id));
+  if (!r.ok || !r.j.cifrado) { $('s-cuerpo').textContent = 'No se ha podido traer.'; return; }
+  try {
+    const d = abrirDelMac(r.j.cifrado, miPublica, privada);
+    $('s-cuerpo').textContent = (typeof d === 'string') ? d : (d.texto || '');
+  } catch (_) { $('s-cuerpo').textContent = 'No se ha podido abrir.'; }
+}
+$('s-volver').addEventListener('click', panel);
+$('s-firmar').addEventListener('click', async () => {
+  const nombre = $('s-nombre').value.trim();
+  if (nombre.length < 5) {
+    $('s-estado').textContent = 'Escribe tu nombre y apellidos completos.';
+    return;
+  }
+  $('s-firmar').disabled = true;
+  try {
+    /* La firma va sellada al Mac: él tiene la prueba completa de qué
+       nombre se escribió y cuándo. El servidor solo apunta que se
+       firmó y la hora, que es lo que puede saber sin leer nada. */
+    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'firma', documento: FIRMA.id,
+                                       titulo: FIRMA.titulo, nombre,
+                                       firmado_en: ahoraLocal(), origen: 'cuenta' },
+                                     macPublica);
+    const r = await api('firmar', { id: FIRMA.id, cifrado });
+    if (!r.ok) { $('s-estado').textContent = r.j.error || 'No se ha podido firmar.'; return; }
+    await panel();
+    $('panel-estado').textContent = 'Firmado. Gracias.';
+  } finally { $('s-firmar').disabled = false; }
+});
+
+/* Hora local con el desfase escrito, no UTC: «las once de la noche» y
+   «las nueve de la mañana» dicen cosas distintas de una persona, y
+   convertir a UTC las confunde según el mes. */
+function ahoraLocal() {
+  const d = new Date(), dd = (n) => (n < 10 ? '0' : '') + n;
+  let off = -d.getTimezoneOffset();
+  const signo = off >= 0 ? '+' : '-';
+  off = Math.abs(off);
+  return d.getFullYear() + '-' + dd(d.getMonth() + 1) + '-' + dd(d.getDate()) +
+    'T' + dd(d.getHours()) + ':' + dd(d.getMinutes()) + ':' + dd(d.getSeconds()) +
+    signo + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
 }
 
 /* Actualizar SIN recargar. Recargar tiraría la clave de memoria y
@@ -733,16 +938,7 @@ $('t-form').addEventListener('submit', async (ev) => {
   ev.preventDefault();
   $('t-enviar').disabled = true;
   const P = TAREA.plantilla;
-  const d = new Date(), dd = (n) => (n < 10 ? '0' : '') + n;
-  let off = -d.getTimezoneOffset();
-  const signo = off >= 0 ? '+' : '-';
-  off = Math.abs(off);
-  /* Hora local con el desfase escrito, no UTC: «las once de la noche»
-     y «las nueve de la mañana» dicen cosas distintas de una persona, y
-     convertir a UTC las confunde según el mes. */
-  const momento = d.getFullYear() + '-' + dd(d.getMonth() + 1) + '-' + dd(d.getDate()) +
-    'T' + dd(d.getHours()) + ':' + dd(d.getMinutes()) + ':' + dd(d.getSeconds()) +
-    signo + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
+  const momento = ahoraLocal();
 
   const sobre = {
     v: 1,
