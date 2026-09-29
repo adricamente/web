@@ -230,10 +230,44 @@ case 'recoger': {
 case 'recogido': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $ids = array_values(array_filter(array_map('intval', (array)($in['ids'] ?? []))));
-    if (!$ids) adr_json(['ok' => true]);
-    $marcas = implode(',', array_fill(0, count($ids), '?'));
-    $db->prepare("UPDATE sobres SET recogido = ? WHERE id IN ($marcas) AND direccion = 1")
-       ->execute([adr_ahora(), ...$ids]);
+    if ($ids) {
+        $marcas = implode(',', array_fill(0, count($ids), '?'));
+        $db->prepare("UPDATE sobres SET recogido = ? WHERE id IN ($marcas) AND direccion = 1")
+           ->execute([adr_ahora(), ...$ids]);
+    }
+
+    /* Y aquí se borra lo que el Mac ya se llevó hace tiempo.
+       -------------------------------------------------------------------
+       Ojo al orden: esto va DESPUÉS de la lista vacía, no antes. La
+       primera versión salía por la puerta de atrás cuando no había nada
+       que marcar —`if (!$ids) adr_json(...)`— y entonces un Mac que
+       sincroniza a diario sin recoger nada nuevo no purgaba NUNCA. El
+       plazo de conservación existía en el código y no ocurría en la
+       base de datos. Lo encontró la prueba.
+
+       Esto faltaba, y no es una optimización: es minimización de datos.
+       Un cuestionario recogido ya vive en el Mac, que es su sitio. La
+       copia cifrada del servidor deja de tener función el día que se
+       recoge, y a partir de ahí solo es un montón que crece.
+
+       «Está cifrado» no es una respuesta a «por qué lo sigues
+       guardando». Lo es a «qué pasa si te lo roban», que es otra
+       pregunta. Un tratamiento de datos de salud necesita un plazo
+       escrito, y el plazo es éste.
+
+       No se borra en el acto sino pasados unos días a propósito: un
+       disco que se estropea el martes por la tarde no puede llevarse
+       por delante lo que se recogió el martes por la mañana. El margen
+       es la ventana para darse cuenta.
+
+       Los documentos que van HACIA el paciente (direccion = 2) no se
+       tocan: ésos son su copia y su derecho a tenerla. */
+    $dias = max(1, (int)($ADR['dias_sobres'] ?? 30));
+    $db->prepare("DELETE FROM sobres
+                  WHERE direccion = 1 AND recogido IS NOT NULL
+                    AND recogido < datetime('now', ?)")
+       ->execute(['-' . $dias . ' days']);
+
     adr_json(['ok' => true, 'marcados' => count($ids)]);
 }
 

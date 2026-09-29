@@ -50,4 +50,19 @@ return [
      tengas dos minutos. */
   'brevo'  => '',
   'remite' => 'hola@adricamente.com',
+
+  /* Cuántos días se guarda en el servidor un cuestionario DESPUÉS de
+     que el Mac se lo haya llevado. Pasado ese plazo se borra solo.
+
+     No es limpieza: es el plazo de conservación, y un tratamiento de
+     datos de salud necesita tener uno escrito. Cuando el Mac ya lo
+     tiene, la copia cifrada del servidor deja de tener función.
+
+     No es cero a propósito: un disco que se estropea el martes por la
+     tarde no puede llevarse por delante lo que se recogió el martes
+     por la mañana. Treinta días es margen de sobra para enterarse.
+
+     Los documentos que van HACIA el paciente no caducan: ésos son su
+     copia y su derecho a tenerla. */
+  'dias_sobres' => 30,
 ];
