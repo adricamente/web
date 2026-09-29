@@ -86,6 +86,62 @@ function adr_db(array $ADR): PDO {
       )');
     $pdo->exec('CREATE INDEX IF NOT EXISTS i_sobres ON sobres(cod, direccion, recogido)');
 
+    /* `clase` separa lo que el paciente ve en sitios distintos:
+
+         sesion      la hoja de «lo que nos llevamos» de cada sesión
+         documento   consentimiento, material, cosas que se guardan
+         ejercicio   lo que ha entregado él
+
+       Va en claro, y es lo ÚNICO que el servidor sabe de un sobre
+       además de su tamaño. No es contenido clínico: es en qué estante
+       lo pone. Sin esto todo cae en una lista sola y la persona tiene
+       que leer doce títulos para encontrar el consentimiento. */
+    foreach (['clase' => "TEXT NOT NULL DEFAULT 'documento'"] as $col => $tipo) {
+        $hay = false;
+        foreach ($pdo->query('PRAGMA table_info(sobres)')->fetchAll() as $c) {
+            if ($c['name'] === $col) { $hay = true; break; }
+        }
+        if (!$hay) $pdo->exec("ALTER TABLE sobres ADD COLUMN $col $tipo");
+    }
+
+    /* Las tareas: lo que el paciente tiene PENDIENTE de hacer.
+       -------------------------------------------------------------
+       La plantilla —los ítems del cuestionario, las opciones y cuál es
+       el ítem de riesgo— se guarda EN CLARO, y es correcto: el PHQ-9
+       es el mismo para todo el mundo y está publicado. Lo que va
+       sellado son las RESPUESTAS, que es lo único que dice algo de
+       alguien.
+
+       Confundir las dos cosas llevaría a cifrar la plantilla, que no
+       protege nada, y a sentirse a salvo por ello. */
+    $pdo->exec('
+      CREATE TABLE IF NOT EXISTS tareas (
+        id        INTEGER PRIMARY KEY AUTOINCREMENT,
+        cod       TEXT NOT NULL REFERENCES pacientes(cod),
+        titulo    TEXT NOT NULL,
+        plantilla TEXT NOT NULL,
+        creado    TEXT NOT NULL,
+        caduca    TEXT,
+        hecho     TEXT
+      )');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS i_tareas ON tareas(cod, hecho)');
+
+    /* Cuatro cosas sueltas. Ahora mismo una: la clave PÚBLICA del Mac,
+       que es a la que el navegador sella los cuestionarios.
+
+       La sube el propio Mac con `portal_mac.py conectar` en vez de ir
+       en el fichero de configuración, y no es un capricho: obliga a
+       que la clave que el portal usa salga DEL MISMO sitio donde está
+       la privada. Copiarla a mano a un fichero es la clase de paso en
+       el que se pega la clave de otro par y nadie se entera hasta que
+       un cuestionario no se abre. */
+    $pdo->exec('
+      CREATE TABLE IF NOT EXISTS ajustes (
+        clave TEXT PRIMARY KEY,
+        valor TEXT NOT NULL,
+        puesto TEXT NOT NULL
+      )');
+
     /* tipo: alta | reset. Se guarda la HUELLA del papel, no el papel:
        si alguien se lleva la base de datos, no puede usar los enlaces
        de recuperación que estén vivos en ese momento. */

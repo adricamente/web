@@ -155,8 +155,8 @@ case 'salir': {
 case 'mios': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare('SELECT id, titulo, creado, para_v FROM sobres
-                       WHERE cod = ? AND direccion = 2 ORDER BY id DESC LIMIT 100');
+    $q = $db->prepare('SELECT id, titulo, creado, para_v, clase FROM sobres
+                       WHERE cod = ? AND direccion = 2 ORDER BY id DESC LIMIT 200');
     $q->execute([$cod]);
     /* Se devuelve también su propia clave pública: crypto_box_seal_open
        la necesita, y el navegador no la tiene guardada en ningún sitio
@@ -165,8 +165,20 @@ case 'mios': {
     $p = $db->prepare('SELECT publica, publica_v FROM pacientes WHERE cod = ?');
     $p->execute([$cod]);
     $f = $p->fetch();
+    /* Y lo que tiene pendiente. Va aquí y no en otra llamada porque
+       el panel las enseña juntas: dos peticiones para pintar una
+       pantalla es una pantalla que se dibuja a trozos. */
+    $t = $db->prepare('SELECT id, titulo, creado, caduca FROM tareas
+                       WHERE cod = ? AND hecho IS NULL ORDER BY id');
+    $t->execute([$cod]);
+
+    /* Y la pública del Mac, que es a la que el navegador sella lo que
+       entrega. Es pública: va aquí y no en una petición aparte. */
+    $m = $db->query("SELECT valor FROM ajustes WHERE clave = 'mac_publica'")->fetch();
+
     adr_json(['v' => (int)$f['publica_v'], 'publica' => adr_b64($f['publica']),
-              'documentos' => $q->fetchAll()]);
+              'mac_publica' => $m ? $m['valor'] : null,
+              'documentos' => $q->fetchAll(), 'tareas' => $t->fetchAll()]);
 }
 
 case 'abrir': {
@@ -258,9 +270,12 @@ case 'publicar': {
         adr_json(['error' => 'clave caducada', 'v_actual' => (int)$p['publica_v']], 409);
     }
 
-    $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado)
-                  VALUES (?,2,?,?,?,?)')
-       ->execute([$cod, $titulo, $cifrado, $para_v, adr_ahora()]);
+    $clase = (string)($in['clase'] ?? 'documento');
+    if (!in_array($clase, ['sesion', 'documento'], true)) $clase = 'documento';
+
+    $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase)
+                  VALUES (?,2,?,?,?,?,?)')
+       ->execute([$cod, $titulo, $cifrado, $para_v, adr_ahora(), $clase]);
     adr_json(['ok' => true]);
 }
 
@@ -279,6 +294,107 @@ case 'alta': {
        ->execute([$cod, $correo, adr_ahora()]);
     $papel = adr_ficha($db, $cod, 'alta', 24 * 7);
     adr_json(['ok' => true, 'enlace' => $ADR['sitio'] . '/activar.php?p=' . $papel]);
+}
+
+/* El Mac deja aquí su clave PÚBLICA. La sube él, no se copia a mano a
+   un fichero de configuración: así la clave que usa el portal sale
+   forzosamente del mismo sitio donde está la privada. Pegar a mano la
+   pública de otro par no da ningún error — simplemente los
+   cuestionarios dejan de poder abrirse, y se descubre tarde. */
+case 'mac_publica': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $pub = adr_deb64($in['publica'] ?? null, 32);
+    if (!$pub) adr_json(['error' => 'eso no es una X25519 de 32 bytes'], 400);
+    $db->prepare('INSERT INTO ajustes (clave, valor, puesto) VALUES (?,?,?)
+                  ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor,
+                                                   puesto = excluded.puesto')
+       ->execute(['mac_publica', adr_b64($pub), adr_ahora()]);
+    adr_json(['ok' => true]);
+}
+
+/* --- Las tareas ------------------------------------------------------ */
+
+/* El Mac asigna un cuestionario. La plantilla viaja y se guarda EN
+   CLARO: el PHQ-9 es público y el mismo para todo el mundo. Lo que se
+   sella son las respuestas. */
+case 'asignar': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $titulo = trim(preg_replace('/\s+/u', ' ', (string)($in['titulo'] ?? '')));
+    $plantilla = $in['plantilla'] ?? null;
+
+    $q = $db->prepare('SELECT 1 FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    if (!$q->fetch()) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
+
+    /* Se valida la forma aquí, no en el navegador. Una plantilla sin
+       `items` pinta una pantalla vacía, y una con el bloque `riesgo`
+       apuntando al ítem que no es vigila la pregunta equivocada — y
+       eso no falla con un error, falla en silencio. */
+    if (!is_array($plantilla) || empty($plantilla['items']) || empty($plantilla['opciones'])) {
+        adr_json(['error' => 'la plantilla no tiene items u opciones'], 400);
+    }
+    $r = $plantilla['riesgo'] ?? null;
+    if ($r !== null) {
+        if (!isset($r['item'], $r['umbral'], $r['bandera'])
+            || (int)$r['item'] < 1 || (int)$r['item'] > count($plantilla['items'])) {
+            adr_json(['error' => 'el bloque riesgo apunta fuera de los items'], 400);
+        }
+    }
+
+    $db->prepare('INSERT INTO tareas (cod, titulo, plantilla, creado, caduca)
+                  VALUES (?,?,?,?,?)')
+       ->execute([$cod, mb_substr($titulo ?: 'Cuestionario', 0, 80, 'UTF-8'),
+                  json_encode($plantilla, JSON_UNESCAPED_UNICODE),
+                  adr_ahora(), $in['caduca'] ?? null]);
+    adr_json(['ok' => true, 'id' => (int)$db->lastInsertId()]);
+}
+
+/* El paciente pide la plantilla de UNA tarea suya. */
+case 'tarea': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $q = $db->prepare('SELECT id, titulo, plantilla, hecho FROM tareas
+                       WHERE id = ? AND cod = ?');
+    $q->execute([(int)($_GET['id'] ?? 0), $cod]);
+    $t = $q->fetch();
+    if (!$t) adr_json(['error' => 'no existe'], 404);
+    if ($t['hecho'] !== null) adr_json(['error' => 'ya la habías entregado'], 409);
+    adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'],
+              'plantilla' => json_decode($t['plantilla'], true)]);
+}
+
+/* Y la entrega. El sobre y la marca de hecho van en la MISMA
+   transacción: si se guardara el sobre y fallara la marca, la persona
+   volvería a ver la tarea pendiente y la contestaría dos veces; al
+   revés, se perdería lo que acaba de escribir. */
+case 'entregar': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $id = (int)($in['id'] ?? 0);
+    $cifrado = adr_deb64($in['cifrado'] ?? null);
+    if (!$cifrado || strlen($cifrado) > 65536) adr_json(['error' => 'sobre no válido'], 400);
+    if (!adr_freno($db, 'ent:' . $cod, 60, 3600)) adr_json(['error' => 'despacio'], 429);
+
+    $q = $db->prepare('SELECT titulo, hecho FROM tareas WHERE id = ? AND cod = ?');
+    $q->execute([$id, $cod]);
+    $t = $q->fetch();
+    if (!$t) adr_json(['error' => 'no existe'], 404);
+    if ($t['hecho'] !== null) adr_json(['error' => 'ya la habías entregado'], 409);
+
+    $db->beginTransaction();
+    try {
+        $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase)
+                      VALUES (?,1,?,?,?,\'ejercicio\')')
+           ->execute([$cod, $t['titulo'], $cifrado, adr_ahora()]);
+        $db->prepare('UPDATE tareas SET hecho = ? WHERE id = ? AND cod = ?')
+           ->execute([adr_ahora(), $id, $cod]);
+        $db->commit();
+    } catch (Throwable $e) {
+        $db->rollBack();
+        adr_json(['error' => 'no se ha podido guardar'], 500);
+    }
+    adr_json(['ok' => true]);
 }
 
 default:

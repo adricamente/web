@@ -11,6 +11,12 @@
    disco de un aparato que a veces no es solo suyo. Una sola página no
    navega, cambia de vista, y la clave no se escribe en ningún sitio.
 
+   La consecuencia de eso se nota al recargar: la sesión del servidor
+   sigue abierta, pero la llave ya no está en memoria y hay que
+   escribir la contraseña otra vez. La primera versión no lo explicaba
+   y parecía que te echaba. Ahora lo dice, y además el panel tiene un
+   botón de actualizar para que recargar no haga falta casi nunca.
+
    Aquí NO hay «crear cuenta», y tampoco es un olvido. Quien entra,
    entra porque Adrián lo ha dado de alta. Un registro abierto en un
    portal de salud es una lista de correos de gente en tratamiento
@@ -34,15 +40,38 @@ require __DIR__ . '/lib/arranque.php';
 require __DIR__ . '/lib/sesion.php';
 require __DIR__ . '/lib/pagina.php';
 
-$cuerpo = <<<'HTML'
+/* ¿Hay sesión viva? Entonces esto no es «entrar», es «seguir». La
+   galleta demuestra que este navegador ya se autenticó, así que se
+   puede rellenar el correo sin contárselo a nadie que no lo supiera
+   ya. Lo que no se puede rellenar es la contraseña: no está aquí, no
+   está en el servidor, y ése es justo el punto. */
+$sigue = null;
+if ($cod = adr_sesion($ADR['secreto'])) {
+    $q = adr_db($ADR)->prepare('SELECT correo FROM pacientes WHERE cod = ?');
+    $q->execute([$cod]);
+    $f = $q->fetch();
+    if ($f) $sigue = $f['correo'];
+}
+$correo_puesto = $sigue ? htmlspecialchars($sigue, ENT_QUOTES) : '';
+$aviso_sigue = $sigue ? '
+    <div class="nota ojo">
+      <p><strong>Tu sesión sigue abierta.</strong> Escribe otra vez tu
+      contraseña: tu llave no se guarda en este dispositivo, así que al
+      recargar hay que volver a construirla. Es a propósito — si se
+      guardara, quien cogiera este móvil entraría sin saberla.</p>
+    </div>' : '';
+
+$cuerpo = <<<HTML
 <!-- Las vistas. Solo una visible cada vez; el guion las cambia sin
      navegar, que es lo que mantiene la clave en memoria. -->
 
 <section id="v-entrar" class="vista">
   <div class="centrado">
     <h1>Entrar</h1>
-    <p class="apunte">Tu cuenta de adricamente: los documentos que te
-    mando y los cuestionarios que te toque rellenar.</p>
+    <p class="apunte">Tu cuenta de adricamente: lo que tienes pendiente,
+    lo que nos llevamos de cada sesión y tus documentos.</p>
+
+    {$aviso_sigue}
 
     <div class="nota mal" id="mal" hidden role="alert"><p id="mal-t"></p></div>
 
@@ -50,7 +79,7 @@ $cuerpo = <<<'HTML'
       <div class="campo">
         <label for="correo">Tu correo</label>
         <input type="email" id="correo" required autocomplete="username"
-               autocapitalize="off" spellcheck="false">
+               autocapitalize="off" spellcheck="false" value="{$correo_puesto}">
       </div>
       <div class="campo">
         <label for="clave">Tu contraseña</label>
@@ -69,10 +98,12 @@ $cuerpo = <<<'HTML'
     </div>
   </div>
 </section>
+HTML;
 
+$cuerpo .= <<<'HTML'
 <section id="v-panel" class="vista" hidden>
   <p class="etiqueta">Tu cuenta</p>
-  <h1>Hola</h1>
+  <h1>Tu espacio</h1>
 
   <div class="nota ojo" id="reenviando" hidden>
     <p><strong>Tus documentos están volviendo.</strong> Cambiaste la
@@ -81,25 +112,82 @@ $cuerpo = <<<'HTML'
     apareciendo aquí.</p>
   </div>
 
-  <div class="caja">
-    <h2 style="margin-top:0">Mis documentos</h2>
-    <div id="docs"></div>
+  <!-- Tres estantes, no una lista.
+       Lo pendiente arriba del todo porque es lo único que pide algo de
+       quien entra; lo demás está para cuando lo busque. -->
+  <div class="caja" id="c-tareas" hidden>
+    <h2 style="margin-top:0">Pendiente de hacer</h2>
+    <div id="tareas"></div>
   </div>
 
-  <p class="apunte" id="panel-estado" role="status"></p>
+  <div class="caja">
+    <h2 style="margin-top:0">Nuestras sesiones</h2>
+    <div id="sesiones"></div>
+  </div>
+
+  <div class="caja">
+    <h2 style="margin-top:0">Mis documentos</h2>
+    <div id="documentos"></div>
+  </div>
+
+  <p>
+    <button class="enlace-boton" id="refrescar" type="button">Actualizar</button>
+    <span class="apunte" id="panel-estado" role="status"></span>
+  </p>
 </section>
 
 <section id="v-doc" class="vista" hidden>
-  <p class="etiqueta">Documento</p>
+  <p class="etiqueta" id="doc-clase">Documento</p>
   <h1 id="doc-titulo">…</h1>
   <div class="caja"><div id="doc-cuerpo"></div></div>
   <p><button class="enlace-boton" id="doc-volver" type="button">← Volver</button></p>
+</section>
+
+<section id="v-tarea" class="vista" hidden>
+  <p class="etiqueta">Cuestionario</p>
+  <h1 id="t-titulo">…</h1>
+  <p class="apunte" id="t-cabecera"></p>
+
+  <div class="progreso-barra" role="progressbar" aria-label="Preguntas contestadas"
+       aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" id="t-barra">
+    <i style="width:0%" id="t-barra-i"></i>
+  </div>
+  <p class="apunte" id="t-cuenta"></p>
+
+  <!-- El bloque de crisis. Vive aquí en el marcado pero NO se enseña
+       aquí: el guion lo mueve debajo del ítem que lo ha disparado.
+
+       La primera versión de esto, en las maquetas, lo dejaba arriba del
+       todo. La prueba automática decía que aparecía, y aparecía. Solo
+       que la persona estaba abajo, en la pregunta nueve, y el aviso
+       salía fuera de la pantalla. Una red de seguridad que no se ve no
+       es una red de seguridad, y eso no lo dice ninguna aserción: se
+       vio mirando la captura. -->
+  <div class="auxilio" id="t-auxilio" role="status" hidden>
+    <p><strong>Antes de seguir.</strong> Has marcado algo que quiero que
+    sepas que voy a leer. Pero esto no es un canal de urgencias: lo leo
+    cuando reviso, y puede que no sea hoy.</p>
+    <p><strong>Si ahora mismo estás en peligro, llama al 024</strong>
+    (atención a la conducta suicida, 24 horas, gratuito) <strong>o al
+    112</strong>. Si puedes, díselo a alguien que tengas cerca.</p>
+  </div>
+
+  <form id="t-form">
+    <div id="t-items"></div>
+    <p style="margin-top:22px">
+      <button class="boton" id="t-enviar" type="submit">Enviar</button>
+      <button class="enlace-boton" id="t-luego" type="button">Seguir en otro momento</button>
+    </p>
+    <p class="apunte" id="t-estado" role="status">Lo que vas marcando se
+    queda en este dispositivo hasta que envíes. No sale de aquí sin cifrar.</p>
+  </form>
 </section>
 HTML;
 
 $guion = adr_sodio() . <<<'HTML'
 <script type="module">
-import { listo, entrarConServidor, abrirDelMac, vigilarSesion } from './cripto.js';
+import { listo, entrarConServidor, abrirDelMac, sellarHaciaElMac, vigilarSesion }
+  from './cripto.js';
 
 /* --- Lo que se queda aquí dentro y no sale ---------------------------
    `privada` es la clave del paciente. No se escribe en localStorage ni
@@ -113,11 +201,12 @@ import { listo, entrarConServidor, abrirDelMac, vigilarSesion } from './cripto.j
    Reduce la ventana; no la cierra. */
 let privada = null;
 let miPublica = null;
+let macPublica = null;
 
 const $ = (id) => document.getElementById(id);
-const vistas = ['v-entrar', 'v-panel', 'v-doc'];
+const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea'];
 function ver(cual) {
-  vistas.forEach(v => { $(v).hidden = (v !== cual); });
+  VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
   window.scrollTo(0, 0);
 }
 function falla(t) { $('mal-t').textContent = t; $('mal').hidden = false; }
@@ -199,58 +288,98 @@ $('f-entrar').addEventListener('submit', async (ev) => {
   }
 });
 
-/* --- El panel -------------------------------------------------------- */
+/* --- El panel, en tres estantes --------------------------------------- */
+function fecha(iso) {
+  return (iso || '').slice(0, 10).split('-').reverse().join('/');
+}
+function vacio(txt) {
+  const d = document.createElement('div');
+  d.className = 'vacio';
+  const p = document.createElement('p');
+  p.textContent = txt;
+  d.appendChild(p);
+  return d;
+}
+function fila(titulo, pie) {
+  const f = document.createElement('div');
+  f.className = 'fila';
+  const t = document.createElement('div');
+  t.className = 'texto';
+  const s = document.createElement('strong');
+  s.textContent = titulo;
+  t.appendChild(s);
+  if (pie) { const p = document.createElement('p'); p.textContent = pie; t.appendChild(p); }
+  f.appendChild(t);
+  return f;
+}
+
 async function panel() {
-  ver('v-panel');
+  /* Se piden los datos ANTES de cambiar de vista. Al revés —que es
+     como estaba— el panel aparece un instante con el contenido de la
+     vez anterior y luego se redibuja: se ve el parpadeo, y peor, un
+     dedo rápido puede pulsar un botón que ya no existe. */
+  $('panel-estado').textContent = '';
   const r = await api('mios');
   if (!r.ok) { location.reload(); return; }
+  ver('v-panel');
   miPublica = r.j.publica || null;
+  macPublica = r.j.mac_publica || null;
+
+  /* Pendiente */
+  const ts = r.j.tareas || [];
+  $('c-tareas').hidden = (ts.length === 0);
+  const ct = $('tareas'); ct.innerHTML = '';
+  ts.forEach(t => {
+    const f = fila(t.titulo, t.caduca ? ('antes del ' + fecha(t.caduca)) : null);
+    const b = document.createElement('button');
+    b.className = 'boton'; b.type = 'button'; b.textContent = 'Rellenar';
+    b.addEventListener('click', () => abrirTarea(t.id));
+    f.appendChild(b);
+    ct.appendChild(f);
+  });
+
+  /* Sesiones y documentos */
   const docs = r.j.documentos || [];
-  const caja = $('docs');
-  caja.innerHTML = '';
-
-  if (!docs.length) {
-    caja.innerHTML = '<div class="vacio"><p>Todavía no hay nada aquí. ' +
-      'Cuando te mande algo, aparece en esta lista.</p></div>';
-    return;
-  }
-
-  /* Un documento sellado a una llave anterior no se puede abrir, y sin
-     avisar parecería que está roto. Se marca, y el panel explica que
-     están volviendo. */
   let viejos = 0;
-  docs.forEach(d => {
-    const caduco = Number(d.para_v) !== Number(r.j.v);
-    if (caduco) viejos++;
-    const fila = document.createElement('div');
-    fila.className = 'fila';
-    const t = document.createElement('div');
-    t.className = 'texto';
-    const s = document.createElement('strong');
-    s.textContent = d.titulo || 'Documento';
-    const f = document.createElement('p');
-    f.textContent = (d.creado || '').slice(0, 10).split('-').reverse().join('/');
-    t.appendChild(s); t.appendChild(f);
-    fila.appendChild(t);
-    if (caduco) {
-      const e = document.createElement('span');
-      e.className = 'sello caduca';
-      e.textContent = 'volviendo';
-      fila.appendChild(e);
-    } else {
-      const b = document.createElement('button');
-      b.className = 'boton suave';
-      b.type = 'button';
-      b.textContent = 'Abrir';
-      b.addEventListener('click', () => abrir(d.id, d.titulo));
-      fila.appendChild(b);
-    }
-    caja.appendChild(fila);
+  [['sesion', 'sesiones', 'Aquí irá apareciendo lo que nos llevamos de cada sesión.'],
+   ['documento', 'documentos', 'Todavía no hay documentos. Cuando te mande alguno, aparece aquí.']]
+  .forEach(([clase, caja, cuandoNoHay]) => {
+    const c = $(caja); c.innerHTML = '';
+    const mios = docs.filter(d => (d.clase || 'documento') === clase);
+    if (!mios.length) { c.appendChild(vacio(cuandoNoHay)); return; }
+    mios.forEach(d => {
+      const caduco = Number(d.para_v) !== Number(r.j.v);
+      if (caduco) viejos++;
+      const f = fila(d.titulo || 'Documento', fecha(d.creado));
+      if (caduco) {
+        /* Un botón que no abre es peor que no tener botón: la persona
+           piensa que está roto y que ha perdido algo. */
+        const e = document.createElement('span');
+        e.className = 'sello caduca'; e.textContent = 'volviendo';
+        f.appendChild(e);
+      } else {
+        const b = document.createElement('button');
+        b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
+        b.addEventListener('click', () => abrir(d.id, d.titulo, clase));
+        f.appendChild(b);
+      }
+      c.appendChild(f);
+    });
   });
   $('reenviando').hidden = (viejos === 0);
 }
 
-async function abrir(id, titulo) {
+/* Actualizar SIN recargar. Recargar tiraría la clave de memoria y
+   obligaría a escribir la contraseña otra vez — que es correcto, pero
+   no por querer ver si ha llegado algo. */
+$('refrescar').addEventListener('click', async () => {
+  $('panel-estado').textContent = 'Mirando…';
+  await panel();
+  $('panel-estado').textContent = 'Al día.';
+});
+
+async function abrir(id, titulo, clase) {
+  $('doc-clase').textContent = (clase === 'sesion') ? 'Sesión' : 'Documento';
   $('doc-titulo').textContent = titulo || 'Documento';
   $('doc-cuerpo').textContent = 'Abriendo…';
   ver('v-doc');
@@ -261,18 +390,198 @@ async function abrir(id, titulo) {
     /* Se pinta como TEXTO, nunca como HTML. Lo que hay dentro lo ha
        escrito el Mac, pero «viene de mi propio sistema» es exactamente
        la frase con la que entran los agujeros. */
-    $('doc-cuerpo').textContent = (typeof d === 'string') ? d : (d.texto || JSON.stringify(d, null, 1));
+    $('doc-cuerpo').textContent =
+      (typeof d === 'string') ? d : (d.texto || JSON.stringify(d, null, 1));
   } catch (_) {
     $('doc-cuerpo').textContent =
       'Este documento está cerrado con una llave anterior a tu contraseña actual. ' +
       'Lo vuelvo a mandar y reaparece aquí; no se ha perdido.';
   }
 }
-
 $('doc-volver').addEventListener('click', panel);
-/* El borrado al cerrar la pestaña ya lo pone vigilarSesion(). No se
-   repite aquí: dos sitios que hacen lo mismo es uno que algún día
-   deja de hacerlo sin que se note. */
+
+/* --- Rellenar un cuestionario ----------------------------------------
+   Esta vista no sabe nada de ningún instrumento. Los ítems, las
+   opciones y el bloque `riesgo {item, umbral, bandera}` vienen de la
+   plantilla que sirve el servidor. Por eso el CORE-10 o cualquier
+   instrumento nuevo entran añadiendo una plantilla, sin tocar esto. */
+let TAREA = null;
+
+async function abrirTarea(id) {
+  const r = await api('tarea&id=' + encodeURIComponent(id));
+  if (!r.ok) { await panel(); return; }
+  TAREA = r.j;
+  const P = TAREA.plantilla;
+  $('t-titulo').textContent = TAREA.titulo;
+  $('t-cabecera').textContent = P.cabecera ||
+    'Si alguna no sabes contestarla, déjala en blanco y ya está.';
+  /* Antes de nada, devolver el bloque de crisis a su sitio.
+     -------------------------------------------------------------------
+     Esto no es limpieza opcional: es un fallo que se comió la pantalla.
+     Cuando salta, el bloque se MUEVE dentro de #t-items para quedar
+     pegado al ítem que lo dispara. Si luego se vuelve a abrir el
+     cuestionario, el `innerHTML = ''` de más abajo lo borraba con el
+     resto — y a partir de ahí $('t-auxilio') era null y la vista
+     reventaba en silencio: la persona pulsaba «Rellenar» y no pasaba
+     nada.
+
+     Lo encontró la prueba de «seguir en otro momento» y volver, que es
+     exactamente lo que va a hacer alguien que deja un cuestionario a
+     medias. */
+  const aux = $('t-auxilio');
+  aux.hidden = true;
+  $('v-tarea').insertBefore(aux, $('t-form'));
+
+  $('t-form').hidden = false;
+  $('t-estado').textContent = 'Lo que vas marcando se queda en este ' +
+    'dispositivo hasta que envíes. No sale de aquí sin cifrar.';
+
+  const cont = $('t-items'); cont.innerHTML = '';
+  P.items.forEach((texto, i) => {
+    const n = i + 1;
+    const caja = document.createElement('div');
+    caja.className = 'item';
+    const fs = document.createElement('fieldset');
+    const lg = document.createElement('legend');
+    lg.textContent = n + '. ' + texto;
+    fs.appendChild(lg);
+    const ops = document.createElement('div');
+    ops.className = 'opciones';
+    P.opciones.forEach(o => {
+      const lb = document.createElement('label');
+      lb.className = 'opcion';
+      const inp = document.createElement('input');
+      inp.type = 'radio'; inp.name = 'i' + n; inp.value = String(o[0]);
+      const sp = document.createElement('span');
+      sp.textContent = o[1];
+      lb.appendChild(inp); lb.appendChild(sp);
+      ops.appendChild(lb);
+    });
+    fs.appendChild(ops);
+    caja.appendChild(fs);
+    cont.appendChild(caja);
+  });
+  $('t-barra').setAttribute('aria-valuemax', String(P.items.length));
+  recuperar();
+  repintar();
+  ver('v-tarea');
+}
+
+function respuestas() {
+  const out = [];
+  for (let n = 1; n <= TAREA.plantilla.items.length; n++) {
+    const m = document.querySelector('input[name=i' + n + ']:checked');
+    if (m) out.push({ item: n, valor: Number(m.value) });
+  }
+  return out;
+}
+function noContestados() {
+  const hechas = new Set(respuestas().map(r => r.item));
+  const out = [];
+  for (let n = 1; n <= TAREA.plantilla.items.length; n++) if (!hechas.has(n)) out.push(n);
+  return out;
+}
+function bloqueRiesgo() {
+  const r = TAREA.plantilla.riesgo;
+  if (!r) return null;
+  const m = document.querySelector('input[name=i' + r.item + ']:checked');
+  if (!m) return null;
+  const v = Number(m.value);
+  return { item: r.item, valor: v, umbral: r.umbral,
+           superado: v >= r.umbral, bandera: r.bandera };
+}
+
+function repintar() {
+  const hechas = respuestas().length;
+  const total = TAREA.plantilla.items.length;
+  $('t-barra').setAttribute('aria-valuenow', String(hechas));
+  $('t-barra-i').style.width = (hechas / total * 100) + '%';
+  $('t-cuenta').textContent = hechas + ' de ' + total + ' contestadas';
+
+  /* La aparición del bloque de crisis ocurre entera aquí dentro. No
+     hay petición, no hay baliza, no se entera nadie más. La señal le
+     llega a Adrián dentro del sobre, cifrada, como todo lo demás. */
+  const r = bloqueRiesgo();
+  const toca = !!(r && r.superado);
+  const aux = $('t-auxilio');
+  if (toca && aux.hidden) {
+    const suyo = document.querySelector(
+      'input[name=i' + TAREA.plantilla.riesgo.item + ']').closest('.item');
+    suyo.insertAdjacentElement('afterend', aux);
+  }
+  aux.hidden = !toca;
+}
+
+/* Lo contestado a medias se queda en ESTE dispositivo y sin cifrar,
+   porque no sale. Mandar un borrador al servidor sería contenido
+   clínico en claro, que es justo lo que este diseño existe para
+   evitar. Se borra al entregar. */
+function laClave() { return 'adr.parcial.' + TAREA.id; }
+function guardar() {
+  try { localStorage.setItem(laClave(), JSON.stringify(respuestas())); } catch (_) {}
+}
+function recuperar() {
+  try {
+    const s = localStorage.getItem(laClave());
+    if (!s) return;
+    JSON.parse(s).forEach(r => {
+      const el = document.querySelector(
+        'input[name=i' + r.item + '][value="' + r.valor + '"]');
+      if (el) el.checked = true;
+    });
+  } catch (_) {}
+}
+
+$('t-items').addEventListener('change', () => { guardar(); repintar(); });
+$('t-luego').addEventListener('click', () => { guardar(); panel(); });
+
+$('t-form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  $('t-enviar').disabled = true;
+  const P = TAREA.plantilla;
+  const d = new Date(), dd = (n) => (n < 10 ? '0' : '') + n;
+  let off = -d.getTimezoneOffset();
+  const signo = off >= 0 ? '+' : '-';
+  off = Math.abs(off);
+  /* Hora local con el desfase escrito, no UTC: «las once de la noche»
+     y «las nueve de la mañana» dicen cosas distintas de una persona, y
+     convertir a UTC las confunde según el mes. */
+  const momento = d.getFullYear() + '-' + dd(d.getMonth() + 1) + '-' + dd(d.getDate()) +
+    'T' + dd(d.getHours()) + ':' + dd(d.getMinutes()) + ':' + dd(d.getSeconds()) +
+    signo + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
+
+  const sobre = {
+    v: 1,
+    tipo: 'instrumento_estandarizado',
+    instrumento: P.instrumento || TAREA.titulo,
+    version_items: P.version_items || null,
+    completado_en: momento,
+    respuestas: respuestas(),
+    no_contestados: noContestados(),
+    riesgo: bloqueRiesgo(),
+    tarea: TAREA.id,
+    origen: 'cuenta',
+  };
+
+  try {
+    /* Sellado a la clave del Mac. El servidor transporta un bloque que
+       no puede abrir: lo que guarda es ruido para él. */
+    const cifrado = sellarHaciaElMac(sobre, macPublica);
+    const r = await api('entregar', { id: TAREA.id, cifrado });
+    if (!r.ok) { $('t-estado').textContent = 'No se ha podido enviar. Inténtalo otra vez.'; return; }
+    try { localStorage.removeItem(laClave()); } catch (_) {}
+    $('t-form').hidden = true;
+    $('t-estado').textContent = '';
+    await panel();
+    $('panel-estado').textContent = 'Enviado. Gracias.';
+  } finally {
+    $('t-enviar').disabled = false;
+  }
+});
+
+/* La pública del Mac llega dentro de `mios`, que ya se pide para
+   pintar el panel. Una petición menos, y no hay forma de estar en la
+   pantalla de un cuestionario sin haber pasado por el panel. */
 </script>
 HTML;
 
