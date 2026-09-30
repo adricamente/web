@@ -60,6 +60,32 @@ function adr_vencen(PDO $db, array $ADR): int {
     }
     return $n;
 }
+/* --- Plantillas retiradas -------------------------------------------
+   El «CORE-10» que llevaba el portal NO era el CORE-10: sus ítems 4 a
+   10 no son los del instrumento y el de riesgo apuntaba a otra
+   pregunta. Se escribió sin fuente, que es justo lo que no se hace.
+   Se reconoce por su bandera, que solo tenía esa versión.
+
+   Aquí se cortan las recurrencias que lo siguen mandando y se retiran
+   las entregas pendientes. No se borra nada: se marcan. */
+const ADR_RETIRADAS = ['core10_item9_autolesion'];
+function adr_retirada(string $plantilla_json): bool {
+    foreach (ADR_RETIRADAS as $b) {
+        if (strpos($plantilla_json, '"' . $b . '"') !== false) return true;
+    }
+    return false;
+}
+function adr_retira(PDO $db): void {
+    foreach (ADR_RETIRADAS as $b) {
+        $como = '%"' . $b . '"%';
+        $db->prepare('UPDATE recurrencias SET activa = 0 WHERE activa = 1 AND plantilla LIKE ?')
+           ->execute([$como]);
+        $db->prepare("UPDATE tareas SET hecho = 'retirada' WHERE hecho IS NULL AND plantilla LIKE ?")
+           ->execute([$como]);
+    }
+}
+adr_retira($db);
+
 $a  = $_GET['a'] ?? '';
 $in = adr_entrada();
 
@@ -536,6 +562,9 @@ case 'programar': {
     if (!is_array($plantilla) || empty($plantilla['items'])) {
         adr_json(['error' => 'la plantilla no tiene items'], 400);
     }
+    if (adr_retirada(json_encode($plantilla, JSON_UNESCAPED_UNICODE))) {
+        adr_json(['error' => 'esa plantilla está retirada: no es el instrumento que dice ser'], 409);
+    }
     $titulo = mb_substr((string)($in['titulo'] ?? ($plantilla['instrumento'] ?? 'Cuestionario')), 0, 80, 'UTF-8');
     $q = $db->prepare('SELECT 1 FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
     $q->execute([$cod]);
@@ -678,6 +707,9 @@ case 'asignar': {
        eso no falla con un error, falla en silencio. */
     if (!is_array($plantilla) || empty($plantilla['items']) || empty($plantilla['opciones'])) {
         adr_json(['error' => 'la plantilla no tiene items u opciones'], 400);
+    }
+    if (adr_retirada(json_encode($plantilla, JSON_UNESCAPED_UNICODE))) {
+        adr_json(['error' => 'esa plantilla está retirada: no es el instrumento que dice ser'], 409);
     }
     /* Respuestas distintas por ítem (AUDIT): tantas listas como ítems.
        Una de menos desplaza todas las respuestas un ítem. */
