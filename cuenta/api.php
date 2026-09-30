@@ -68,16 +68,20 @@ function adr_vencen(PDO $db, array $ADR): int {
 
    Aquí se cortan las recurrencias que lo siguen mandando y se retiran
    las entregas pendientes. No se borra nada: se marcan. */
-const ADR_RETIRADAS = ['core10_item9_autolesion'];
+/* Cada marca es un trozo de texto que solo tiene esa plantilla:
+     · la bandera del CORE-10 falso;
+     · un ítem del WSAS parafraseado de la misma sesión (dominios y
+       escala bien, redacción sin fuente). */
+const ADR_RETIRADAS = ['"core10_item9_autolesion"', 'Las aficiones que hago yo solo'];
 function adr_retirada(string $plantilla_json): bool {
     foreach (ADR_RETIRADAS as $b) {
-        if (strpos($plantilla_json, '"' . $b . '"') !== false) return true;
+        if (strpos($plantilla_json, $b) !== false) return true;
     }
     return false;
 }
 function adr_retira(PDO $db): void {
     foreach (ADR_RETIRADAS as $b) {
-        $como = '%"' . $b . '"%';
+        $como = '%' . $b . '%';
         $db->prepare('UPDATE recurrencias SET activa = 0 WHERE activa = 1 AND plantilla LIKE ?')
            ->execute([$como]);
         $db->prepare("UPDATE tareas SET hecho = 'retirada' WHERE hecho IS NULL AND plantilla LIKE ?")
