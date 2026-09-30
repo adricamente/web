@@ -659,8 +659,11 @@ function svgSerie(m) {
   if (!pts.length) return null;
   const An = 640, Al = 158, izq = 34, der = 58, arr = 18, aba = 28;
   const w = An - izq - der, h = Al - arr - aba, maxv = m.maximo || 27;
+  /* El DERS-28 va de 28 a 140 y el Rosenberg de 10 a 40. Dibujarlos
+     desde 0 aplasta la línea arriba y deja media gráfica vacía. */
+  const minv = m.minimo || 0, rango = (maxv - minv) || 1;
   const x = (i) => izq + (pts.length === 1 ? w : w * i / (pts.length - 1));
-  const y = (v) => arr + h - (v / maxv) * h;
+  const y = (v) => arr + h - ((v - minv) / rango) * h;
 
   const svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('viewBox', '0 0 ' + An + ' ' + Al);
@@ -688,7 +691,7 @@ function svgSerie(m) {
   };
 
   svg.appendChild(linea(izq, arr + h, izq + w, arr + h, '#CECCC6', 1));
-  svg.appendChild(texto(izq - 8, y(0) + 4, '0', 10, '#6C6963', 'end'));
+  svg.appendChild(texto(izq - 8, y(minv) + 4, String(minv), 10, '#6C6963', 'end'));
   svg.appendChild(texto(izq - 8, y(maxv) + 4, String(maxv), 10, '#6C6963', 'end'));
 
   if (m.corte != null) {
@@ -729,7 +732,12 @@ function lectura(m) {
     return 'Es la primera medida, así que todavía no hay nada que comparar. ' +
            'Sirve como punto de partida.';
   }
-  const a = pts[0].valor, z = pts[pts.length - 1].valor, dif = a - z;
+  const a = pts[0].valor, z = pts[pts.length - 1].valor;
+  /* En casi todos, bajar es mejorar. En el Rosenberg o el WHO-5 es al
+     revés, y leerlos con la misma frase le diría a alguien que ha
+     empeorado justo la semana que mejora. */
+  const alReves = m.direccion === 'mas_es_mejor';
+  const dif = alReves ? z - a : a - z;
   const cf = m.cambio_fiable;
   if (cf == null) {
     return 'De ' + a + ' a ' + z + '. Lo que dice una sola medida es poco; ' +
@@ -740,12 +748,13 @@ function lectura(m) {
            'cuestionario puede medir con seguridad (hacen falta ' + cf + ' puntos), ' +
            'así que de momento se lee como «parecido», ni mejor ni peor.';
   }
+  const cuanto = Math.abs(dif) + ' puntos ' + (z < a ? 'menos' : 'más');
   if (dif > 0) {
-    return 'De ' + a + ' a ' + z + ': ' + dif + ' puntos menos, y eso ya pasa de lo ' +
+    return 'De ' + a + ' a ' + z + ': ' + cuanto + ', y eso ya pasa de lo ' +
            'que el cuestionario puede confundir con ruido (' + cf + ' puntos). ' +
-           'Es un cambio real en lo que mide.';
+           'Es un cambio real, y en la buena dirección.';
   }
-  return 'De ' + a + ' a ' + z + ': ha subido ' + Math.abs(dif) + ', y es más de lo ' +
+  return 'De ' + a + ' a ' + z + ': ' + cuanto + ', y es más de lo ' +
          'que se explica por el propio cuestionario (' + cf + ' puntos). Lo hablamos.';
 }
 
@@ -846,7 +855,10 @@ async function abrirTarea(id) {
     fs.appendChild(lg);
     const ops = document.createElement('div');
     ops.className = 'opciones';
-    P.opciones.forEach(o => {
+    /* AUDIT, OASIS, ODSIS: cada pregunta tiene sus propias respuestas.
+       Si el ítem trae las suyas, mandan; si no, las comunes. */
+    const suyas = (P.opciones_por_item && P.opciones_por_item[i]) || P.opciones;
+    suyas.forEach(o => {
       const lb = document.createElement('label');
       lb.className = 'opcion';
       const inp = document.createElement('input');

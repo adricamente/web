@@ -679,6 +679,12 @@ case 'asignar': {
     if (!is_array($plantilla) || empty($plantilla['items']) || empty($plantilla['opciones'])) {
         adr_json(['error' => 'la plantilla no tiene items u opciones'], 400);
     }
+    /* Respuestas distintas por ítem (AUDIT): tantas listas como ítems.
+       Una de menos desplaza todas las respuestas un ítem. */
+    $pi = $plantilla['opciones_por_item'] ?? null;
+    if ($pi !== null && (!is_array($pi) || count($pi) !== count($plantilla['items']))) {
+        adr_json(['error' => 'opciones_por_item no cuadra con los items'], 400);
+    }
     $r = $plantilla['riesgo'] ?? null;
     if ($r !== null) {
         if (!isset($r['item'], $r['umbral'], $r['bandera'])
