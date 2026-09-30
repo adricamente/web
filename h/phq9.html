@@ -91,8 +91,8 @@ input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outli
 <main id="principal">
   <p class="etiqueta">Cuestionario</p>
   <h1>PHQ-9</h1>
-  <p class="intro">Durante las <strong>últimas dos semanas</strong>, ¿con qué frecuencia te han molestado los siguientes problemas? Si alguna no sabes contestarla,
-  déjala en blanco.</p>
+  <p class="intro">Durante las últimas 2 semanas ¿con qué frecuencia le ha molestado alguno de los siguientes problemas?</p>
+  <p class="intro">Si alguna no sabes contestarla, déjala en blanco.</p>
 
   <div class="nota">
     <p><strong>Esto no se envía a ningún sitio solo.</strong> Se queda
@@ -175,7 +175,7 @@ input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outli
   <script src="/h/sodio-env.js"></script>
 <script>
 
-const PLANTILLA = {"instrumento": "PHQ-9", "version_items": "es-2017-munoz-navarro", "opciones": [[0, "Ningún día"], [1, "Varios días"], [2, "Más de la mitad de los días"], [3, "Casi todos los días"]], "items": ["Poco interés o placer en hacer las cosas", "Sentirte decaído, deprimido o sin esperanza", "Problemas para dormirte, para seguir durmiendo o dormir demasiado", "Sentirte cansado o con poca energía", "Poco apetito o comer en exceso", "Sentirte mal contigo mismo, o que eres un fracaso, o que te has fallado a ti o a tu familia", "Problemas para concentrarte en cosas como leer o ver la televisión", "Moverte o hablar tan despacio que otros podrían haberlo notado; o al revés, estar tan inquieto que te has movido mucho más de lo normal", "Pensar que estarías mejor muerto o que te harías daño de alguna forma"], "riesgo": {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"}};
+const PLANTILLA = {"instrumento": "PHQ-9", "version_items": "pfizer-es-ES", "opciones": [[0, "Nunca"], [1, "Varios días"], [2, "Más de la mitad de los días"], [3, "Casi cada día"]], "items": ["Poco interés o alegría por hacer cosas", "Sensación de estar decaído/a, deprimido/a o desesperanzado/a", "Problemas para quedarse dormido/a, para seguir durmiendo o dormir demasiado", "Sensación de cansancio o de tener poca energía", "Poco apetito o comer demasiado", "Sentirse mal consigo mismo/a; sentir que es un/a fracasado/a o que ha decepcionado a su familia o a sí mismo/a", "Problemas para concentrarse en algo, como leer el periódico o ver la televisión", "Moverse o hablar tan despacio que los demás pueden haberlo notado. O lo contrario: estar tan inquieto/a o agitado/a que se ha estado moviendo de un lado a otro más de lo habitual", "Pensamientos de que estaría mejor muerto/a o de querer hacerse daño de algún modo"], "riesgo": {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"}};
 const PUBLICA = "wHlYCXKYXtIN2cWtSilEor5ZBQ9tXhbef6zmF0MQNV8=";
 const RIESGO = {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"};
 

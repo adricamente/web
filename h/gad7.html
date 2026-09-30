@@ -91,8 +91,8 @@ input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outli
 <main id="principal">
   <p class="etiqueta">Cuestionario</p>
   <h1>GAD-7</h1>
-  <p class="intro">Durante las <strong>últimas dos semanas</strong>, ¿con qué frecuencia te han molestado los siguientes problemas? Si alguna no sabes contestarla,
-  déjala en blanco.</p>
+  <p class="intro">En los últimos 14 días, ¿con qué frecuencia le han supuesto una molestia los siguientes problemas?</p>
+  <p class="intro">Si alguna no sabes contestarla, déjala en blanco.</p>
 
   <div class="nota">
     <p><strong>Esto no se envía a ningún sitio solo.</strong> Se queda
@@ -175,7 +175,7 @@ input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outli
   <script src="/h/sodio-env.js"></script>
 <script>
 
-const PLANTILLA = {"instrumento": "GAD-7", "version_items": "es-2010-garcia-campayo", "opciones": [[0, "Ningún día"], [1, "Varios días"], [2, "Más de la mitad de los días"], [3, "Casi todos los días"]], "items": ["Sentirte nervioso, ansioso o muy alterado", "No poder dejar de preocuparte", "Preocuparte demasiado por diferentes cosas", "Dificultad para relajarte", "Estar tan inquieto que te cuesta quedarte quieto", "Molestarte o irritarte con facilidad", "Sentir miedo de que pueda pasar algo terrible"], "riesgo": null};
+const PLANTILLA = {"instrumento": "GAD-7", "version_items": "pfizer-es-ES", "opciones": [[0, "Nunca"], [1, "Varios días"], [2, "Más de la mitad de los días"], [3, "Casi cada día"]], "items": ["Sentirse nervioso/a, angustiado/a o muy tenso/a", "Ser incapaz de dejar de preocuparse o de controlar la preocupación", "Preocuparse demasiado por diferentes cuestiones", "Tener problemas para relajarse", "Estar tan inquieto/a que le resulta difícil permanecer sentado/a", "Enfadarse o irritarse con facilidad", "Sentir miedo de que algo terrible pueda ocurrir"], "riesgo": null};
 const PUBLICA = "wHlYCXKYXtIN2cWtSilEor5ZBQ9tXhbef6zmF0MQNV8=";
 const RIESGO = null;
 
