@@ -242,3 +242,7 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
 .plan-fijo button{font:inherit;font-weight:700;background:none;border:0;padding:0;
   color:#5C390E;text-decoration:underline;cursor:pointer}
 .plan-fijo a{color:#5C390E;font-weight:700}
+.accesos{list-style:none;padding:0;margin:8px 0 0;font-size:14.5px;color:var(--ink-2)}
+.accesos li{padding:4px 0;border-bottom:1px solid var(--line)}
+.accesos li.fallo{color:#8A2B1E}
+#c-accesos summary{cursor:pointer}

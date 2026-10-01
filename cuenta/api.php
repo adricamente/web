@@ -108,6 +108,9 @@ const ADR_SOMBRA = '$argon2id$v=19$m=65536,t=4,p=1$TEJQYmppQXlTQVhjN2JHTg'
 
 require __DIR__ . '/lib/sesion.php';
 
+/* Todo lo que hace el Mac queda apuntado (acción y hora). */
+if (adr_es_el_mac($ADR) && $a !== '') adr_apunta($db, 'mac', $a);
+
 switch ($a) {
 
 /* --- La sal ---------------------------------------------------------
@@ -147,7 +150,11 @@ case 'entrar': {
         ? password_verify($auth, $f['verificador'])
         : (password_verify($auth, ADR_SOMBRA) && false);
 
-    if (!$bien) adr_json(['error' => 'no hemos podido entrar'], 401);
+    if (!$bien) {
+        if ($f) adr_apunta($db, $f['cod'], 'entrada fallida', false);
+        adr_json(['error' => 'no hemos podido entrar'], 401);
+    }
+    adr_apunta($db, $f['cod'], 'entrada');
 
     adr_freno_limpia($db, 'ent:' . $correo);
     $db->prepare('UPDATE pacientes SET ultimo = ? WHERE cod = ?')
@@ -197,6 +204,7 @@ case 'reset': {
            ->execute([$cod]);
     }
 
+    adr_apunta($db, $cod, $a === 'activar' ? 'activación de la cuenta' : 'contraseña nueva');
     adr_sesion_pon($cod, $ADR['secreto']);
     adr_json(['ok' => true]);
 }
@@ -934,6 +942,33 @@ case 'refrescar_plantillas': {
         }
     }
     adr_json(['ok' => true, 'recurrencias' => $rec, 'pendientes' => $tar]);
+}
+
+/* El paciente ve sus propios accesos: si alguien ha entrado sin que él
+   lo sepa, aquí se ve. */
+case 'accesos': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $q = $db->prepare('SELECT cuando, que, ok FROM accesos WHERE quien = ? ORDER BY id DESC LIMIT 15');
+    $q->execute([$cod]);
+    adr_json(['accesos' => $q->fetchAll()]);
+}
+
+/* Y el Mac, el registro entero (sin el ruido de sus propias recogidas). */
+case 'registro': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->query("SELECT cuando, quien, que, ok FROM accesos
+                     WHERE NOT (quien = 'mac' AND que IN ('recoger','recogido','panel_mac','claves','registro'))
+                     ORDER BY id DESC LIMIT 300");
+    adr_json(['accesos' => $q->fetchAll()]);
+}
+
+/* Qué documentos para firmar tiene cada uno y si los ha firmado. */
+case 'firmas': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->query('SELECT cod, titulo, creado, firmado FROM sobres
+                     WHERE direccion = 2 AND requiere_firma = 1 ORDER BY id');
+    adr_json(['firmas' => $q->fetchAll()]);
 }
 
 default:

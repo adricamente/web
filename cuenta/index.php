@@ -184,6 +184,12 @@ $cuerpo .= <<<'HTML'
     <span class="apunte" id="m-estado" role="status"></span></p>
   </div>
 
+  <details class="caja" id="c-accesos">
+    <summary><strong>Últimos accesos a tu cuenta</strong></summary>
+    <p class="apunte">Si ves una entrada que no reconoces, cambia la contraseña y escríbeme.</p>
+    <ul id="accesos" class="accesos"></ul>
+  </details>
+
   <p>
     <button class="enlace-boton" id="refrescar" type="button">Actualizar</button>
     <span class="apunte" id="panel-estado" role="status"></span>
@@ -606,7 +612,8 @@ $('d-hecho').addEventListener('click', async () => {
 /* --- Firmar ---------------------------------------------------------- */
 let FIRMA = null;
 async function abrirFirma(id, titulo) {
-  FIRMA = { id, titulo };
+  FIRMA = { id, titulo, texto: null };
+  $('s-firmar').disabled = true;
   $('s-titulo').textContent = titulo || 'Documento';
   $('s-cuerpo').textContent = 'Abriendo…';
   $('s-estado').textContent = '';
@@ -616,7 +623,10 @@ async function abrirFirma(id, titulo) {
   if (!r.ok || !r.j.cifrado) { $('s-cuerpo').textContent = 'No se ha podido traer.'; return; }
   try {
     const d = abrirDelMac(r.j.cifrado, miPublica, privada);
-    $('s-cuerpo').textContent = (typeof d === 'string') ? d : (d.texto || '');
+    FIRMA.texto = (typeof d === 'string') ? d : (d.texto || '');
+    $('s-cuerpo').textContent = FIRMA.texto;
+    /* Solo se puede firmar lo que se ha podido leer. */
+    $('s-firmar').disabled = !FIRMA.texto;
   } catch (_) { $('s-cuerpo').textContent = 'No se ha podido abrir.'; }
 }
 $('s-volver').addEventListener('click', panel);
@@ -626,13 +636,19 @@ $('s-firmar').addEventListener('click', async () => {
     $('s-estado').textContent = 'Escribe tu nombre y apellidos completos.';
     return;
   }
+  if (!FIRMA.texto) return;
   $('s-firmar').disabled = true;
   try {
+    /* La huella del texto EXACTO que tenía delante: así la firma dice
+       qué se firmó, no solo cuándo. */
+    const bytes = new TextEncoder().encode(FIRMA.texto);
+    const h = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
+      .map(b => b.toString(16).padStart(2, '0')).join('');
     /* La firma va sellada al Mac: él tiene la prueba completa de qué
        nombre se escribió y cuándo. El servidor solo apunta que se
        firmó y la hora, que es lo que puede saber sin leer nada. */
     const cifrado = sellarHaciaElMac({ v: 1, tipo: 'firma', documento: FIRMA.id,
-                                       titulo: FIRMA.titulo, nombre,
+                                       titulo: FIRMA.titulo, documento_sha256: h, nombre,
                                        firmado_en: ahoraLocal(), origen: 'cuenta',
                                        cod_web: miCod },
                                      macPublica);
@@ -1420,6 +1436,19 @@ function buscaPlan(copias, v) {
   $('plan-fijo').hidden = true;
 }
 $('b-plan').addEventListener('click', () => { if (PLAN) abrirCopia(PLAN); });
+
+$('c-accesos').addEventListener('toggle', async () => {
+  if (!$('c-accesos').open) return;
+  const r = await api('accesos');
+  const ul = $('accesos'); ul.innerHTML = '';
+  ((r.j && r.j.accesos) || []).forEach(a => {
+    const li = document.createElement('li');
+    li.textContent = a.cuando.slice(0, 16).replace('T', ' ') + ' · ' + a.que;
+    if (!Number(a.ok)) li.className = 'fallo';
+    ul.appendChild(li);
+  });
+  if (!ul.children.length) ul.appendChild(Object.assign(document.createElement('li'), { textContent: 'Nada todavía.' }));
+});
 </script>
 HTML;
 

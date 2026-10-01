@@ -197,7 +197,20 @@ function adr_db(array $ADR): PDO {
        la privada. Copiarla a mano a un fichero es la clase de paso en
        el que se pega la clave de otro par y nadie se entera hasta que
        un cuestionario no se abre. */
+        /* El registro de accesos: quién entra y qué hace el Mac, con su
+       hora. No guarda contenidos ni IPs: dice que alguien entró, no qué
+       leyó. Se conserva un año. */
     $pdo->exec('
+      CREATE TABLE IF NOT EXISTS accesos (
+        id     INTEGER PRIMARY KEY AUTOINCREMENT,
+        cuando TEXT NOT NULL,
+        quien  TEXT NOT NULL,
+        que    TEXT NOT NULL,
+        ok     INTEGER NOT NULL DEFAULT 1
+      )');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS i_accesos ON accesos(quien, cuando)');
+
+$pdo->exec('
       CREATE TABLE IF NOT EXISTS ajustes (
         clave TEXT PRIMARY KEY,
         valor TEXT NOT NULL,
@@ -244,6 +257,12 @@ function adr_ahora(): string {
  * si la cuenta existe: frenar solo a los correos reales sería otra
  * forma de decir cuáles lo son.
  */
+function adr_apunta(PDO $db, string $quien, string $que, bool $ok = true): void {
+    $db->prepare('INSERT INTO accesos (cuando, quien, que, ok) VALUES (?,?,?,?)')
+       ->execute([adr_ahora(), $quien, $que, $ok ? 1 : 0]);
+    $db->exec("DELETE FROM accesos WHERE cuando < datetime('now', '-365 days')");
+}
+
 function adr_freno(PDO $db, string $clave, int $tope = 10, int $ventana = 900): bool {
     $t = time();
     /* Se limpia SOLO esta clave con su ventana, y lo demás a partir de
