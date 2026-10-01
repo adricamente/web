@@ -552,7 +552,8 @@ $('m-enviar').addEventListener('click', async () => {
   $('m-estado').textContent = '';
   try {
     const cifrado = sellarHaciaElMac({ v: 1, tipo: 'mensaje', texto,
-                                       escrito_en: ahoraLocal(), origen: 'cuenta' },
+                                       escrito_en: ahoraLocal(), origen: 'cuenta',
+                                       cod_web: miCod },
                                      macPublica);
     const r = await api('escribir', { cifrado });
     if (!r.ok) { $('m-estado').textContent = 'No se ha podido enviar.'; return; }
@@ -616,7 +617,8 @@ $('s-firmar').addEventListener('click', async () => {
        firmó y la hora, que es lo que puede saber sin leer nada. */
     const cifrado = sellarHaciaElMac({ v: 1, tipo: 'firma', documento: FIRMA.id,
                                        titulo: FIRMA.titulo, nombre,
-                                       firmado_en: ahoraLocal(), origen: 'cuenta' },
+                                       firmado_en: ahoraLocal(), origen: 'cuenta',
+                                       cod_web: miCod },
                                      macPublica);
     const r = await api('firmar', { id: FIRMA.id, cifrado });
     if (!r.ok) { $('s-estado').textContent = r.j.error || 'No se ha podido firmar.'; return; }
@@ -1075,7 +1077,7 @@ $('t-form').addEventListener('submit', async (ev) => {
        qué historia archivarla. Es lo mismo que hace la hoja suelta de
        /h/ con el fragmento de la URL: un solo formato de sobre para los
        dos caminos. */
-    cod: miCod,
+    cod_web: miCod,
     origen: 'cuenta',
   };
   if (P.extra) {
