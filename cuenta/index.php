@@ -101,6 +101,13 @@ $cuerpo = <<<HTML
 HTML;
 
 $cuerpo .= <<<'HTML'
+<!-- Su plan de seguridad, a un toque desde cualquier pantalla de la
+     cuenta. Solo aparece si tiene uno enviado. -->
+<p class="plan-fijo" id="plan-fijo" hidden>
+  <button type="button" id="b-plan">Mi plan de seguridad</button>
+  <span>· Si estás en peligro: <a href="tel:024">024</a> · <a href="tel:112">112</a></span>
+</p>
+
 <section id="v-panel" class="vista" hidden>
   <p class="etiqueta">Tu cuenta</p>
   <h1>Tu espacio</h1>
@@ -125,14 +132,16 @@ $cuerpo .= <<<'HTML'
        quien entra; lo demás está para cuando lo busque. -->
   <!-- La gráfica. Va antes que los estantes porque es la respuesta a
        la pregunta con la que entra la mayoría: «¿voy mejor?». -->
-  <div class="caja" id="c-progreso" hidden>
-    <h2 style="margin-top:0">Mi progreso</h2>
-    <div id="progreso"></div>
-  </div>
+  <p class="resumen" id="resumen" role="status"></p>
 
   <div class="caja" id="c-tareas" hidden>
     <h2 style="margin-top:0">Pendiente de hacer</h2>
     <div id="tareas"></div>
+  </div>
+
+  <div class="caja" id="c-progreso" hidden>
+    <h2 style="margin-top:0">Mi progreso</h2>
+    <div id="progreso"></div>
   </div>
 
   <!-- Herramientas: lo que se rellena o se lee y se GUARDA (plan de
@@ -312,8 +321,10 @@ let miCod = null;
 
 const $ = (id) => document.getElementById(id);
 const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr'];
+let PLAN = null;   // id de su plan de seguridad enviado, si tiene
 function ver(cual) {
   VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
+  $('plan-fijo').hidden = !(PLAN && cual !== 'v-entrar');
   window.scrollTo(0, 0);
 }
 function falla(t) { $('mal-t').textContent = t; $('mal').hidden = false; }
@@ -437,6 +448,11 @@ async function panel() {
   /* Pendiente (las herramientas van en su propia caja) */
   const todas = r.j.tareas || [];
   const ts = todas.filter(t => t.tipo !== 'herramienta');
+  const n = todas.length;
+  $('resumen').textContent = n
+    ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.') + ' Empieza por arriba.'
+    : 'No tienes nada pendiente. Aquí están tu progreso y lo que hemos ido trabajando.';
+  buscaPlan((r.j.documentos || []).filter(d => d.clase === 'herramienta'), r.j.v);
   pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'),
                     (r.j.documentos || []).filter(d => d.clase === 'herramienta'), r.j.v);
   $('c-tareas').hidden = (ts.length === 0);
@@ -1386,6 +1402,24 @@ $('h-pdf').addEventListener('click', () => {
 });
 
 $('h-volver').addEventListener('click', panel);
+
+/* El plan de seguridad: se busca entre sus copias enviadas (se abren
+   aquí, con su clave) la más reciente que sea de riesgo. */
+function buscaPlan(copias, v) {
+  PLAN = null;
+  for (const d of copias) {               // vienen de la más nueva a la más vieja
+    if (Number(d.para_v) !== Number(v)) continue;
+    api('abrir&id=' + encodeURIComponent(d.id)).then(r => {
+      if (PLAN || !r.ok || !r.j.cifrado) return;
+      try {
+        const c = abrirDelMac(r.j.cifrado, miPublica, privada);
+        if (c.def && c.def.riesgo && !PLAN) { PLAN = d.id; $('plan-fijo').hidden = false; }
+      } catch (_) {}
+    });
+  }
+  $('plan-fijo').hidden = true;
+}
+$('b-plan').addEventListener('click', () => { if (PLAN) abrirCopia(PLAN); });
 </script>
 HTML;
 

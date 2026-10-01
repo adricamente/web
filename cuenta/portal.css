@@ -233,3 +233,12 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
   .solo-impresion .tabla-h table{min-width:0}
   .solo-impresion .auxilio{break-inside:avoid}
 }
+
+/* --- Inicio y plan de seguridad fijo ------------------------------- */
+.resumen{font-size:17px;color:var(--ink-2);margin:-4px 0 18px}
+.plan-fijo{position:sticky;top:0;z-index:5;margin:0 0 16px;padding:10px 14px;
+  background:var(--aviso-soft);border:1px solid #E7C89A;border-left:5px solid var(--aviso);
+  border-radius:var(--r-s);display:flex;flex-wrap:wrap;align-items:center;gap:8px;max-width:none;color:#5C390E}
+.plan-fijo button{font:inherit;font-weight:700;background:none;border:0;padding:0;
+  color:#5C390E;text-decoration:underline;cursor:pointer}
+.plan-fijo a{color:#5C390E;font-weight:700}
