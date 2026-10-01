@@ -646,6 +646,7 @@ case 'panel_mac': {
     foreach ($db->query('SELECT s.cod, COUNT(*) n FROM sobres s
                          JOIN pacientes p ON p.cod = s.cod
                          WHERE s.direccion = 2 AND s.para_v <> p.publica_v
+                           AND s.clase <> \'herramienta\'
                          GROUP BY s.cod')->fetchAll() as $r) $viejos[$r['cod']] = (int)$r['n'];
 
     $out = [];
@@ -840,6 +841,99 @@ case 'entregar': {
         adr_json(['error' => 'no se ha podido guardar'], 500);
     }
     adr_json(['ok' => true]);
+}
+
+/* --- Catálogos -------------------------------------------------------
+   El sistema clínico sube aquí su catálogo cada vez que lo exporta.
+
+   Lo que hace el servidor con él es poco, y a propósito: comprueba que
+   ha llegado entero (sha256), lo guarda fuera de la carpeta pública y
+   dice si las hojas sueltas de /h/ siguen al día. NO lo valida ni lo
+   «aplica»: eso lo hace la consola del Mac con el mismo importador de
+   siempre, que es donde viven las plantillas. Un segundo validador en
+   PHP sería una segunda copia de las mismas reglas, y dos copias acaban
+   diciendo cosas distintas. */
+case 'catalogo': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $tipo = (string)($in['tipo'] ?? '');
+    $contenido = (string)($in['contenido'] ?? '');
+    $sha = strtolower((string)($in['sha256'] ?? ''));
+    if (!in_array($tipo, ['instrumentos', 'herramientas'], true)) adr_json(['error' => 'tipo no válido'], 400);
+    if ($contenido === '' || strlen($contenido) > 2 * 1024 * 1024) adr_json(['error' => 'contenido vacío o demasiado grande'], 400);
+    if (!hash_equals(hash('sha256', $contenido), $sha)) adr_json(['error' => 'la sha256 no coincide: no ha llegado entero'], 400);
+    $lista = json_decode($contenido, true);
+    if (!is_array($lista) || !array_is_list($lista) || !$lista) adr_json(['error' => 'no es una lista JSON'], 400);
+    $clave = $tipo === 'instrumentos' ? 'instrumento' : 'id';
+    foreach ($lista as $d) {
+        if (!is_array($d) || !is_string($d[$clave] ?? null)) adr_json(['error' => "cada entrada necesita «{$clave}»"], 400);
+    }
+
+    $dir = dirname($ADR['datos']) . '/catalogos';
+    if (!is_dir($dir)) mkdir($dir, 0700, true);
+    file_put_contents("$dir/$tipo.json", $contenido, LOCK_EX);
+    $db->prepare('INSERT INTO ajustes (clave, valor, puesto) VALUES (?,?,?)
+                  ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor, puesto = excluded.puesto')
+       ->execute(["catalogo_$tipo", $sha, adr_ahora()]);
+
+    /* ¿Las hojas de /h/ dicen lo mismo que el catálogo? Se compara el
+       texto (cabecera, ítems, opciones) y el bloque de riesgo con lo que
+       lleva cada hoja dentro. Si no coincide se dice, y se rehacen en el
+       siguiente despliegue: una hoja pública no se reescribe desde aquí,
+       porque lleva dentro la clave del Mac y no debe depender de nada
+       que llegue por la red. */
+    $hojas = [];
+    if ($tipo === 'instrumentos') {
+        $por = [];
+        foreach ($lista as $d) $por[$d['instrumento']] = $d;
+        foreach (['phq9' => 'PHQ-9', 'gad7' => 'GAD-7'] as $f => $nombre) {
+            $html = @file_get_contents(ADR_RAIZ . "/../h/$f.html");
+            if (!$html || !preg_match('/const PLANTILLA = (\{.*\});/', $html, $m) || !isset($por[$nombre])) {
+                $hojas[$f] = 'sin_comparar';
+                continue;
+            }
+            $h = json_decode($m[1], true);
+            $c = $por[$nombre];
+            $ops = array_map(fn($o) => [(int)$o[0], (string)$o[1]], $c['opciones'] ?? []);
+            $hops = array_map(fn($o) => [(int)$o[0], (string)$o[1]], $h['opciones'] ?? []);
+            $igual = ($h['items'] ?? null) === ($c['items'] ?? null) && $hops === $ops
+                && ($h['riesgo'] ?? null) == ($c['riesgo'] ?? null)
+                && ($h['version_items'] ?? null) === ($c['version_items'] ?? null);
+            $hojas[$f] = $igual ? 'al_dia' : 'desfasada';
+        }
+    }
+    adr_json(['ok' => true, 'sha256' => $sha, 'hojas' => $hojas]);
+}
+
+/* Las plantillas vigentes, desde la consola, después de importar.
+   Las medidas programadas y los cuestionarios aún sin contestar llevan
+   una COPIA de la plantilla de cuando se mandaron. Sin esto, cambiar un
+   texto en el catálogo no cambiaba lo que siguen recibiendo: una
+   recurrencia de hace un mes seguía mandando la redacción vieja.
+   Solo se tocan las pendientes con el mismo número de ítems, para no
+   descuadrar lo que alguien tenga a medias. */
+case 'refrescar_plantillas': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $ps = $in['plantillas'] ?? [];
+    if (!is_array($ps)) adr_json(['error' => 'plantillas no válidas'], 400);
+    $rec = 0; $tar = 0;
+    foreach ($ps as $titulo => $p) {
+        if (!is_array($p) || empty($p['items']) || empty($p['opciones'])) continue;
+        $j = json_encode($p, JSON_UNESCAPED_UNICODE);
+        if (adr_retirada($j)) continue;
+        $u = $db->prepare('UPDATE recurrencias SET plantilla = ? WHERE titulo = ? AND activa = 1 AND plantilla <> ?');
+        $u->execute([$j, (string)$titulo, $j]);
+        $rec += $u->rowCount();
+        $q = $db->prepare("SELECT id, plantilla FROM tareas
+                           WHERE titulo = ? AND hecho IS NULL AND tipo = 'cuestionario'");
+        $q->execute([(string)$titulo]);
+        foreach ($q->fetchAll() as $t) {
+            $vieja = json_decode((string)$t['plantilla'], true);
+            if ($t['plantilla'] === $j || count($vieja['items'] ?? []) !== count($p['items'])) continue;
+            $db->prepare('UPDATE tareas SET plantilla = ? WHERE id = ?')->execute([$j, $t['id']]);
+            $tar++;
+        }
+    }
+    adr_json(['ok' => true, 'recurrencias' => $rec, 'pendientes' => $tar]);
 }
 
 default:

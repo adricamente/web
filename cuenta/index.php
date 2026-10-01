@@ -1045,8 +1045,19 @@ $('t-luego').addEventListener('click', () => { guardar(); panel(); });
 
 $('t-form').addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  $('t-enviar').disabled = true;
   const P = TAREA.plantilla;
+  /* Hay pruebas que solo se pueden corregir enteras (el DES-II es una
+     media; el PSST, un algoritmo). Ahí no se deja enviar con huecos, y
+     se dice cuáles faltan. */
+  const faltan = noContestados();
+  if (P.obligatorio && faltan.length) {
+    $('t-estado').textContent = 'En este cuestionario hacen falta todas las respuestas. ' +
+      'Te falta' + (faltan.length > 1 ? 'n las preguntas ' : ' la pregunta ') + faltan.join(', ') + '.';
+    const primera = document.querySelector('input[name=i' + faltan[0] + ']');
+    if (primera) primera.closest('.item').scrollIntoView({ block: 'center' });
+    return;
+  }
+  $('t-enviar').disabled = true;
   const momento = ahoraLocal();
 
   const sobre = {
