@@ -11,18 +11,20 @@
 # sitio, no más laxa. Aquí el CSP no es decoración: es lo que OBLIGA a
 # que la promesa se cumpla.
 #
-#   connect-src 'none'   la página no puede hacer NINGUNA petición.
-#                        Si alguien añade un fetch dentro de dos años,
-#                        el navegador lo bloquea. La promesa de que las
-#                        respuestas no salen deja de depender de que
-#                        nadie se equivoque.
+#   connect-src 'self'   la página solo puede hablar con este mismo
+#                        sitio, y solo para dejar el sobre YA SELLADO
+#                        en /h/enviar.php. Antes era 'none' y había que
+#                        descargar un fichero; se cambió para que el
+#                        paciente pulse «Enviar» y ya. Lo que sale es
+#                        un bloque que solo abre el Mac; a ningún otro
+#                        dominio puede salir nada.
 #   form-action 'none'   el formulario no puede enviarse a ningún sitio.
 #   default-src 'none'   nada por defecto. Se permite lo justo.
 #   img-src / font-src   'none': no hay imágenes y las fuentes son
 #                        locales del sistema.
 # ===================================================================
 <IfModule mod_headers.c>
-  Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'none'; img-src 'none'; font-src 'none'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests"
+  Header always set Content-Security-Policy "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'none'; font-src 'none'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; upgrade-insecure-requests"
 
   # Que no se indexe ni se archive, además del meta de la propia página.
   Header always set X-Robots-Tag "noindex, nofollow, noarchive"

@@ -95,10 +95,10 @@ input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outli
   <p class="intro">Si alguna no sabes contestarla, déjala en blanco.</p>
 
   <div class="nota">
-    <p><strong>Esto no se envía a ningún sitio solo.</strong> Se queda
-    en tu dispositivo hasta que pulses el botón del final. Entonces se
-    cifra con mi clave y te descargas un archivo que solo puedo abrir
-    yo. Me lo mandas por donde hablemos normalmente.</p>
+    <p><strong>Esto no sale de tu dispositivo hasta que pulses
+    «Enviar».</strong> Entonces se cifra aquí mismo con mi clave y me
+    llega a mí. Nadie más puede abrirlo, tampoco el servidor por el que
+    pasa.</p>
   </div>
 
   <div class="progreso" role="progressbar" aria-label="Contestadas"
@@ -119,16 +119,26 @@ input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outli
 
   <form id="form">
     <div id="items"></div>
+    <div id="extra"></div>
     <p class="acciones">
-      <button class="boton" type="submit" id="enviar">Cifrar y descargar</button>
+      <button class="boton" type="submit" id="enviar">Enviar</button>
+      <button class="boton suave" type="button" id="descargar">Prefiero descargarlo</button>
     </p>
     <p class="apunte" id="estado">Lo que marcas se guarda en este
     dispositivo por si cierras sin terminar.</p>
   </form>
 
+  <div class="hecho" id="enviado" hidden>
+    <h2>Enviado</h2>
+    <p>Ya me ha llegado. No tienes que hacer nada más.</p>
+    <p class="apunte">Ya puedes cerrar esta página. Se ha borrado lo que
+    quedaba guardado aquí.</p>
+  </div>
+
   <div class="hecho" id="hecho" hidden>
     <h2>Listo</h2>
-    <p>Se ha descargado un archivo. <strong>Mándamelo</strong> por donde
+    <p id="hecho-motivo">Se ha descargado un archivo.</p>
+    <p><strong>Mándamelo</strong> por donde
     hablemos: correo, WhatsApp, lo que uses.</p>
     <p class="apunte">Da igual por dónde lo mandes: va cifrado y no lo
     puede abrir nadie más que yo, ni siquiera quien lleve la aplicación
@@ -175,7 +185,7 @@ input:focus-visible,button:focus-visible{outline:2.5px solid var(--accent);outli
   <script src="/h/sodio-env.js"></script>
 <script>
 
-const PLANTILLA = {"instrumento": "PHQ-9", "version_items": "pfizer-es-ES", "opciones": [[0, "Nunca"], [1, "Varios días"], [2, "Más de la mitad de los días"], [3, "Casi cada día"]], "items": ["Poco interés o alegría por hacer cosas", "Sensación de estar decaído/a, deprimido/a o desesperanzado/a", "Problemas para quedarse dormido/a, para seguir durmiendo o dormir demasiado", "Sensación de cansancio o de tener poca energía", "Poco apetito o comer demasiado", "Sentirse mal consigo mismo/a; sentir que es un/a fracasado/a o que ha decepcionado a su familia o a sí mismo/a", "Problemas para concentrarse en algo, como leer el periódico o ver la televisión", "Moverse o hablar tan despacio que los demás pueden haberlo notado. O lo contrario: estar tan inquieto/a o agitado/a que se ha estado moviendo de un lado a otro más de lo habitual", "Pensamientos de que estaría mejor muerto/a o de querer hacerse daño de algún modo"], "riesgo": {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"}};
+const PLANTILLA = {"instrumento": "PHQ-9", "version_items": "pfizer-es-ES", "opciones": [[0, "Nunca"], [1, "Varios días"], [2, "Más de la mitad de los días"], [3, "Casi cada día"]], "items": ["Poco interés o alegría por hacer cosas", "Sensación de estar decaído/a, deprimido/a o desesperanzado/a", "Problemas para quedarse dormido/a, para seguir durmiendo o dormir demasiado", "Sensación de cansancio o de tener poca energía", "Poco apetito o comer demasiado", "Sentirse mal consigo mismo/a; sentir que es un/a fracasado/a o que ha decepcionado a su familia o a sí mismo/a", "Problemas para concentrarse en algo, como leer el periódico o ver la televisión", "Moverse o hablar tan despacio que los demás pueden haberlo notado. O lo contrario: estar tan inquieto/a o agitado/a que se ha estado moviendo de un lado a otro más de lo habitual", "Pensamientos de que estaría mejor muerto/a o de querer hacerse daño de algún modo"], "riesgo": {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"}, "extra": {"pregunta_funcional": {"texto": "Si ha marcado alguno de los problemas de este cuestionario, ¿hasta qué punto estos problemas le han creado dificultades para hacer su trabajo, ocuparse de la casa o relacionarse con los demás?", "opciones": ["Ninguna dificultad", "Algunas dificultades", "Muchas dificultades", "Muchísimas dificultades"], "puntua": false}}};
 const PUBLICA = "wHlYCXKYXtIN2cWtSilEor5ZBQ9tXhbef6zmF0MQNV8=";
 const RIESGO = {"item": 9, "umbral": 1, "bandera": "phq9_item9_positivo"};
 
@@ -191,17 +201,62 @@ const barra = document.getElementById('barra');
 const barraI = document.getElementById('barra-i');
 const cuenta = document.getElementById('cuenta');
 
-PLANTILLA.items.forEach((texto, i) => {
-  const n = i + 1;
-  const ops = PLANTILLA.opciones.map(o =>
-    `<label class="opcion"><input type="radio" name="i${n}" value="${o[0]}">` +
-    `<span>${o[1]}</span></label>`).join('');
+function grupo(nombre, leyenda, opciones) {
   const d = document.createElement('div');
   d.className = 'item';
-  d.innerHTML = `<fieldset><legend>${n}. ${texto}</legend>` +
-                `<div class="opciones">${ops}</div></fieldset>`;
-  cont.appendChild(d);
+  const fs = document.createElement('fieldset');
+  const lg = document.createElement('legend');
+  lg.textContent = leyenda;
+  fs.appendChild(lg);
+  const ops = document.createElement('div');
+  ops.className = 'opciones';
+  opciones.forEach(([valor, etiqueta]) => {
+    const lb = document.createElement('label');
+    lb.className = 'opcion';
+    const inp = document.createElement('input');
+    inp.type = 'radio'; inp.name = nombre; inp.value = String(valor);
+    const sp = document.createElement('span');
+    sp.textContent = etiqueta;
+    lb.appendChild(inp); lb.appendChild(sp);
+    ops.appendChild(lb);
+  });
+  fs.appendChild(ops);
+  d.appendChild(fs);
+  return d;
+}
+PLANTILLA.items.forEach((texto, i) => {
+  cont.appendChild(grupo('i' + (i + 1), (i + 1) + '. ' + texto, PLANTILLA.opciones));
 });
+
+/* Lo que acompaña al cuestionario y NO puntúa: la pregunta de
+   dificultad del PHQ-9, la experiencia de referencia del PCL-5. Va en
+   el sobre aparte, en `extra`, nunca dentro de `respuestas`. */
+const EXTRA = PLANTILLA.extra || null;
+const cajaExtra = document.getElementById('extra');
+if (EXTRA && EXTRA.pregunta_funcional) {
+  cajaExtra.appendChild(grupo('pf', EXTRA.pregunta_funcional.texto,
+    EXTRA.pregunta_funcional.opciones.map((t, k) => [k, t])));
+}
+if (EXTRA && EXTRA.experiencia_referencia) {
+  const d = document.createElement('div');
+  d.className = 'item';
+  const lb = document.createElement('label');
+  lb.textContent = EXTRA.experiencia_referencia.texto;
+  lb.setAttribute('for', 'er');
+  const ta = document.createElement('textarea');
+  ta.id = 'er'; ta.rows = 3; ta.maxLength = 1000;
+  d.appendChild(lb); d.appendChild(ta);
+  cajaExtra.appendChild(d);
+}
+function extra() {
+  if (!EXTRA) return undefined;
+  const pf = document.querySelector('input[name=pf]:checked');
+  const er = document.getElementById('er');
+  return {
+    pregunta_funcional: pf ? Number(pf.value) : null,
+    experiencia_referencia: er && er.value.trim() ? er.value.trim() : null,
+  };
+}
 
 function respuestas() {
   const out = [];
@@ -248,7 +303,7 @@ function repintar() {
 }
 
 /* Lo contestado a medias se queda aqui, sin cifrar, porque no sale del
-   dispositivo. Se borra al descargar. */
+   dispositivo. Se borra al enviar o descargar. */
 function guardar() {
   try { localStorage.setItem(CLAVE, JSON.stringify(respuestas())); } catch (_) {}
 }
@@ -307,8 +362,7 @@ function codigo() {
   } catch (_) { return null; }
 }
 
-document.getElementById('form').addEventListener('submit', (ev) => {
-  ev.preventDefault();
+function sellar() {
   const momento = ahora();
   const sobre = {
     v: 1,
@@ -322,27 +376,71 @@ document.getElementById('form').addEventListener('submit', (ev) => {
     cod: codigo(),
     origen: 'hoja-sellada',
   };
+  const ex = extra();
+  if (ex) sobre.extra = ex;
   const cifrado = b64(s.crypto_box_seal(
     s.from_string(JSON.stringify(sobre)), deB64(PUBLICA)));
-  /* Lo que viaja: el sobre cifrado y nada mas. Ni el nombre del
-     instrumento va en claro, porque el nombre del fichero se ve en la
-     carpeta de descargas de un movil que puede no ser solo suyo. */
-  const fichero = JSON.stringify({ v: 1, formato: 'adr-sobre', cifrado }, null, 1);
+  return { momento, cifrado };
+}
+
+/* El plan B: el mismo sobre, como archivo y como texto para copiar.
+   Lo que viaja es el sobre cifrado y nada mas: ni el nombre del
+   instrumento va en claro, porque el nombre del fichero se ve en la
+   carpeta de descargas de un movil que puede no ser solo suyo. */
+function descargar(sellado, motivo) {
+  const fichero = JSON.stringify({ v: 1, formato: 'adr-sobre', cifrado: sellado.cifrado }, null, 1);
   const url = URL.createObjectURL(new Blob([fichero], {type: 'application/json'}));
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'cuestionario-' + momento.slice(0, 10) + '.json';
+  a.download = 'cuestionario-' + sellado.momento.slice(0, 10) + '.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-  /* El mismo sobre, en texto, por si la descarga no se ve. Se rellena
-     SIEMPRE, no solo cuando falla: no hay forma fiable de enterarse de
-     que a.click() no ha descargado nada. */
+  /* Se rellena SIEMPRE, no solo cuando falla: no hay forma fiable de
+     enterarse de que a.click() no ha descargado nada. */
   document.getElementById('sobre-texto').value = fichero;
+  document.getElementById('hecho-motivo').textContent = motivo;
+  terminar('hecho');
+}
 
+function terminar(cual) {
   try { localStorage.removeItem(CLAVE); } catch (_) {}
+  /* Si marcó el ítem de riesgo, el aviso del 024 y el 112 se queda
+     también en la pantalla final: es la última que va a ver. */
+  const r = bloqueRiesgo();
+  const pantalla = document.getElementById(cual);
+  if (r && r.superado) pantalla.insertAdjacentElement('afterbegin', aux);
+  aux.hidden = !(r && r.superado);
   document.getElementById('form').hidden = true;
-  document.getElementById('hecho').hidden = false;
+  pantalla.hidden = false;
   window.scrollTo(0, 0);
+}
+
+document.getElementById('form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const boton = document.getElementById('enviar');
+  boton.disabled = true;
+  document.getElementById('estado').textContent = 'Enviando…';
+  const sellado = sellar();
+  try {
+    const r = await fetch('/h/enviar.php', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ cifrado: sellado.cifrado }),
+      cache: 'no-store', credentials: 'omit', referrerPolicy: 'no-referrer',
+    });
+    if (!r.ok) throw new Error(String(r.status));
+    terminar('enviado');
+  } catch (_) {
+    /* Sin conexión, o el servidor no ha contestado: no se pierde nada,
+       se descarga el mismo sobre. */
+    descargar(sellado, 'No se ha podido enviar (puede ser la conexión), así que se ha descargado un archivo con tus respuestas cifradas.');
+  } finally {
+    boton.disabled = false;
+  }
+});
+
+document.getElementById('descargar').addEventListener('click', () => {
+  descargar(sellar(), 'Se ha descargado un archivo.');
 });
 
 document.getElementById('copiar').addEventListener('click', () => {

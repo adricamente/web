@@ -246,7 +246,13 @@ function adr_ahora(): string {
  */
 function adr_freno(PDO $db, string $clave, int $tope = 10, int $ventana = 900): bool {
     $t = time();
-    $db->prepare('DELETE FROM intentos WHERE cuando < ?')->execute([$t - $ventana]);
+    /* Se limpia SOLO esta clave con su ventana, y lo demás a partir de
+       un día. Antes se borraba todo lo más viejo que la ventana de
+       quien llamara: un intento de entrada (15 minutos) se llevaba por
+       delante el freno de una hora de las entregas, y el tope diario
+       de las hojas no duraba un día sino una hora. */
+    $db->prepare('DELETE FROM intentos WHERE clave = ? AND cuando < ?')->execute([$clave, $t - $ventana]);
+    $db->prepare('DELETE FROM intentos WHERE cuando < ?')->execute([$t - 86400]);
     $q = $db->prepare('SELECT COUNT(*) c FROM intentos WHERE clave = ? AND cuando >= ?');
     $q->execute([$clave, $t - $ventana]);
     if ((int)$q->fetch()['c'] >= $tope) return false;

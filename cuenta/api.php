@@ -371,10 +371,15 @@ case 'firmar': {
 case 'hecho': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare("SELECT tipo, hecho FROM tareas WHERE id = ? AND cod = ?");
+    $q = $db->prepare("SELECT tipo, hecho, plantilla FROM tareas WHERE id = ? AND cod = ?");
     $q->execute([(int)($in['id'] ?? 0), $cod]);
     $t = $q->fetch();
-    if (!$t || $t['tipo'] !== 'deber') adr_json(['error' => 'no existe'], 404);
+    /* Se marca a mano lo que no se entrega: un deber, o una herramienta
+       que es solo para leer. Una herramienta para rellenar se cierra
+       entregándola, no con un clic. */
+    $es_lectura = $t && $t['tipo'] === 'herramienta'
+        && ((json_decode((string)$t['plantilla'], true)['tipo'] ?? '') === 'lectura');
+    if (!$t || ($t['tipo'] !== 'deber' && !$es_lectura)) adr_json(['error' => 'no existe'], 404);
     if ($t['hecho']) adr_json(['error' => 'ya estaba'], 409);
     $db->prepare('UPDATE tareas SET hecho = ? WHERE id = ? AND cod = ?')
        ->execute([adr_ahora(), (int)$in['id'], $cod]);
@@ -607,7 +612,8 @@ case 'alta': {
        letra más. No habría fallado con «carácter no válido»: habría
        fallado con «cod no válido» en un alta suelta, cada varias
        altas, sin patrón aparente. */
-    if (!preg_match('/^[A-Za-z0-9_-]{3,64}$/', $cod) || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+    if (!preg_match('/^[A-Za-z0-9_-]{3,64}$/', $cod) || $cod === 'hoja'
+        || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
         adr_json(['error' => 'cod o correo no válidos'], 400);
     }
     $db->prepare('INSERT OR IGNORE INTO pacientes (cod, correo, alta) VALUES (?,?,?)')
@@ -626,8 +632,9 @@ case 'alta': {
 case 'panel_mac': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
 
-    $ps = $db->query('SELECT cod, correo, alta, activado, publica_v, ultimo
-                      FROM pacientes ORDER BY alta')->fetchAll();
+    /* 'hoja' es el buzón de las hojas sueltas, no un paciente. */
+    $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo
+                      FROM pacientes WHERE cod <> 'hoja' ORDER BY alta")->fetchAll();
     $pend = [];
     foreach ($db->query('SELECT cod, COUNT(*) n FROM sobres
                          WHERE direccion = 1 AND recogido IS NULL
@@ -666,10 +673,11 @@ case 'panel_mac': {
    del Mac. */
 case 'por_reenviar': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
-    $q = $db->prepare('SELECT s.id, s.titulo, s.clase, s.creado, s.para_v
+    $q = $db->prepare("SELECT s.id, s.titulo, s.clase, s.creado, s.para_v
                        FROM sobres s JOIN pacientes p ON p.cod = s.cod
                        WHERE s.cod = ? AND s.direccion = 2 AND s.para_v <> p.publica_v
-                       ORDER BY s.id');
+                         AND s.clase <> 'herramienta'
+                       ORDER BY s.id");
     $q->execute([(string)($_GET['cod'] ?? '')]);
     adr_json(['sobres' => $q->fetchAll()]);
 }
@@ -704,6 +712,26 @@ case 'asignar': {
     $q = $db->prepare('SELECT 1 FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
     $q->execute([$cod]);
     if (!$q->fetch()) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
+
+    /* Una HERRAMIENTA (plan de seguridad, autorregistro, guía) no es un
+       cuestionario: no tiene ítems ni opciones, tiene bloques y campos.
+       La valida a fondo la consola; aquí lo justo para no guardar algo
+       que el navegador no pueda pintar. */
+    if (($in['tipo'] ?? '') === 'herramienta') {
+        if (!is_array($plantilla) || empty($plantilla['bloques']) || !is_array($plantilla['bloques'])
+            || !preg_match('/^[a-z0-9-]{2,60}$/', (string)($plantilla['id'] ?? ''))
+            || !in_array($plantilla['tipo'] ?? '', ['rellenable', 'lectura'], true)) {
+            adr_json(['error' => 'la herramienta no tiene una forma válida'], 400);
+        }
+        $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo)
+                      VALUES (?,?,?,?,?,'herramienta')")
+           ->execute([$cod, mb_substr($titulo ?: 'Herramienta', 0, 80, 'UTF-8'),
+                      json_encode($plantilla, JSON_UNESCAPED_UNICODE),
+                      adr_ahora(), $in['caduca'] ?? null]);
+        $id = (int)$db->lastInsertId();
+        adr_avisa($db, $ADR, $cod);
+        adr_json(['ok' => true, 'id' => $id]);
+    }
 
     /* Se valida la forma aquí, no en el navegador. Una plantilla sin
        `items` pinta una pantalla vacía, y una con el bloque `riesgo`
@@ -758,7 +786,8 @@ case 'tarea': {
         adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'], 'tipo' => 'deber',
                   'cifrado' => adr_b64($t['cifrado']), 'para_v' => (int)$t['para_v']]);
     }
-    adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'], 'tipo' => 'cuestionario',
+    adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'],
+              'tipo' => $t['tipo'] === 'herramienta' ? 'herramienta' : 'cuestionario',
               'plantilla' => json_decode($t['plantilla'], true)]);
 }
 
@@ -780,6 +809,15 @@ case 'entregar': {
     if (!$t) adr_json(['error' => 'no existe'], 404);
     if ($t['hecho'] !== null) adr_json(['error' => 'ya la habías entregado'], 409);
 
+    $copia = null; $copia_v = null;
+    if (!empty($in['copia'])) {
+        $copia = adr_deb64($in['copia']);
+        if (!$copia || strlen($copia) > 65536) adr_json(['error' => 'copia no válida'], 400);
+        $p = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+        $p->execute([$cod]);
+        $copia_v = (int)$p->fetch()['publica_v'];
+    }
+
     $db->beginTransaction();
     try {
         $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase)
@@ -787,6 +825,15 @@ case 'entregar': {
            ->execute([$cod, $t['titulo'], $cifrado, adr_ahora()]);
         $db->prepare('UPDATE tareas SET hecho = ? WHERE id = ? AND cod = ?')
            ->execute([adr_ahora(), $id, $cod]);
+        /* La copia propia de una herramienta: lo que ha escrito, sellado
+           en su navegador a SU clave. Así su plan de seguridad sigue en
+           «Mis herramientas» después de enviarlo, que es justo cuando
+           hace falta. El servidor guarda otro bloque que no puede leer. */
+        if ($copia) {
+            $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase)
+                          VALUES (?,2,?,?,?,?,'herramienta')")
+               ->execute([$cod, $t['titulo'], $copia, $copia_v, adr_ahora()]);
+        }
         $db->commit();
     } catch (Throwable $e) {
         $db->rollBack();

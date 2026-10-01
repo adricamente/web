@@ -11,6 +11,11 @@
    fuente por defecto sin que nadie se entere. Antes que una fuente
    que a veces esta, la del sistema siempre.
    =================================================================== */
+
+/* El atributo hidden manda siempre. Sin esto, cualquier clase con
+   display propio (.boton) lo ignora y un botón «oculto» se ve. */
+[hidden]{display:none !important}
+
 :root{
   color-scheme:light;
   --bg:#FAF9F5; --surface:#FFFFFF; --surface-2:#F5F3EF;
@@ -179,4 +184,52 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
   main{padding:22px 16px 60px}
   .barra .dentro{padding:11px 16px}
   .caja{padding:17px 17px}
+}
+
+/* --- Herramientas ------------------------------------------------- */
+.bloque-titulo{font-size:17px;margin:26px 0 4px}
+.herr h2.titulo-h{margin:30px 0 4px}
+.herr h3.apartado-h{font-size:16.5px;margin:22px 0 4px}
+.herr .apunte{margin:0 0 8px}
+.herr textarea,.herr input[type=text]{width:100%;font:inherit;padding:9px 11px;
+  border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface)}
+.herr textarea{resize:vertical}
+.herr input:disabled,.herr textarea:disabled{background:var(--surface-2);color:var(--muted)}
+.campos-fila{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
+.campo-h{display:flex;flex-direction:column;gap:4px;min-width:0}
+.campo-h .rotulo{font-size:14px;color:var(--ink-2)}
+.nota-h{background:var(--surface-2);border-radius:var(--r-s);padding:12px 14px;max-width:none}
+.tabla-h{overflow-x:auto;margin:8px 0 14px;-webkit-overflow-scrolling:touch}
+.tabla-h table{border-collapse:collapse;width:100%}
+@media (min-width:561px){ .herr.apaisado .tabla-h table{min-width:900px} }
+/* En el móvil, cada fila de una tabla es una ficha: con dos columnas
+   cortadas, la segunda (el teléfono) quedaba fuera de la pantalla, y
+   en un plan de seguridad el teléfono es lo que importa. */
+@media (max-width:560px){
+  .tabla-h thead{display:none}
+  .tabla-h tr{display:block;border:1px solid var(--line);border-radius:var(--r-s);margin:0 0 10px;padding:6px 8px}
+  .tabla-h table,.tabla-h tbody{display:block}
+  .tabla-h td{display:block;border:0 !important;padding:4px 2px}
+  .tabla-h td::before{content:attr(data-rotulo);display:block;font-size:13px;font-weight:600;color:var(--ink-2)}
+  .tabla-h td textarea,.tabla-h td input{border:1px solid var(--line);padding:8px}
+}
+.tabla-h th,.tabla-h td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top;font-size:14.5px}
+.tabla-h th{background:var(--surface-2);font-weight:600}
+.tabla-h tr.ejemplo td{color:var(--muted);font-style:italic}
+.tabla-h td textarea,.tabla-h td input{border:0;padding:4px;background:transparent}
+.firma-h{display:flex;flex-wrap:wrap;gap:22px;margin-top:10px}
+.firma-col{flex:1 1 14rem}
+.fuente-h{font-size:13px;color:var(--muted);margin-top:26px}
+.valor{border-bottom:1px solid var(--line);padding:4px 2px;min-height:1.6em;white-space:pre-wrap}
+.valor.multi{border:1px solid var(--line);border-radius:var(--r-s);padding:8px 10px}
+
+/* PDF: solo la copia estática, sin nada de la página alrededor. */
+.solo-impresion{display:none}
+@media print{
+  body > *:not(.solo-impresion){display:none !important}
+  .solo-impresion{display:block !important;color:#000}
+  .solo-impresion .salto{break-before:page}
+  .solo-impresion .tabla-h{overflow:visible}
+  .solo-impresion .tabla-h table{min-width:0}
+  .solo-impresion .auxilio{break-inside:avoid}
 }

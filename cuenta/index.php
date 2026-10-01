@@ -135,6 +135,15 @@ $cuerpo .= <<<'HTML'
     <div id="tareas"></div>
   </div>
 
+  <!-- Herramientas: lo que se rellena o se lee y se GUARDA (plan de
+       seguridad, autorregistros, guías). No son pruebas: no puntúan ni
+       salen en la gráfica, y lo enviado se queda aquí para volver a
+       abrirlo, que es justo cuando hace falta un plan de seguridad. -->
+  <div class="caja" id="c-herramientas" hidden>
+    <h2 style="margin-top:0">Mis herramientas</h2>
+    <div id="herramientas"></div>
+  </div>
+
   <div class="caja">
     <h2 style="margin-top:0">Nuestras sesiones</h2>
     <div id="sesiones"></div>
@@ -209,6 +218,7 @@ $cuerpo .= <<<'HTML'
 <section id="v-tarea" class="vista" hidden>
   <p class="etiqueta">Cuestionario</p>
   <h1 id="t-titulo">…</h1>
+  <p class="apunte" id="t-instrucciones" hidden></p>
   <p class="apunte" id="t-cabecera"></p>
 
   <div class="progreso-barra" role="progressbar" aria-label="Preguntas contestadas"
@@ -237,6 +247,7 @@ $cuerpo .= <<<'HTML'
 
   <form id="t-form">
     <div id="t-items"></div>
+    <div id="t-extra"></div>
     <p style="margin-top:22px">
       <button class="boton" id="t-enviar" type="submit">Enviar</button>
       <button class="enlace-boton" id="t-luego" type="button">Seguir en otro momento</button>
@@ -245,6 +256,38 @@ $cuerpo .= <<<'HTML'
     queda en este dispositivo hasta que envíes. No sale de aquí sin cifrar.</p>
   </form>
 </section>
+
+<section id="v-herr" class="vista" hidden>
+  <p class="etiqueta" id="h-etiqueta">Herramienta</p>
+  <h1 id="h-titulo">…</h1>
+  <p class="apunte" id="h-subtitulo"></p>
+  <!-- Con riesgo (el plan de seguridad), el 024 y el 112 van arriba y
+       abajo de TODA la pantalla, y también en el PDF. -->
+  <div class="auxilio h-riesgo" hidden>
+    <p><strong>Si ahora mismo no puedes mantenerte a salvo, llama al
+    024</strong> (atención a la conducta suicida, 24 horas, gratuito)
+    <strong>o al 112</strong>, o ve a urgencias.</p>
+  </div>
+  <form id="h-form" autocomplete="off">
+    <div id="h-cuerpo"></div>
+    <p style="margin-top:22px" id="h-botones">
+      <button class="boton" id="h-enviar" type="submit">Enviar</button>
+      <button class="boton suave" id="h-leido" type="button" hidden>Ya lo he leído</button>
+      <button class="boton suave" id="h-pdf" type="button">Descargar en PDF</button>
+      <button class="enlace-boton" id="h-volver" type="button">← Volver</button>
+    </p>
+    <p class="apunte" id="h-estado" role="status"></p>
+  </form>
+  <div class="auxilio h-riesgo" hidden>
+    <p><strong>024</strong> · atención a la conducta suicida, 24 horas,
+    gratuito. <strong>112</strong> · emergencias.</p>
+  </div>
+</section>
+
+<!-- Lo que se imprime: una copia estática, con lo escrito como texto.
+     Las casillas de un formulario se imprimen mal (se cortan, salen
+     vacías en algunos navegadores); esto no. -->
+<div id="h-imprimir" class="solo-impresion" aria-hidden="true"></div>
 HTML;
 
 $guion = adr_sodio() . <<<'HTML'
@@ -268,7 +311,7 @@ let macPublica = null;
 let miCod = null;
 
 const $ = (id) => document.getElementById(id);
-const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar'];
+const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr'];
 function ver(cual) {
   VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
   window.scrollTo(0, 0);
@@ -391,8 +434,11 @@ async function panel() {
   miCod = r.j.cod || null;
   pintaProgreso(r.j.progreso, r.j.v);
 
-  /* Pendiente */
-  const ts = r.j.tareas || [];
+  /* Pendiente (las herramientas van en su propia caja) */
+  const todas = r.j.tareas || [];
+  const ts = todas.filter(t => t.tipo !== 'herramienta');
+  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'),
+                    (r.j.documentos || []).filter(d => d.clase === 'herramienta'), r.j.v);
   $('c-tareas').hidden = (ts.length === 0);
   const ct = $('tareas'); ct.innerHTML = '';
   ts.forEach(t => {
@@ -633,9 +679,10 @@ $('doc-volver').addEventListener('click', panel);
    · UNA serie por gráfica, nunca dos instrumentos en los mismos ejes.
      Tienen escalas distintas y superponerlos es el error de gráfica más
      común que hay.
-   · El eje empieza en CERO siempre. Recortarlo haría que dos puntos
-     parecidos se vieran como un desplome o un milagro, y esto lo mira
-     alguien que está mal.
+   · El eje empieza en el MÍNIMO DE LA ESCALA (0 casi siempre; 10 en
+     el Rosenberg, 28 en el DERS-28), nunca en el mínimo de los datos.
+     Recortarlo a los datos haría que dos puntos parecidos se vieran
+     como un desplome o un milagro, y esto lo mira alguien que está mal.
    · Etiqueta en el primero y el último, y nada más. Un número encima de
      cada punto convierte la gráfica en una tabla fea.
    · Las cifras van también en texto debajo: para quien la lea con un
@@ -821,8 +868,16 @@ async function abrirTarea(id) {
   TAREA = r.j;
   const P = TAREA.plantilla;
   $('t-titulo').textContent = TAREA.titulo;
-  $('t-cabecera').textContent = P.cabecera ||
-    'Si alguna no sabes contestarla, déjala en blanco y ya está.';
+  /* Las instrucciones del instrumento (cuando las trae) y la frase que
+     encabeza los ítems. Una cabecera de una o dos palabras («Ítem») es
+     el rótulo de una columna del papel, no una frase: no se enseña. Y
+     si el primer bloque la repite, tampoco. */
+  $('t-instrucciones').hidden = !P.instrucciones;
+  $('t-instrucciones').textContent = P.instrucciones || '';
+  const cab = (P.cabecera || '').trim();
+  const repetida = P.bloques && P.bloques[0] && P.bloques[0].titulo === cab;
+  $('t-cabecera').textContent = (cab.split(/\s+/).length >= 3 && !repetida) ? cab
+    : (P.instrucciones ? '' : 'Si alguna no sabes contestarla, déjala en blanco y ya está.');
   /* Antes de nada, devolver el bloque de crisis a su sitio.
      -------------------------------------------------------------------
      Esto no es limpieza opcional: es un fallo que se comió la pantalla.
@@ -845,8 +900,16 @@ async function abrirTarea(id) {
     'dispositivo hasta que envíes. No sale de aquí sin cifrar.';
 
   const cont = $('t-items'); cont.innerHTML = '';
+  const inicioBloque = {};
+  (P.bloques || []).forEach(b => { inicioBloque[Math.min(...b.items)] = b.titulo; });
   P.items.forEach((texto, i) => {
     const n = i + 1;
+    if (inicioBloque[n]) {
+      const h = document.createElement('h2');
+      h.className = 'bloque-titulo';
+      h.textContent = inicioBloque[n];
+      cont.appendChild(h);
+    }
     const caja = document.createElement('div');
     caja.className = 'item';
     const fs = document.createElement('fieldset');
@@ -872,6 +935,40 @@ async function abrirTarea(id) {
     caja.appendChild(fs);
     cont.appendChild(caja);
   });
+  /* Lo que acompaña y NO puntúa: la pregunta de dificultad del PHQ-9,
+     la experiencia de referencia del PCL-5. Va en el sobre en `extra`,
+     nunca en `respuestas`, y no cuenta en la barra. */
+  const ex = $('t-extra'); ex.innerHTML = '';
+  const X = P.extra || {};
+  if (X.pregunta_funcional) {
+    const caja = document.createElement('div');
+    caja.className = 'item';
+    const fs = document.createElement('fieldset');
+    const lg = document.createElement('legend');
+    lg.textContent = X.pregunta_funcional.texto;
+    fs.appendChild(lg);
+    const ops = document.createElement('div');
+    ops.className = 'opciones';
+    X.pregunta_funcional.opciones.forEach((t, k) => {
+      const lb = document.createElement('label');
+      lb.className = 'opcion';
+      const inp = document.createElement('input');
+      inp.type = 'radio'; inp.name = 'pf'; inp.value = String(k);
+      const sp = document.createElement('span'); sp.textContent = t;
+      lb.appendChild(inp); lb.appendChild(sp); ops.appendChild(lb);
+    });
+    fs.appendChild(ops); caja.appendChild(fs); ex.appendChild(caja);
+  }
+  if (X.experiencia_referencia) {
+    const caja = document.createElement('div');
+    caja.className = 'campo';
+    const lb = document.createElement('label');
+    lb.setAttribute('for', 't-er'); lb.textContent = X.experiencia_referencia.texto;
+    const ta = document.createElement('textarea');
+    ta.id = 't-er'; ta.rows = 3; ta.maxLength = 1000;
+    caja.appendChild(lb); caja.appendChild(ta); ex.appendChild(caja);
+  }
+
   $('t-barra').setAttribute('aria-valuemax', String(P.items.length));
   recuperar();
   repintar();
@@ -970,6 +1067,14 @@ $('t-form').addEventListener('submit', async (ev) => {
     cod: miCod,
     origen: 'cuenta',
   };
+  if (P.extra) {
+    const pf = document.querySelector('input[name=pf]:checked');
+    const er = $('t-er');
+    sobre.extra = {
+      pregunta_funcional: pf ? Number(pf.value) : null,
+      experiencia_referencia: er && er.value.trim() ? er.value.trim() : null,
+    };
+  }
 
   try {
     /* Sellado a la clave del Mac. El servidor transporta un bloque que
@@ -990,6 +1095,284 @@ $('t-form').addEventListener('submit', async (ev) => {
 /* La pública del Mac llega dentro de `mios`, que ya se pide para
    pintar el panel. Una petición menos, y no hay forma de estar en la
    pantalla de un cuestionario sin haber pasado por el panel. */
+
+/* --- Herramientas ------------------------------------------------------
+   Plan de seguridad, autorregistros, hojas de trabajo, guías. Las
+   define el sistema clínico como BLOQUES y CAMPOS; esto solo las pinta.
+   Los `id` de los campos son el contrato con el Mac: se calculan aquí
+   exactamente igual que en la consola, que comprueba que cuadran antes
+   de mandar nada.
+
+   Lo que se envía va sellado al Mac. Y una copia sellada a TU clave se
+   queda en «Mis herramientas»: un plan de seguridad que desaparece al
+   enviarlo no sirve el día que hace falta. */
+let HERR = null;   // {tarea, def, soloLeer}
+
+function pintaHerramientas(pendientes, copias, v) {
+  const c = $('herramientas'); c.innerHTML = '';
+  $('c-herramientas').hidden = !(pendientes.length || copias.length);
+  pendientes.forEach(t => {
+    const f = fila(t.titulo, t.caduca ? ('antes del ' + fecha(t.caduca)) : 'Pendiente');
+    const b = document.createElement('button');
+    b.className = 'boton'; b.type = 'button'; b.textContent = 'Abrir';
+    b.addEventListener('click', () => abrirHerramienta(t.id));
+    f.appendChild(b); c.appendChild(f);
+  });
+  copias.forEach(d => {
+    const f = fila(d.titulo || 'Herramienta', 'Enviada el ' + fecha(d.creado));
+    if (Number(d.para_v) !== Number(v)) {
+      /* Se cerró con la llave de la contraseña anterior. Esta copia no
+         se puede reabrir; el Mac tiene la suya y me la puedes pedir. */
+      const e = document.createElement('span');
+      e.className = 'sello caduca'; e.textContent = 'pídemela';
+      e.title = 'Se guardó con tu contraseña anterior. Escríbeme y te la vuelvo a mandar.';
+      f.appendChild(e);
+    } else {
+      const b = document.createElement('button');
+      b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
+      b.addEventListener('click', () => abrirCopia(d.id));
+      f.appendChild(b);
+    }
+    c.appendChild(f);
+  });
+}
+
+/* Los id de campo de una tabla: `{tabla}.{fila}.{columna}`. Las filas
+   fijas van primero (1, 2…) y las libres siguen la numeración. */
+function idsTabla(b) {
+  const fijas = b.fijas || [], filas = [];
+  fijas.forEach((fila, i) => filas.push({ n: i + 1, fija: fila }));
+  for (let i = 0; i < (b.filas || 0); i++) filas.push({ n: fijas.length + i + 1, fija: null });
+  return filas;
+}
+
+function el(tag, clase, texto) {
+  const e = document.createElement(tag);
+  if (clase) e.className = clase;
+  if (texto != null) e.textContent = texto;
+  return e;
+}
+function parrafo(b, clase) {
+  const p = el('p', clase);
+  if (b.negrita) p.appendChild(el('strong', null, b.negrita));
+  p.appendChild(document.createTextNode(b.texto || ''));
+  return p;
+}
+
+/* Pinta los bloques. modo 'form' = casillas; modo 'texto' = lo escrito,
+   como texto (para leer una copia enviada y para imprimir). */
+function pintaBloques(def, valores, modo, desactivar) {
+  const raiz = el('div', 'herr' + (def.apaisado ? ' apaisado' : ''));
+  const casilla = (id, rotulo, multilinea, lineas, bloqueada) => {
+    const v = valores[id] || '';
+    if (modo === 'texto') {
+      const d = el('div', 'valor' + (multilinea ? ' multi' : ''), v);
+      if (multilinea) d.style.minHeight = (1.6 * (lineas || 2)) + 'em';
+      return d;
+    }
+    const c = multilinea ? document.createElement('textarea') : document.createElement('input');
+    if (multilinea) c.rows = lineas || 3; else c.type = 'text';
+    c.dataset.campo = id;
+    c.value = v;
+    c.maxLength = multilinea ? 4000 : 300;
+    if (rotulo) c.setAttribute('aria-label', rotulo);
+    if (desactivar || bloqueada) c.disabled = true;
+    return c;
+  };
+  (def.bloques || []).forEach(b => {
+    if (b.t === 'campos') {
+      const fila = el('div', 'campos-fila');
+      b.campos.forEach(k => {
+        const caja = el('label', 'campo-h');
+        caja.style.flex = (k.ancho || 6) + ' 1 ' + Math.max(8, (k.ancho || 6) * 1.6) + 'rem';
+        caja.appendChild(el('span', 'rotulo', k.rotulo));
+        caja.appendChild(casilla(k.id, k.rotulo, false));
+        fila.appendChild(caja);
+      });
+      raiz.appendChild(fila);
+    } else if (b.t === 'nota') {
+      raiz.appendChild(parrafo(b, 'nota-h'));
+    } else if (b.t === 'advertencia') {
+      const d = el('div', 'auxilio'); d.appendChild(parrafo(b)); raiz.appendChild(d);
+    } else if (b.t === 'texto') {
+      raiz.appendChild(parrafo(b));
+    } else if (b.t === 'titulo') {
+      const h = el('h2', 'titulo-h' + (b.salto ? ' salto' : ''), b.texto);
+      raiz.appendChild(h);
+      if (b.sub) raiz.appendChild(el('p', 'apunte', b.sub));
+    } else if (b.t === 'apartado') {
+      raiz.appendChild(el('h3', 'apartado-h', b.titulo));
+      if (b.ayuda) raiz.appendChild(el('p', 'apunte', b.ayuda));
+      if (b.id) raiz.appendChild(casilla(b.id, b.titulo, true, b.lineas));
+    } else if (b.t === 'lista') {
+      if (b.titulo) raiz.appendChild(el('h3', 'apartado-h', b.titulo));
+      const ul = el('ul');
+      (b.items || []).forEach(t => ul.appendChild(el('li', null, t)));
+      raiz.appendChild(ul);
+    } else if (b.t === 'tabla' || b.t === 'tabla_lectura') {
+      const lectura = b.t === 'tabla_lectura';
+      if (b.titulo) raiz.appendChild(el('h3', 'apartado-h', b.titulo));
+      const envoltura = el('div', 'tabla-h');
+      const tab = el('table');
+      const thead = el('thead'), trh = el('tr');
+      const cols = lectura ? b.columnas.map(c => ({ rotulo: c[0], ancho: c[1] })) : b.columnas;
+      cols.forEach(c => { const th = el('th', null, c.rotulo); th.style.width = (c.ancho || 4) + 'em'; trh.appendChild(th); });
+      thead.appendChild(trh); tab.appendChild(thead);
+      const tb = el('tbody');
+      if (lectura) {
+        (b.filas || []).forEach(f => {
+          const tr = el('tr');
+          f.forEach((x, j) => { const td = el('td', null, x); td.dataset.rotulo = cols[j].rotulo; tr.appendChild(td); });
+          tb.appendChild(tr);
+        });
+      } else {
+        if (b.ejemplo) {
+          const tr = el('tr', 'ejemplo');
+          b.ejemplo.forEach((x, i) => {
+            const td = el('td', null, (i === 0 ? 'Ejemplo: ' : '') + x);
+            td.dataset.rotulo = b.columnas[i].rotulo; tr.appendChild(td);
+          });
+          tb.appendChild(tr);
+        }
+        idsTabla(b).forEach(({ n, fija }) => {
+          const tr = el('tr');
+          b.columnas.forEach((c, j) => {
+            const td = el('td');
+            td.dataset.rotulo = c.rotulo;
+            if (fija && fija[j] != null) td.textContent = fija[j];
+            else td.appendChild(casilla(b.id + '.' + n + '.' + c.id, c.rotulo, (b.alto || 0) > 1.2, 2));
+            tr.appendChild(td);
+          });
+          tb.appendChild(tr);
+        });
+      }
+      tab.appendChild(tb); envoltura.appendChild(tab); raiz.appendChild(envoltura);
+    } else if (b.t === 'firma') {
+      const fila = el('div', 'firma-h');
+      [['paciente', 'Paciente'], ['profesional', 'Psicólogo']].forEach(([w, nombre]) => {
+        const col = el('div', 'firma-col');
+        col.appendChild(el('h3', 'apartado-h', nombre));
+        [['nombre', 'Nombre'], ['fecha', 'Fecha'], ['firma', 'Firma']].forEach(([q, r]) => {
+          const caja = el('label', 'campo-h');
+          caja.appendChild(el('span', 'rotulo', r));
+          /* Lo del psicólogo no lo rellena el paciente: lo firmo yo. */
+          caja.appendChild(casilla('firma.' + q + '.' + w, r + ' (' + nombre + ')', false, 0, w === 'profesional'));
+          col.appendChild(caja);
+        });
+        fila.appendChild(col);
+      });
+      raiz.appendChild(fila);
+    } else if (b.t === 'fuente') {
+      raiz.appendChild(el('p', 'fuente-h', b.texto));
+    }
+  });
+  return raiz;
+}
+
+function camposDelForm() {
+  const out = {};
+  (HERR.def.campos || []).forEach(c => { out[c.id] = ''; });
+  document.querySelectorAll('#h-cuerpo [data-campo]').forEach(c => { out[c.dataset.campo] = c.value; });
+  return out;
+}
+function claveHerr() { return 'adr.herr.' + HERR.tarea; }
+
+function montaHerramienta(def, valores, soloLeer, etiqueta) {
+  $('h-etiqueta').textContent = etiqueta;
+  $('h-titulo').textContent = def.titulo;
+  $('h-subtitulo').textContent = def.subtitulo || '';
+  document.querySelectorAll('.h-riesgo').forEach(x => { x.hidden = !def.riesgo; });
+  const cuerpo = $('h-cuerpo'); cuerpo.innerHTML = '';
+  cuerpo.appendChild(pintaBloques(def, valores, soloLeer ? 'texto' : 'form', false));
+  const lectura = def.tipo === 'lectura';
+  $('h-enviar').hidden = soloLeer || lectura;
+  $('h-leido').hidden = !(lectura && !soloLeer);
+  $('h-estado').textContent = (soloLeer || lectura) ? '' :
+    'Lo que escribes se queda en este dispositivo hasta que envíes. No sale de aquí sin cifrar.';
+  ver('v-herr');
+}
+
+async function abrirHerramienta(id) {
+  const r = await api('tarea&id=' + encodeURIComponent(id));
+  if (!r.ok || r.j.tipo !== 'herramienta') { await panel(); return; }
+  HERR = { tarea: r.j.id, def: r.j.plantilla, soloLeer: false };
+  let borrador = {};
+  try { borrador = JSON.parse(localStorage.getItem(claveHerr()) || '{}'); } catch (_) {}
+  montaHerramienta(HERR.def, borrador, false, 'Herramienta');
+}
+
+async function abrirCopia(id) {
+  const r = await api('abrir&id=' + encodeURIComponent(id));
+  if (!r.ok || !r.j.cifrado) return;
+  let d;
+  try { d = abrirDelMac(r.j.cifrado, miPublica, privada); } catch (_) { return; }
+  HERR = { tarea: null, def: d.def, soloLeer: true, valores: d.campos || {} };
+  montaHerramienta(d.def, d.campos || {}, true,
+    'Enviada el ' + fecha(d.completado_en));
+}
+
+$('h-cuerpo').addEventListener('input', () => {
+  if (!HERR || HERR.soloLeer || !HERR.tarea) return;
+  try { localStorage.setItem(claveHerr(), JSON.stringify(camposDelForm())); } catch (_) {}
+});
+
+$('h-form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  if (!HERR || HERR.soloLeer) return;
+  $('h-enviar').disabled = true;
+  try {
+    const campos = camposDelForm();
+    const momento = ahoraLocal();
+    /* El sobre, exactamente con la forma acordada con el sistema
+       clínico: sin `instrumento` ni `respuestas`. */
+    const sobre = { herramienta: HERR.def.id, campos, completado_en: momento,
+                    origen: 'cuenta', cod_web: miCod };
+    const cifrado = sellarHaciaElMac(sobre, macPublica);
+    const copia = sellarHaciaElMac({ def: HERR.def, campos, completado_en: momento }, miPublica);
+    const r = await api('entregar', { id: HERR.tarea, cifrado, copia });
+    if (!r.ok) { $('h-estado').textContent = 'No se ha podido enviar. Inténtalo otra vez.'; return; }
+    try { localStorage.removeItem(claveHerr()); } catch (_) {}
+    const def = HERR.def;
+    HERR = { tarea: null, def, soloLeer: true, valores: campos };
+    montaHerramienta(def, campos, true, 'Enviada');
+    $('h-estado').textContent = 'Enviada. Te queda una copia en «Mis herramientas». ' +
+      'Si quieres tenerla también en papel o en el móvil, descárgala en PDF.';
+  } finally {
+    $('h-enviar').disabled = false;
+  }
+});
+
+$('h-leido').addEventListener('click', async () => {
+  if (!HERR || !HERR.tarea) return;
+  await api('hecho', { id: HERR.tarea });
+  await panel();
+});
+
+/* PDF: se imprime una copia estática con lo escrito, y el navegador la
+   guarda como PDF («Guardar como PDF» en el diálogo de imprimir). Sin
+   librerías de fuera, que esta página no carga ninguna. */
+$('h-pdf').addEventListener('click', () => {
+  if (!HERR) return;
+  const valores = HERR.soloLeer ? (HERR.valores || {}) : camposDelForm();
+  const cont = $('h-imprimir'); cont.innerHTML = '';
+  /* Hijo directo de <body>, para que al imprimir se pueda esconder todo
+     lo demás sin esconderla a ella. */
+  if (cont.parentNode !== document.body) document.body.appendChild(cont);
+  cont.appendChild(el('h1', null, HERR.def.titulo));
+  if (HERR.def.subtitulo) cont.appendChild(el('p', 'apunte', HERR.def.subtitulo));
+  if (HERR.def.riesgo) {
+    const a = el('div', 'auxilio');
+    a.appendChild(el('p', null, 'Si no puedes mantenerte a salvo: 024 (24 horas, gratuito) o 112.'));
+    cont.appendChild(a);
+  }
+  cont.appendChild(pintaBloques(HERR.def, valores, 'texto', true));
+  let estilo = document.getElementById('h-pagina');
+  if (!estilo) { estilo = document.createElement('style'); estilo.id = 'h-pagina'; document.head.appendChild(estilo); }
+  estilo.textContent = '@page { size: A4 ' + (HERR.def.apaisado ? 'landscape' : 'portrait') + '; margin: 14mm; }';
+  window.print();
+});
+
+$('h-volver').addEventListener('click', panel);
 </script>
 HTML;
 
