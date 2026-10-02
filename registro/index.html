@@ -64,7 +64,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=37">
+  <link rel="stylesheet" href="/estilos.min.css?v=38">
 
 
   <script type="application/ld+json">
@@ -105,11 +105,11 @@
      pone su barra de direcciones en el iPhone. Arriba no estorba a
      nada y aparece a los trescientos píxeles de scroll, que es
      cuando la cabecera de verdad ya no se ve. -->
-<div class="barra-cita">
+<aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
      href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
-</div>
+</aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
      en las páginas de área, así que medía 120 px en unas y 151 en
@@ -623,9 +623,7 @@
 
     /* Los dibujos (clase `dibujado`) y los bloques que aparecen al bajar
        (clase `visto`) se disparan aqui, una vez, al entrar en pantalla.
-       Antes los bloques iban atados al scroll con CSS y solo se movian
-       en Chrome y en los Safari mas nuevos. */
-    /* Cada icono se vigila solo (svg.icono), no la tarjeta que lo
+       Cada icono se vigila solo (svg.icono), no la tarjeta que lo
        lleva: asi se dibujan todos, tambien los de las listas. */
     var piezas = document.querySelectorAll('.figura, .insignia, .presentacion, .rejilla, .tarifa, .cinta, .caja.destacada, .ciclo, .pasos, svg.icono');
     if(!piezas.length) return;
@@ -646,23 +644,56 @@
     }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
     piezas.forEach(function(x){ ojo.observe(x); });
 
-    /* Lo que va ATADO al scroll (la barra de lectura, la barra de cita
-       del movil, la flecha de «baja») lo hace CSS donde se puede. Donde
-       no, esto, con un solo oyente pasivo. */
-    if(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')) return;
-    document.documentElement.classList.add('js-scroll');
-    var lectura = document.querySelector('.barra-lectura');
-    var cita = document.querySelector('.barra-cita');
-    var baja = document.querySelector('.baja');
+    /* El 30 tiene su propio disparo: cuando la cifra se ve ENTERA y ya
+       ha subido un poco, que es cuando de verdad se esta mirando. */
+    /* Se vigila la linea del precio y no la cifra: la cifra empieza
+       encogida, y con un umbral del 100 % un rectangulo escalado con
+       decimales no llega nunca a contar como entero. */
+    var precios = document.querySelectorAll('.precio');
+    if(precios.length && document.querySelector('.precio .cifra')){
+      var ojo30 = new IntersectionObserver(function(entradas){
+        entradas.forEach(function(e){
+          if(!e.isIntersecting) return;
+          var c = e.target.querySelector('.cifra');
+          if(c) c.classList.add('visto');
+          ojo30.unobserve(e.target);
+        });
+      }, { threshold: .95, rootMargin: '0px 0px -28% 0px' });
+      precios.forEach(function(x){ ojo30.observe(x); });
+    }
+
+    /* Todo lo que va atado al scroll, con un solo oyente pasivo. */
+    var pasos = document.querySelectorAll('.pasos');
+    var porCss = window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()');
+    if(!porCss) document.documentElement.classList.add('js-scroll');
+    var lectura = porCss ? null : document.querySelector('.barra-lectura');
+    var cita = porCss ? null : document.querySelector('.barra-cita');
+    var baja = porCss ? null : document.querySelector('.baja');
+    if(!pasos.length && !lectura && !cita && !baja) return;
     var pendiente = false;
     function pinta(){
       pendiente = false;
       var y = window.scrollY || 0;
-      var alto = document.documentElement.scrollHeight - window.innerHeight;
-      if(lectura) lectura.style.transform = 'scaleX(' + (alto > 0 ? Math.min(1, y / alto) : 0) + ')';
+      var vh = window.innerHeight;
+      /* El hilo de los pasos: cuanto de la lista ha pasado ya por la
+         linea del 65 % de la pantalla. Solo avanza. */
+      pasos.forEach(function(l){
+        var r = l.getBoundingClientRect();
+        var p = Math.max(0, Math.min(1, (vh * .65 - r.top) / r.height));
+        var antes = parseFloat(l.style.getPropertyValue('--lleno')) || 0;
+        if(p <= antes) return;
+        l.style.setProperty('--lleno', p.toFixed(3));
+        l.querySelectorAll(':scope > li').forEach(function(li){
+          if(li.offsetTop + 14 <= p * r.height) li.classList.add('alcanzado');
+        });
+      });
+      if(lectura){
+        var alto = document.documentElement.scrollHeight - vh;
+        lectura.style.transform = 'scaleX(' + (alto > 0 ? Math.min(1, y / alto) : 0) + ')';
+      }
       if(cita) cita.classList.toggle('asoma', y > 300);
       if(baja){
-        var o = Math.max(0, 1 - y / (window.innerHeight * .5));
+        var o = Math.max(0, 1 - y / (vh * .5));
         baja.style.opacity = o; baja.style.visibility = o ? '' : 'hidden';
       }
     }
