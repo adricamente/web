@@ -70,7 +70,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=36">
+  <link rel="stylesheet" href="/estilos.min.css?v=37">
 
 
   <script type="application/ld+json">
@@ -213,8 +213,8 @@
 
   <p class="grande">
     Entre <strong>39 y 55 € la sesión</strong> en las plataformas
-    grandes, y entre 40 y 65 € de media según las guías de precios del
-    sector. Aquí son <strong>30 €</strong>. Abajo está la tabla con lo
+    grandes, y entre 60 y 70 € lo más habitual con un psicólogo que pasa
+    consulta online por su cuenta. Aquí son <strong>30 €</strong>. Abajo está la tabla con lo
     que cobra cada uno y el enlace para comprobarlo, y antes de eso lo
     que se puede conseguir <strong>gratis</strong>, que es lo primero
     que habría que mirar.
@@ -261,7 +261,7 @@
   <p>
     Precios publicados por cada plataforma en su propia web, con el
     enlace al lado para que no haya que fiarse de mí. Son de
-    septiembre de 2026: los precios cambian, y si encuentras alguno desactualizado
+    octubre de 2026: los precios cambian, y si encuentras alguno desactualizado
     <a href="mailto:hola@adricamente.com">dímelo y lo corrijo</a>.
   </p>
   <div class="tabla-envoltorio" tabindex="0" role="region"
@@ -270,7 +270,7 @@
       <caption>
         Precio de una sesión individual de psicología online en España,
         tal y como lo publica cada uno en su propia web. Consultado en
-        septiembre de 2026. Ordenado de menos a más.
+        octubre de 2026. Ordenado de menos a más.
       </caption>
       <thead>
         <tr><th scope="col">Dónde</th><th scope="col">Sesión suelta</th>
@@ -278,8 +278,8 @@
             <th scope="col">Primera</th></tr>
       </thead>
       <tbody>
-      <tr><th scope="row"><a href="https://mundopsicosalud.com/" target="_blank" rel="noopener nofollow">Mundo Psicosalud</a></th><td class="con-barra" style="--p:42%"><span>25 €</span></td><td>99,99 € al mes por cuatro sesiones</td><td>—</td></tr>
       <tr class="propia"><th scope="row"><strong>adricamente</strong> (esta web)</th><td class="con-barra" style="--p:50%"><span>30 €</span></td><td>no hay bonos</td><td>gratis, 30 min</td></tr>
+      <tr><th scope="row"><a href="https://mundopsicosalud.com/" target="_blank" rel="noopener nofollow">Mundo Psicosalud</a></th><td class="con-barra" style="--p:58%"><span>35 €</span></td><td>solo por suscripción: 35 € la sesión en el plan de dos al mes, 20 € en el de cuatro</td><td>—</td></tr>
       <tr><th scope="row"><a href="https://www.psiko.es/" target="_blank" rel="noopener nofollow">Psiko</a></th><td class="con-barra" style="--p:65%"><span>39 €</span></td><td>—</td><td>—</td></tr>
       <tr><th scope="row"><a href="https://www.unobravo.com/es" target="_blank" rel="noopener nofollow">Unobravo</a></th><td class="con-barra" style="--p:75%"><span>45 €</span></td><td>—</td><td>gratis</td></tr>
       <tr><th scope="row"><a href="https://mentesanapsicologia.com/" target="_blank" rel="noopener nofollow">Mente Sana</a></th><td class="con-barra" style="--p:83%"><span>50 €</span></td><td>28,75 € por sesión en el bono de ocho</td><td>9,99 €</td></tr>
@@ -288,10 +288,10 @@
     </table>
   </div>
   <p class="apunte">
-    Falta el precio de las consultas privadas presenciales, que es otra
-    liga: ahí lo habitual en España está entre 45 y 70 € la sesión, y
-    en las capitales más. Y falta Terapify, que no publica sus precios
-    sin registrarte.
+    Fuera de las plataformas, un psicólogo que pasa consulta online por
+    su cuenta cobra lo más habitual entre 60 y 70 € la sesión (perfiles
+    de Doctoralia en Madrid y Valencia, octubre de 2026). Y falta Terapify, que
+    no publica sus precios sin registrarte.
   </p>
 
   <h2>Por qué aquí son 30 € y no 50</h2>
@@ -521,18 +521,21 @@
        (clase `visto`) se disparan aqui, una vez, al entrar en pantalla.
        Antes los bloques iban atados al scroll con CSS y solo se movian
        en Chrome y en los Safari mas nuevos. */
-    var piezas;
-    var sel = '.figura, .insignia, .presentacion, .rejilla, .tarifa, .cinta, .caja.destacada, .ciclo, .pasos';
-    try{ piezas = document.querySelectorAll(sel + ', .tarjeta:has(.icono)'); }
-    catch(_){ piezas = document.querySelectorAll(sel); }
+    /* Cada icono se vigila solo (svg.icono), no la tarjeta que lo
+       lleva: asi se dibujan todos, tambien los de las listas. */
+    var piezas = document.querySelectorAll('.figura, .insignia, .presentacion, .rejilla, .tarifa, .cinta, .caja.destacada, .ciclo, .pasos, svg.icono');
     if(!piezas.length) return;
     document.documentElement.classList.add('js-dibujo');
 
     var ojo = new IntersectionObserver(function(entradas){
+      /* Los iconos que entran a la vez van en fila, uno tras otro. */
+      var n = 0;
       entradas.forEach(function(e){
         if(!e.isIntersecting) return;
-        e.target.classList.add('dibujado', 'visto');
-        ojo.unobserve(e.target);
+        var t = e.target;
+        if(t.classList.contains('icono')) t.style.setProperty('--tanda', (n++ * .18) + 's');
+        t.classList.add('dibujado', 'visto');
+        ojo.unobserve(t);
       });
     /* Un 12 % basta para disparar: con un umbral alto, un bloque mas
        alto que la ventana no llegaba a cumplirlo nunca. */

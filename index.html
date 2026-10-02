@@ -74,7 +74,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=36">
+  <link rel="stylesheet" href="/estilos.min.css?v=37">
 
 
   <script type="application/ld+json">
@@ -671,7 +671,8 @@
          como una ventaja: se lee como una sospecha. -->
     <p class="comparativa">
       <span class="barra-mercado"><span class="yo"></span></span>
-      La media del sector está entre <strong>39 y 55 € la sesión</strong>.
+      Las plataformas online grandes cobran entre <strong>39 y 55 € la sesión</strong>,
+      y un psicólogo por su cuenta suele cobrar entre 60 y 70 €.
       <strong>Aquí son 30 €, la hora entera</strong>, porque estoy en
       prácticas supervisadas, y por eso mismo subirá cuando termine el
       máster.
@@ -755,17 +756,17 @@
   <div class="franja">
   <h2>Preguntas frecuentes</h2>
   <div class="faq">
-    <details open>
+    <details>
       <summary>¿Cuánto me va a costar todo esto, no una sesión?</summary>
       <p>Depende, y quien te dé un número el primer día se lo está inventando. Lo que sí puedo darte es <strong>cómo se calcula</strong>: a 30&nbsp;€ la sesión, una frecuencia semanal cuesta unos <strong>120&nbsp;€ al mes</strong> y una quincenal, unos <strong>60&nbsp;€</strong>. La frecuencia la eliges tú y se puede cambiar sobre la marcha.</p><p>Los procesos que llevo suelen moverse entre tres y ocho meses, según el problema. Sobre la tercera sesión, cuando ya te he evaluado, te doy una estimación de tu caso con los números delante. Y <strong>no hay bonos, ni paquetes, ni permanencia</strong>: se paga sesión a sesión y se deja cuando quieras. <a href='/cuanto-cuesta-un-psicologo-online/'>Aquí está lo que cobra cada plataforma</a>, y lo que se puede conseguir gratis.</p>
     </details>
 
-    <details open>
+    <details>
       <summary>¿Y si me pongo a llorar, o me quedo en blanco?</summary>
       <p>Pasa a mucha gente y no es un problema: es de las cosas más normales de una primera vez. Si lloras, <strong>paramos, respiramos y seguimos cuando puedas</strong>; no voy a hacer como si no hubiera pasado ni voy a insistir para que sigas hablando.</p><p>Y si te quedas en blanco, <strong>preguntar es mi trabajo</strong>: para eso estoy yo al otro lado y no un formulario. Llegar sin saber por dónde empezar es un sitio perfectamente normal desde el que arrancar. <a href='/primera-sesion/'>La primera sesión, contada minuto a minuto</a>.</p>
     </details>
 
-    <details open>
+    <details>
       <summary>¿Me vas a juzgar por lo que te cuente?</summary>
       <p>No, y no es una frase bonita: es que <strong>juzgar no sirve para nada de lo que hay que hacer ahí</strong>. Lo que me interesa no es si lo que hiciste estuvo bien o mal, es qué conseguiste con ello en el minuto siguiente y qué te está costando ahora. Esa pregunta no se puede contestar desde el juicio.</p><p>Habrás contado esto a poca gente, o a ninguna. Y lo que se dice ahí dentro no sale de ahí: <strong>secreto profesional</strong>, también para el profesional colegiado que supervisa los casos conmigo.</p>
     </details>
@@ -1015,18 +1016,21 @@
        (clase `visto`) se disparan aqui, una vez, al entrar en pantalla.
        Antes los bloques iban atados al scroll con CSS y solo se movian
        en Chrome y en los Safari mas nuevos. */
-    var piezas;
-    var sel = '.figura, .insignia, .presentacion, .rejilla, .tarifa, .cinta, .caja.destacada, .ciclo, .pasos';
-    try{ piezas = document.querySelectorAll(sel + ', .tarjeta:has(.icono)'); }
-    catch(_){ piezas = document.querySelectorAll(sel); }
+    /* Cada icono se vigila solo (svg.icono), no la tarjeta que lo
+       lleva: asi se dibujan todos, tambien los de las listas. */
+    var piezas = document.querySelectorAll('.figura, .insignia, .presentacion, .rejilla, .tarifa, .cinta, .caja.destacada, .ciclo, .pasos, svg.icono');
     if(!piezas.length) return;
     document.documentElement.classList.add('js-dibujo');
 
     var ojo = new IntersectionObserver(function(entradas){
+      /* Los iconos que entran a la vez van en fila, uno tras otro. */
+      var n = 0;
       entradas.forEach(function(e){
         if(!e.isIntersecting) return;
-        e.target.classList.add('dibujado', 'visto');
-        ojo.unobserve(e.target);
+        var t = e.target;
+        if(t.classList.contains('icono')) t.style.setProperty('--tanda', (n++ * .18) + 's');
+        t.classList.add('dibujado', 'visto');
+        ojo.unobserve(t);
       });
     /* Un 12 % basta para disparar: con un umbral alto, un bloque mas
        alto que la ventana no llegaba a cumplirlo nunca. */
