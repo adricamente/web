@@ -54,7 +54,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="estilos.min.css?v=35">
+  <link rel="stylesheet" href="estilos.min.css?v=36">
 </head>
 
 <body>
@@ -209,21 +209,52 @@
     if(window.matchMedia &&
        window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
 
-    var piezas = document.querySelectorAll('.figura, .tarjeta:has(.icono), .insignia');
+    /* Los dibujos (clase `dibujado`) y los bloques que aparecen al bajar
+       (clase `visto`) se disparan aqui, una vez, al entrar en pantalla.
+       Antes los bloques iban atados al scroll con CSS y solo se movian
+       en Chrome y en los Safari mas nuevos. */
+    var piezas;
+    var sel = '.figura, .insignia, .presentacion, .rejilla, .tarifa, .cinta, .caja.destacada, .ciclo, .pasos';
+    try{ piezas = document.querySelectorAll(sel + ', .tarjeta:has(.icono)'); }
+    catch(_){ piezas = document.querySelectorAll(sel); }
     if(!piezas.length) return;
     document.documentElement.classList.add('js-dibujo');
 
     var ojo = new IntersectionObserver(function(entradas){
       entradas.forEach(function(e){
         if(!e.isIntersecting) return;
-        e.target.classList.add('dibujado');
+        e.target.classList.add('dibujado', 'visto');
         ojo.unobserve(e.target);
       });
-    /* Un 22 % de la figura basta para disparar: con el umbral más
-       alto, una lámina más alta que la ventana no llegaba a cumplirlo
-       nunca y no se dibujaba jamás. */
-    }, { threshold: .22, rootMargin: '0px 0px -8% 0px' });
+    /* Un 12 % basta para disparar: con un umbral alto, un bloque mas
+       alto que la ventana no llegaba a cumplirlo nunca. */
+    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
     piezas.forEach(function(x){ ojo.observe(x); });
+
+    /* Lo que va ATADO al scroll (la barra de lectura, la barra de cita
+       del movil, la flecha de «baja») lo hace CSS donde se puede. Donde
+       no, esto, con un solo oyente pasivo. */
+    if(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()')) return;
+    document.documentElement.classList.add('js-scroll');
+    var lectura = document.querySelector('.barra-lectura');
+    var cita = document.querySelector('.barra-cita');
+    var baja = document.querySelector('.baja');
+    var pendiente = false;
+    function pinta(){
+      pendiente = false;
+      var y = window.scrollY || 0;
+      var alto = document.documentElement.scrollHeight - window.innerHeight;
+      if(lectura) lectura.style.transform = 'scaleX(' + (alto > 0 ? Math.min(1, y / alto) : 0) + ')';
+      if(cita) cita.classList.toggle('asoma', y > 300);
+      if(baja){
+        var o = Math.max(0, 1 - y / (window.innerHeight * .5));
+        baja.style.opacity = o; baja.style.visibility = o ? '' : 'hidden';
+      }
+    }
+    window.addEventListener('scroll', function(){
+      if(!pendiente){ pendiente = true; requestAnimationFrame(pinta); }
+    }, { passive: true });
+    pinta();
   })();
 </script>
 
