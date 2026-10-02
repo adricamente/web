@@ -366,7 +366,9 @@ img{max-width:100%;height:auto}
 .franja.marino > p a,.cinta > :is(h2,p),.cinta > p a{color:var(--sobre-accent)}
 .franja.marino > p a:hover,.cinta > p a:hover{color:#fff}
 .franja.marino > p strong,.cinta > p strong{color:#fff}
-.franja.marino :is(.tranquiliza,.apunte),.cinta :is(.tranquiliza,.apunte){color:#D3E0EA}
+/* Solo los que pisan el azul: un .apunte DENTRO de la tarjeta blanca
+   de la tarifa se quedaba claro sobre blanco y no se leía. */
+.franja.marino > :is(.tranquiliza,.apunte),.cinta > :is(.tranquiliza,.apunte){color:#D3E0EA}
 .franja.marino .boton,.cinta .boton{background:var(--surface);color:var(--accent)}
 .franja.marino .boton:hover,.cinta .boton:hover{background:var(--accent-soft);color:var(--accent-3)}
 .franja.marino :focus-visible,.cinta :focus-visible{outline-color:var(--sobre-accent)}
@@ -895,9 +897,8 @@ p strong, li strong, dd strong, .tarjeta strong{
    Se distingue del cuerpo sin gritar. No es una cita —no lo ha dicho
    nadie— así que no lleva comillas ni cursiva de cita: lleva un
    cuerpo mayor, la tinta principal y una línea de acento a la
-   izquierda, que es lo mismo que usa .idea en los artículos. Que
-   compartan forma no es descuido: las dos hacen lo mismo, sacar del
-   muro la frase que alguien se va a llevar.
+   izquierda. (La .idea de los artículos compartía esta forma hasta
+   octubre de 2026; ahora es una franja marino, como las frases.)
 
    Va sin negritas a propósito. Una escena con una palabra en negrita
    deja de ser una escena y pasa a ser un argumento. */
@@ -917,25 +918,32 @@ p strong, li strong, dd strong, .tarjeta strong{
    descansar, y deja fuera del muro la única frase que alguien se va
    a llevar si no lee el resto. No es una cita de nadie: es la idea. */
 
+/* Desde octubre de 2026 es una franja marino a sangre, como las de la
+   portada: la idea del artículo hace de separador a mitad de lectura,
+   y en el móvil se ve venir desde lejos. Antes era una caja azul
+   clarito, del ancho de la columna. */
 .idea{
-  margin:34px 0;padding:22px 24px 24px;
-  background:var(--accent-soft);
-  border-radius:var(--r-l);
-  border-left:4px solid var(--accent-2);
-  border-radius:0 14px 14px 0;
+  position:relative;
+  margin:44px 0;padding:42px 0 40px;
+  color:var(--sobre-accent);
+}
+.idea::before{
+  content:"";position:absolute;z-index:-1;
+  left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;
+  top:0;bottom:0;background:var(--accent);
 }
 .idea .rotulo-idea{
-  font-family:Archivo,"Archivo reserva",sans-serif;font-size:11.5px;font-weight:700;
-  letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);
-  margin:0 0 9px;
+  font-family:Archivo,"Archivo reserva",sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:#D3E0EA;
+  margin:0 0 12px;
 }
 .idea p:not(.rotulo-idea){
   font-family:Archivo,"Archivo reserva",sans-serif;
-  font-size:clamp(1.05rem,2.7vw,1.3rem);
-  font-weight:600;line-height:1.32;letter-spacing:0;
-  color:var(--ink);margin:0;max-width:34ch;text-wrap:balance;
+  font-size:clamp(1.35rem,5vw,1.9rem);
+  font-weight:700;line-height:1.22;letter-spacing:-.005em;
+  color:#fff;margin:0;max-width:28ch;text-wrap:balance;
 }
-@media (max-width:520px){.idea{padding:18px 19px 20px}}
+@media (max-width:520px){.idea{padding:34px 0 32px}}
 
 /* Ficha técnica: los datos de un servicio con icono, en rejilla.
    Es la misma información que una lista de viñetas, pero se consulta
