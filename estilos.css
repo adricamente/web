@@ -378,7 +378,7 @@ img{max-width:100%;height:auto}
    párrafo, y el párrafo, debajo y más corto. */
 .franja.marino .frase{
   font-family:Archivo,"Archivo reserva",sans-serif;
-  font-size:clamp(1.45rem,4.6vw,2.15rem);font-weight:700;line-height:1.2;
+  font-size:clamp(1.75rem,7vw,2.6rem);font-weight:700;line-height:1.15;
   letter-spacing:-.01em;max-width:24ch;text-wrap:balance;margin:6px 0;
 }
 .franja.marino .frase strong{color:#fff;font-weight:800}
@@ -546,28 +546,13 @@ p strong, li strong, dd strong, .tarjeta strong{
     padding:9px 15px;border-radius:var(--r-s);text-decoration:none;
     border:1px solid transparent;
   }
-  /* Sin soporte de animaciones por scroll no hay forma de saber
-     dónde está el lector, así que no se enseña nada: una barra fija
-     permanente en un móvil es justo lo que se quitó. */
-  @supports not (animation-timeline:scroll()){
-    .barra-cita{display:none}
-    /* …salvo que el guion la lleve a mano (clase en <html>). */
-    .js-scroll .barra-cita{display:flex;transition:transform .25s var(--entra),visibility .25s}
-    .js-scroll .barra-cita.asoma{transform:none;visibility:visible}
-  }
-  @supports (animation-timeline:scroll()){
-    @media (prefers-reduced-motion:no-preference){
-      .barra-cita{
-        animation:asomar linear both;
-        animation-timeline:scroll(root);
-        animation-range:300px 380px;
-      }
-    }
-  }
-}
-@keyframes asomar{
-  from{transform:translateY(-100%);visibility:hidden}
-  to{transform:translateY(0);visibility:visible}
+  /* La lleva el guion, con una clase y una transición, en todos los
+     navegadores. Antes iba atada al scroll con CSS (de 300 a 380 px):
+     si el dedo paraba a 340 px, la barra se quedaba a medio salir,
+     cortada por la mitad. Eso era una de las «cosas raras» del móvil.
+     Ahora o está o no está, y entra en 0,3 s. Sin guion no sale. */
+  .barra-cita{transition:transform .3s var(--entra),visibility .3s}
+  .barra-cita.asoma{transform:none;visibility:visible}
 }
 .cabecera .marca{margin:0;flex:0 0 auto;margin-right:auto}
 
@@ -1038,7 +1023,7 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
    del subtítulo. Un selector de descendencia sin acotar es lo que
    pasa cuando el marcado cambia y la hoja no se entera.
    Acotado a los hijos directos que NO son la cifra. */
-.precio > span:not(.cifra):not(.moneda){font-size:1.05rem;font-weight:700;color:var(--ink-2);letter-spacing:0}
+.precio > span:not(.importe){font-size:1.05rem;font-weight:700;color:var(--ink-2);letter-spacing:0}
 
 /* El 30, enorme. Es la cifra que más pesa en la decisión y la que
    menos tiene que buscarse: va a un tamaño de cartel, con el euro
@@ -1054,7 +1039,10 @@ ul.marcada .icono{margin-top:2px;stroke-width:2}
   font-size:clamp(2rem,8vw,3.2rem);font-weight:800;
   line-height:1;margin:.12em 0 0 .06em;color:var(--accent);
 }
-.precio .cifra + .moneda + span{display:block;margin-top:14px}
+/* La cifra y el euro van juntos en .importe: así crecen como una sola
+   pieza y el € no se queda grande esperando a que llegue el 30. */
+.precio .importe{display:inline-block;white-space:nowrap}
+.precio .importe + span{display:block;margin-top:14px}
 
 /* Preguntas frecuentes con <details>. Se abren sin una línea de
    JavaScript y el buscador lee el contenido aunque estén cerradas. */
@@ -2227,8 +2215,8 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
       abrir, que es como se percibe que algo responde. Es la franja
       de 100–500 ms que recomienda Nielsen Norman Group para la
       interfaz.
-      Lo que nadie ha pedido y solo acompaña la lectura (un bloque
-      que llega, un icono que se dibuja, una gráfica que se traza)
+      Lo que nadie ha pedido y solo acompaña la lectura (un icono
+      que se dibuja, una gráfica que se traza, el 30 que crece)
       puede ir más despacio, de 0,9 a 2 s, porque no hace esperar a
       nadie: el texto está ahí desde el primer momento. Por debajo
       de eso un trazo no se ve dibujarse, solo aparecer.
@@ -2254,7 +2242,6 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
   --t-corto:170ms;   /* borde, subrayado, fondo de botón */
   --t-abre:260ms;    /* desplegar una pregunta */
   --t-cierra:190ms;  /* plegarla: un 27 % más rápido */
-  --t-entra:440ms;   /* aparecer al bajar */
 }
 
 /* --- 14.1 Lo que se pulsa ---------------------------------------
@@ -2329,28 +2316,14 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
    cero sin condiciones; eso es el clásico error que deja una
    página en blanco. */
 
-/* Antes iba con `animation-timeline:view()`. Solo lo entienden
-   Chrome y los Safari más nuevos: en el resto no se movía nada, y
-   eso es lo que se veía como «unas animaciones van y otras no».
-   Ahora lo dispara el mismo IntersectionObserver de los dibujos
-   (clase `visto`), y la animación es de las de toda la vida: va igual
-   en todos los navegadores. Sin el guion, no se oculta ni se mueve
-   nada: la clase raíz `js-dibujo` solo la pone el guion. */
-@media (prefers-reduced-motion:no-preference){
-  /* El bloque espera ya colocado abajo y transparente. Antes estaba
-     en su sitio, y al dispararse saltaba 14 px hacia abajo para volver
-     a subir: con la foto de la presentación ese tirón se veía raro. */
-  .js-dibujo :is(.presentacion,.rejilla,.tarifa,.cinta,.caja.destacada,.ciclo,.figura):not(.visto){
-    transform:translateY(14px);opacity:0;
-  }
-  .js-dibujo :is(.presentacion,.rejilla,.tarifa,.cinta,.caja.destacada,.ciclo,.figura).visto{
-    animation:aparecer .9s var(--entra) both;
-  }
-  @keyframes aparecer{
-    from{transform:translateY(14px);opacity:0}
-    to{transform:none;opacity:1}
-  }
-}
+/* Aquí los bloques de texto entraban subiendo y desvaneciéndose al
+   bajar. Se quita en octubre de 2026. El estudio de Nielsen Norman
+   Group sobre animaciones al hacer scroll es claro: en webs donde la
+   gente viene a decidir algo serio (sanidad, dinero) retrasar el
+   texto se vive como una carga lenta, y en el móvil, con el dedo
+   rápido, se veían huecos en blanco que se rellenaban tarde. El
+   movimiento se queda en lo secundario: iconos, gráficas, el hilo de
+   los pasos y el 30. */
 
 /* --- 14.4 Pasar de una página a otra ----------------------------
    Un fundido de 200 ms entre documentos. Nada de deslizar: pasar
@@ -2361,6 +2334,10 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
    siempre. No hay nada que degrade. */
 
 @view-transition{navigation:auto}
+/* En pantallas táctiles, no. Safari y Chrome en el móvil ya animan el
+   gesto de volver atrás deslizando el dedo, y encima de eso el
+   fundido se veía como un parpadeo doble. */
+@media (pointer:coarse){@view-transition{navigation:none}}
 
 ::view-transition-old(root),::view-transition-new(root){
   animation-duration:200ms;
@@ -2519,12 +2496,12 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
   /* Lo dispara la propia cifra cuando ya se ve entera, no el bloque
      de la tarifa: el bloque entraba con el 12 % asomando, el 30 aún
      estaba por debajo del borde, y crecía donde nadie miraba. */
-  .js-dibujo .precio .cifra{transform-origin:left bottom}
-  .js-dibujo .precio .cifra:not(.visto){transform:scale(.2);opacity:0}
+  .js-dibujo .precio .importe{transform-origin:left bottom}
+  .js-dibujo .precio .importe:not(.visto){transform:scale(.2);opacity:0}
   /* Con la curva de entrar, el 30 llegaba al 90 % de su tamaño en
      un cuarto de segundo y no se veía crecer. Esta reparte el
      crecimiento por todo el segundo y medio. */
-  .js-dibujo .precio .cifra.visto{animation:entrar-precio 1.6s cubic-bezier(.3,.6,.2,1) both}
+  .js-dibujo .precio .importe.visto{animation:entrar-precio 1.6s cubic-bezier(.3,.6,.2,1) both}
   @keyframes entrar-precio{
     from{transform:scale(.2);opacity:0}
     20%{opacity:1}
@@ -2591,13 +2568,27 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
      trazo perdía las rayas, salía entero de golpe, y la animación
      movía un desfase que ya no tenía nada que desplazar. Era el
      «aparecen pero no se construyen». */
-  .js-dibujo .figura .dibujo :is(.eje,.trazo-coste,.trazo-alivio,.trazo-salida),
   .js-dibujo .icono *{stroke-dasharray:1 3}
-  .js-dibujo .figura:not(.dibujado) .dibujo :is(.eje,.trazo-coste,.trazo-alivio,.trazo-salida),
   .js-dibujo .icono:not(.dibujado) *{stroke-dashoffset:1}
-  .js-dibujo .figura:not(.dibujado) .dibujo .trazo-flojo,
-  .js-dibujo .figura:not(.dibujado) .dibujo .area-coste,
-  .js-dibujo .figura:not(.dibujado) .dibujo .area-alivio,
+
+  /* Las gráficas NO van con rayas. Sus trazos llevan
+     vector-effect:non-scaling-stroke (para que la línea mida lo mismo
+     en el móvil que en el escritorio), y con eso el navegador ignora
+     pathLength: el desfase se medía en píxeles y la línea salía
+     entera desde el primer momento. Solo se veía animarse el fondo
+     azul, que era exactamente la queja.
+
+     Ahora se descubren de izquierda a derecha con un recorte, como un
+     telón que se abre. En una gráfica cuyo eje horizontal es el
+     tiempo eso además es lo honesto: se ve pasar el tiempo, y el
+     coste y el alivio avanzan juntos, a la misma altura del eje.
+     Los -12px dejan sitio al grosor de la línea y a las puntas
+     redondeadas, que con un recorte justo se cortaban. */
+  .js-dibujo .figura:not(.dibujado) .dibujo :is(.eje,.regla,.trazo-coste,.trazo-alivio,.trazo-salida,.trazo-flojo,.area-coste,.area-alivio){
+    clip-path:inset(-12px calc(100% + 12px) -12px -12px);
+  }
+  .js-dibujo .figura:not(.dibujado) .anota,
+  .js-dibujo .figura:not(.dibujado) .dibujo .llamada,
   .js-dibujo .figura:not(.dibujado) .dibujo .marca-evento,
   .js-dibujo .figura:not(.dibujado) .dibujo .celda-llena,
   .js-dibujo .figura:not(.dibujado) .dibujo .nodo,
@@ -2615,10 +2606,19 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
   /* Y el recorrido, cuando entra. Los retardos cuentan la secuencia:
      primero el eje, luego lo que se acumula, y el alivio al final
      porque es el que se lee. */
-  .figura.dibujado .dibujo .eje{animation:trazar .83s var(--traza) both}
-  .figura.dibujado .dibujo .trazo-coste{animation:trazar 1.5s var(--traza) .27s both}
-  .figura.dibujado .dibujo .trazo-alivio{animation:trazar 1.5s var(--traza) .63s both}
-  .figura.dibujado .dibujo .trazo-salida{animation:trazar 1.2s var(--traza) 1.05s both}
+  .figura.dibujado .dibujo :is(.eje,.regla){animation:barrer 1.1s var(--traza) both}
+  .figura.dibujado .dibujo :is(.trazo-coste,.trazo-alivio,.trazo-flojo,.area-coste,.area-alivio){
+    animation:barrer 2.8s cubic-bezier(.35,.1,.45,1) .45s both;
+  }
+  .figura.dibujado .dibujo .trazo-salida{animation:barrer 1.6s var(--traza) 2.4s both}
+  @keyframes barrer{
+    from{clip-path:inset(-12px calc(100% + 12px) -12px -12px)}
+    to{clip-path:inset(-12px -12px -12px -12px)}
+  }
+  /* Los rótulos, cuando su trozo de gráfica ya está dibujado. Cada uno
+     puede traer su retardo en el HTML (--cuando); si no, al final. */
+  .figura.dibujado .anota,
+  .figura.dibujado .dibujo .llamada{animation:marcar .9s var(--entra) var(--cuando,2.6s) both}
   /* Los iconos se construyen trazo a trazo: cada pieza empieza un
      poco después de la anterior, y si entran varios a la vez en
      pantalla, el guion les da una `--tanda` para que vayan en fila y
@@ -2630,11 +2630,10 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
   .icono.dibujado > :nth-child(n+5){animation-delay:calc(var(--tanda,0s) + 1.05s)}
   @keyframes trazar{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 
-  .figura.dibujado .dibujo .area-coste,
-  .figura.dibujado .dibujo .area-alivio{animation:marcar 1.2s var(--entra) .38s both}
-  .figura.dibujado .dibujo .trazo-flojo{animation:marcar 1.05s var(--entra) .75s both}
-  .figura.dibujado .dibujo .punta{animation:marcar .75s var(--entra) 1.8s both}
-  .figura.dibujado .dibujo .marca-evento{animation:marcar 1.05s var(--entra) .52s both}
+  .figura.dibujado .dibujo .punta{animation:marcar .75s var(--entra) 3.1s both}
+  /* Cada marca de evento, justo cuando el telón pasa por ella (el
+     retardo viene escrito en cada una, --cuando). */
+  .figura.dibujado .dibujo .marca-evento{animation:marcar .6s var(--entra) var(--cuando,1s) both}
   .figura.dibujado .dibujo .celda-llena{animation:marcar 1.05s var(--entra) .3s both}
   .figura.dibujado .dibujo .nodo,
   .figura.dibujado .dibujo .nodo-txt{animation:marcar .9s var(--entra) .83s both}
@@ -2711,7 +2710,7 @@ a.tarjeta.con-sello:hover .ficha{background:var(--accent-soft)}
 .baja svg{width:20px;height:20px}
 
 @media (prefers-reduced-motion:no-preference){
-  .baja a{animation:cabecear 2.4s var(--entra) infinite}
+  .baja a{animation:cabecear 2.4s var(--entra) 1s 3}
   @keyframes cabecear{
     0%,70%,100%{transform:translateY(0)}
     35%{transform:translateY(6px)}

@@ -67,7 +67,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=38">
+  <link rel="stylesheet" href="/estilos.min.css?v=39">
 
 
   <script type="application/ld+json">
@@ -467,55 +467,57 @@
     if(window.matchMedia &&
        window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
 
-    /* Los dibujos (clase `dibujado`) y los bloques que aparecen al bajar
-       (clase `visto`) se disparan aqui, una vez, al entrar en pantalla.
-       Cada icono se vigila solo (svg.icono), no la tarjeta que lo
-       lleva: asi se dibujan todos, tambien los de las listas. */
-    var piezas = document.querySelectorAll('.figura, .insignia, .presentacion, .rejilla, .tarifa, .cinta, .caja.destacada, .ciclo, .pasos, svg.icono');
-    if(!piezas.length) return;
+    /* Solo se anima lo secundario: las graficas, los iconos, el hilo de
+       los pasos y el 30. El texto no se oculta nunca para luego
+       mostrarlo (ver la hoja de estilos, seccion 14). Todo se dispara
+       una vez y no se repite al volver arriba. */
+    var figuras = document.querySelectorAll('.figura');
+    var iconos = document.querySelectorAll('svg.icono');
+    var precios = document.querySelectorAll('.precio');
+    var pasos = document.querySelectorAll('.pasos');
     document.documentElement.classList.add('js-dibujo');
 
-    var ojo = new IntersectionObserver(function(entradas){
-      /* Los iconos que entran a la vez van en fila, uno tras otro. */
-      var n = 0;
-      entradas.forEach(function(e){
-        if(!e.isIntersecting) return;
-        var t = e.target;
-        if(t.classList.contains('icono')) t.style.setProperty('--tanda', (n++ * .18) + 's');
-        t.classList.add('dibujado', 'visto');
-        ojo.unobserve(t);
-      });
-    /* Un 12 % basta para disparar: con un umbral alto, un bloque mas
-       alto que la ventana no llegaba a cumplirlo nunca. */
-    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
-    piezas.forEach(function(x){ ojo.observe(x); });
-
-    /* El 30 tiene su propio disparo: cuando la cifra se ve ENTERA y ya
-       ha subido un poco, que es cuando de verdad se esta mirando. */
-    /* Se vigila la linea del precio y no la cifra: la cifra empieza
-       encogida, y con un umbral del 100 % un rectangulo escalado con
-       decimales no llega nunca a contar como entero. */
-    var precios = document.querySelectorAll('.precio');
-    if(precios.length && document.querySelector('.precio .cifra')){
-      var ojo30 = new IntersectionObserver(function(entradas){
+    function vigila(lista, opciones, alEntrar){
+      if(!lista.length) return;
+      var ojo = new IntersectionObserver(function(entradas){
+        var n = 0;
         entradas.forEach(function(e){
           if(!e.isIntersecting) return;
-          var c = e.target.querySelector('.cifra');
-          if(c) c.classList.add('visto');
-          ojo30.unobserve(e.target);
+          alEntrar(e.target, n++);
+          ojo.unobserve(e.target);
         });
-      }, { threshold: .95, rootMargin: '0px 0px -28% 0px' });
-      precios.forEach(function(x){ ojo30.observe(x); });
+      }, opciones);
+      lista.forEach(function(x){ ojo.observe(x); });
     }
 
-    /* Todo lo que va atado al scroll, con un solo oyente pasivo. */
-    var pasos = document.querySelectorAll('.pasos');
+    /* Las graficas, cuando ya se ve un tercio: en el movil una grafica
+       que empieza a dibujarse con el borde asomando termina antes de
+       que nadie la este mirando. */
+    vigila(figuras, { threshold: .35, rootMargin: '0px 0px -8% 0px' },
+      function(t){ t.classList.add('dibujado'); });
+    /* Cada icono, cuando se ve entero. Los que entran a la vez van en
+       fila, uno tras otro. */
+    vigila(iconos, { threshold: .9, rootMargin: '0px 0px -8% 0px' },
+      function(t, n){ t.style.setProperty('--tanda', (n * .18) + 's'); t.classList.add('dibujado'); });
+    /* El 30 y su euro, cuando la linea del precio esta entera y ya ha
+       subido un poco. Se vigila la linea y no la cifra: la cifra
+       empieza encogida y un rectangulo escalado con decimales no llega
+       nunca a contar como entero. */
+    vigila(precios, { threshold: .95, rootMargin: '0px 0px -28% 0px' },
+      function(t){
+        var c = t.querySelector('.importe'); if(c) c.classList.add('visto');
+        var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
+      });
+
+    /* Lo que va atado al scroll, con un solo oyente pasivo. */
     var porCss = window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()');
-    if(!porCss) document.documentElement.classList.add('js-scroll');
     var lectura = porCss ? null : document.querySelector('.barra-lectura');
-    var cita = porCss ? null : document.querySelector('.barra-cita');
+    var cita = document.querySelector('.barra-cita');
     var baja = porCss ? null : document.querySelector('.baja');
-    if(!pasos.length && !lectura && !cita && !baja) return;
+    var hilos = [];
+    pasos.forEach(function(l){
+      hilos.push({ lista: l, bolas: l.querySelectorAll(':scope > li'), lleno: 0 });
+    });
     var pendiente = false;
     function pinta(){
       pendiente = false;
@@ -523,13 +525,15 @@
       var vh = window.innerHeight;
       /* El hilo de los pasos: cuanto de la lista ha pasado ya por la
          linea del 65 % de la pantalla. Solo avanza. */
-      pasos.forEach(function(l){
-        var r = l.getBoundingClientRect();
+      hilos.forEach(function(h){
+        if(h.lleno >= 1) return;
+        var r = h.lista.getBoundingClientRect();
+        if(r.top > vh) return;
         var p = Math.max(0, Math.min(1, (vh * .65 - r.top) / r.height));
-        var antes = parseFloat(l.style.getPropertyValue('--lleno')) || 0;
-        if(p <= antes) return;
-        l.style.setProperty('--lleno', p.toFixed(3));
-        l.querySelectorAll(':scope > li').forEach(function(li){
+        if(p <= h.lleno) return;
+        h.lleno = p;
+        h.lista.style.setProperty('--lleno', p.toFixed(3));
+        h.bolas.forEach(function(li){
           if(li.offsetTop + 14 <= p * r.height) li.classList.add('alcanzado');
         });
       });
@@ -543,6 +547,7 @@
         baja.style.opacity = o; baja.style.visibility = o ? '' : 'hidden';
       }
     }
+    if(!hilos.length && !lectura && !cita && !baja) return;
     window.addEventListener('scroll', function(){
       if(!pendiente){ pendiente = true; requestAnimationFrame(pinta); }
     }, { passive: true });
