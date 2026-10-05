@@ -19,17 +19,74 @@ $db = adr_db($ADR);
 /** Avisa por correo de que hay algo pendiente, como mucho una vez cada
  *  N horas. Sin esto, asignar un cuestionario es hablarle a una pared:
  *  el paciente no entra «por si acaso». */
-function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 6): void {
+function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 6): bool {
     $q = $db->prepare('SELECT correo, ultimo_aviso FROM pacientes
                        WHERE cod = ? AND activado IS NOT NULL');
     $q->execute([$cod]);
     $p = $q->fetch();
-    if (!$p) return;
-    if ($p['ultimo_aviso'] && strtotime($p['ultimo_aviso']) > time() - $horas * 3600) return;
+    if (!$p) return false;
+    if ($p['ultimo_aviso'] && strtotime($p['ultimo_aviso']) > time() - $horas * 3600) return false;
     require_once __DIR__ . '/lib/correo.php';
     adr_correo_aviso($ADR, $p['correo']);
     $db->prepare('UPDATE pacientes SET ultimo_aviso = ? WHERE cod = ?')
        ->execute([adr_ahora(), $cod]);
+    return true;
+}
+
+/** El recordatorio de las 48 horas.
+ *
+ *  Una medida programada que sigue sin contestar a las 48 horas recibe
+ *  UN recordatorio, con el mismo texto neutro del aviso: ni el
+ *  instrumento ni nada clínico. Uno solo por tarea; si a los cuatro
+ *  días sigue igual, es Adrián quien escribe, no una máquina (el Mac lo
+ *  saca de `pendientes`). Se llama en cada pasada del Mac. */
+function adr_recuerda(PDO $db, array $ADR): int {
+    $q = $db->query("SELECT DISTINCT t.cod FROM tareas t
+                     JOIN pacientes p ON p.cod = t.cod AND p.activado IS NOT NULL
+                     WHERE t.hecho IS NULL AND t.recordada IS NULL
+                       AND t.origen = 'programada'
+                       AND t.creado < datetime('now', '-48 hours')");
+    $n = 0;
+    foreach ($q->fetchAll() as $r) {
+        /* Si el aviso de las 6 horas no deja mandarlo ahora, no se marca:
+           se intenta en la pasada siguiente. */
+        if (!adr_avisa($db, $ADR, $r['cod'])) continue;
+        $db->prepare("UPDATE tareas SET recordada = ?
+                      WHERE cod = ? AND hecho IS NULL AND recordada IS NULL
+                        AND origen = 'programada'")
+           ->execute([adr_ahora(), $r['cod']]);
+        $n++;
+    }
+    return $n;
+}
+
+/** Las altas que nadie activó, fuera.
+ *
+ *  La informativa genera una cuenta por si la persona sigue. Si no
+ *  sigue, en el servidor se queda su correo y nada más, pero se queda.
+ *  Cuando ya no le queda ningún enlace de activación vivo (caducan a
+ *  los 7 días), la fila se borra con todo lo suyo: minimización, no
+ *  limpieza estética. Si después hay cita, el Mac la vuelve a dar de
+ *  alta con el mismo código y no se nota. 'hoja' no es una persona. */
+function adr_limpia_altas(PDO $db): int {
+    $q = $db->prepare("SELECT cod FROM pacientes p
+                       WHERE p.activado IS NULL AND p.cod <> 'hoja'
+                         AND NOT EXISTS (SELECT 1 FROM fichas f
+                                         WHERE f.cod = p.cod AND f.tipo = 'alta'
+                                           AND f.usada IS NULL AND f.caduca >= ?)");
+    $q->execute([time()]);
+    $n = 0;
+    foreach ($q->fetchAll() as $r) {
+        $db->beginTransaction();
+        foreach (['fichas', 'tareas', 'recurrencias', 'sobres'] as $t) {
+            $db->prepare("DELETE FROM $t WHERE cod = ?")->execute([$r['cod']]);
+        }
+        $db->prepare('DELETE FROM accesos WHERE quien = ?')->execute([$r['cod']]);
+        $db->prepare('DELETE FROM pacientes WHERE cod = ? AND activado IS NULL')->execute([$r['cod']]);
+        $db->commit();
+        $n++;
+    }
+    return $n;
 }
 
 /** Materializa las medidas periódicas que ya tocan.
@@ -49,8 +106,8 @@ function adr_vencen(PDO $db, array $ADR): int {
         $y = $db->prepare('SELECT 1 FROM tareas WHERE cod = ? AND titulo = ? AND hecho IS NULL');
         $y->execute([$r['cod'], $r['titulo']]);
         if (!$y->fetch()) {
-            $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, tipo)
-                          VALUES (?,?,?,?,'cuestionario')")
+            $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, tipo, origen)
+                          VALUES (?,?,?,?,'cuestionario','programada')")
                ->execute([$r['cod'], $r['titulo'], $r['plantilla'], adr_ahora()]);
             adr_avisa($db, $ADR, $r['cod']);
             $n++;
@@ -109,7 +166,14 @@ const ADR_SOMBRA = '$argon2id$v=19$m=65536,t=4,p=1$TEJQYmppQXlTQVhjN2JHTg'
 require __DIR__ . '/lib/sesion.php';
 
 /* Todo lo que hace el Mac queda apuntado (acción y hora). */
-if (adr_es_el_mac($ADR) && $a !== '') adr_apunta($db, 'mac', $a);
+/* Todo lo que el Mac CAMBIA queda apuntado. Lo que solo mira (recoger
+   cada 5 minutos, las claves, el panel) no: con el recolector de fondo
+   eran unas 1.500 filas al día que no decían nada y tapaban lo que sí. */
+const ADR_RUTINA = ['recoger', 'recogido', 'claves', 'panel_mac', 'registro',
+                    'firmas', 'pendientes', 'estado', 'por_reenviar'];
+if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
+    adr_apunta($db, 'mac', $a);
+}
 
 switch ($a) {
 
@@ -177,6 +241,12 @@ case 'activar':
 case 'reset': {
     if (!adr_freno($db, 'act:' . adr_huella(), 20)) adr_json(['error' => 'despacio'], 429);
 
+    /* Al activar, la información de protección de datos se tiene que
+       haber visto (la casilla). Se comprueba ANTES de gastar el enlace:
+       si no, un fallo aquí dejaría a la persona sin enlace válido. */
+    if ($a === 'activar' && ($in['aviso'] ?? '') !== ADR_AVISO_V) {
+        adr_json(['error' => 'falta aceptar la información de protección de datos'], 400);
+    }
     $cod = adr_ficha_gasta($db, (string)($in['papel'] ?? ''), $a === 'activar' ? 'alta' : 'reset');
     if ($cod === null) adr_json(['error' => 'ese enlace ya no vale'], 400);
 
@@ -204,6 +274,12 @@ case 'reset': {
            ->execute([$cod]);
     }
 
+    if ($a === 'activar') {
+        /* Qué versión de la información leyó, y cuándo: lo que hay que
+           poder enseñar si alguien lo pregunta. */
+        $db->prepare('UPDATE pacientes SET aviso_privacidad = ? WHERE cod = ?')
+           ->execute([ADR_AVISO_V . ' ' . adr_ahora(), $cod]);
+    }
     adr_apunta($db, $cod, $a === 'activar' ? 'activación de la cuenta' : 'contraseña nueva');
     adr_sesion_pon($cod, $ADR['secreto']);
     adr_json(['ok' => true]);
@@ -402,6 +478,8 @@ case 'recoger': {
        ya tocaban. Es el sustituto honesto de un cron que este
        alojamiento no garantiza. */
     adr_vencen($db, $ADR);
+    adr_recuerda($db, $ADR);
+    adr_limpia_altas($db);
     $q = $db->query('SELECT id, cod, cifrado, creado FROM sobres
                      WHERE direccion = 1 AND recogido IS NULL ORDER BY id LIMIT 50');
     $out = [];
@@ -476,7 +554,9 @@ case 'publicar': {
     $cod = (string)($in['cod'] ?? '');
     $cifrado = adr_deb64($in['cifrado'] ?? null);
     $para_v = (int)($in['para_v'] ?? 0);
-    if (!$cifrado || strlen($cifrado) > 2 * 1024 * 1024) adr_json(['error' => 'sobre no válido'], 400);
+    /* 8 MB: cabe un PDF de unos 6 (va en base64 dentro del sobre). Un
+       documento de texto no pasa de unas decenas de kilobytes. */
+    if (!$cifrado || strlen($cifrado) > 8 * 1024 * 1024) adr_json(['error' => 'sobre no válido o demasiado grande'], 400);
 
     /* El título se ve en la lista SIN abrir nada, así que es lo único
        que el servidor puede leer de un documento. Por eso lo escribe
@@ -624,10 +704,41 @@ case 'alta': {
         || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
         adr_json(['error' => 'cod o correo no válidos'], 400);
     }
-    $db->prepare('INSERT OR IGNORE INTO pacientes (cod, correo, alta) VALUES (?,?,?)')
-       ->execute([$cod, $correo, adr_ahora()]);
+
+    /* Aquí NO sale ningún correo, y es a propósito: el enlace lo da
+       Adrián en persona. Lo que sí se comprueba antes de crear nada:
+
+       · Ese código ya tiene cuenta ACTIVADA. Un enlace de alta nuevo
+         serviría para ponerle otra contraseña y otra clave encima, y
+         todo lo que el Mac le hubiera mandado dejaría de abrirse. No.
+       · Ese correo ya es de OTRA cuenta (el correo es único). Antes
+         esto acababa en un error 500 por la clave foránea de la ficha.
+         Ahora se dice, con el código que ya tiene, para que el Mac
+         vincule esa en vez de crear otra. */
+    $q = $db->prepare('SELECT cod, correo, activado FROM pacientes WHERE cod = ? OR correo = ?');
+    $q->execute([$cod, $correo]);
+    $propia = null;
+    foreach ($q->fetchAll() as $f) {
+        if ($f['cod'] === $cod) { $propia = $f; continue; }
+        adr_json(['error' => 'ese correo ya tiene cuenta', 'cod' => $f['cod'],
+                  'activada' => $f['activado'] !== null], 409);
+    }
+    if ($propia && $propia['activado'] !== null) {
+        adr_json(['error' => 'esa cuenta ya está activada', 'activada' => true], 409);
+    }
+    if (!$propia) {
+        $db->prepare('INSERT INTO pacientes (cod, correo, alta) VALUES (?,?,?)')
+           ->execute([$cod, $correo, adr_ahora()]);
+    } elseif ($propia['correo'] !== $correo) {
+        /* Sin activar todavía: se corrige el correo, que es lo único que hay. */
+        $db->prepare('UPDATE pacientes SET correo = ? WHERE cod = ? AND activado IS NULL')
+           ->execute([$correo, $cod]);
+    }
+    /* Ficha nueva siempre, también si la anterior había caducado: el
+       enlace que devuelve es válido 7 días desde ahora. */
     $papel = adr_ficha($db, $cod, 'alta', 24 * 7);
-    adr_json(['ok' => true, 'enlace' => $ADR['sitio'] . '/activar.php?p=' . $papel]);
+    adr_json(['ok' => true, 'enlace' => $ADR['sitio'] . '/activar.php?p=' . $papel,
+              'caduca' => date('c', time() + 24 * 7 * 3600)]);
 }
 
 /* Todo lo que la consola del Mac necesita para pintar su pantalla, en
@@ -641,15 +752,18 @@ case 'panel_mac': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
 
     /* 'hoja' es el buzón de las hojas sueltas, no un paciente. */
-    $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo
+    $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo, aviso_privacidad
                       FROM pacientes WHERE cod <> 'hoja' ORDER BY alta")->fetchAll();
     $pend = [];
     foreach ($db->query('SELECT cod, COUNT(*) n FROM sobres
                          WHERE direccion = 1 AND recogido IS NULL
                          GROUP BY cod')->fetchAll() as $r) $pend[$r['cod']] = (int)$r['n'];
-    $tar = [];
-    foreach ($db->query('SELECT cod, COUNT(*) n FROM tareas
-                         WHERE hecho IS NULL GROUP BY cod')->fetchAll() as $r) $tar[$r['cod']] = (int)$r['n'];
+    $tar = []; $desde = [];
+    foreach ($db->query('SELECT cod, COUNT(*) n, MIN(creado) d FROM tareas
+                         WHERE hecho IS NULL GROUP BY cod')->fetchAll() as $r) {
+        $tar[$r['cod']] = (int)$r['n'];
+        $desde[$r['cod']] = $r['d'];
+    }
     $viejos = [];
     foreach ($db->query('SELECT s.cod, COUNT(*) n FROM sobres s
                          JOIN pacientes p ON p.cod = s.cod
@@ -665,6 +779,9 @@ case 'panel_mac': {
             'v' => (int)$p['publica_v'], 'ultimo' => $p['ultimo'],
             'por_recoger' => $pend[$p['cod']] ?? 0,
             'tareas' => $tar[$p['cod']] ?? 0,
+            /* Desde cuándo tiene algo sin hacer: lo más antiguo. */
+            'tareas_desde' => $desde[$p['cod']] ?? null,
+            'aviso_privacidad' => $p['aviso_privacidad'],
             /* Cuántos documentos suyos quedaron sellados a una clave
                anterior. Es lo que hay que reenviar después de que
                alguien restablezca la contraseña, y si no se enseña en
@@ -969,6 +1086,31 @@ case 'firmas': {
     $q = $db->query('SELECT cod, titulo, creado, firmado FROM sobres
                      WHERE direccion = 2 AND requiere_firma = 1 ORDER BY id');
     adr_json(['firmas' => $q->fetchAll()]);
+}
+
+/* Lo pendiente, tarea a tarea, con su fecha. Para que el Mac le diga a
+   Adrián quién lleva cuatro días sin contestar y le escriba él. El
+   título es lo que ya está en claro en el servidor («PHQ-9»). */
+case 'pendientes': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->query("SELECT t.cod, t.id, t.titulo, t.tipo, t.origen, t.creado, t.recordada
+                     FROM tareas t JOIN pacientes p ON p.cod = t.cod
+                     WHERE t.hecho IS NULL AND p.activado IS NOT NULL
+                     ORDER BY t.cod, t.creado");
+    adr_json(['pendientes' => $q->fetchAll()]);
+}
+
+/* El estado de la instalación, para que el Mac pueda comprobarlo sin
+   que nadie abra el panel de Hostinger. Ningún secreto: si hay clave
+   de Brevo, no cuál es. */
+case 'estado': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    adr_json(['ok' => true,
+              'correo' => empty($ADR['brevo']) ? 'mail' : 'brevo',
+              'remite' => $ADR['remite'] ?? null,
+              'php' => PHP_VERSION,
+              'pacientes' => (int)$db->query("SELECT COUNT(*) FROM pacientes WHERE cod <> 'hoja'")->fetchColumn(),
+              'activados' => (int)$db->query("SELECT COUNT(*) FROM pacientes WHERE activado IS NOT NULL AND cod <> 'hoja'")->fetchColumn()]);
 }
 
 default:

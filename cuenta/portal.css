@@ -123,6 +123,14 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
 .nota p + p{margin-top:8px}
 .nota.mal{background:var(--error-soft);color:#6E1E20;border:1px solid #E9B7B4}
 .nota.bien{background:var(--exito-soft);color:#1E4A1D;border:1px solid #B6D4B4}
+/* La información de protección de datos al activar: en una caja propia,
+   con la casilla debajo, para que no se confunda con el aviso de la
+   contraseña. */
+.nota.privacidad{background:var(--surface);border:1px solid var(--line);font-size:14.5px}
+.nota.privacidad ul{margin:8px 0 8px;padding-left:20px}
+.nota.privacidad li{margin:0 0 6px}
+.nota.privacidad .acepto{display:flex;gap:10px;align-items:flex-start;margin-top:10px;font-weight:600;cursor:pointer}
+.nota.privacidad .acepto input{width:20px;height:20px;margin-top:1px;flex:0 0 auto}
 .nota.ojo{background:var(--aviso-soft);color:#5C390E;border:1px solid #E7C89A}
 
 /* El bloque de crisis. Aparece cuando alguien acaba de marcar el item
@@ -191,6 +199,8 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
 .herr h2.titulo-h{margin:30px 0 4px}
 .herr h3.apartado-h{font-size:16.5px;margin:22px 0 4px}
 .herr .apunte{margin:0 0 8px}
+/* El aviso de derechos de un instrumento: pequeño, pero entero y legible. */
+.copyright{font-size:13px;margin-top:18px;overflow-wrap:anywhere}
 .herr textarea,.herr input[type=text]{width:100%;font:inherit;padding:9px 11px;
   border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface)}
 .herr textarea{resize:vertical}

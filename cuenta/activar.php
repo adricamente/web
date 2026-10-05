@@ -48,6 +48,33 @@ $cuerpo = <<<HTML
       <label for="c2">Otra vez, para estar seguros</label>
       <input type="password" id="c2" required autocomplete="new-password">
     </div>
+    <!-- Información de protección de datos, primera capa (art. 13
+         RGPD). El consentimiento v2 no habla del portal: esto lo cubre.
+         Si cambia, se sube ADR_AVISO_V en lib/arranque.php. -->
+    <div class="nota privacidad">
+      <p><strong>Antes de crear tu cuenta, lo que pasa con tus datos aquí:</strong></p>
+      <ul>
+        <li><strong>Responsable:</strong> Clínica Neurococos, el centro
+        sanitario donde te atiendo.</li>
+        <li><strong>Para qué:</strong> para que recibas y me mandes los
+        documentos y cuestionarios de tu tratamiento.</li>
+        <li><strong>Qué se guarda en el servidor:</strong> tu correo, una
+        versión transformada de tu contraseña que no permite recuperarla,
+        la fecha de cada entrada y tus documentos <strong>cifrados de
+        extremo a extremo</strong>: el servidor no puede leerlos.</li>
+        <li><strong>Quién más interviene:</strong> Hostinger, que aloja el
+        portal, y Brevo, que envía los correos de aviso, como encargados
+        del tratamiento.</li>
+        <li><strong>Tus derechos:</strong> acceso, rectificación,
+        supresión, oposición, limitación y portabilidad, escribiendo a
+        <a href="mailto:clinicaneurococos@gmail.com">clinicaneurococos@gmail.com</a>.
+        Si crees que no se han respetado, puedes reclamar ante la Agencia
+        Española de Protección de Datos.</li>
+      </ul>
+      <p><a href="https://adricamente.com/privacidad.html#cuenta" target="_blank" rel="noopener">La información completa</a></p>
+      <label class="acepto"><input type="checkbox" id="aviso" required>
+      He leído esta información sobre mis datos en el portal.</label>
+    </div>
     <p><button class="boton ancho" id="b" type="submit">Crear mi cuenta</button></p>
     <p class="apunte" id="estado" role="status"></p>
   </form>
@@ -71,6 +98,7 @@ $('f').addEventListener('submit', async (ev) => {
   const c1 = $('c1').value, c2 = $('c2').value;
   if (c1 !== c2) { falla('Las dos contraseñas no son la misma.'); return; }
   if (c1.length < 10) { falla('Hacen falta al menos diez caracteres.'); return; }
+  if (!$('aviso').checked) { falla('Falta marcar que has leído la información sobre tus datos.'); return; }
 
   $('b').disabled = true;
   $('estado').textContent = 'Creando tu llave…';
@@ -86,6 +114,7 @@ $('f').addEventListener('submit', async (ev) => {
       body: JSON.stringify({
         papel, sal: id.sal, auth: id.auth,
         publica: id.publica, envuelta: id.privadaEnvuelta,
+        aviso: 'portal-v1',
       }),
     });
     const j = await r.json().catch(() => ({}));

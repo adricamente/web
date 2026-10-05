@@ -269,6 +269,10 @@ $cuerpo .= <<<'HTML'
     </p>
     <p class="apunte" id="t-estado" role="status">Lo que vas marcando se
     queda en este dispositivo hasta que envíes. No sale de aquí sin cifrar.</p>
+    <!-- El aviso de derechos que exige la licencia de algunos
+         instrumentos (el CORE-10: CC BY-NC-ND). Lo trae la plantilla;
+         sin él, ese cuestionario no se puede usar. -->
+    <p class="apunte copyright" id="t-copyright" hidden></p>
   </form>
 </section>
 
@@ -693,6 +697,7 @@ async function abrir(id, titulo, clase) {
     /* Se pinta como TEXTO, nunca como HTML. Lo que hay dentro lo ha
        escrito el Mac, pero «viene de mi propio sistema» es exactamente
        la frase con la que entran los agujeros. */
+    if (d && typeof d.pdf === 'string') { pintaPdf(d); return; }
     $('doc-cuerpo').textContent =
       (typeof d === 'string') ? d : (d.texto || JSON.stringify(d, null, 1));
   } catch (_) {
@@ -701,7 +706,35 @@ async function abrir(id, titulo, clase) {
       'Lo vuelvo a mandar y reaparece aquí; no se ha perdido.';
   }
 }
-$('doc-volver').addEventListener('click', panel);
+/* Un PDF sellado (una herramienta, un resumen ya maquetado). Se abre
+   aquí mismo, en el navegador: los bytes se descifran en memoria y se
+   ofrecen como un enlace local (blob:), que no sale a ningún sitio.
+   Cuando se vuelve atrás, se suelta. */
+let URL_PDF = null;
+function pintaPdf(d) {
+  const bin = atob(d.pdf), bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  if (URL_PDF) URL.revokeObjectURL(URL_PDF);
+  URL_PDF = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+  const caja = $('doc-cuerpo');
+  caja.replaceChildren();
+  const p = document.createElement('p');
+  p.textContent = 'Es un PDF. Se abre en tu dispositivo, sin pasar por ningún otro sitio.';
+  const abrirA = document.createElement('a');
+  abrirA.className = 'boton'; abrirA.href = URL_PDF; abrirA.target = '_blank'; abrirA.rel = 'noopener';
+  abrirA.textContent = 'Abrir el PDF';
+  const bajar = document.createElement('a');
+  bajar.className = 'enlace-boton'; bajar.href = URL_PDF;
+  bajar.download = (String(d.nombre || 'documento.pdf').replace(/[\\/:*?"<>|]/g, '') || 'documento.pdf');
+  bajar.textContent = 'Guardarlo';
+  const fila = document.createElement('p');
+  fila.append(abrirA, ' ', bajar);
+  caja.append(p, fila);
+}
+$('doc-volver').addEventListener('click', () => {
+  if (URL_PDF) { URL.revokeObjectURL(URL_PDF); URL_PDF = null; }
+  panel();
+});
 
 /* --- La gráfica -------------------------------------------------------
    La dibuja el navegador con lo que el Mac ha sellado. El servidor
@@ -729,6 +762,14 @@ $('doc-volver').addEventListener('click', panel);
 
 const MESES = ['', 'ene', 'feb', 'mar', 'abr', 'may', 'jun',
                'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+/* Las cifras en castellano: 48 y no 48.0; 2,3 y no 2.3. El corte del
+   WHO-5 llega reescalado (48.0) y la media del DES-II con decimales. */
+function cifra(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return String(v);
+  return Number.isInteger(n) ? String(n)
+    : n.toLocaleString('es-ES', { maximumFractionDigits: 1 });
+}
 function dia(iso) {
   const p = (iso || '').slice(0, 10).split('-');
   return p.length === 3 ? (Number(p[2]) + ' ' + MESES[Number(p[1])]) : iso;
@@ -743,7 +784,9 @@ function svgSerie(m) {
   /* El DERS-28 va de 28 a 140 y el Rosenberg de 10 a 40. Dibujarlos
      desde 0 aplasta la línea arriba y deja media gráfica vacía. */
   const minv = m.minimo || 0, rango = (maxv - minv) || 1;
-  const x = (i) => izq + (pts.length === 1 ? w : w * i / (pts.length - 1));
+  /* Con una sola medida, el punto va en medio: pegado a la derecha
+     parecía el final de una línea que no se ve. */
+  const x = (i) => izq + (pts.length === 1 ? w / 2 : w * i / (pts.length - 1));
   const y = (v) => arr + h - ((v - minv) / rango) * h;
 
   const svg = document.createElementNS(NS, 'svg');
@@ -751,7 +794,7 @@ function svgSerie(m) {
   svg.setAttribute('width', '100%');
   svg.setAttribute('role', 'img');
   svg.setAttribute('aria-label', m.instrumento + ': ' +
-    pts.map(p => dia(p.fecha) + ' ' + p.valor).join(', '));
+    pts.map(p => dia(p.fecha) + ' ' + cifra(p.valor)).join(', '));
 
   const linea = (x1, y1, x2, y2, color, ancho, guion) => {
     const l = document.createElementNS(NS, 'line');
@@ -772,13 +815,13 @@ function svgSerie(m) {
   };
 
   svg.appendChild(linea(izq, arr + h, izq + w, arr + h, '#CECCC6', 1));
-  svg.appendChild(texto(izq - 8, y(minv) + 4, String(minv), 10, '#6C6963', 'end'));
-  svg.appendChild(texto(izq - 8, y(maxv) + 4, String(maxv), 10, '#6C6963', 'end'));
+  svg.appendChild(texto(izq - 8, y(minv) + 4, cifra(minv), 10, '#6C6963', 'end'));
+  svg.appendChild(texto(izq - 8, y(maxv) + 4, cifra(maxv), 10, '#6C6963', 'end'));
 
   if (m.corte != null) {
     const yc = y(m.corte);
     svg.appendChild(linea(izq, yc, izq + w, yc, '#7B4D13', 1.5, '5 4'));
-    svg.appendChild(texto(izq + w + 6, yc + 3.5, 'corte (' + m.corte + ')', 9.5, '#7B4D13'));
+    svg.appendChild(texto(izq + w + 6, yc + 3.5, 'corte (' + cifra(m.corte) + ')', 9.5, '#7B4D13'));
   }
 
   const d = pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.valor).toFixed(1)).join(' ');
@@ -799,10 +842,10 @@ function svgSerie(m) {
     svg.appendChild(c);
     svg.appendChild(texto(x(i).toFixed(1), Al - 10, dia(p.fecha), 9.5, '#6C6963', 'middle'));
   });
-  [0, pts.length - 1].forEach(i => {
+  [...new Set([0, pts.length - 1])].forEach(i => {
     const p = pts[i], cy = y(p.valor);
     svg.appendChild(texto(x(i).toFixed(1), (cy > arr + 22 ? cy - 12 : cy + 19).toFixed(1),
-                          String(p.valor), 12, '#25231F', 'middle', '700'));
+                          cifra(p.valor), 12, '#25231F', 'middle', '700'));
   });
   return svg;
 }
@@ -810,15 +853,16 @@ function svgSerie(m) {
 function lectura(m) {
   const pts = m.puntos || [];
   if (pts.length < 2) {
-    return 'Es la primera medida, así que todavía no hay nada que comparar. ' +
-           'Sirve como punto de partida.';
+    return 'Aún no hay suficientes medidas para ver una tendencia. Esta primera ' +
+           'sirve como punto de partida.';
   }
-  const a = pts[0].valor, z = pts[pts.length - 1].valor;
+  const a = cifra(pts[0].valor), z = cifra(pts[pts.length - 1].valor);
+  const A = Number(pts[0].valor), Z = Number(pts[pts.length - 1].valor);
   /* En casi todos, bajar es mejorar. En el Rosenberg o el WHO-5 es al
      revés, y leerlos con la misma frase le diría a alguien que ha
      empeorado justo la semana que mejora. */
   const alReves = m.direccion === 'mas_es_mejor';
-  const dif = alReves ? z - a : a - z;
+  const dif = alReves ? Z - A : A - Z;
   const cf = m.cambio_fiable;
   if (cf == null) {
     return 'De ' + a + ' a ' + z + '. Lo que dice una sola medida es poco; ' +
@@ -829,7 +873,7 @@ function lectura(m) {
            'cuestionario puede medir con seguridad (hacen falta ' + cf + ' puntos), ' +
            'así que de momento se lee como «parecido», ni mejor ni peor.';
   }
-  const cuanto = Math.abs(dif) + ' puntos ' + (z < a ? 'menos' : 'más');
+  const cuanto = cifra(Math.abs(dif)) + ' puntos ' + (Z < A ? 'menos' : 'más');
   if (dif > 0) {
     return 'De ' + a + ' a ' + z + ': ' + cuanto + ', y eso ya pasa de lo ' +
            'que el cuestionario puede confundir con ruido (' + cf + ' puntos). ' +
@@ -872,7 +916,10 @@ async function pintaProgreso(meta, v) {
     cifras.className = 'apunte';
     cifras.style.borderTop = '1px solid var(--line)';
     cifras.style.paddingTop = '6px';
-    cifras.textContent = (m.puntos || []).map(p => dia(p.fecha) + ' ' + p.valor).join(' · ');
+    /* La escala, siempre: un 12 no dice nada sin saber si es de 27 o de 140. */
+    cifras.textContent = (m.puntos || []).map(p => dia(p.fecha) + ' ' + cifra(p.valor)).join(' · ')
+      + ' · escala de ' + cifra(m.minimo || 0) + ' a ' + cifra(m.maximo || 27)
+      + (m.corte != null ? ' · corte en ' + cifra(m.corte) : '');
     fig.appendChild(cifras);
     const l = document.createElement('p');
     l.className = 'apunte';
@@ -908,6 +955,20 @@ async function abrirTarea(id) {
      si el primer bloque la repite, tampoco. */
   $('t-instrucciones').hidden = !P.instrucciones;
   $('t-instrucciones').textContent = P.instrucciones || '';
+  /* El aviso de copyright, con su enlace pulsable. Se monta con nodos y
+     no con innerHTML: viene del catálogo, y lo que viene de fuera no se
+     pega como HTML. */
+  const cp = $('t-copyright');
+  cp.replaceChildren();
+  cp.hidden = !P.aviso_copyright;
+  String(P.aviso_copyright || '').split(/(https:\/\/[^\s]+)/).forEach((trozo, i) => {
+    if (!trozo) return;
+    if (i % 2) {
+      const a = document.createElement('a');
+      a.href = trozo; a.textContent = trozo; a.target = '_blank'; a.rel = 'noopener';
+      cp.append(a);
+    } else cp.append(document.createTextNode(trozo));
+  });
   const cab = (P.cabecera || '').trim();
   const repetida = P.bloques && P.bloques[0] && P.bloques[0].titulo === cab;
   $('t-cabecera').textContent = (cab.split(/\s+/).length >= 3 && !repetida) ? cab

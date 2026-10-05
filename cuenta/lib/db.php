@@ -146,12 +146,22 @@ function adr_db(array $ADR): PDO {
             'tipo'    => "TEXT NOT NULL DEFAULT 'cuestionario'",
             'cifrado' => 'BLOB',
             'para_v'  => 'INTEGER NOT NULL DEFAULT 0',
+            /* De dónde salió: 'programada' si la materializó una
+               recurrencia. Solo a ésas se les manda el recordatorio de
+               las 48 horas: un CORE-10 de antes de la sesión que no se
+               hizo a tiempo no se recuerda después. */
+            'origen'    => 'TEXT',
+            /* Cuándo se le recordó. Uno solo por tarea, nunca dos. */
+            'recordada' => 'TEXT',
         ],
         'pacientes' => [
             /* Cuándo se le avisó por última vez de que tiene algo
                pendiente. Sirve para no mandarle cuatro correos seguidos
                cuando se le asignan cuatro cosas en un minuto. */
             'ultimo_aviso' => 'TEXT',
+            /* «portal-v1 2026-10-05T…»: la versión de la información de
+               protección de datos que aceptó al activar, y cuándo. */
+            'aviso_privacidad' => 'TEXT',
         ],
     ];
     foreach ($columnas as $tabla => $cols) {

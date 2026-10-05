@@ -153,6 +153,10 @@ function adr_json(array $d, int $codigo = 200): never {
 }
 
 /** El cuerpo de una petición JSON, o array vacío. */
+/* La versión de la información de protección de datos de la pantalla
+   de activación. Si se cambia el texto de activar.php, se sube esto. */
+const ADR_AVISO_V = 'portal-v1';
+
 function adr_entrada(): array {
     $c = file_get_contents('php://input');
     if ($c === false || $c === '') return [];
