@@ -440,3 +440,12 @@ body{-webkit-font-smoothing:antialiased}
 /* El pie del panel, a la misma altura los dos enlaces. */
 .pie-panel{align-items:baseline;max-width:none}
 .pie-panel .salir{margin:0 0 0 auto}
+
+/* Al cambiar de apartado, el contenido nuevo entra con un paso corto:
+   dice «esto ha cambiado» sin hacer esperar. Solo responde a un toque;
+   al actualizar los datos no se repite. */
+@media (prefers-reduced-motion:no-preference){
+  .pestana:not([hidden]){animation:entra-pestana .24s cubic-bezier(.2,0,0,1) both}
+  @keyframes entra-pestana{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .boton:active{transform:translateY(1px)}
+}

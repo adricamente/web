@@ -2988,3 +2988,77 @@ html:not(.js-dibujo) .pasos::after{transform:scaleY(1)}
 @media print{
   .cuenta{display:none}
 }
+
+
+/* =================================================================
+   10. Pulido editorial (octubre de 2026)
+   -----------------------------------------------------------------
+   Tres cambios que salieron de pasar la web por una crítica de
+   diseño con él delante:
+
+   - Las listas que se leen de arriba abajo (herramientas y
+     artículos) van en filas con separador, no en cajas. Las áreas
+     siguen en tarjetas porque se comparan de un vistazo. Seis cajas
+     blancas iguales seguidas eran el kit de cualquier web.
+   - Los titulares reparten sus líneas (text-wrap:balance) para que
+     no quede una palabra sola en la segunda.
+   - El movimiento responde a lo que hace la persona —pasar por
+     encima, pulsar— y dice qué ha cambiado. Nada se mueve solo.
+   ================================================================= */
+
+h2,h3{text-wrap:balance}
+
+.filas{margin:24px 0 20px;border-top:1px solid var(--line)}
+.filas > .tarjeta{
+  background:none;border:0;border-radius:0;box-shadow:none;
+  border-bottom:1px solid var(--line);
+  padding:20px 2px 20px;
+}
+.filas > a.tarjeta:hover{box-shadow:none;border-color:var(--line)}
+.filas .tarjeta h3{min-height:0;margin:0 0 6px}
+.filas .tarjeta p{font-size:16px;margin:0 0 8px;max-width:var(--medida)}
+.filas .tarjeta .mas{font-size:15px}
+.filas .cabeza-tarjeta{margin-bottom:6px}
+.filas .cabeza-tarjeta h3{margin:0}
+
+/* Los artículos: la lámina en pequeño a la izquierda, como miniatura,
+   y el texto a su lado. En el móvil, más pequeña pero al lado igual:
+   es lo que distingue un artículo de otro sin leer el título. */
+.filas > .tarjeta.con-sello{
+  display:grid;grid-template-columns:132px 1fr;column-gap:20px;align-items:start;
+  overflow:visible;padding:20px 2px;
+}
+.filas > .tarjeta.con-sello .ficha{
+  border:1px solid var(--line);border-radius:var(--r-s);padding:6px 8px 2px;
+}
+.filas > .tarjeta.con-sello .cuerpo{padding:0}
+@media (max-width:520px){
+  .filas > .tarjeta.con-sello{grid-template-columns:92px 1fr;column-gap:14px}
+  .filas > .tarjeta.con-sello .ficha{padding:4px 5px 1px}
+}
+
+/* Al pasar por encima: el título toma el azul de lo que se pulsa y el
+   «Leer» se adelanta un paso. Sin sombras ni cajas que aparecen. */
+.filas > a.tarjeta:hover h3{color:var(--accent-2)}
+.filas > a.tarjeta:hover .mas{color:var(--accent-3)}
+.filas > a.tarjeta:focus-visible{outline:2.5px solid var(--accent);outline-offset:4px;border-radius:var(--r-s)}
+@media (prefers-reduced-motion:no-preference){
+  .filas > a.tarjeta h3,.filas > a.tarjeta .mas{transition:color var(--t-corto) var(--suave)}
+  .filas > a.tarjeta .mas{display:inline-block;transition:transform var(--t-corto) var(--suave),color var(--t-corto) var(--suave)}
+  .filas > a.tarjeta:hover .mas{transform:translateX(3px)}
+  .filas > a.tarjeta.con-sello:hover .ficha{transform:none;background:var(--accent-soft)}
+}
+
+/* La miniatura del artículo se vuelve a dibujar al pasar por encima:
+   el mismo barrido que las gráficas grandes, ahora como respuesta a
+   un gesto y no al scroll. Solo con ratón (en el móvil no hay «pasar
+   por encima») y nunca con movimiento reducido. */
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .filas > a.tarjeta.con-sello:is(:hover,:focus-visible) .ficha .sello{
+    animation:redibujar .9s var(--traza) both;
+  }
+  @keyframes redibujar{
+    from{clip-path:inset(-4px calc(100% + 4px) -4px -4px)}
+    to{clip-path:inset(-4px -4px -4px -4px)}
+  }
+}
