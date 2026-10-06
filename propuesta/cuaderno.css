@@ -107,12 +107,28 @@
 /* ---- Índice de lo que trabajo: líneas de libreta ----------------- */
 .cuaderno .indice{list-style:none;padding:0;margin:26px 0 8px;max-width:none;border-top:1.5px solid var(--grafito)}
 .cuaderno .indice li{border-bottom:1px solid var(--line-strong)}
-.cuaderno .indice a{display:grid;grid-template-columns:minmax(0,15rem) 1fr;gap:4px 24px;padding:15px 2px;
-  text-decoration:none;color:inherit;align-items:baseline}
-.cuaderno .indice b{font-family:var(--estrecha);font-weight:700;font-size:1.45rem;line-height:1.1;color:var(--grafito)}
+/* Cada renglón se pulsa entero, y tiene que parecerlo: el nombre va en
+   el azul de lo que se pulsa (en esta web, lo frío es lo que se toca)
+   y al final de la línea hay un chevrón. Al tocarlo en el móvil, el
+   renglón se tiñe un instante: confirma el toque. */
+.cuaderno .indice a{display:grid;grid-template-columns:minmax(0,15rem) 1fr 22px;gap:4px 24px;padding:16px 6px 16px 2px;
+  text-decoration:none;color:inherit;align-items:center;border-radius:4px;
+  -webkit-tap-highlight-color:transparent}
+.cuaderno .indice a::after{content:"";justify-self:end;width:9px;height:9px;margin-right:4px;
+  border-top:2px solid var(--tinta);border-right:2px solid var(--tinta);transform:rotate(45deg)}
+.cuaderno .indice b{font-family:var(--estrecha);font-weight:700;font-size:1.45rem;line-height:1.1;color:var(--tinta);
+  text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:5px;
+  text-decoration-color:color-mix(in srgb,var(--tinta) 35%,transparent)}
 .cuaderno .indice span{color:var(--ink-2);font-size:16.5px}
-.cuaderno .indice a:hover b{color:var(--tinta)}
-@media (max-width:620px){.cuaderno .indice a{grid-template-columns:1fr}}
+.cuaderno .indice a:hover b{color:var(--tinta-honda);text-decoration-color:currentColor}
+.cuaderno .indice a:hover,.cuaderno .indice a:active{background:color-mix(in srgb,var(--tinta) 7%,transparent)}
+.cuaderno .indice a:focus-visible{outline:2.5px solid var(--tinta);outline-offset:2px}
+@media (max-width:620px){
+  .cuaderno .indice a{grid-template-columns:1fr 22px;column-gap:12px}
+  .cuaderno .indice a b{grid-column:1;grid-row:1}
+  .cuaderno .indice a span{grid-column:1;grid-row:2}
+  .cuaderno .indice a::after{grid-column:2;grid-row:1 / span 2}
+}
 
 /* ---- Empezar: tres pasos, que sí son una secuencia --------------- */
 .cuaderno .tres{list-style:none;padding:0;margin:28px 0 34px;max-width:none;display:grid;gap:26px}
@@ -170,4 +186,7 @@
 /* ---- Movimiento al pulsar: el botón baja un pelo ----------------- */
 @media (prefers-reduced-motion:no-preference){
   .cuaderno .indice a b{transition:color .17s cubic-bezier(.2,0,0,1)}
+  .cuaderno .indice a{transition:background-color .17s cubic-bezier(.2,0,0,1)}
+  .cuaderno .indice a::after{transition:transform .2s cubic-bezier(.2,0,0,1)}
+  .cuaderno .indice a:hover::after{transform:translateX(3px) rotate(45deg)}
 }
