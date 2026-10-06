@@ -561,3 +561,7 @@ h3{font-weight:700}
 .fila .texto{min-width:0}
 .minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:10px 12px}
 #c-accesos{background:none;border:0;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);border-radius:0;padding:14px 2px}
+/* Versión intermedia: las hojas de la evolución en papel liso, sin
+   cuadrícula (demasiado informal, según la primera opinión de fuera). */
+.grafica{background-image:none;background-color:#fff}
+.marcado{background-size:100% 30%;background-position:0 92%}

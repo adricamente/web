@@ -3386,3 +3386,33 @@ main .franja.marino strong,main .idea strong{background-image:none;font-weight:i
 .paso-ciclo span{font-family:var(--estrecha);font-size:12.5px;font-weight:800}
 /* El precio, en la voz de los titulares. */
 .precio .importe,.precio .cifra,.precio .moneda{font-family:var(--estrecha)}
+
+/* =================================================================
+   13. Versión intermedia (6 de octubre de 2026, noche)
+   -----------------------------------------------------------------
+   La primera opinión de fuera (un amigo, mirando las dos portadas en
+   el móvil): reservaría antes con la anterior; la cuadrícula y la foto
+   de medio cuerpo le parecían demasiado informales para alguien a
+   quien vas a contarle algo delicado. Se queda lo que mejoraba la
+   venta (menos texto, precio y botón arriba, la letra, la gráfica de
+   evolución) y vuelve el tono serio: papel liso, bandas grises lisas,
+   la foto de pecho para arriba, la franja de datos, las tarjetas de
+   áreas, los pasos con su hilo y la caja del precio con su barra.
+   ================================================================= */
+.franja:not(.marino)::before,
+.cinta::before,
+.cuaderno .hoja::before{background-color:var(--surface-2);background-image:none}
+.cuaderno .hoja.portada::before{background:none;border:0}
+.cuaderno .portada{padding-bottom:20px}
+/* El rotulador, más fino: subraya sin parecer un apunte de estudiante. */
+main p strong,main figcaption strong,.cuaderno strong{background-size:100% 30%;background-position:0 92%}
+.cuaderno .yo img,.retrato,.hero.con-retrato .retrato-hero{border-radius:var(--r-m)}
+/* El botón dentro de la caja blanca del precio: el de la franja marino
+   es blanco y ahí no se vería. */
+.franja.marino .tarifa .boton{background:var(--accent);color:var(--sobre-accent)}
+.franja.marino .tarifa .boton:hover{background:var(--accent-3);color:var(--sobre-accent)}
+.tarifa .condiciones{list-style:none;padding:0;margin:12px 0 14px;border-top:1px solid var(--line-strong)}
+.tarifa .condiciones li{padding:8px 0;border-bottom:1px solid var(--line);color:var(--ink)}
+.cuaderno .confianza{margin-top:8px}
+/* El título de cada paso es un rótulo, no un subrayado. */
+.cuaderno .pasos li > strong:first-child,.pasos li > strong:first-child{background-image:none;padding:0}
