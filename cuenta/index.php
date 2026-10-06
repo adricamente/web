@@ -101,24 +101,20 @@ $cuerpo = <<<HTML
 HTML;
 
 $cuerpo .= <<<'HTML'
-<!-- Su plan de seguridad, a un toque desde cualquier pantalla de la
-     cuenta. Solo aparece si tiene uno enviado. -->
+<!-- La ayuda urgente, siempre a mano en cualquier pantalla de la
+     cuenta. Si tiene plan de seguridad enviado, el plan va delante. -->
 <p class="plan-fijo" id="plan-fijo" hidden>
-  <button type="button" id="b-plan">Mi plan de seguridad</button>
-  <span>· Si estás en peligro: <a href="tel:024">024</a> · <a href="tel:112">112</a></span>
+  <button type="button" id="b-plan" hidden>Mi plan de seguridad ·</button>
+  <span>¿En peligro ahora? <a href="tel:024">024</a> (24 h) · <a href="tel:112">112</a></span>
 </p>
 
+<!-- El inicio, de arriba abajo en el orden en que se usa: la próxima
+     sesión, lo que hay que hacer antes, cómo va, las herramientas, lo
+     trabajado, y al final mensajes, documentos y ajustes. Móvil
+     primero: en una pantalla de 390 px, lo de arriba es lo que se ve. -->
 <section id="v-panel" class="vista" hidden>
-  <p class="etiqueta">Tu cuenta</p>
-  <h1>Tu espacio</h1>
-  <!-- Salir. No estaba, y se vio mirando la captura: la barra de
-       navegación de las maquetas no se pinta en el portal de una sola
-       página, así que `salir.php` existía sin que nada llevara a él.
-       Alguien en un portátil compartido tiene que poder cerrar su
-       cuenta sin buscar la URL. -->
-  <p class="apunte" style="margin:-6px 0 18px">
-    <a href="salir.php">Salir de mi cuenta</a>
-  </p>
+  <h1 id="hola">Tu espacio</h1>
+  <p class="apunte salir"><a href="salir.php">Salir de mi cuenta</a></p>
 
   <div class="nota ojo" id="reenviando" hidden>
     <p><strong>Tus documentos están volviendo.</strong> Cambiaste la
@@ -126,68 +122,95 @@ $cuerpo .= <<<'HTML'
     anterior. No se ha perdido nada: los vuelvo a mandar y van
     apareciendo aquí.</p>
   </div>
+  <div class="nota bien" id="recibido" role="status" hidden>
+    <p><strong>Recibido.</strong> Lo tendré delante en tu próxima sesión.</p>
+  </div>
 
-  <!-- Tres estantes, no una lista.
-       Lo pendiente arriba del todo porque es lo único que pide algo de
-       quien entra; lo demás está para cuando lo busque. -->
-  <!-- La gráfica. Va antes que los estantes porque es la respuesta a
-       la pregunta con la que entra la mayoría: «¿voy mejor?». -->
-  <p class="resumen" id="resumen" role="status"></p>
+  <!-- La próxima sesión. La publica el Mac (clase «agenda»): día, hora
+       y el enlace de la videollamada, que se activa 10 minutos antes. -->
+  <div class="tarjeta-sesion" id="c-agenda" hidden>
+    <p class="etiqueta">Tu próxima sesión</p>
+    <p class="cuando" id="ag-cuando"></p>
+    <p class="botones">
+      <a class="boton" id="ag-entrar" target="_blank" rel="noopener">Entrar a la videollamada</a>
+      <a class="enlace-boton" id="ag-cambiar" target="_blank" rel="noopener" hidden>Cambiar o cancelar</a>
+    </p>
+    <p class="apunte" id="ag-nota"></p>
+  </div>
 
-  <div class="caja" id="c-tareas" hidden>
-    <h2 style="margin-top:0">Pendiente de hacer</h2>
+  <section class="caja bloque" id="c-tareas" aria-labelledby="t-tareas">
+    <h2 id="t-tareas">Para antes de tu sesión</h2>
+    <p class="resumen" id="resumen" role="status"></p>
+    <div class="progreso-barra" id="hecho-barra" hidden role="progressbar"
+         aria-label="Lo que has hecho de lo que te he mandado estas semanas">
+      <i id="hecho-barra-i" style="width:0%"></i>
+    </div>
     <div id="tareas"></div>
-  </div>
+  </section>
 
-  <div class="caja" id="c-progreso" hidden>
-    <h2 style="margin-top:0">Mi progreso</h2>
+  <section class="caja bloque" id="c-progreso" aria-labelledby="t-progreso">
+    <h2 id="t-progreso">Tu evolución</h2>
     <div id="progreso"></div>
-  </div>
+  </section>
 
   <!-- Herramientas: lo que se rellena o se lee y se GUARDA (plan de
        seguridad, autorregistros, guías). No son pruebas: no puntúan ni
        salen en la gráfica, y lo enviado se queda aquí para volver a
        abrirlo, que es justo cuando hace falta un plan de seguridad. -->
-  <div class="caja" id="c-herramientas" hidden>
-    <h2 style="margin-top:0">Mis herramientas</h2>
+  <section class="caja bloque" id="c-herramientas" aria-labelledby="t-herr">
+    <h2 id="t-herr">Tus herramientas</h2>
     <div id="herramientas"></div>
-  </div>
+  </section>
 
-  <div class="caja">
-    <h2 style="margin-top:0">Nuestras sesiones</h2>
-    <div id="sesiones"></div>
-  </div>
+  <section class="caja bloque" aria-labelledby="t-sesiones">
+    <h2 id="t-sesiones">Lo que hemos trabajado</h2>
+    <div id="sesiones" class="linea-tiempo"></div>
+  </section>
 
-  <div class="caja">
-    <h2 style="margin-top:0">Mis documentos</h2>
-    <div id="documentos"></div>
-  </div>
+  <section class="caja bloque" id="c-hechas" aria-labelledby="t-hechas">
+    <h2 id="t-hechas">Lo que has completado</h2>
+    <div id="hechas"></div>
+  </section>
 
-  <!-- Los mensajes van los ÚLTIMOS a propósito. Es lo que más engancha
-       y lo que menos urge; arriba haría que lo primero de cada visita
-       fuera mirar si hay respuesta, y esto no es una aplicación de
-       mensajería. -->
-  <div class="caja">
-    <h2 style="margin-top:0">Escribirme</h2>
+  <!-- Los mensajes, después de lo de trabajo: es lo que más engancha y
+       lo que menos urge, y esto no es una aplicación de mensajería. -->
+  <section class="caja bloque" id="c-mensajes" aria-labelledby="t-mensajes">
+    <h2 id="t-mensajes">Escribirme</h2>
     <div class="nota ojo" style="margin-bottom:14px">
-      <p><strong>Esto no es un canal de urgencias.</strong> Lo leo cuando
-      reviso, y puede que no sea hoy. Si estás en peligro ahora mismo,
-      llama al <strong>024</strong> (atención a la conducta suicida, 24
-      horas, gratuito) o al <strong>112</strong>.</p>
+      <p><strong>Este canal no es para urgencias.</strong> Lo leo en mi
+      horario de consulta, no al momento. Si estás en peligro ahora:
+      <strong>024</strong> (atención a la conducta suicida, 24 horas,
+      gratuito) o <strong>112</strong>.</p>
     </div>
     <div id="hilo"></div>
     <div class="campo" style="margin-top:14px">
       <label for="m-texto">Lo que quieras contarme</label>
       <textarea id="m-texto" rows="4"></textarea>
     </div>
+    <!-- Si lo que escribe suena a riesgo, esto aparece ANTES de enviar.
+         No bloquea: se puede enviar igual. -->
+    <div class="auxilio" id="m-auxilio" role="status" hidden>
+      <p><strong>Antes de enviarlo.</strong> Lo voy a leer, pero no al
+      momento: puede que no sea hoy.</p>
+      <p><strong>Si ahora mismo estás en peligro, llama al 024</strong>
+      (atención a la conducta suicida, 24 horas, gratuito) <strong>o al
+      112</strong>. Si puedes, díselo a alguien que tengas cerca.</p>
+    </div>
     <p><button class="boton" id="m-enviar" type="button">Enviar</button>
     <span class="apunte" id="m-estado" role="status"></span></p>
-  </div>
+  </section>
+
+  <section class="caja bloque" aria-labelledby="t-docs">
+    <h2 id="t-docs">Documentos</h2>
+    <div id="documentos"></div>
+  </section>
 
   <details class="caja" id="c-accesos">
-    <summary><strong>Últimos accesos a tu cuenta</strong></summary>
-    <p class="apunte">Si ves una entrada que no reconoces, cambia la contraseña y escríbeme.</p>
+    <summary><strong>Ajustes y seguridad</strong></summary>
+    <p class="apunte">Las últimas entradas en tu cuenta. Si ves una que no
+    reconoces, cambia la contraseña y escríbeme.</p>
     <ul id="accesos" class="accesos"></ul>
+    <p style="margin-top:14px"><a href="clave.php?olvide=1">Cambiar la contraseña</a></p>
   </details>
 
   <p>
@@ -196,10 +219,25 @@ $cuerpo .= <<<'HTML'
   </p>
 </section>
 
+<!-- La navegación de abajo, solo en el móvil y solo en el inicio:
+     cuatro sitios, sin menú que abrir. -->
+<nav class="nav-abajo" id="nav-abajo" aria-label="Secciones" hidden>
+  <a href="#hola">Inicio</a>
+  <a href="#c-progreso">Evolución</a>
+  <a href="#c-tareas">Tareas</a>
+  <a href="#c-mensajes">Mensajes</a>
+</nav>
+
 <section id="v-doc" class="vista" hidden>
   <p class="etiqueta" id="doc-clase">Documento</p>
   <h1 id="doc-titulo">…</h1>
-  <div class="caja"><div id="doc-cuerpo"></div></div>
+  <div class="caja doc-caja"><div id="doc-cuerpo"></div>
+    <div class="doc-firma" id="doc-firma" hidden>
+      <p id="doc-firma-t"></p>
+      <p class="apunte" id="doc-firma-h"></p>
+    </div>
+  </div>
+  <p><button class="boton suave" id="doc-imprimir" type="button" hidden>Guardar o imprimir una copia</button></p>
   <p><button class="enlace-boton" id="doc-volver" type="button">← Volver</button></p>
 </section>
 
@@ -222,7 +260,7 @@ $cuerpo .= <<<'HTML'
     como aparecen en tu DNI. Queda registrada la fecha y la hora.</p>
     <div class="campo">
       <label for="s-nombre">Nombre y apellidos</label>
-      <input id="s-nombre" autocomplete="name">
+      <input type="text" id="s-nombre" autocomplete="name">
     </div>
     <p><button class="boton" id="s-firmar" type="button">Firmar</button>
     <button class="enlace-boton" id="s-volver" type="button">← Volver</button></p>
@@ -326,6 +364,7 @@ import { listo, entrarConServidor, abrirDelMac, sellarHaciaElMac, vigilarSesion 
    Reduce la ventana; no la cierra. */
 let privada = null;
 let miPublica = null;
+let miV = null;
 let macPublica = null;
 let miCod = null;
 
@@ -334,7 +373,11 @@ const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar'
 let PLAN = null;   // id de su plan de seguridad enviado, si tiene
 function ver(cual) {
   VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
-  $('plan-fijo').hidden = !(PLAN && cual !== 'v-entrar');
+  /* La ayuda urgente está en todas las pantallas de la cuenta; el
+     botón del plan, solo si hay plan. */
+  $('plan-fijo').hidden = (cual === 'v-entrar');
+  $('b-plan').hidden = !PLAN;
+  $('nav-abajo').hidden = (cual !== 'v-panel');
   window.scrollTo(0, 0);
 }
 function falla(t) { $('mal-t').textContent = t; $('mal').hidden = false; }
@@ -453,23 +496,40 @@ async function panel() {
   miPublica = r.j.publica || null;
   macPublica = r.j.mac_publica || null;
   miCod = r.j.cod || null;
+  miV = r.j.v;
+  pintaAgenda(r.j.agenda, r.j.v);
   pintaProgreso(r.j.progreso, r.j.v);
 
-  /* Pendiente (las herramientas van en su propia caja) */
   const todas = r.j.tareas || [];
+  const docs = r.j.documentos || [];
+  buscaPlan(docs.filter(d => d.clase === 'herramienta'), r.j.v);
+  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'),
+                    docs.filter(d => d.clase === 'herramienta'), r.j.v);
+
+  /* «Para antes de tu sesión»: lo pendiente, con cuánto lleva, y el
+     documento por firmar si lo hay. Lo de las herramientas va en su
+     caja; aquí se cuenta igual. */
   const ts = todas.filter(t => t.tipo !== 'herramienta');
-  const n = todas.length;
+  const porFirmar = docs.filter(d => Number(d.requiere_firma) && !d.firmado
+                                     && Number(d.para_v) === Number(r.j.v));
+  const n = todas.length + porFirmar.length;
   $('resumen').textContent = n
     ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.') + ' Empieza por arriba.'
-    : 'No tienes nada pendiente. Aquí están tu progreso y lo que hemos ido trabajando.';
-  buscaPlan((r.j.documentos || []).filter(d => d.clase === 'herramienta'), r.j.v);
-  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'),
-                    (r.j.documentos || []).filter(d => d.clase === 'herramienta'), r.j.v);
-  $('c-tareas').hidden = (ts.length === 0);
+    : 'No tienes nada pendiente. Cuando te mande algo, aparecerá aquí.';
   const ct = $('tareas'); ct.innerHTML = '';
+  porFirmar.forEach(d => {
+    const f = fila(d.titulo || 'Documento', 'Para leer y firmar');
+    const b = document.createElement('button');
+    b.className = 'boton'; b.type = 'button'; b.textContent = 'Leer y firmar';
+    b.addEventListener('click', () => abrirFirma(d.id, d.titulo));
+    f.appendChild(b);
+    ct.appendChild(f);
+  });
   ts.forEach(t => {
     const esDeber = (t.tipo === 'deber');
-    const f = fila(t.titulo, t.caduca ? ('antes del ' + fecha(t.caduca)) : null);
+    const pie = [t.preguntas ? 'unos ' + Math.max(1, Math.round(t.preguntas * 10 / 60)) + ' min' : null,
+                 t.caduca ? 'antes del ' + fecha(t.caduca) : null].filter(Boolean).join(' · ');
+    const f = fila(t.titulo, pie || null);
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button';
     b.textContent = esDeber ? 'Ver' : 'Rellenar';
@@ -477,9 +537,21 @@ async function panel() {
     f.appendChild(b);
     ct.appendChild(f);
   });
+  /* La barra: lo hecho de lo que se ha mandado en las dos últimas
+     semanas. Sin rachas ni medallas: una barra y ya. */
+  const hechas = r.j.hechas || [];
+  const hace14 = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
+  const recientes = hechas.filter(h => (h.hecho || '').slice(0, 10) >= hace14).length;
+  const total = recientes + todas.length;
+  $('hecho-barra').hidden = !(recientes && total);
+  if (recientes && total) {
+    $('hecho-barra-i').style.width = Math.round(100 * recientes / total) + '%';
+    $('hecho-barra').setAttribute('aria-valuenow', String(recientes));
+    $('hecho-barra').setAttribute('aria-valuemax', String(total));
+  }
+  pintaHechas(hechas);
 
-  /* Sesiones y documentos */
-  const docs = r.j.documentos || [];
+  /* Lo trabajado (sesiones) y los documentos */
   let viejos = 0;
   [['sesion', 'sesiones', 'Aquí irá apareciendo lo que nos llevamos de cada sesión.'],
    ['documento', 'documentos', 'Todavía no hay documentos. Cuando te mande alguno, aparece aquí.']]
@@ -498,9 +570,6 @@ async function panel() {
         e.className = 'sello caduca'; e.textContent = 'volviendo';
         f.appendChild(e);
       } else if (Number(d.requiere_firma) && !d.firmado) {
-        /* Pendiente de firma: el botón lo dice y lleva a la pantalla de
-           firmar, no a la de leer. Un documento que hay que firmar y se
-           abre como cualquier otro se lee y se cierra. */
         const e = document.createElement('span');
         e.className = 'sello ojo'; e.textContent = 'sin firmar';
         f.appendChild(e);
@@ -517,7 +586,7 @@ async function panel() {
         }
         const b = document.createElement('button');
         b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
-        b.addEventListener('click', () => abrir(d.id, d.titulo, clase));
+        b.addEventListener('click', () => abrir(d.id, d.titulo, clase, d));
         f.appendChild(b);
       }
       c.appendChild(f);
@@ -525,6 +594,63 @@ async function panel() {
   });
   $('reenviando').hidden = (viejos === 0);
   pintaHilo(r.j.mensajes || [], r.j.v);
+}
+
+/* Lo completado: qué y cuándo, sin puntuación. La puntuación está en
+   «Tu evolución»; aquí se ve que lo que mandas llega a algún sitio. */
+function pintaHechas(hs) {
+  const c = $('hechas'); c.innerHTML = '';
+  if (!hs.length) {
+    c.appendChild(vacio('Aquí irá quedando lo que vayas haciendo, con su fecha.'));
+    return;
+  }
+  hs.slice(0, 12).forEach(h => c.appendChild(fila(h.titulo, 'Hecho el ' + fecha(h.hecho))));
+}
+
+/* --- La próxima sesión ------------------------------------------------
+   La publica el Mac sellada: {proxima: ISO, meet: url, cambiar?: url,
+   nombre?: «Marta»}. El botón de la videollamada se enciende 10 minutos
+   antes y se apaga una hora después de empezar. Solo se aceptan
+   enlaces https: lo que se pinta como botón no puede ser otra cosa. */
+const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MESES_L = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+                 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+let AGENDA = null, RELOJ_AG = null;
+function esHttps(u) { try { return new URL(u).protocol === 'https:'; } catch (_) { return false; } }
+async function pintaAgenda(meta, v) {
+  const caja = $('c-agenda');
+  if (RELOJ_AG) { clearInterval(RELOJ_AG); RELOJ_AG = null; }
+  AGENDA = null;
+  caja.hidden = true;
+  $('hola').textContent = 'Tu espacio';
+  if (!meta || Number(meta.para_v) !== Number(v)) return;
+  const r = await api('abrir&id=' + encodeURIComponent(meta.id));
+  if (!r.ok || !r.j.cifrado) return;
+  let d;
+  try { d = abrirDelMac(r.j.cifrado, miPublica, privada); } catch (_) { return; }
+  if (d && typeof d.nombre === 'string' && d.nombre.trim()) {
+    $('hola').textContent = 'Hola, ' + d.nombre.trim().split(/\s+/)[0];
+  }
+  const t = d && d.proxima ? new Date(d.proxima) : null;
+  if (!t || isNaN(t) || t.getTime() < Date.now() - 60 * 60000) return;
+  AGENDA = d;
+  $('ag-cuando').textContent = DIAS[t.getDay()] + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()] +
+    ', a las ' + String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+  const cambiar = $('ag-cambiar');
+  cambiar.hidden = !esHttps(d.cambiar);
+  if (!cambiar.hidden) cambiar.href = d.cambiar;
+  const reloj = () => {
+    const ahora = Date.now(), abre = t.getTime() - 10 * 60000, cierra = t.getTime() + 60 * 60000;
+    const b = $('ag-entrar');
+    const listo = esHttps(d.meet) && ahora >= abre && ahora <= cierra;
+    if (listo) { b.href = d.meet; b.removeAttribute('aria-disabled'); b.classList.remove('apagado'); }
+    else { b.removeAttribute('href'); b.setAttribute('aria-disabled', 'true'); b.classList.add('apagado'); }
+    $('ag-nota').textContent = listo ? 'Ya puedes entrar. Te espero.'
+      : (ahora < abre ? 'El botón se activa 10 minutos antes.' : '');
+  };
+  reloj();
+  RELOJ_AG = setInterval(reloj, 30000);
+  caja.hidden = false;
 }
 
 /* --- Los mensajes ----------------------------------------------------
@@ -571,9 +697,29 @@ async function pintaHilo(ms, v) {
   }
 }
 
+/* La red de seguridad del mensaje. Si lo que escribe suena a riesgo, la
+   misma caja que en el ítem 9 aparece ANTES de enviar, sin bloquearlo.
+   Es la misma lista que mira el sistema clínico al recibirlo (morir,
+   desaparecer, no despertar, ser una carga, hacerse daño…), sin las
+   frases hechas que solo dan falsas alarmas («muerta de cansancio»). */
+const RIESGO_MENSAJE = new RegExp([
+  '\\bmorir(me|se)?\\b', '\\bme quiero morir\\b', '\\bquiero morirme\\b',
+  '\\bmuerte\\b', '\\bmatarme\\b', '\\bsuicid', '\\bquitarme la vida\\b',
+  '\\bacabar con todo\\b', '\\bdesaparecer\\b', '\\bno despertar(me)?\\b',
+  '\\bser una carga\\b', '\\bsoy una carga\\b', '\\bhacerme da[ñn]o\\b',
+  '\\bautolesi', '\\bcortarme\\b', '\\btirarme (por|a|al|desde|de)\\b',
+  '\\bno quiero (seguir )?vivir\\b', '\\bno merece la pena vivir\\b',
+].join('|'), 'i');
+const FALSAS = /\b(muert[oa]s? de (cansancio|sueño|risa|hambre|frío|calor|miedo|vergüenza|asco)|me muero de (ganas|risa|sueño|hambre|vergüenza))\b/gi;
+function suenaARiesgo(t) { return RIESGO_MENSAJE.test(String(t).replace(FALSAS, '')); }
+$('m-texto').addEventListener('input', () => {
+  $('m-auxilio').hidden = !suenaARiesgo($('m-texto').value);
+});
+
 $('m-enviar').addEventListener('click', async () => {
   const texto = $('m-texto').value.trim();
   if (!texto) return;
+  if (suenaARiesgo(texto)) $('m-auxilio').hidden = false;
   $('m-enviar').disabled = true;
   $('m-estado').textContent = '';
   try {
@@ -584,7 +730,7 @@ $('m-enviar').addEventListener('click', async () => {
     const r = await api('escribir', { cifrado });
     if (!r.ok) { $('m-estado').textContent = 'No se ha podido enviar.'; return; }
     $('m-texto').value = '';
-    $('m-estado').textContent = 'Enviado.';
+    $('m-estado').textContent = 'Enviado. Lo leeré en mi horario de consulta.';
     await panel();
   } finally { $('m-enviar').disabled = false; }
 });
@@ -600,7 +746,7 @@ async function abrirDeber(t) {
   if (!r.ok) { $('d-cuerpo').textContent = 'No se ha podido traer.'; return; }
   try {
     const x = abrirDelMac(r.j.cifrado, miPublica, privada);
-    $('d-cuerpo').textContent = (typeof x === 'string') ? x : (x.texto || '');
+    pintaTexto($('d-cuerpo'), (typeof x === 'string') ? x : (x.texto || ''));
   } catch (_) {
     $('d-cuerpo').textContent = 'Esta tarea está cerrada con una llave anterior a tu ' +
       'contraseña actual. Te la vuelvo a mandar.';
@@ -628,7 +774,9 @@ async function abrirFirma(id, titulo) {
   try {
     const d = abrirDelMac(r.j.cifrado, miPublica, privada);
     FIRMA.texto = (typeof d === 'string') ? d : (d.texto || '');
-    $('s-cuerpo').textContent = FIRMA.texto;
+    /* Se PINTA estructurado; FIRMA.texto, que es lo que se firma y se
+       hashea, se queda exactamente como llegó. */
+    pintaTexto($('s-cuerpo'), FIRMA.texto);
     /* Solo se puede firmar lo que se ha podido leer. */
     $('s-firmar').disabled = !FIRMA.texto;
   } catch (_) { $('s-cuerpo').textContent = 'No se ha podido abrir.'; }
@@ -656,7 +804,13 @@ $('s-firmar').addEventListener('click', async () => {
                                        firmado_en: ahoraLocal(), origen: 'cuenta',
                                        cod_web: miCod },
                                      macPublica);
-    const r = await api('firmar', { id: FIRMA.id, cifrado });
+    /* Y su copia: el texto, su nombre, la hora y la huella, sellados a
+       SU clave. Se queda en «Documentos», legible y para imprimir. */
+    const copia = sellarHaciaElMac({ v: 1, tipo: 'copia_firmada', titulo: FIRMA.titulo,
+                                     texto: FIRMA.texto,
+                                     firma: { nombre, firmado_en: ahoraLocal(), documento_sha256: h } },
+                                   miPublica);
+    const r = await api('firmar', { id: FIRMA.id, cifrado, copia });
     if (!r.ok) { $('s-estado').textContent = r.j.error || 'No se ha podido firmar.'; return; }
     await panel();
     $('panel-estado').textContent = 'Firmado. Gracias.';
@@ -685,27 +839,104 @@ $('refrescar').addEventListener('click', async () => {
   $('panel-estado').textContent = 'Al día.';
 });
 
-async function abrir(id, titulo, clase) {
+async function abrir(id, titulo, clase, doc) {
   $('doc-clase').textContent = (clase === 'sesion') ? 'Sesión' : 'Documento';
   $('doc-titulo').textContent = titulo || 'Documento';
   $('doc-cuerpo').textContent = 'Abriendo…';
+  $('doc-firma').hidden = true;
+  $('doc-imprimir').hidden = true;
   ver('v-doc');
-  const r = await api('abrir&id=' + encodeURIComponent(id));
+  /* Un documento firmado se abre por su copia firmada, si la hay: el
+     mismo texto, y debajo quién firmó, cuándo y la huella. */
+  const usaCopia = doc && doc.copia_id && Number(doc.copia_v) === Number(miV);
+  const r = await api('abrir&id=' + encodeURIComponent(usaCopia ? doc.copia_id : id));
   if (!r.ok || !r.j.cifrado) { $('doc-cuerpo').textContent = 'No se ha podido traer.'; return; }
   try {
     const d = abrirDelMac(r.j.cifrado, miPublica, privada);
+    if (d && typeof d.pdf === 'string') { pintaPdf(d); return; }
     /* Se pinta como TEXTO, nunca como HTML. Lo que hay dentro lo ha
        escrito el Mac, pero «viene de mi propio sistema» es exactamente
        la frase con la que entran los agujeros. */
-    if (d && typeof d.pdf === 'string') { pintaPdf(d); return; }
-    $('doc-cuerpo').textContent =
-      (typeof d === 'string') ? d : (d.texto || JSON.stringify(d, null, 1));
+    const texto = (typeof d === 'string') ? d : (d.texto || JSON.stringify(d, null, 1));
+    pintaTexto($('doc-cuerpo'), texto);
+    if (doc && doc.firmado) {
+      const f = (usaCopia && d.firma) || {};
+      $('doc-firma-t').textContent =
+        'Firmado' + (f.nombre ? ' por ' + f.nombre : '') + ' el ' +
+        fecha(f.firmado_en || doc.firmado) + ' a las ' + String(f.firmado_en || doc.firmado).slice(11, 16) + '.';
+      $('doc-firma-h').textContent = 'Huella del texto firmado (SHA-256): ' +
+        (f.documento_sha256 || await huellaDe(texto));
+      $('doc-firma').hidden = false;
+      $('doc-imprimir').hidden = false;
+    }
   } catch (_) {
     $('doc-cuerpo').textContent =
       'Este documento está cerrado con una llave anterior a tu contraseña actual. ' +
       'Lo vuelvo a mandar y reaparece aquí; no se ha perdido.';
   }
 }
+async function huellaDe(texto) {
+  const bytes = new TextEncoder().encode(texto);
+  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+/* La copia firmada, en papel o en PDF: lo que se imprime es la vista
+   del documento y nada más (ni el panel, ni los botones). */
+$('doc-imprimir').addEventListener('click', () => {
+  document.body.classList.add('imprime-doc');
+  window.print();
+  setTimeout(() => document.body.classList.remove('imprime-doc'), 500);
+});
+
+/* --- Un texto largo, legible -----------------------------------------
+   El consentimiento llega con su estructura en saltos de línea —título,
+   secciones numeradas, apartados a), b)— y pintado tal cual en un
+   bloque, HTML junta todos los saltos y sale un solo párrafo de dos
+   pantallas. Esto lo parte en piezas SOLO para verlo: la cadena no se
+   toca, y la huella de la firma se calcula sobre ella, no sobre lo
+   pintado. Todo con textContent: nada de lo que llega se pega como HTML. */
+function pintaTexto(caja, texto) {
+  caja.replaceChildren();
+  caja.classList.add('texto-largo');
+  const lineas = String(texto).replace(/\r\n?/g, '\n').split('\n');
+  let previaVacia = true, cabecera = 0, lista = null, parrafo = null;
+  const cierra = () => { lista = null; parrafo = null; };
+  const nuevo = (tag, txt, clase) => {
+    const e = document.createElement(tag);
+    e.textContent = txt;
+    if (clase) e.className = clase;
+    caja.append(e);
+    return e;
+  };
+  lineas.forEach(l => {
+    const t = l.trim();
+    if (!t) { previaVacia = true; cierra(); return; }
+    if (cabecera < 2 && !caja.querySelector('h3,p')) {
+      /* Las dos primeras líneas: título y subtítulo. */
+      nuevo(cabecera === 0 ? 'h2' : 'p', t, cabecera === 0 ? 'doc-t' : 'doc-sub');
+      cabecera++; previaVacia = false; return;
+    }
+    if (/^#{1,3}\s/.test(t)) { nuevo('h3', t.replace(/^#+\s*/, '')); cierra(); previaVacia = false; return; }
+    if ((previaVacia && /^\d+\.\s/.test(t)) || /^Cláusula de protección de datos/i.test(t)) {
+      nuevo('h3', t); cierra(); previaVacia = false; return;
+    }
+    if (/^([a-z]\)|[-•]|\d+\.)\s/.test(t)) {
+      if (!lista) lista = nuevo('ul', '', 'apartados');
+      const li = document.createElement('li');
+      li.textContent = t.replace(/^[-•]\s/, '');
+      lista.append(li);
+      parrafo = null; previaVacia = false; return;
+    }
+    if (parrafo && !previaVacia) { parrafo.textContent += '\n' + t; }
+    else { lista = null; parrafo = nuevo('p', t); }
+    previaVacia = false;
+  });
+  /* El último párrafo —en el consentimiento, «La persona firmante
+     consiente…»— destacado: es lo que se firma. */
+  const ps = caja.querySelectorAll(':scope > p:not(.doc-sub)');
+  if (ps.length > 2) ps[ps.length - 1].classList.add('destacado');
+}
+
 /* Un PDF sellado (una herramienta, un resumen ya maquetado). Se abre
    aquí mismo, en el navegador: los bytes se descifran en memoria y se
    ofrecen como un enlace local (blob:), que no sale a ningún sitio.
@@ -883,11 +1114,25 @@ function lectura(m) {
          'que se explica por el propio cuestionario (' + cf + ' puntos). Lo hablamos.';
 }
 
+/* El cambio desde la primera medida, en palabras y sin juzgar: «5 puntos
+   menos que en junio». Si es mejor o peor lo dice `lectura`, con el
+   cambio fiable delante; aquí solo el hecho. */
+function desdeElPrincipio(m) {
+  const pts = m.puntos || [];
+  if (pts.length < 2) return 'Primera medida: ' + dia(pts[0] && pts[0].fecha) + '.';
+  const a = Number(pts[0].valor), z = Number(pts[pts.length - 1].valor);
+  const mes = MESES_L[Number((pts[0].fecha || '').slice(5, 7)) - 1] || 'la primera';
+  if (a === z) return 'Igual que en ' + mes + '.';
+  return cifra(Math.abs(z - a)) + ' puntos ' + (z < a ? 'menos' : 'más') + ' que en ' + mes + '.';
+}
+
 async function pintaProgreso(meta, v) {
-  const caja = $('c-progreso');
-  if (!meta) { caja.hidden = true; return; }
-  caja.hidden = false;
   const dentro = $('progreso');
+  /* Nunca en blanco: sin gráfica todavía, se dice qué va a haber. */
+  if (!meta) {
+    dentro.replaceChildren(vacio('Aquí verás tu evolución cuando hayas rellenado tus cuestionarios.'));
+    return;
+  }
   dentro.textContent = 'Abriendo…';
 
   if (Number(meta.para_v) !== Number(v)) {
@@ -896,35 +1141,71 @@ async function pintaProgreso(meta, v) {
     return;
   }
   const r = await api('abrir&id=' + encodeURIComponent(meta.id));
-  if (!r.ok || !r.j.cifrado) { dentro.textContent = 'No se ha podido traer.'; return; }
+  if (!r.ok || !r.j.cifrado) {
+    dentro.textContent = 'No se ha podido traer tu gráfica. Prueba con «Actualizar» y, si sigue, avísame.';
+    return;
+  }
   let d;
   try { d = abrirDelMac(r.j.cifrado, miPublica, privada); }
-  catch (_) { dentro.textContent = 'No se ha podido abrir.'; return; }
+  catch (_) { dentro.textContent = 'No se ha podido abrir tu gráfica. Avísame y lo miro.'; return; }
 
+  /* Lo que llega es {series: [...]}; si alguna vez llega la lista sola,
+     se acepta igual en vez de quedarse en blanco. */
+  const series = Array.isArray(d) ? d : ((d && d.series) || []);
   dentro.innerHTML = '';
-  (d.series || []).forEach(m => {
+  if (!series.length) {
+    dentro.appendChild(vacio('Todavía no hay medidas que dibujar. Aparecerán cuando rellenes tus cuestionarios.'));
+    return;
+  }
+  series.forEach(m => {
     const fig = document.createElement('figure');
     fig.className = 'grafica';
-    fig.style.margin = '0 0 18px';
-    const cap = document.createElement('figcaption');
-    cap.style.fontWeight = '700';
-    cap.textContent = m.instrumento;
-    fig.appendChild(cap);
-    const g = svgSerie(m);
-    if (g) fig.appendChild(g);
-    const cifras = document.createElement('p');
-    cifras.className = 'apunte';
-    cifras.style.borderTop = '1px solid var(--line)';
-    cifras.style.paddingTop = '6px';
-    /* La escala, siempre: un 12 no dice nada sin saber si es de 27 o de 140. */
-    cifras.textContent = (m.puntos || []).map(p => dia(p.fecha) + ' ' + cifra(p.valor)).join(' · ')
-      + ' · escala de ' + cifra(m.minimo || 0) + ' a ' + cifra(m.maximo || 27)
-      + (m.corte != null ? ' · corte en ' + cifra(m.corte) : '');
-    fig.appendChild(cifras);
-    const l = document.createElement('p');
-    l.className = 'apunte';
-    l.textContent = lectura(m);
-    fig.appendChild(l);
+    try {
+      const pts = (m.puntos || []).filter(p => p && p.valor != null && p.valor !== '');
+      m = Object.assign({}, m, { puntos: pts });
+      const cab = document.createElement('figcaption');
+      const nombre = document.createElement('span');
+      nombre.className = 'g-nombre'; nombre.textContent = m.instrumento || 'Cuestionario';
+      cab.appendChild(nombre);
+      if (pts.length) {
+        const ultimo = document.createElement('span');
+        ultimo.className = 'g-ultimo';
+        ultimo.textContent = cifra(pts[pts.length - 1].valor);
+        const de = document.createElement('span');
+        de.className = 'g-de';
+        de.textContent = ' de ' + cifra(m.maximo || 27);
+        ultimo.appendChild(de);
+        cab.appendChild(ultimo);
+      }
+      fig.appendChild(cab);
+      if (!pts.length) {
+        fig.appendChild(vacio('Sin medidas todavía.'));
+        dentro.appendChild(fig);
+        return;
+      }
+      const cambio = document.createElement('p');
+      cambio.className = 'g-cambio';
+      cambio.textContent = desdeElPrincipio(m);
+      fig.appendChild(cambio);
+      const g = svgSerie(m);
+      if (g) fig.appendChild(g);
+      const cifras = document.createElement('p');
+      cifras.className = 'apunte g-cifras';
+      /* La escala, siempre: un 12 no dice nada sin saber si es de 27 o de 140. */
+      cifras.textContent = pts.map(p => dia(p.fecha) + ' ' + cifra(p.valor)).join(' · ')
+        + ' · escala de ' + cifra(m.minimo || 0) + ' a ' + cifra(m.maximo || 27)
+        + (m.corte != null ? ' · corte en ' + cifra(m.corte) : '');
+      fig.appendChild(cifras);
+      const l = document.createElement('p');
+      l.className = 'apunte';
+      l.textContent = lectura(m);
+      fig.appendChild(l);
+    } catch (e) {
+      /* Una serie que no se puede dibujar no se lleva por delante a las
+         demás, y no se queda en blanco: lo dice. */
+      fig.replaceChildren(vacio('No se ha podido dibujar esta gráfica. Avísame y lo miro.'));
+      console.error('progreso', e);
+    }
     dentro.appendChild(fig);
   });
 
@@ -1193,6 +1474,9 @@ $('t-form').addEventListener('submit', async (ev) => {
     $('t-estado').textContent = '';
     await panel();
     $('panel-estado').textContent = 'Enviado. Gracias.';
+    /* Arriba, donde se ve: que lo que acaba de hacer ha llegado. */
+    $('recibido').hidden = false;
+    setTimeout(() => { $('recibido').hidden = true; }, 12000);
   } finally {
     $('t-enviar').disabled = false;
   }
@@ -1490,11 +1774,11 @@ function buscaPlan(copias, v) {
       if (PLAN || !r.ok || !r.j.cifrado) return;
       try {
         const c = abrirDelMac(r.j.cifrado, miPublica, privada);
-        if (c.def && c.def.riesgo && !PLAN) { PLAN = d.id; $('plan-fijo').hidden = false; }
+        if (c.def && c.def.riesgo && !PLAN) { PLAN = d.id; $('b-plan').hidden = false; }
       } catch (_) {}
     });
   }
-  $('plan-fijo').hidden = true;
+  $('b-plan').hidden = true;
 }
 $('b-plan').addEventListener('click', () => { if (PLAN) abrirCopia(PLAN); });
 

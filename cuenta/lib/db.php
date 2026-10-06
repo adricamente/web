@@ -137,6 +137,10 @@ function adr_db(array $ADR): PDO {
                justo lo que un consentimiento necesita poder demostrar. */
             'requiere_firma' => 'INTEGER NOT NULL DEFAULT 0',
             'firmado'        => 'TEXT',
+            /* La copia firmada que se queda el paciente: un sobre sellado
+               por SU navegador a SU clave, con el texto y la firma. Apunta
+               al documento del que es copia. */
+            'copia_de'       => 'INTEGER',
         ],
         'tareas' => [
             /* cuestionario | deber. El cuestionario lleva su plantilla

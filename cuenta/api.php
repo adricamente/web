@@ -314,11 +314,17 @@ case 'salir': {
 case 'mios': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare("SELECT id, titulo, creado, para_v, clase, requiere_firma, firmado
-                       FROM sobres
-                       WHERE cod = ? AND direccion = 2
-                         AND clase NOT IN ('progreso','mensaje')
-                       ORDER BY id DESC LIMIT 200");
+    /* La copia firmada no sale como fila propia: va colgada del documento
+       que firmó (copia_id), que es donde la persona la va a buscar. */
+    $q = $db->prepare("SELECT s.id, s.titulo, s.creado, s.para_v, s.clase, s.requiere_firma, s.firmado,
+                              (SELECT c.id FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
+                                 AND c.direccion = 2 ORDER BY c.id DESC LIMIT 1) AS copia_id,
+                              (SELECT c.para_v FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
+                                 AND c.direccion = 2 ORDER BY c.id DESC LIMIT 1) AS copia_v
+                       FROM sobres s
+                       WHERE s.cod = ? AND s.direccion = 2
+                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia')
+                       ORDER BY s.id DESC LIMIT 200");
     $q->execute([$cod]);
 
     /* El progreso va aparte: no es una fila de una lista, es una
@@ -328,6 +334,13 @@ case 'mios': {
                        ORDER BY id DESC LIMIT 1");
     $g->execute([$cod]);
     $grafica = $g->fetch() ?: null;
+    /* La próxima sesión: la publica el Mac sellada (día, hora, enlace de
+       la videollamada). Como el progreso, una y la última. */
+    $ag = $db->prepare("SELECT id, para_v FROM sobres
+                        WHERE cod = ? AND direccion = 2 AND clase = 'agenda'
+                        ORDER BY id DESC LIMIT 1");
+    $ag->execute([$cod]);
+    $agenda = $ag->fetch() ?: null;
     /* Se devuelve también su propia clave pública: crypto_box_seal_open
        la necesita, y el navegador no la tiene guardada en ningún sitio
        —lo que guarda es la privada envuelta—. No es un secreto: es
@@ -338,9 +351,24 @@ case 'mios': {
     /* Y lo que tiene pendiente. Va aquí y no en otra llamada porque
        el panel las enseña juntas: dos peticiones para pintar una
        pantalla es una pantalla que se dibuja a trozos. */
-    $t = $db->prepare('SELECT id, titulo, creado, caduca, tipo, para_v FROM tareas
+    $t = $db->prepare('SELECT id, titulo, creado, caduca, tipo, para_v, plantilla FROM tareas
                        WHERE cod = ? AND hecho IS NULL ORDER BY id');
     $t->execute([$cod]);
+    /* Cuántas preguntas tiene cada cuestionario, para decirle cuánto
+       le va a llevar («2 min»). La plantilla no sale entera aquí. */
+    $tareas = [];
+    foreach ($t->fetchAll() as $x) {
+        $pl = json_decode((string)$x['plantilla'], true);
+        $x['preguntas'] = ($x['tipo'] === 'cuestionario' && is_array($pl)) ? count($pl['items'] ?? []) : null;
+        unset($x['plantilla']);
+        $tareas[] = $x;
+    }
+    /* Y lo que ya ha hecho: qué y cuándo, sin puntuación (la puntuación
+       vive en la gráfica). Sin esto, lo que entrega cae en un pozo. */
+    $h = $db->prepare("SELECT titulo, tipo, hecho FROM tareas
+                       WHERE cod = ? AND hecho IS NOT NULL AND hecho <> 'retirada'
+                       ORDER BY hecho DESC LIMIT 40");
+    $h->execute([$cod]);
 
     /* Los mensajes, en su propio hilo y en las dos direcciones. */
     $ms = $db->prepare("SELECT id, direccion, para_v, creado FROM sobres
@@ -365,7 +393,10 @@ case 'mios': {
               'mac_publica' => $m ? $m['valor'] : null,
               'progreso' => $grafica ? ['id' => (int)$grafica['id'],
                                         'para_v' => (int)$grafica['para_v']] : null,
-              'documentos' => $q->fetchAll(), 'tareas' => $t->fetchAll(),
+              'agenda' => $agenda ? ['id' => (int)$agenda['id'],
+                                     'para_v' => (int)$agenda['para_v']] : null,
+              'documentos' => $q->fetchAll(), 'tareas' => $tareas,
+              'hechas' => $h->fetchAll(),
               'mensajes' => array_reverse($ms->fetchAll())]);
 }
 
@@ -427,6 +458,11 @@ case 'firmar': {
     $id = (int)($in['id'] ?? 0);
     $cifrado = adr_deb64($in['cifrado'] ?? null);
     if (!$cifrado) adr_json(['error' => 'falta la firma'], 400);
+    /* La copia para el paciente, sellada en su navegador a su clave: el
+       texto que firmó, su nombre, la hora y la huella. El servidor
+       guarda otro bloque que no puede leer. */
+    $copia = !empty($in['copia']) ? adr_deb64($in['copia']) : null;
+    if ($copia !== null && (!$copia || strlen($copia) > 512 * 1024)) adr_json(['error' => 'copia no válida'], 400);
 
     $q = $db->prepare("SELECT requiere_firma, firmado FROM sobres
                        WHERE id = ? AND cod = ? AND direccion = 2");
@@ -442,6 +478,13 @@ case 'firmar': {
         $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase)
                       VALUES (?,1,?,?,?,'firma')")
            ->execute([$cod, 'Firma del documento ' . $id, $cifrado, adr_ahora()]);
+        if ($copia) {
+            $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+            $v->execute([$cod]);
+            $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase, copia_de)
+                          VALUES (?,2,?,?,?,?,'copia',?)")
+               ->execute([$cod, 'Copia firmada', $copia, (int)$v->fetch()['publica_v'], adr_ahora(), $id]);
+        }
         $db->commit();
     } catch (Throwable $e) {
         $db->rollBack();
@@ -579,16 +622,17 @@ case 'publicar': {
     }
 
     $clase = (string)($in['clase'] ?? 'documento');
-    if (!in_array($clase, ['sesion', 'documento', 'progreso'], true)) $clase = 'documento';
+    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda'], true)) $clase = 'documento';
 
     /* El progreso es UNO y el último. No es un documento que se
        colecciona: es una foto de cómo va, y tener cinco fotos viejas en
        la lista no ayuda a nadie. Se borra el anterior al publicar el
        nuevo — y se borra de verdad, porque el contenido que sustituye
        es el mismo dato desactualizado. */
-    if ($clase === 'progreso') {
-        $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = 'progreso'")
-           ->execute([$cod]);
+    /* La agenda igual: la próxima sesión es una sola. */
+    if ($clase === 'progreso' || $clase === 'agenda') {
+        $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = ?")
+           ->execute([$cod, $clase]);
     }
 
     $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase,
@@ -599,7 +643,7 @@ case 'publicar': {
     /* La gráfica no se avisa: se republica cada vez que él recoge algo
        y avisaría cada dos por tres de algo que el paciente no ha
        pedido. Lo demás sí. */
-    if ($clase !== 'progreso') adr_avisa($db, $ADR, $cod);
+    if ($clase !== 'progreso' && $clase !== 'agenda') adr_avisa($db, $ADR, $cod);
     adr_json(['ok' => true]);
 }
 
@@ -768,9 +812,20 @@ case 'panel_mac': {
     foreach ($db->query('SELECT s.cod, COUNT(*) n FROM sobres s
                          JOIN pacientes p ON p.cod = s.cod
                          WHERE s.direccion = 2 AND s.para_v <> p.publica_v
-                           AND s.clase <> \'herramienta\'
+                           AND s.clase NOT IN (\'herramienta\', \'copia\')
                          GROUP BY s.cod')->fetchAll() as $r) $viejos[$r['cod']] = (int)$r['n'];
 
+    /* Lo que tiene publicado cada cuenta en las dos cajas que no son
+       lista (gráfica y próxima sesión), con su versión de clave: si no
+       coincide con la de la cuenta, el paciente no puede abrirlo. */
+    $caja = [];
+    foreach ($db->query("SELECT cod, clase, MAX(id) id FROM sobres
+                         WHERE direccion = 2 AND clase IN ('progreso','agenda')
+                         GROUP BY cod, clase")->fetchAll() as $r) {
+        $x = $db->prepare('SELECT id, para_v, creado FROM sobres WHERE id = ?');
+        $x->execute([$r['id']]);
+        $caja[$r['cod']][$r['clase']] = $x->fetch();
+    }
     $out = [];
     foreach ($ps as $p) {
         $out[] = [
@@ -782,6 +837,8 @@ case 'panel_mac': {
             /* Desde cuándo tiene algo sin hacer: lo más antiguo. */
             'tareas_desde' => $desde[$p['cod']] ?? null,
             'aviso_privacidad' => $p['aviso_privacidad'],
+            'progreso' => $caja[$p['cod']]['progreso'] ?? null,
+            'agenda' => $caja[$p['cod']]['agenda'] ?? null,
             /* Cuántos documentos suyos quedaron sellados a una clave
                anterior. Es lo que hay que reenviar después de que
                alguien restablezca la contraseña, y si no se enseña en
@@ -802,7 +859,7 @@ case 'por_reenviar': {
     $q = $db->prepare("SELECT s.id, s.titulo, s.clase, s.creado, s.para_v
                        FROM sobres s JOIN pacientes p ON p.cod = s.cod
                        WHERE s.cod = ? AND s.direccion = 2 AND s.para_v <> p.publica_v
-                         AND s.clase <> 'herramienta'
+                         AND s.clase NOT IN ('herramienta', 'copia')
                        ORDER BY s.id");
     $q->execute([(string)($_GET['cod'] ?? '')]);
     adr_json(['sobres' => $q->fetchAll()]);
