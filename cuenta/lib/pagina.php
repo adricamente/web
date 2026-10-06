@@ -49,7 +49,9 @@ function adr_pagina(string $titulo, string $cuerpo, string $guion = '',
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>', htmlspecialchars($titulo), '</title>
-<link rel="stylesheet" href="portal.css">
+<link rel="preload" href="fuentes/source-sans-3-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fuentes/archivo-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="portal.css?v=', @filemtime(__DIR__ . '/../portal.css'), '">
 </head>
 <body>
 <a class="saltar" href="#principal">Saltar al contenido</a>

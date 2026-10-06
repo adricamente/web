@@ -5,12 +5,17 @@
    web son 120 kB pensados para paginas de venta —laminas, retratos,
    animaciones— y aqui no hay nada de eso.
 
-   Sin fuentes propias, y no por peso: la CSP de esta carpeta lleva
-   `default-src 'none'` y no abre `font-src`. Una @font-face aqui no
-   falla con un error, simplemente no carga, y la pagina se ve con la
-   fuente por defecto sin que nadie se entere. Antes que una fuente
-   que a veces esta, la del sistema siempre.
+   Las mismas fuentes que la web (Archivo para títulos, Source Sans 3
+   para el texto), servidas desde esta misma carpeta. La CSP abre
+   `font-src 'self'` y nada más: sin esa línea, una @font-face no falla
+   con un error, simplemente no carga y la página se ve con la fuente
+   del sistema sin que nadie se entere. Lo comprueba la prueba.
    =================================================================== */
+@font-face{font-family:Archivo;src:url(fuentes/archivo-latin-700-normal.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:Archivo;src:url(fuentes/archivo-latin-800-normal.woff2) format('woff2');font-weight:800;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(fuentes/source-sans-3-latin-400-normal.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(fuentes/source-sans-3-latin-600-normal.woff2) format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(fuentes/source-sans-3-latin-700-normal.woff2) format('woff2');font-weight:700;font-display:swap}
 
 /* El atributo hidden manda siempre. Sin esto, cualquier clase con
    display propio (.boton) lo ignora y un botón «oculto» se ve. */
@@ -28,6 +33,8 @@
   --shadow:0 1px 2px rgba(37,35,31,.05), 0 12px 32px -16px rgba(37,35,31,.28);
   --r-s:8px; --r-m:12px; --r-l:16px;
   --ancho:720px;
+  --titulo:Archivo,"Segoe UI",system-ui,sans-serif;
+  --texto:"Source Sans 3","Segoe UI",system-ui,sans-serif;
 }
 
 *{box-sizing:border-box}
@@ -36,10 +43,10 @@ body{
   margin:0;
   background:var(--bg);
   color:var(--ink);
-  font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
+  font-family:var(--texto);
   font-size:17px; line-height:1.6;
 }
-h1,h2,h3{font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0 0 14px}
+h1,h2,h3{font-family:var(--titulo);letter-spacing:-.015em;line-height:1.15;margin:0 0 14px}
 h1{font-size:clamp(28px,5vw,38px);font-weight:800}
 h2{font-size:clamp(21px,3vw,25px);font-weight:700;margin-top:34px}
 h3{font-size:18px;font-weight:700;margin-bottom:8px}
@@ -61,7 +68,7 @@ a{color:var(--accent);text-underline-offset:3px}
   display:flex; align-items:center; gap:14px;
 }
 .marca{
-  font-family:-apple-system,system-ui,sans-serif; font-weight:800; font-size:17px;
+  font-family:var(--titulo); font-weight:800; font-size:18px;
   color:var(--accent); text-decoration:none; margin-right:auto;
 }
 .barra nav{display:flex;gap:4px;flex-wrap:wrap}
@@ -83,14 +90,14 @@ main{max-width:var(--ancho);margin:0 auto;padding:30px 20px 70px}
 .caja.plana{background:var(--surface-2);border-color:transparent}
 .apunte{font-size:15px;color:var(--ink-2)}
 .etiqueta{
-  font-family:-apple-system,system-ui,sans-serif;font-size:12px;font-weight:700;
+  font-family:var(--texto);font-size:12.5px;font-weight:700;
   letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 7px;
 }
 
 .boton{
   display:inline-block; border:0; cursor:pointer;
   background:var(--accent); color:#fff;
-  font-family:-apple-system,system-ui,sans-serif; font-weight:700; font-size:16px;
+  font-family:var(--texto); font-weight:700; font-size:16.5px;
   padding:13px 22px; border-radius:var(--r-s);
   text-decoration:none; text-align:center;
 }
@@ -373,3 +380,63 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
   main{padding-bottom:110px}
   .caja.bloque{padding:18px 16px 14px}
 }
+
+
+/* =================================================================
+   Pulido (07-10-2026)
+   -----------------------------------------------------------------
+   Las fuentes de la marca, la ayuda urgente en una línea tranquila,
+   la conversación como conversación y las cifras de la evolución
+   con su peso.
+   ================================================================= */
+body{-webkit-font-smoothing:antialiased}
+
+/* La ayuda urgente, siempre a la vista pero sin alarma. El ámbar se
+   guarda para cuando de verdad toca (el ítem 9, un mensaje que suena
+   a riesgo): si está en todas las pantallas, ese día ya no se ve. */
+.plan-fijo{background:var(--surface-2);border:0;color:var(--ink-2);
+  padding:8px 14px;margin:0 0 18px;font-size:15.5px;gap:4px 16px;line-height:1.4}
+.plan-fijo button{color:var(--accent-3);text-decoration-thickness:1px;text-underline-offset:3px;padding:4px 0}
+.plan-fijo .urgente{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap}
+.plan-fijo .urgente svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;flex:0 0 auto}
+.plan-fijo a{color:var(--accent-3);font-weight:700;padding:4px 2px}
+
+/* Los títulos y las cifras grandes, en Archivo, como en la web. */
+.g-ultimo strong,.tarjeta-sesion .cuando,.pestanas a{font-family:var(--titulo)}
+.pestanas a{font-weight:700;letter-spacing:-.005em}
+.g-ultimo strong{font-size:32px}
+
+/* Las tarjetas del inicio que llevan a su apartado: un chevrón y, en
+   «Tu evolución», la última cifra de cada cuestionario. */
+.tarjeta-ir .flecha{width:22px;height:22px;fill:none;stroke:var(--accent);stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;font-size:inherit}
+.tarjeta-ir:hover .flecha{transform:translateX(2px)}
+@media (prefers-reduced-motion:no-preference){.tarjeta-ir .flecha{transition:transform .2s ease}}
+.minis{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:6px}
+.mini{display:flex;flex-direction:column;line-height:1.15}
+.mini .n{font-size:14px;font-weight:600;color:var(--muted)}
+.mini .v{font-family:var(--titulo);font-weight:800;font-size:26px;color:var(--accent)}
+.mini .v small{font-family:var(--texto);font-size:14.5px;font-weight:600;color:var(--muted);margin-left:5px}
+
+/* En las listas, «Abrir» con menos peso: el título de cada fila es lo
+   que se lee; el botón acompaña. */
+.fila .boton.suave{padding:10px 18px;font-size:15.5px}
+
+/* La conversación. */
+.hilo{display:flex;flex-direction:column;gap:12px;margin:0 0 22px}
+.hilo .vacio{padding:10px 0 4px;text-align:left}
+.hilo .vacio p{margin:0;max-width:none}
+.burbuja{align-self:flex-start;max-width:min(88%,520px);background:var(--surface-2);
+  border-radius:16px 16px 16px 5px;padding:10px 15px 9px}
+.burbuja.mia{align-self:flex-end;background:var(--accent-soft);border-radius:16px 16px 5px 16px}
+.burbuja p{margin:0;max-width:none}
+.burbuja .quien{font-size:13.5px;font-weight:700;color:var(--ink-2);margin-bottom:2px}
+.burbuja .cuerpo{white-space:pre-wrap;font-size:16.5px;color:var(--ink);overflow-wrap:anywhere}
+.burbuja.cerrada .cuerpo{color:var(--muted);font-style:italic;font-size:15.5px}
+.burbuja .cuando{font-size:13px;color:var(--muted);margin-top:5px}
+.escribir{border-top:1px solid var(--line);padding-top:18px;margin-top:4px}
+.escribir .pista{margin:0 0 10px;max-width:none;color:var(--ink-2)}
+
+/* El pie del panel, a la misma altura los dos enlaces. */
+.pie-panel{align-items:baseline;max-width:none}
+.pie-panel .salir{margin:0 0 0 auto}

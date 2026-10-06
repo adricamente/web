@@ -82,6 +82,7 @@ function adr_cabeceras(): void {
         . " script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval';"
         . " style-src 'self' 'unsafe-inline';"
         . " img-src 'self' data:;"
+        . " font-src 'self';"
         . " connect-src 'self';"
         . " form-action 'self';"
         . " frame-ancestors 'none';"

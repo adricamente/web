@@ -376,9 +376,14 @@ case 'mios': {
     $h->execute([$cod]);
 
     /* Los mensajes, en su propio hilo y en las dos direcciones. */
-    $ms = $db->prepare("SELECT id, direccion, para_v, creado FROM sobres
-                        WHERE cod = ? AND clase = 'mensaje'
-                        ORDER BY id DESC LIMIT 60");
+    $ms = $db->prepare("SELECT s.id, s.direccion, s.para_v, s.creado,
+                               (SELECT c.id FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
+                                  AND c.clase = 'copia' ORDER BY c.id DESC LIMIT 1) AS copia_id,
+                               (SELECT c.para_v FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
+                                  AND c.clase = 'copia' ORDER BY c.id DESC LIMIT 1) AS copia_v
+                        FROM sobres s
+                        WHERE s.cod = ? AND s.clase = 'mensaje'
+                        ORDER BY s.id DESC LIMIT 60");
     $ms->execute([$cod]);
 
     /* Y la pública del Mac, que es a la que el navegador sella lo que
@@ -442,9 +447,21 @@ case 'escribir': {
     $cifrado = adr_deb64($in['cifrado'] ?? null);
     if (!$cifrado || strlen($cifrado) > 65536) adr_json(['error' => 'mensaje no válido'], 400);
     if (!adr_freno($db, 'msg:' . $cod, 30, 3600)) adr_json(['error' => 'despacio'], 429);
+    /* La copia para releerlo, sellada en su navegador a SU clave. Va
+       colgada del mensaje (copia_de) y se borra con él. */
+    $copia = !empty($in['copia']) ? adr_deb64($in['copia']) : null;
+    if ($copia !== null && (!$copia || strlen($copia) > 65536)) adr_json(['error' => 'copia no válida'], 400);
     $db->prepare("INSERT INTO sobres (cod, direccion, cifrado, creado, clase)
                   VALUES (?,1,?,?,'mensaje')")
        ->execute([$cod, $cifrado, adr_ahora()]);
+    $mid = (int)$db->lastInsertId();
+    if ($copia) {
+        $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+        $v->execute([$cod]);
+        $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase, copia_de)
+                      VALUES (?,2,'Mi mensaje',?,?,?,'copia',?)")
+           ->execute([$cod, $copia, (int)$v->fetch()['publica_v'], adr_ahora(), $mid]);
+    }
     adr_json(['ok' => true]);
 }
 
@@ -578,6 +595,12 @@ case 'recogido': {
                   WHERE direccion = 1 AND recogido IS NOT NULL
                     AND recogido < datetime('now', ?)")
        ->execute(['-' . $dias . ' days']);
+    /* Y las copias de releer de los mensajes que se acaban de purgar:
+       una copia sin su mensaje no la enseña nadie y solo ocupa. Las de
+       los documentos firmados cuelgan de un sobre hacia el paciente,
+       que no se purga, así que no les toca. */
+    $db->exec("DELETE FROM sobres WHERE clase = 'copia' AND copia_de IS NOT NULL
+               AND copia_de NOT IN (SELECT id FROM sobres)");
 
     adr_json(['ok' => true, 'marcados' => count($ids)]);
 }

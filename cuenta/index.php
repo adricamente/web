@@ -104,8 +104,8 @@ $cuerpo .= <<<'HTML'
 <!-- La ayuda urgente, siempre a mano en cualquier pantalla de la
      cuenta. Si tiene plan de seguridad enviado, el plan va delante. -->
 <p class="plan-fijo" id="plan-fijo" hidden>
-  <button type="button" id="b-plan" hidden>Mi plan de seguridad ·</button>
-  <span>¿En peligro ahora? <a href="tel:024">024</a> (24 h) · <a href="tel:112">112</a></span>
+  <button type="button" id="b-plan" hidden>Mi plan de seguridad</button>
+  <span class="urgente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>¿En peligro ahora? <a href="tel:024">024</a> o <a href="tel:112">112</a></span>
 </p>
 
 <!-- El inicio, de arriba abajo en el orden en que se usa: la próxima
@@ -155,13 +155,13 @@ $cuerpo .= <<<'HTML'
     <a class="tarjeta-ir" href="#tareas" id="ir-tareas">
       <span class="t">Lo que te toca</span>
       <span class="resumen" id="resumen" role="status"></span>
-      <span class="flecha" aria-hidden="true">→</span>
+      <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>
 
     <a class="tarjeta-ir" href="#evolucion" id="ir-evolucion">
       <span class="t">Tu evolución</span>
       <span class="resumen" id="resumen-evolucion">Aquí verás cómo vas cuando hayas rellenado tus cuestionarios.</span>
-      <span class="flecha" aria-hidden="true">→</span>
+      <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>
 
     <section class="caja bloque" aria-labelledby="t-sesiones">
@@ -225,16 +225,14 @@ $cuerpo .= <<<'HTML'
   <div class="pestana" id="p-mensajes" data-p="mensajes" hidden>
     <h1>Mensajes</h1>
     <section class="caja bloque" id="c-mensajes" aria-label="Escribirme">
-      <div class="nota ojo" style="margin-bottom:14px">
-        <p><strong>Este canal no es para urgencias.</strong> Lo leo en mi
+      <div id="hilo" class="hilo" aria-live="polite"></div>
+      <div class="campo escribir">
+        <label for="m-texto">Lo que quieras contarme</label>
+        <p class="pista" id="m-pista"><strong>Este canal no es para urgencias.</strong> Lo leo en mi
         horario de consulta, no al momento. Si estás en peligro ahora:
         <strong>024</strong> (atención a la conducta suicida, 24 horas,
         gratuito) o <strong>112</strong>.</p>
-      </div>
-      <div id="hilo"></div>
-      <div class="campo" style="margin-top:14px">
-        <label for="m-texto">Lo que quieras contarme</label>
-        <textarea id="m-texto" rows="4"></textarea>
+        <textarea id="m-texto" rows="4" aria-describedby="m-pista"></textarea>
       </div>
       <!-- Si lo que escribe suena a riesgo, esto aparece ANTES de enviar.
            No bloquea: se puede enviar igual. -->
@@ -510,9 +508,16 @@ $('f-entrar').addEventListener('submit', async (ev) => {
 });
 
 /* --- El panel, en tres estantes --------------------------------------- */
+/* Las fechas, como se dicen: «6 oct», y el año solo si no es este.
+   «06/10/2026» en un sitio y «6 oct» en la gráfica de al lado eran dos
+   idiomas para lo mismo. */
 function fecha(iso) {
-  return (iso || '').slice(0, 10).split('-').reverse().join('/');
+  const p = (iso || '').slice(0, 10).split('-').map(Number);
+  if (p.length !== 3 || !p[0] || !p[1] || !p[2]) return iso || '';
+  const M = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sept', 'oct', 'nov', 'dic'];
+  return p[2] + ' ' + M[p[1] - 1] + (p[0] !== new Date().getFullYear() ? ' ' + p[0] : '');
 }
+function hora(iso) { const m = /T(\d{2}:\d{2})/.exec(iso || ''); return m ? m[1] : ''; }
 function vacio(txt) {
   const d = document.createElement('div');
   d.className = 'vacio';
@@ -641,7 +646,10 @@ async function panel() {
           const e = document.createElement('span');
           e.className = 'sello ok'; e.textContent = 'firmado';
           e.title = 'Firmado el ' + fecha(d.firmado);
-          f.appendChild(e);
+          /* Junto a la fecha, no entre el título y el botón: en un móvil
+             empujaba «Abrir» a otra línea y cada fila salía distinta. */
+          const pie = f.querySelector('.texto p');
+          if (pie) pie.append(' ', e); else f.appendChild(e);
         }
         const b = document.createElement('button');
         b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
@@ -713,45 +721,61 @@ async function pintaAgenda(meta, v) {
 }
 
 /* --- Los mensajes ----------------------------------------------------
-   Los suyos se descifran aquí; los que él ha escrito no se pueden
-   volver a leer —fueron sellados a la clave del Mac y esa privada no
-   está aquí—, así que se marcan como enviados y punto. Eso es una
-   consecuencia del diseño, no una carencia: si su navegador pudiera
-   releerlos, el sobre no estaría sellado de verdad. */
+   Como una conversación: en orden, lo último abajo, junto a donde se
+   escribe; lo de Adrián a la izquierda y lo tuyo a la derecha.
+
+   Lo que escribe la persona va sellado a la clave del Mac, y eso su
+   navegador no lo puede volver a abrir. Por eso, al enviar, se sella
+   además una copia a SU clave (como la del consentimiento firmado): el
+   servidor guarda dos bloques que no puede leer, y ella puede releer
+   lo que escribió. Los mensajes de antes de esta copia salen como
+   «enviado», sin texto. */
+async function abreMio(m, v) {
+  if (!m.copia_id || Number(m.copia_v) !== Number(v)) return null;
+  const r = await api('abrir&id=' + encodeURIComponent(m.copia_id));
+  if (!r.ok || !r.j.cifrado) return null;
+  try { const x = abrirDelMac(r.j.cifrado, miPublica, privada); return (x && x.texto) || null; }
+  catch (_) { return null; }
+}
 async function pintaHilo(ms, v) {
   const caja = $('hilo');
   caja.innerHTML = '';
   if (!ms.length) {
-    caja.appendChild(vacio('Todavía no hay mensajes.'));
+    caja.appendChild(vacio('Todavía no hay mensajes. Lo que me escribas aquí lo leo antes de tu próxima sesión.'));
     return;
   }
+  /* El servidor ya los da en orden (del primero al último). */
   for (const m of ms) {
+    const mio = Number(m.direccion) === 1;
     const d = document.createElement('div');
-    d.className = 'fila';
-    const t = document.createElement('div');
-    t.className = 'texto';
-    const quien = document.createElement('strong');
-    quien.textContent = (Number(m.direccion) === 2) ? 'Adrián' : 'Tú';
+    d.className = 'burbuja' + (mio ? ' mia' : '');
+    const quien = document.createElement('p');
+    quien.className = 'quien';
+    quien.textContent = mio ? 'Tú' : 'Adrián';
     const cuerpo = document.createElement('p');
-    cuerpo.style.whiteSpace = 'pre-wrap';
-    cuerpo.style.color = 'var(--ink)';
-    cuerpo.style.fontSize = '15.5px';
-    if (Number(m.direccion) === 1) {
-      cuerpo.textContent = '(enviado el ' + fecha(m.creado) + ')';
-      cuerpo.style.color = 'var(--muted)';
+    cuerpo.className = 'cuerpo';
+    if (mio) {
+      const t = await abreMio(m, v);
+      if (t) cuerpo.textContent = t;
+      else {
+        cuerpo.textContent = m.copia_id
+          ? 'Mensaje enviado. Se guardó con tu contraseña anterior y ya no se puede releer aquí.'
+          : 'Mensaje enviado. Este no se guardó para releerlo aquí.';
+        d.classList.add('cerrada');
+      }
     } else if (Number(m.para_v) !== Number(v)) {
       cuerpo.textContent = 'Este mensaje está cerrado con una llave anterior. Te lo reenvío.';
-      cuerpo.style.color = 'var(--muted)';
+      d.classList.add('cerrada');
     } else {
       const r = await api('abrir&id=' + encodeURIComponent(m.id));
       try { const x = abrirDelMac(r.j.cifrado, miPublica, privada);
             cuerpo.textContent = (typeof x === 'string') ? x : (x.texto || ''); }
-      catch (_) { cuerpo.textContent = 'No se ha podido abrir.'; }
+      catch (_) { cuerpo.textContent = 'No se ha podido abrir.'; d.classList.add('cerrada'); }
     }
     const f = document.createElement('p');
-    f.textContent = fecha(m.creado);
-    t.appendChild(quien); t.appendChild(cuerpo); t.appendChild(f);
-    d.appendChild(t);
+    f.className = 'cuando';
+    f.textContent = fecha(m.creado) + (hora(m.creado) ? ', ' + hora(m.creado) : '');
+    d.append(quien, cuerpo, f);
     caja.appendChild(d);
   }
 }
@@ -783,7 +807,9 @@ $('m-enviar').addEventListener('click', async () => {
                                        escrito_en: ahoraLocal(), origen: 'cuenta',
                                        cod_web: miCod },
                                      macPublica);
-    const r = await api('escribir', { cifrado });
+    /* Y una copia a su propia clave, para poder releerlo. */
+    const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_mensaje', texto, escrito_en: ahoraLocal() }, miPublica);
+    const r = await api('escribir', { cifrado, copia });
     if (!r.ok) { $('m-estado').textContent = 'No se ha podido enviar.'; return; }
     $('m-texto').value = '';
     $('m-estado').textContent = 'Enviado. Lo leeré en mi horario de consulta.';
@@ -1070,7 +1096,7 @@ function svgSerie(m, ancho) {
      640 encogidos a un móvil de 360, los rótulos salían a 5 px y no se
      leían. Así un 11 del SVG es un 11 de verdad. */
   const An = Math.max(280, Math.min(640, Math.round(ancho || 640))), Al = 170,
-        izq = 30, der = 64, arr = 20, aba = 30;
+        izq = 30, der = 72, arr = 20, aba = 30;
   const w = An - izq - der, h = Al - arr - aba, maxv = m.maximo || 27;
   /* El DERS-28 va de 28 a 140 y el Rosenberg de 10 a 40. Dibujarlos
      desde 0 aplasta la línea arriba y deja media gráfica vacía. */
@@ -1112,7 +1138,9 @@ function svgSerie(m, ancho) {
   if (m.corte != null) {
     const yc = y(m.corte);
     svg.appendChild(linea(izq, yc, izq + w, yc, '#7B4D13', 1.5, '5 4'));
-    svg.appendChild(texto(izq + w + 6, yc + 3.5, 'corte ' + cifra(m.corte), 12, '#7B4D13'));
+    /* A 14 px del final y no a 6: el último punto (radio 6,5 con su
+       anillo) cae justo ahí y se comía la «c» de «corte». */
+    svg.appendChild(texto(izq + w + 14, yc + 4, 'corte ' + cifra(m.corte), 12, '#7B4D13'));
   }
 
   const d = pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.valor).toFixed(1)).join(' ');
@@ -1254,7 +1282,18 @@ function dibujaSeries() {
   const lineas = series.map(m => { const u = ultimaDe(m);
     return u ? (m.instrumento || 'Cuestionario') + ': ' + cifra(u.valor) + ' sobre ' + cifra(m.maximo || 27) : null; })
     .filter(Boolean);
-  if (lineas.length) resumenEv.textContent = 'Última medida — ' + lineas.join(' · ');
+  if (lineas.length) {
+    const minis = document.createElement('span');
+    minis.className = 'minis';
+    series.forEach(m => { const u = ultimaDe(m); if (!u) return;
+      const e = document.createElement('span'); e.className = 'mini';
+      const n = document.createElement('span'); n.className = 'n'; n.textContent = m.instrumento || 'Cuestionario';
+      const v = document.createElement('span'); v.className = 'v'; v.textContent = cifra(u.valor);
+      const de = document.createElement('small'); de.textContent = 'de ' + cifra(m.maximo || 27);
+      v.appendChild(de); e.append(n, v); minis.appendChild(e); });
+    resumenEv.replaceChildren(minis);
+    resumenEv.setAttribute('aria-label', 'Última medida: ' + lineas.join('; '));
+  }
   if (!series.length) {
     dentro.appendChild(vacio('Todavía no hay medidas que dibujar. Aparecerán cuando rellenes tus cuestionarios.'));
     return;
