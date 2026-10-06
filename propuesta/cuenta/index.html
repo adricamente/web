@@ -1,0 +1,378 @@
+<!doctype html>
+<!-- ============================================================
+     Propuesta del portal del paciente en el lenguaje «cuaderno»
+     ------------------------------------------------------------
+     Maqueta estática con DATOS INVENTADOS. No toca el portal real
+     (cuenta.adricamente.com), no tiene cifrado ni guarda nada: solo
+     enseña cómo se vería. noindex y sin enlazar.
+
+     Lo que cambia respecto al portal de hoy, y por qué:
+     - La misma identidad que la web (tinta azul, Archivo estrecha,
+       rotulador), pero más quieta: esto no vende, acompaña. El papel
+       cuadriculado solo aparece donde se dibuja, en la evolución.
+     - El inicio es «la hoja de hoy»: cuándo es la próxima sesión, qué
+       hay que hacer antes y cómo vas, en ese orden.
+     - Lo que toca hacer va en renglones con su casilla, como una
+       lista de libreta. Sin rachas ni medallas.
+     - En cada gráfica se pinta la zona en la que un cambio todavía
+       puede ser ruido del propio cuestionario: se ve de un vistazo si
+       lo que ha cambiado es real, sin tener que leer el párrafo.
+     ============================================================ -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Propuesta: tu cuenta | adricamente</title>
+<style>
+@font-face{font-family:"Archivo estrecha";src:url(/fuentes/archivo-estrecha-800.woff2) format('woff2');font-weight:800;font-display:swap}
+@font-face{font-family:"Archivo estrecha";src:url(/fuentes/archivo-estrecha-700.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(/fuentes/source-sans-3-latin-400-normal.woff2) format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(/fuentes/source-sans-3-latin-600-normal.woff2) format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:"Source Sans 3";src:url(/fuentes/source-sans-3-latin-700-normal.woff2) format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:Archivo;src:url(/fuentes/archivo-latin-800-normal.woff2) format('woff2');font-weight:800;font-display:swap}
+
+:root{
+  --papel:#FAF9F5; --hoja:#FCFCFA; --blanco:#FFFFFF; --gris-papel:#F3F2EE;
+  --grafito:#25231F; --ink-2:#52504A; --muted:#6C6963;
+  --linea:#E6E4DF; --linea-fuerte:#CECCC6;
+  --tinta:#1F5474; --tinta-honda:#173F58; --tinta-suave:#E7EEF4;
+  --cuadricula:rgba(31,84,116,.08);
+  --rotulador:#F7DF72; --corte:#7B4D13;
+  --estrecha:"Archivo estrecha","Arial Narrow",sans-serif;
+  --texto:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--papel);color:var(--grafito);font-family:var(--texto);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--tinta);text-underline-offset:3px}
+p{margin:0 0 12px}
+h1,h2,h3{font-family:var(--estrecha);font-weight:800;letter-spacing:-.005em;line-height:1;margin:0}
+
+.aviso-maqueta{display:block;background:var(--grafito);color:#fff;font-size:13.5px;text-align:center;padding:7px 14px}
+.aviso-maqueta a{color:#fff}
+
+/* La barra de arriba: la marca y nada más. La ayuda urgente va justo
+   debajo, siempre, en una línea tranquila. */
+.barra{background:var(--blanco);border-bottom:1px solid var(--linea);position:sticky;top:0;z-index:5}
+.barra .dentro,.urgente .dentro,main{max-width:720px;margin:0 auto;padding-inline:20px}
+.barra .dentro{display:flex;align-items:center;justify-content:space-between;height:54px}
+.marca{font-family:Archivo,var(--texto);font-weight:800;font-size:18px;color:var(--tinta);text-decoration:none}
+.inicial{width:32px;height:32px;border-radius:50%;background:var(--tinta-suave);color:var(--tinta);display:grid;place-items:center;font-weight:700;font-size:15px}
+.urgente{background:var(--gris-papel);border-bottom:1px solid var(--linea);font-size:15px;color:var(--ink-2)}
+.urgente .dentro{display:flex;flex-wrap:wrap;gap:2px 16px;align-items:center;padding-block:7px}
+.urgente a{font-weight:700;color:var(--tinta-honda);padding:4px 1px}
+.urgente svg{width:16px;height:16px;vertical-align:-3px;margin-right:6px;fill:none;stroke:currentColor;stroke-width:1.8}
+
+main{padding-top:26px;padding-bottom:110px}
+
+/* Pestañas: arriba en el ordenador, abajo en el móvil. */
+.pestanas{display:flex;gap:4px;padding:4px;background:var(--gris-papel);border-radius:10px;margin:0 0 26px}
+.pestanas a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;position:relative;padding:10px 6px;border-radius:7px;
+  color:var(--ink-2);text-decoration:none;font-family:var(--estrecha);font-weight:700;font-size:17px;letter-spacing:.01em}
+.pestanas a[aria-current=page]{background:var(--blanco);color:var(--tinta);box-shadow:0 1px 3px rgba(37,35,31,.12)}
+.pestanas svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.globo{min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--tinta);color:#fff;font:700 11.5px/18px var(--texto);text-align:center}
+@media (max-width:720px){
+  .pestanas{position:fixed;left:0;right:0;bottom:0;margin:0;border-radius:0;z-index:6;background:var(--blanco);border-top:1px solid var(--linea);
+    padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+  .pestanas a{flex-direction:column;gap:1px;font-size:13.5px;padding:7px 2px}
+  .pestanas a[aria-current=page]{box-shadow:none;background:var(--tinta-suave)}
+  .pestanas .globo{position:absolute;top:3px;left:calc(50% + 6px)}
+}
+.pestana{animation:entra .24s cubic-bezier(.2,0,0,1) both}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.pestana{animation:none}}
+
+.titulo{font-size:clamp(2.6rem,10vw,3.4rem);margin:0 0 6px}
+.bajada{color:var(--ink-2);margin:0 0 24px;max-width:36rem}
+.seccion{margin:34px 0 0}
+.seccion > h2{font-size:1.75rem;margin:0 0 4px}
+.seccion > .pie{font-size:15px;color:var(--muted);margin:0 0 12px}
+
+/* El rotulador: lo único que hay que llevarse de la pantalla. */
+.marcado{background:linear-gradient(var(--rotulador),var(--rotulador)) no-repeat 0 88%/100% 42%;padding:0 .08em;font-weight:600}
+
+/* ---- La próxima sesión: un papel que se entrega -------------------- */
+.cita{background:var(--tinta);color:#E9F1F7;border-radius:12px;padding:20px 20px 18px;position:relative;overflow:hidden}
+.cita .que{font-size:14.5px;letter-spacing:.01em;color:#CFDDE8;margin:0 0 4px}
+.cita .cuando{font-family:var(--estrecha);font-weight:800;font-size:2.6rem;line-height:.95;color:#fff;margin:0 0 4px}
+.cita .hora{font-size:18px;color:#fff;margin:0 0 16px}
+.cita .botones{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:0}
+.boton{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:8px;cursor:pointer;
+  font:700 16px/1 var(--texto);padding:14px 20px;text-decoration:none;background:var(--tinta);color:#fff}
+.boton:active{transform:translateY(1px)}
+.cita .boton{background:#fff;color:var(--tinta)}
+.cita .boton[aria-disabled=true]{background:rgba(255,255,255,.16);color:#E6EEF5;cursor:default}
+.cita .enlace{color:#fff;font-size:15.5px}
+.cita .nota{font-size:14px;color:#CFDDE8;margin:10px 0 0}
+
+/* ---- Renglones con casilla ----------------------------------------- */
+.renglones{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--grafito)}
+.renglones li{border-bottom:1px solid var(--linea-fuerte)}
+.renglones a,.renglones .fila{display:grid;grid-template-columns:28px 1fr 18px;gap:2px 14px;align-items:center;padding:15px 4px 15px 2px;
+  text-decoration:none;color:inherit;border-radius:4px;-webkit-tap-highlight-color:transparent}
+.renglones a:active,.renglones a:hover{background:rgba(31,84,116,.06)}
+.casilla{width:24px;height:24px;border:2px solid var(--tinta);border-radius:50%;grid-row:1 / span 2}
+.renglones .t{font-family:var(--estrecha);font-weight:700;font-size:1.35rem;line-height:1.1;color:var(--tinta)}
+.renglones .m{grid-column:2;font-size:15px;color:var(--ink-2)}
+.renglones a::after{content:"";grid-column:3;grid-row:1 / span 2;width:8px;height:8px;border-top:2px solid var(--tinta);border-right:2px solid var(--tinta);transform:rotate(45deg)}
+.renglones .firmar .casilla{border-style:dashed}
+.hecho .casilla{background:var(--tinta);border-color:var(--tinta);position:relative}
+.hecho .casilla::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.hecho .t{color:var(--ink-2);font-weight:700}
+.hecho .fila{grid-template-columns:28px 1fr}
+
+/* ---- Cómo vas, en pequeño ------------------------------------------- */
+.minis{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1.5px solid var(--grafito);border-bottom:1px solid var(--linea-fuerte)}
+.mini{padding:12px 10px 12px 0;text-decoration:none;color:inherit}
+.mini + .mini{border-left:1px solid var(--linea);padding-left:12px}
+.mini .n{font-size:14px;color:var(--muted);font-weight:600}
+.mini .v{font-family:var(--estrecha);font-weight:800;font-size:2.3rem;line-height:1;color:var(--tinta)}
+.mini .v small{font-family:var(--texto);font-weight:600;font-size:14px;color:var(--muted);margin-left:3px}
+.mini svg{display:block;width:100%;height:26px;margin-top:6px}
+.ver-todo{display:inline-block;margin-top:10px;font-size:15.5px}
+
+/* ---- Diario de sesiones: la fecha en el margen ---------------------- */
+.diario{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--grafito)}
+.diario li{display:grid;grid-template-columns:62px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--linea)}
+.diario .fecha{font-family:var(--estrecha);font-weight:700;color:var(--tinta);line-height:1}
+.diario .fecha b{display:block;font-size:2rem;font-weight:800}
+.diario .fecha span{font-size:14px;color:var(--muted);font-family:var(--texto);font-weight:600}
+.diario h3{font-size:1.3rem;margin:2px 0 4px}
+.diario p{font-size:15.5px;color:var(--ink-2);margin:0 0 6px}
+
+/* ---- Evolución: cada cuestionario en su hoja cuadriculada ----------- */
+.hoja{background-color:var(--hoja);
+  background-image:linear-gradient(var(--cuadricula) 1px,transparent 1px),linear-gradient(90deg,var(--cuadricula) 1px,transparent 1px);
+  background-size:20px 20px;border:1px solid var(--linea);border-radius:6px;padding:18px 16px 14px;margin:0 0 18px}
+.hoja h2{font-size:1.9rem}
+.hoja .mide{font-size:15px;color:var(--ink-2);margin:4px 0 10px}
+.hoja .ultimo{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:0 0 4px}
+.hoja .ultimo b{font-family:var(--estrecha);font-size:3.2rem;line-height:.9;color:var(--tinta)}
+.hoja .ultimo span{color:var(--ink-2);font-size:15.5px}
+.hoja .lectura{font-size:16px;margin:10px 0 0}
+.hoja svg{display:block;width:100%;height:auto;margin-top:6px;overflow:visible}
+.leyenda{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13.5px;color:var(--muted);margin-top:4px}
+.leyenda i{display:inline-block;width:18px;height:10px;vertical-align:-1px;margin-right:6px;border-radius:2px}
+.leyenda .ruido{background:rgba(247,223,114,.55)}
+.leyenda .corte{height:0;border-top:2px dashed var(--corte);border-radius:0;vertical-align:3px}
+.aclara{font-size:15px;color:var(--ink-2);border-top:1px solid var(--linea-fuerte);padding-top:12px;margin-top:6px}
+
+/* ---- Mensajes: notas -------------------------------------------------- */
+.hilo{display:flex;flex-direction:column;gap:12px;margin:0 0 20px}
+.nota-msg{max-width:88%;padding:11px 15px 9px;border-radius:14px 14px 14px 4px;background:var(--blanco);border:1px solid var(--linea)}
+.nota-msg.mia{align-self:flex-end;background:var(--tinta-suave);border-color:transparent;border-radius:14px 14px 4px 14px}
+.nota-msg .quien{font-size:13.5px;font-weight:700;color:var(--ink-2);margin:0 0 2px}
+.nota-msg p{margin:0;font-size:16.5px}
+.nota-msg .hora{font-size:13px;color:var(--muted);margin-top:4px}
+.escribir label{display:block;font-weight:600;margin:0 0 4px}
+.escribir .pista{font-size:14.5px;color:var(--ink-2);margin:0 0 8px}
+textarea{width:100%;min-height:110px;font:inherit;padding:12px;border:1px solid #8E8B85;border-radius:8px;background:var(--blanco);resize:vertical}
+textarea:focus-visible,.boton:focus-visible,a:focus-visible{outline:2.5px solid var(--tinta);outline-offset:2px}
+
+.pie-cuenta{display:flex;justify-content:space-between;align-items:baseline;margin-top:34px;font-size:15px;color:var(--muted)}
+.pie-cuenta a{display:inline-block;padding:10px 0}
+</style>
+</head>
+<body>
+<aside class="aviso-maqueta" aria-label="Aviso">Maqueta con datos inventados, para ver el diseño. El portal de verdad sigue en
+<a href="https://cuenta.adricamente.com/">cuenta.adricamente.com</a>.</aside>
+
+<header class="barra"><div class="dentro">
+  <a class="marca" href="#inicio">adricamente</a>
+  <span class="inicial" aria-label="Tu cuenta">M</span>
+</div></header>
+<aside class="urgente" aria-label="Ayuda urgente"><div class="dentro">
+  <a href="#tareas">Mi plan de seguridad</a>
+  <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>¿En peligro ahora? <a href="tel:024">024</a> o <a href="tel:112">112</a></span>
+</div></aside>
+
+<main>
+  <nav class="pestanas" aria-label="Apartados de tu cuenta">
+    <a href="#inicio" data-p="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></a>
+    <a href="#tareas" data-p="tareas"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="7" r="2"/><circle cx="5.5" cy="17" r="2"/><path d="M10 7h10M10 17h10"/></svg><span>Tareas</span><b class="globo">2</b></a>
+    <a href="#evolucion" data-p="evolucion"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M5 15l4-4 3 3 6-7"/></svg><span>Evolución</span></a>
+    <a href="#mensajes" data-p="mensajes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg><span>Mensajes</span></a>
+  </nav>
+
+  <!-- ========================== INICIO ========================== -->
+  <section class="pestana" id="p-inicio" data-p="inicio">
+    <h1 class="titulo">Hola, Marta</h1>
+    <p class="bajada">Esto es lo que tienes entre sesión y sesión.</p>
+
+    <div class="cita">
+      <p class="que">Tu próxima sesión</p>
+      <p class="cuando">Jueves 9 de octubre</p>
+      <p class="hora">18:00, por videollamada. Una hora.</p>
+      <p class="botones">
+        <a class="boton" aria-disabled="true">Entrar a la videollamada</a>
+        <a class="enlace" href="#inicio">Cambiar o cancelar</a>
+      </p>
+      <p class="nota">El botón se activa 10 minutos antes.</p>
+    </div>
+
+    <div class="seccion">
+      <h2>Para antes del jueves</h2>
+      <p class="pie">Empieza por arriba. Cada cosa dice cuánto lleva.</p>
+      <ul class="renglones">
+        <li><a href="#tareas"><span class="casilla"></span><span class="t">GAD-7</span><span class="m">Unos 2 minutos</span></a></li>
+        <li><a href="#tareas"><span class="casilla"></span><span class="t">Registrar los domingos</span><span class="m">Cinco minutos al día</span></a></li>
+      </ul>
+    </div>
+
+    <div class="seccion">
+      <h2>Cómo vas</h2>
+      <p class="pie">La última medida de cada cuestionario.</p>
+      <div class="minis" id="minis"></div>
+      <a class="ver-todo" href="#evolucion">Ver tu evolución</a>
+    </div>
+
+    <div class="seccion">
+      <h2>Lo que hemos trabajado</h2>
+      <ul class="diario">
+        <li><span class="fecha"><b>2</b><span>oct</span></span><div><h3>Sesión 3</h3><p>El resumen que te dejo después de cada sesión: lo que vimos y lo que acordamos para la semana.</p><a href="#inicio">Abrir</a></div></li>
+        <li><span class="fecha"><b>25</b><span>sept</span></span><div><h3>Sesión 2</h3><p>Resumen de la sesión.</p><a href="#inicio">Abrir</a></div></li>
+      </ul>
+    </div>
+
+    <div class="pie-cuenta"><a href="#inicio">Ajustes y seguridad</a><a href="#inicio">Salir de mi cuenta</a></div>
+  </section>
+
+  <!-- ========================== TAREAS ========================== -->
+  <section class="pestana" id="p-tareas" data-p="tareas" hidden>
+    <h1 class="titulo">Tareas</h1>
+    <p class="bajada">Lo que te he mandado y lo que ya has hecho. Sin prisas y sin rachas: <span class="marcado">lo que puedas, cuando puedas</span>.</p>
+    <ul class="renglones">
+      <li><a href="#tareas"><span class="casilla"></span><span class="t">GAD-7</span><span class="m">Unos 2 minutos, antes del 9 de octubre</span></a></li>
+      <li><a href="#tareas"><span class="casilla"></span><span class="t">Registrar los domingos</span><span class="m">Cinco minutos al día</span></a></li>
+      <li class="firmar"><a href="#tareas"><span class="casilla"></span><span class="t">Consentimiento informado</span><span class="m">Para leer y firmar</span></a></li>
+    </ul>
+
+    <div class="seccion">
+      <h2>Tus herramientas</h2>
+      <p class="pie">Lo que se rellena una vez y se queda aquí para cuando lo necesites.</p>
+      <ul class="renglones">
+        <li><a href="#tareas"><span class="casilla" style="border-radius:5px"></span><span class="t">Mi plan de seguridad</span><span class="m">Guardado el 2 de octubre</span></a></li>
+      </ul>
+    </div>
+
+    <div class="seccion">
+      <h2>Lo que has hecho</h2>
+      <p class="pie">Qué y cuándo. Las puntuaciones están en tu evolución.</p>
+      <ul class="renglones">
+        <li class="hecho"><span class="fila"><span class="casilla"></span><span class="t">PHQ-9</span><span class="m">6 oct</span></span></li>
+        <li class="hecho"><span class="fila"><span class="casilla"></span><span class="t">Rosenberg</span><span class="m">6 oct</span></span></li>
+        <li class="hecho"><span class="fila"><span class="casilla"></span><span class="t">Mi plan de seguridad</span><span class="m">2 oct</span></span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ========================= EVOLUCIÓN ========================= -->
+  <section class="pestana" id="p-evolucion" data-p="evolucion" hidden>
+    <h1 class="titulo">Tu evolución</h1>
+    <p class="bajada">Cada cuestionario en su hoja y con su escala. No se comparan entre sí.</p>
+    <div id="hojas"></div>
+    <p class="aclara">Un cuestionario mide una parte de lo que te pasa, no todo, y no es una nota
+    ni un diagnóstico. Está aquí porque ver la línea entre los dos ayuda a decidir qué hacemos después.</p>
+  </section>
+
+  <!-- ========================= MENSAJES ========================= -->
+  <section class="pestana" id="p-mensajes" data-p="mensajes" hidden>
+    <h1 class="titulo">Mensajes</h1>
+    <p class="bajada">Para lo que quieras contarme entre sesiones. Lo leo en mi horario de consulta.</p>
+    <div class="hilo">
+      <div class="nota-msg"><p class="quien">Adrián</p><p>Te he dejado el resumen de la sesión. Nos vemos el jueves.</p><p class="hora">2 oct, 19:10</p></div>
+      <div class="nota-msg mia"><p class="quien">Tú</p><p>Esta semana me ha costado más de lo normal, lo hablamos el jueves.</p><p class="hora">5 oct, 22:41</p></div>
+    </div>
+    <div class="escribir">
+      <label for="t">Lo que quieras contarme</label>
+      <p class="pista">Este canal no es para urgencias. Si estás en peligro ahora: 024 o 112.</p>
+      <textarea id="t"></textarea>
+      <p style="margin-top:12px"><button class="boton" type="button">Enviar</button></p>
+    </div>
+  </section>
+</main>
+
+<script>
+/* Datos inventados. En el portal real llegan sellados desde el Mac. */
+var SERIES = [
+  {nombre:'PHQ-9', mide:'Estado de ánimo', mejor:'menos', max:27, min:0, corte:10, fiable:6,
+   puntos:[['8 sep',19],['22 sep',15],['6 oct',14]]},
+  {nombre:'GAD-7', mide:'Ansiedad', mejor:'menos', max:21, min:0, corte:10, fiable:5,
+   puntos:[['22 sep',12]]},
+  {nombre:'Rosenberg', mide:'Autoestima', mejor:'más', max:40, min:10, corte:null, fiable:5,
+   puntos:[['8 sep',22],['6 oct',21]]}
+];
+
+function lectura(s){
+  var p=s.puntos; if(p.length<2) return 'Primera medida: sirve como punto de partida.';
+  var a=p[0][1], z=p[p.length-1][1], d=Math.abs(z-a);
+  if(d<s.fiable) return 'De '+a+' a '+z+'. Está dentro de la zona amarilla: de momento se lee como «parecido».';
+  var bueno=(s.mejor==='menos')?(z<a):(z>a);
+  return 'De '+a+' a '+z+': '+d+' puntos, fuera de la zona amarilla. Es un cambio real'+(bueno?', y en la buena dirección.':'. Lo hablamos.');
+}
+
+/* La gráfica, en su hoja. La franja amarilla es la zona de ruido: la
+   primera medida más y menos el cambio fiable del cuestionario. Si el
+   último punto queda dentro, el cambio todavía puede ser del propio
+   cuestionario. */
+function grafica(s, ancho){
+  var NS='http://www.w3.org/2000/svg', An=Math.max(300,Math.min(640,ancho)), Al=180, iz=30, de=70, ar=18, ab=28;
+  var w=An-iz-de, h=Al-ar-ab, P=s.puntos, rango=s.max-s.min;
+  var x=function(i){return iz+(P.length===1?w/2:w*i/(P.length-1));};
+  var y=function(v){return ar+h-(v-s.min)/rango*h;};
+  var svg=document.createElementNS(NS,'svg'); svg.setAttribute('viewBox','0 0 '+An+' '+Al);
+  svg.setAttribute('role','img'); svg.setAttribute('aria-label',s.nombre+': '+P.map(function(p){return p[0]+' '+p[1];}).join(', '));
+  function el(n,a){var e=document.createElementNS(NS,n); for(var k in a) e.setAttribute(k,a[k]); svg.appendChild(e); return e;}
+  function tx(x0,y0,t,o){var e=el('text',Object.assign({x:x0,y:y0,'font-size':13,fill:'#6C6963','font-family':'Source Sans 3, sans-serif'},o||{})); e.textContent=t; return e;}
+  if(P.length>1){var a=P[0][1], t=Math.min(s.max,a+s.fiable), b=Math.max(s.min,a-s.fiable);
+    el('rect',{x:iz,y:y(t),width:w,height:y(b)-y(t),fill:'rgba(247,223,114,.45)'});}
+  el('line',{x1:iz,y1:ar+h,x2:iz+w,y2:ar+h,stroke:'#CECCC6'});
+  tx(iz-8,y(s.min)+4,String(s.min),{'text-anchor':'end'}); tx(iz-8,y(s.max)+4,String(s.max),{'text-anchor':'end'});
+  if(s.corte!=null){var yc=y(s.corte); el('line',{x1:iz,y1:yc,x2:iz+w,y2:yc,stroke:'#7B4D13','stroke-width':1.5,'stroke-dasharray':'5 4'});
+    tx(iz+w+14,yc+4,'corte '+s.corte,{fill:'#7B4D13'});}
+  el('path',{d:P.map(function(p,i){return (i?'L':'M')+x(i).toFixed(1)+' '+y(p[1]).toFixed(1);}).join(' '),fill:'none',stroke:'#1F5474','stroke-width':2.4,'stroke-linecap':'round','stroke-linejoin':'round'});
+  P.forEach(function(p,i){el('circle',{cx:x(i),cy:y(p[1]),r:5,fill:'#1F5474',stroke:'#fff','stroke-width':2});
+    tx(x(i),Al-8,p[0],{'text-anchor':P.length===1?'middle':(i===0?'start':(i===P.length-1?'end':'middle'))});
+    if(i===0||i===P.length-1) tx(x(i),y(p[1])-12,String(p[1]),{'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#25231F'});});
+  return svg;
+}
+function chispa(s){
+  var P=s.puntos, w=100, h=26, r=s.max-s.min;
+  var pts=P.map(function(p,i){return [(P.length===1?50:4+92*i/(P.length-1)), h-3-(p[1]-s.min)/r*(h-6)];});
+  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ')+
+    '" fill="none" stroke="#1F5474" stroke-width="2" vector-effect="non-scaling-stroke"/>'+pts.map(function(p){return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="2.4" fill="#1F5474"/>';}).join('')+'</svg>';
+}
+function pinta(){
+  var m=document.getElementById('minis'); m.innerHTML='';
+  SERIES.forEach(function(s){var u=s.puntos[s.puntos.length-1][1];
+    m.insertAdjacentHTML('beforeend','<a class="mini" href="#evolucion"><span class="n">'+s.nombre+'</span><div class="v">'+u+'<small>de '+s.max+'</small></div>'+chispa(s)+'</a>');});
+  var c=document.getElementById('hojas'); c.innerHTML='';
+  var ancho=(document.querySelector('main').clientWidth||360)-40-34;
+  SERIES.forEach(function(s){
+    var u=s.puntos[s.puntos.length-1];
+    var f=document.createElement('article'); f.className='hoja';
+    f.innerHTML='<h2>'+s.nombre+'</h2><p class="mide">'+s.mide+'. Aquí, '+(s.mejor==='menos'?'más bajo':'más alto')+' es mejor.</p>'+
+      '<p class="ultimo"><b>'+u[1]+'</b><span>de '+s.max+', medido el '+u[0]+'</span></p>';
+    f.appendChild(grafica(s,ancho));
+    var l=document.createElement('div'); l.className='leyenda';
+    l.innerHTML=(s.puntos.length>1?'<span><i class="ruido"></i>Zona en la que un cambio aún puede ser ruido</span>':'')+(s.corte!=null?'<span><i class="corte"></i>Corte orientativo</span>':'');
+    f.appendChild(l);
+    var p=document.createElement('p'); p.className='lectura'; p.textContent=lectura(s); f.appendChild(p);
+    c.appendChild(f);
+  });
+}
+function pestana(p){
+  var ok=['inicio','tareas','evolucion','mensajes']; if(ok.indexOf(p)<0) p='inicio';
+  document.querySelectorAll('.pestana').forEach(function(s){s.hidden=(s.dataset.p!==p);});
+  document.querySelectorAll('.pestanas a').forEach(function(a){ if(a.dataset.p===p) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');});
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',function(){pestana(location.hash.slice(1));});
+var rz; window.addEventListener('resize',function(){clearTimeout(rz); rz=setTimeout(pinta,200);});
+pinta(); pestana(location.hash.slice(1));
+</script>
+</body>
+</html>
