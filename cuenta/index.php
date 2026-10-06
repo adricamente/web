@@ -113,8 +113,18 @@ $cuerpo .= <<<'HTML'
      trabajado, y al final mensajes, documentos y ajustes. Móvil
      primero: en una pantalla de 390 px, lo de arriba es lo que se ve. -->
 <section id="v-panel" class="vista" hidden>
-  <h1 id="hola">Tu espacio</h1>
-  <p class="apunte salir"><a href="salir.php">Salir de mi cuenta</a></p>
+  <!-- Cuatro apartados, uno a la vez, como una aplicación: Inicio,
+       Tareas, Evolución y Mensajes. No son páginas distintas (una
+       página nueva tiraría la llave de la memoria): son pestañas, con
+       su dirección propia (#tareas…), así que el botón de atrás del
+       móvil funciona entre ellas. En el móvil van abajo; en el
+       ordenador, arriba. -->
+  <nav class="pestanas" id="pestanas" aria-label="Apartados de tu cuenta">
+    <a href="#inicio" data-p="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></a>
+    <a href="#tareas" data-p="tareas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>Tareas</span><b class="globo" id="globo-tareas" hidden></b></a>
+    <a href="#evolucion" data-p="evolucion"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M5 15l4-4 3 3 6-7"/></svg><span>Evolución</span></a>
+    <a href="#mensajes" data-p="mensajes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg><span>Mensajes</span></a>
+  </nav>
 
   <div class="nota ojo" id="reenviando" hidden>
     <p><strong>Tus documentos están volviendo.</strong> Cambiaste la
@@ -126,107 +136,129 @@ $cuerpo .= <<<'HTML'
     <p><strong>Recibido.</strong> Lo tendré delante en tu próxima sesión.</p>
   </div>
 
-  <!-- La próxima sesión. La publica el Mac (clase «agenda»): día, hora
-       y el enlace de la videollamada, que se activa 10 minutos antes. -->
-  <div class="tarjeta-sesion" id="c-agenda" hidden>
-    <p class="etiqueta">Tu próxima sesión</p>
-    <p class="cuando" id="ag-cuando"></p>
-    <p class="botones">
-      <a class="boton" id="ag-entrar" target="_blank" rel="noopener">Entrar a la videollamada</a>
-      <a class="enlace-boton" id="ag-cambiar" target="_blank" rel="noopener" hidden>Cambiar o cancelar</a>
-    </p>
-    <p class="apunte" id="ag-nota"></p>
+  <!-- ============================ INICIO ============================ -->
+  <div class="pestana" id="p-inicio" data-p="inicio">
+    <h1 id="hola">Tu espacio</h1>
+
+    <!-- La próxima sesión. La publica el Mac (clase «agenda»): día, hora
+         y el enlace de la videollamada, que se activa 10 minutos antes. -->
+    <div class="tarjeta-sesion" id="c-agenda" hidden>
+      <p class="etiqueta">Tu próxima sesión</p>
+      <p class="cuando" id="ag-cuando"></p>
+      <p class="botones">
+        <a class="boton" id="ag-entrar" target="_blank" rel="noopener">Entrar a la videollamada</a>
+        <a class="enlace-boton" id="ag-cambiar" target="_blank" rel="noopener" hidden>Cambiar o cancelar</a>
+      </p>
+      <p class="apunte" id="ag-nota"></p>
+    </div>
+
+    <a class="tarjeta-ir" href="#tareas" id="ir-tareas">
+      <span class="t">Lo que te toca</span>
+      <span class="resumen" id="resumen" role="status"></span>
+      <span class="flecha" aria-hidden="true">→</span>
+    </a>
+
+    <a class="tarjeta-ir" href="#evolucion" id="ir-evolucion">
+      <span class="t">Tu evolución</span>
+      <span class="resumen" id="resumen-evolucion">Aquí verás cómo vas cuando hayas rellenado tus cuestionarios.</span>
+      <span class="flecha" aria-hidden="true">→</span>
+    </a>
+
+    <section class="caja bloque" aria-labelledby="t-sesiones">
+      <h2 id="t-sesiones">Lo que hemos trabajado</h2>
+      <div id="sesiones" class="linea-tiempo"></div>
+    </section>
+
+    <section class="caja bloque" aria-labelledby="t-docs">
+      <h2 id="t-docs">Documentos</h2>
+      <div id="documentos"></div>
+    </section>
+
+    <details class="caja" id="c-accesos">
+      <summary><strong>Ajustes y seguridad</strong></summary>
+      <p class="apunte">Las últimas entradas en tu cuenta. Si ves una que no
+      reconoces, cambia la contraseña y escríbeme.</p>
+      <ul id="accesos" class="accesos"></ul>
+      <p style="margin-top:14px"><a href="clave.php?olvide=1">Cambiar la contraseña</a></p>
+    </details>
   </div>
 
-  <section class="caja bloque" id="c-tareas" aria-labelledby="t-tareas">
-    <h2 id="t-tareas">Para antes de tu sesión</h2>
-    <p class="resumen" id="resumen" role="status"></p>
-    <div class="progreso-barra" id="hecho-barra" hidden role="progressbar"
-         aria-label="Lo que has hecho de lo que te he mandado estas semanas">
-      <i id="hecho-barra-i" style="width:0%"></i>
-    </div>
-    <div id="tareas"></div>
-  </section>
+  <!-- ============================ TAREAS ============================ -->
+  <div class="pestana" id="p-tareas" data-p="tareas" hidden>
+    <h1>Tareas</h1>
+    <section class="caja bloque" id="c-tareas" aria-labelledby="t-tareas">
+      <h2 id="t-tareas">Para antes de tu sesión</h2>
+      <p class="apunte" id="resumen-tareas"></p>
+      <div class="progreso-barra" id="hecho-barra" hidden role="progressbar"
+           aria-label="Lo que has hecho de lo que te he mandado estas semanas">
+        <i id="hecho-barra-i" style="width:0%"></i>
+      </div>
+      <div id="tareas"></div>
+    </section>
 
-  <section class="caja bloque" id="c-progreso" aria-labelledby="t-progreso">
-    <h2 id="t-progreso">Tu evolución</h2>
-    <div id="progreso"></div>
-  </section>
+    <!-- Herramientas: lo que se rellena o se lee y se GUARDA (plan de
+         seguridad, autorregistros, guías). No son pruebas: no puntúan ni
+         salen en la gráfica, y lo enviado se queda aquí para volver a
+         abrirlo, que es justo cuando hace falta un plan de seguridad. -->
+    <section class="caja bloque" id="c-herramientas" aria-labelledby="t-herr">
+      <h2 id="t-herr">Tus herramientas</h2>
+      <div id="herramientas"></div>
+    </section>
 
-  <!-- Herramientas: lo que se rellena o se lee y se GUARDA (plan de
-       seguridad, autorregistros, guías). No son pruebas: no puntúan ni
-       salen en la gráfica, y lo enviado se queda aquí para volver a
-       abrirlo, que es justo cuando hace falta un plan de seguridad. -->
-  <section class="caja bloque" id="c-herramientas" aria-labelledby="t-herr">
-    <h2 id="t-herr">Tus herramientas</h2>
-    <div id="herramientas"></div>
-  </section>
+    <section class="caja bloque" id="c-hechas" aria-labelledby="t-hechas">
+      <h2 id="t-hechas">Lo que has completado</h2>
+      <div id="hechas"></div>
+    </section>
+  </div>
 
-  <section class="caja bloque" aria-labelledby="t-sesiones">
-    <h2 id="t-sesiones">Lo que hemos trabajado</h2>
-    <div id="sesiones" class="linea-tiempo"></div>
-  </section>
+  <!-- =========================== EVOLUCIÓN ========================== -->
+  <div class="pestana" id="p-evolucion" data-p="evolucion" hidden>
+    <h1>Tu evolución</h1>
+    <p class="apunte">Lo que dicen tus cuestionarios con el tiempo. Cada
+    gráfica es uno, con su escala; no se comparan entre sí.</p>
+    <section class="caja bloque" id="c-progreso" aria-label="Tus gráficas">
+      <div id="progreso"></div>
+    </section>
+  </div>
 
-  <section class="caja bloque" id="c-hechas" aria-labelledby="t-hechas">
-    <h2 id="t-hechas">Lo que has completado</h2>
-    <div id="hechas"></div>
-  </section>
+  <!-- =========================== MENSAJES =========================== -->
+  <div class="pestana" id="p-mensajes" data-p="mensajes" hidden>
+    <h1>Mensajes</h1>
+    <section class="caja bloque" id="c-mensajes" aria-label="Escribirme">
+      <div class="nota ojo" style="margin-bottom:14px">
+        <p><strong>Este canal no es para urgencias.</strong> Lo leo en mi
+        horario de consulta, no al momento. Si estás en peligro ahora:
+        <strong>024</strong> (atención a la conducta suicida, 24 horas,
+        gratuito) o <strong>112</strong>.</p>
+      </div>
+      <div id="hilo"></div>
+      <div class="campo" style="margin-top:14px">
+        <label for="m-texto">Lo que quieras contarme</label>
+        <textarea id="m-texto" rows="4"></textarea>
+      </div>
+      <!-- Si lo que escribe suena a riesgo, esto aparece ANTES de enviar.
+           No bloquea: se puede enviar igual. -->
+      <div class="auxilio" id="m-auxilio" role="status" hidden>
+        <p><strong>Antes de enviarlo.</strong> Lo voy a leer, pero no al
+        momento: puede que no sea hoy.</p>
+        <p><strong>Si ahora mismo estás en peligro, llama al 024</strong>
+        (atención a la conducta suicida, 24 horas, gratuito) <strong>o al
+        112</strong>. Si puedes, díselo a alguien que tengas cerca.</p>
+      </div>
+      <p><button class="boton" id="m-enviar" type="button">Enviar</button>
+      <span class="apunte" id="m-estado" role="status"></span></p>
+    </section>
+  </div>
 
-  <!-- Los mensajes, después de lo de trabajo: es lo que más engancha y
-       lo que menos urge, y esto no es una aplicación de mensajería. -->
-  <section class="caja bloque" id="c-mensajes" aria-labelledby="t-mensajes">
-    <h2 id="t-mensajes">Escribirme</h2>
-    <div class="nota ojo" style="margin-bottom:14px">
-      <p><strong>Este canal no es para urgencias.</strong> Lo leo en mi
-      horario de consulta, no al momento. Si estás en peligro ahora:
-      <strong>024</strong> (atención a la conducta suicida, 24 horas,
-      gratuito) o <strong>112</strong>.</p>
-    </div>
-    <div id="hilo"></div>
-    <div class="campo" style="margin-top:14px">
-      <label for="m-texto">Lo que quieras contarme</label>
-      <textarea id="m-texto" rows="4"></textarea>
-    </div>
-    <!-- Si lo que escribe suena a riesgo, esto aparece ANTES de enviar.
-         No bloquea: se puede enviar igual. -->
-    <div class="auxilio" id="m-auxilio" role="status" hidden>
-      <p><strong>Antes de enviarlo.</strong> Lo voy a leer, pero no al
-      momento: puede que no sea hoy.</p>
-      <p><strong>Si ahora mismo estás en peligro, llama al 024</strong>
-      (atención a la conducta suicida, 24 horas, gratuito) <strong>o al
-      112</strong>. Si puedes, díselo a alguien que tengas cerca.</p>
-    </div>
-    <p><button class="boton" id="m-enviar" type="button">Enviar</button>
-    <span class="apunte" id="m-estado" role="status"></span></p>
-  </section>
-
-  <section class="caja bloque" aria-labelledby="t-docs">
-    <h2 id="t-docs">Documentos</h2>
-    <div id="documentos"></div>
-  </section>
-
-  <details class="caja" id="c-accesos">
-    <summary><strong>Ajustes y seguridad</strong></summary>
-    <p class="apunte">Las últimas entradas en tu cuenta. Si ves una que no
-    reconoces, cambia la contraseña y escríbeme.</p>
-    <ul id="accesos" class="accesos"></ul>
-    <p style="margin-top:14px"><a href="clave.php?olvide=1">Cambiar la contraseña</a></p>
-  </details>
-
-  <p>
+  <!-- Actualizar y salir, en todos los apartados: alguien en un
+       portátil compartido tiene que poder cerrar su cuenta desde donde
+       esté. -->
+  <p class="pie-panel">
     <button class="enlace-boton" id="refrescar" type="button">Actualizar</button>
     <span class="apunte" id="panel-estado" role="status"></span>
+    <a class="salir" href="salir.php">Salir de mi cuenta</a>
   </p>
 </section>
-
-<!-- La navegación de abajo, solo en el móvil y solo en el inicio:
-     cuatro sitios, sin menú que abrir. -->
-<nav class="nav-abajo" id="nav-abajo" aria-label="Secciones" hidden>
-  <a href="#hola">Inicio</a>
-  <a href="#c-progreso">Evolución</a>
-  <a href="#c-tareas">Tareas</a>
-  <a href="#c-mensajes">Mensajes</a>
-</nav>
 
 <section id="v-doc" class="vista" hidden>
   <p class="etiqueta" id="doc-clase">Documento</p>
@@ -377,10 +409,28 @@ function ver(cual) {
      botón del plan, solo si hay plan. */
   $('plan-fijo').hidden = (cual === 'v-entrar');
   $('b-plan').hidden = !PLAN;
-  $('nav-abajo').hidden = (cual !== 'v-panel');
   window.scrollTo(0, 0);
 }
 function falla(t) { $('mal-t').textContent = t; $('mal').hidden = false; }
+
+/* --- Los cuatro apartados ----------------------------------------------
+   Pestañas con dirección propia (#inicio, #tareas, #evolucion,
+   #mensajes). Cambiar de una a otra no recarga nada —la llave sigue en
+   memoria— y el «atrás» del móvil vuelve a la anterior. */
+const PESTANAS = ['inicio', 'tareas', 'evolucion', 'mensajes'];
+function pestana(p) {
+  if (!PESTANAS.includes(p)) p = 'inicio';
+  document.querySelectorAll('.pestana').forEach(x => { x.hidden = (x.dataset.p !== p); });
+  document.querySelectorAll('#pestanas a').forEach(a => {
+    if (a.dataset.p === p) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  });
+}
+window.addEventListener('hashchange', () => {
+  if ($('v-panel').hidden) return;
+  pestana(location.hash.slice(1));
+  window.scrollTo(0, 0);
+});
 
 async function api(a, d) {
   const o = d ? { method: 'POST', headers: { 'content-type': 'application/json' },
@@ -493,6 +543,7 @@ async function panel() {
   const r = await api('mios');
   if (!r.ok) { location.reload(); return; }
   ver('v-panel');
+  pestana(location.hash.slice(1));
   miPublica = r.j.publica || null;
   macPublica = r.j.mac_publica || null;
   miCod = r.j.cod || null;
@@ -514,8 +565,13 @@ async function panel() {
                                      && Number(d.para_v) === Number(r.j.v));
   const n = todas.length + porFirmar.length;
   $('resumen').textContent = n
-    ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.') + ' Empieza por arriba.'
+    ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.')
+    : 'No tienes nada pendiente.';
+  $('resumen-tareas').textContent = n
+    ? 'Empieza por arriba. Cada cosa dice cuánto lleva.'
     : 'No tienes nada pendiente. Cuando te mande algo, aparecerá aquí.';
+  $('globo-tareas').hidden = !n;
+  $('globo-tareas').textContent = n ? String(n) : '';
   const ct = $('tareas'); ct.innerHTML = '';
   porFirmar.forEach(d => {
     const f = fila(d.titulo || 'Documento', 'Para leer y firmar');
@@ -1006,11 +1062,15 @@ function dia(iso) {
   return p.length === 3 ? (Number(p[2]) + ' ' + MESES[Number(p[1])]) : iso;
 }
 
-function svgSerie(m) {
+function svgSerie(m, ancho) {
   const NS = 'http://www.w3.org/2000/svg';
   const pts = m.puntos || [];
   if (!pts.length) return null;
-  const An = 640, Al = 158, izq = 34, der = 58, arr = 18, aba = 28;
+  /* El lienzo mide lo que mide la caja en pantalla, no 640 fijos: con
+     640 encogidos a un móvil de 360, los rótulos salían a 5 px y no se
+     leían. Así un 11 del SVG es un 11 de verdad. */
+  const An = Math.max(280, Math.min(640, Math.round(ancho || 640))), Al = 170,
+        izq = 30, der = 64, arr = 20, aba = 30;
   const w = An - izq - der, h = Al - arr - aba, maxv = m.maximo || 27;
   /* El DERS-28 va de 28 a 140 y el Rosenberg de 10 a 40. Dibujarlos
      desde 0 aplasta la línea arriba y deja media gráfica vacía. */
@@ -1046,13 +1106,13 @@ function svgSerie(m) {
   };
 
   svg.appendChild(linea(izq, arr + h, izq + w, arr + h, '#CECCC6', 1));
-  svg.appendChild(texto(izq - 8, y(minv) + 4, cifra(minv), 10, '#6C6963', 'end'));
-  svg.appendChild(texto(izq - 8, y(maxv) + 4, cifra(maxv), 10, '#6C6963', 'end'));
+  svg.appendChild(texto(izq - 8, y(minv) + 4, cifra(minv), 12, '#6C6963', 'end'));
+  svg.appendChild(texto(izq - 8, y(maxv) + 4, cifra(maxv), 12, '#6C6963', 'end'));
 
   if (m.corte != null) {
     const yc = y(m.corte);
     svg.appendChild(linea(izq, yc, izq + w, yc, '#7B4D13', 1.5, '5 4'));
-    svg.appendChild(texto(izq + w + 6, yc + 3.5, 'corte (' + cifra(m.corte) + ')', 9.5, '#7B4D13'));
+    svg.appendChild(texto(izq + w + 6, yc + 3.5, 'corte ' + cifra(m.corte), 12, '#7B4D13'));
   }
 
   const d = pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.valor).toFixed(1)).join(' ');
@@ -1071,12 +1131,17 @@ function svgSerie(m) {
        cuando la cruza. */
     c.setAttribute('stroke', '#FFFFFF'); c.setAttribute('stroke-width', '2');
     svg.appendChild(c);
-    svg.appendChild(texto(x(i).toFixed(1), Al - 10, dia(p.fecha), 9.5, '#6C6963', 'middle'));
+    /* Con muchas medidas, la fecha solo en la primera y la última: en
+       un móvil no caben doce fechas sin pisarse. */
+    if (pts.length <= 5 || i === 0 || i === pts.length - 1) {
+      svg.appendChild(texto(x(i).toFixed(1), Al - 10, dia(p.fecha), 12, '#6C6963',
+                            pts.length === 1 ? 'middle' : (i === 0 ? 'start' : (i === pts.length - 1 ? 'end' : 'middle'))));
+    }
   });
   [...new Set([0, pts.length - 1])].forEach(i => {
     const p = pts[i], cy = y(p.valor);
     svg.appendChild(texto(x(i).toFixed(1), (cy > arr + 22 ? cy - 12 : cy + 19).toFixed(1),
-                          cifra(p.valor), 12, '#25231F', 'middle', '700'));
+                          cifra(p.valor), 14, '#25231F', 'middle', '700'));
   });
   return svg;
 }
@@ -1126,8 +1191,24 @@ function desdeElPrincipio(m) {
   return cifra(Math.abs(z - a)) + ' puntos ' + (z < a ? 'menos' : 'más') + ' que en ' + mes + '.';
 }
 
+/* Qué mide cada uno, en dos palabras, para la cabecera de su tarjeta.
+   Los que no estén aquí salen solo con su nombre. */
+const QUE_MIDE = {
+  'PHQ-9': 'Estado de ánimo', 'GAD-7': 'Ansiedad', 'CORE-10': 'Malestar general',
+  'CORE-10 (F)': 'Malestar general', 'WHO-5': 'Bienestar', 'Rosenberg': 'Autoestima',
+  'WSAS': 'Cómo afecta a tu día a día', 'AUDIT': 'Consumo de alcohol', 'PSS': 'Estrés',
+  'ISI': 'Sueño', 'DERS-28': 'Regulación emocional', 'PCL-5': 'Estrés postraumático',
+};
+function ultimaDe(m) {
+  const pts = (m.puntos || []).filter(p => p && p.valor != null && p.valor !== '');
+  return pts.length ? pts[pts.length - 1] : null;
+}
+
 async function pintaProgreso(meta, v) {
+  SERIES = null;
   const dentro = $('progreso');
+  const resumenEv = $('resumen-evolucion');
+  resumenEv.textContent = 'Aquí verás cómo vas cuando hayas rellenado tus cuestionarios.';
   /* Nunca en blanco: sin gráfica todavía, se dice qué va a haber. */
   if (!meta) {
     dentro.replaceChildren(vacio('Aquí verás tu evolución cuando hayas rellenado tus cuestionarios.'));
@@ -1152,7 +1233,28 @@ async function pintaProgreso(meta, v) {
   /* Lo que llega es {series: [...]}; si alguna vez llega la lista sola,
      se acepta igual en vez de quedarse en blanco. */
   const series = Array.isArray(d) ? d : ((d && d.series) || []);
+  SERIES = series;
+  dibujaSeries();
+}
+
+/* Se dibujan aparte para poder redibujarlas al girar el móvil o cambiar
+   el ancho de la ventana: el lienzo se ajusta al ancho real. */
+let SERIES = null, RESIZE = null;
+window.addEventListener('resize', () => {
+  clearTimeout(RESIZE);
+  RESIZE = setTimeout(() => { if (SERIES && !$('v-panel').hidden) dibujaSeries(); }, 250);
+});
+function dibujaSeries() {
+  const dentro = $('progreso');
+  const resumenEv = $('resumen-evolucion');
+  const series = SERIES || [];
   dentro.innerHTML = '';
+  /* En el inicio, una línea: la última medida de cada uno, dicha de
+     forma que no se pueda leer «GAD-72»: «GAD-7: 2 sobre 21». */
+  const lineas = series.map(m => { const u = ultimaDe(m);
+    return u ? (m.instrumento || 'Cuestionario') + ': ' + cifra(u.valor) + ' sobre ' + cifra(m.maximo || 27) : null; })
+    .filter(Boolean);
+  if (lineas.length) resumenEv.textContent = 'Última medida — ' + lineas.join(' · ');
   if (!series.length) {
     dentro.appendChild(vacio('Todavía no hay medidas que dibujar. Aparecerán cuando rellenes tus cuestionarios.'));
     return;
@@ -1163,18 +1265,26 @@ async function pintaProgreso(meta, v) {
     try {
       const pts = (m.puntos || []).filter(p => p && p.valor != null && p.valor !== '');
       m = Object.assign({}, m, { puntos: pts });
+      /* La cabecera, en tres líneas para que no se mezcle el nombre con
+         la cifra: qué es, qué mide y hacia dónde es mejor; y debajo la
+         última medida con su escala y su fecha. */
       const cab = document.createElement('figcaption');
-      const nombre = document.createElement('span');
+      const nombre = document.createElement('h3');
       nombre.className = 'g-nombre'; nombre.textContent = m.instrumento || 'Cuestionario';
-      cab.appendChild(nombre);
+      const sub = document.createElement('p');
+      sub.className = 'g-sub';
+      sub.textContent = [QUE_MIDE[m.instrumento],
+        m.direccion === 'mas_es_mejor' ? 'aquí, más alto es mejor' : 'aquí, más bajo es mejor']
+        .filter(Boolean).join(' · ');
+      cab.append(nombre, sub);
       if (pts.length) {
-        const ultimo = document.createElement('span');
+        const u = pts[pts.length - 1];
+        const ultimo = document.createElement('p');
         ultimo.className = 'g-ultimo';
-        ultimo.textContent = cifra(pts[pts.length - 1].valor);
+        const n = document.createElement('strong'); n.textContent = cifra(u.valor);
         const de = document.createElement('span');
-        de.className = 'g-de';
-        de.textContent = ' de ' + cifra(m.maximo || 27);
-        ultimo.appendChild(de);
+        de.textContent = ' sobre ' + cifra(m.maximo || 27) + ' · última medida, ' + dia(u.fecha);
+        ultimo.append(n, de);
         cab.appendChild(ultimo);
       }
       fig.appendChild(cab);
@@ -1183,16 +1293,20 @@ async function pintaProgreso(meta, v) {
         dentro.appendChild(fig);
         return;
       }
-      const cambio = document.createElement('p');
-      cambio.className = 'g-cambio';
-      cambio.textContent = desdeElPrincipio(m);
-      fig.appendChild(cambio);
-      const g = svgSerie(m);
+      /* Con una sola medida no hay «cambio» que contar: lo dice la
+         lectura de abajo. */
+      if (pts.length > 1) {
+        const cambio = document.createElement('p');
+        cambio.className = 'g-cambio';
+        cambio.textContent = desdeElPrincipio(m);
+        fig.appendChild(cambio);
+      }
+      const g = svgSerie(m, $('v-panel').clientWidth - 48);
       if (g) fig.appendChild(g);
       const cifras = document.createElement('p');
       cifras.className = 'apunte g-cifras';
       /* La escala, siempre: un 12 no dice nada sin saber si es de 27 o de 140. */
-      cifras.textContent = pts.map(p => dia(p.fecha) + ' ' + cifra(p.valor)).join(' · ')
+      cifras.textContent = pts.map(p => dia(p.fecha) + ': ' + cifra(p.valor)).join(' · ')
         + ' · escala de ' + cifra(m.minimo || 0) + ' a ' + cifra(m.maximo || 27)
         + (m.corte != null ? ' · corte en ' + cifra(m.corte) : '');
       fig.appendChild(cifras);
