@@ -1,0 +1,173 @@
+/* =================================================================
+   Propuesta «cuaderno de consulta» (octubre de 2026)
+   -----------------------------------------------------------------
+   La idea sale del trabajo, no de una plantilla: en sesión, el
+   mecanismo se dibuja en una hoja con alguien. Así que la página es
+   esa hoja.
+
+   - Papel cuadriculado donde se piensa (la portada, el mecanismo y
+     el cierre) y papel liso donde se lee.
+   - Tinta azul, la de la marca. Un rotulador amarillo para lo único
+     que hay que llevarse de cada bloque, en vez de negritas.
+   - Titulares en Archivo estrecha y muy grande: la voz de la página.
+     El resto, Source Sans como siempre.
+   - Nada de cajas como sistema: separan las líneas, como en una
+     libreta. La única caja es la del precio, porque es un papel que
+     se entrega.
+   - Movimiento: las gráficas se dibujan una vez al llegar y el
+     rotulador pasa una vez por debajo de su frase. Nada más.
+   ================================================================= */
+
+@font-face{font-family:"Archivo estrecha";src:url(/fuentes/archivo-estrecha-800.woff2) format('woff2');font-weight:800;font-display:swap}
+@font-face{font-family:"Archivo estrecha";src:url(/fuentes/archivo-estrecha-700.woff2) format('woff2');font-weight:700;font-display:swap}
+
+.cuaderno{
+  --tinta:#1F5474;
+  --tinta-honda:#173F58;
+  --grafito:#25231F;
+  --cuadricula:rgba(31,84,116,.085);
+  --rotulador:#F7DF72;
+  --papel-hoja:#FCFCFA;
+  --estrecha:"Archivo estrecha","Archivo reserva","Arial Narrow",sans-serif;
+}
+
+/* El aviso de que esto es una propuesta. Solo existe en /propuesta/. */
+.cuaderno .aviso-propuesta{
+  font-size:14.5px;color:var(--ink-2);margin:0 0 6px;padding:8px 0;
+  border-bottom:1px dashed var(--line-strong);max-width:none;
+}
+
+/* ---- Las hojas --------------------------------------------------- */
+.cuaderno .hoja{position:relative;padding:56px 0 52px}
+.cuaderno .hoja::before{
+  content:"";position:absolute;z-index:-1;top:0;bottom:0;
+  left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;
+  background-color:var(--papel-hoja);
+  background-image:
+    linear-gradient(var(--cuadricula) 1px,transparent 1px),
+    linear-gradient(90deg,var(--cuadricula) 1px,transparent 1px);
+  background-size:24px 24px;
+  background-position:center top;
+  border-block:1px solid var(--line);
+}
+.cuaderno .hoja.portada::before{border-top:0}
+.cuaderno .hoja.tinta::before{background:var(--tinta);background-image:none;border-color:var(--tinta)}
+.cuaderno .lisa{padding:60px 0 20px}
+
+/* ---- Tipografía -------------------------------------------------- */
+.cuaderno h1,.cuaderno h2{font-family:var(--estrecha);font-weight:800;letter-spacing:-.005em;color:var(--grafito)}
+.cuaderno h1{
+  font-size:clamp(2.85rem,11.4vw,4.7rem);line-height:.94;
+  margin:0 0 22px;max-width:none;text-wrap:balance;
+}
+.cuaderno h2{font-size:clamp(2.1rem,8vw,3.4rem);line-height:.98;margin:0 0 18px;max-width:16ch}
+
+.cuaderno h3{font-family:var(--estrecha);font-weight:700;font-size:1.55rem;line-height:1.05;margin:0 0 6px;letter-spacing:0}
+.cuaderno p{font-size:17.5px}
+.cuaderno .entrada{font-size:clamp(1.15rem,2.4vw,1.35rem);line-height:1.5;color:var(--ink-2);max-width:34rem}
+
+/* El rotulador. Va por debajo de la frase, ocupando el tercio bajo de
+   la línea, como cuando se subraya de verdad. Sin guion, o con el
+   movimiento reducido, sale ya pintado. */
+.cuaderno strong{
+  font-weight:600;color:inherit;
+  background-image:linear-gradient(var(--rotulador),var(--rotulador));
+  background-repeat:no-repeat;background-position:0 88%;background-size:100% 42%;
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;padding:0 .08em;
+}
+.cuaderno .hoja.tinta strong{background-image:none;color:#fff;font-weight:700}
+@media (prefers-reduced-motion:no-preference){
+  .js-dibujo .cuaderno strong:not(.subrayado){background-size:0 42%}
+  .cuaderno strong.subrayado{transition:background-size 1.1s cubic-bezier(.45,.05,.3,1) .15s}
+}
+
+/* ---- La portada -------------------------------------------------- */
+.cuaderno .portada{padding-top:40px}
+.cuaderno .portada .precio-linea{font-size:18px;color:var(--grafito);margin:0 0 22px}
+.cuaderno .portada .acciones{margin:0 0 10px}
+.cuaderno .tranquila{font-size:15px;color:var(--ink-2);margin:0 0 4px}
+.cuaderno .yo{display:grid;grid-template-columns:minmax(0,56%) 1fr;gap:16px;align-items:end;margin:30px 0 0}
+.cuaderno .yo img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;
+  border-radius:3px;background:#A9A194}
+.cuaderno .nota-margen{font-size:15px;line-height:1.4;color:var(--tinta);font-weight:600;margin:0 0 18px;max-width:16rem}
+.cuaderno .nota-margen svg{display:block;width:46px;height:34px;margin:0 0 4px;fill:none;stroke:var(--tinta);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.cuaderno .nota-margen small{display:block;font-weight:400;color:var(--ink-2);font-size:14px;margin-top:6px}
+@media (min-width:860px){
+  .cuaderno .portada{display:grid;grid-template-columns:1fr 300px;column-gap:48px;align-items:start}
+  .cuaderno .portada > *{grid-column:1}
+  /* El titular a todo el ancho, encima de las dos columnas: con la
+     foto al lado se partía en siete líneas y el botón caía por debajo
+     de la primera pantalla. */
+  .cuaderno .portada > h1{grid-column:1 / -1;max-width:19ch}
+  .cuaderno .portada > .yo{grid-column:2;grid-row:2 / span 6;display:block;margin:6px 0 0}
+  .cuaderno .portada > .yo .nota-margen{margin:14px 0 0}
+  .cuaderno .portada > .yo .nota-margen svg{transform:scaleY(-1)}
+}
+
+/* ---- Índice de lo que trabajo: líneas de libreta ----------------- */
+.cuaderno .indice{list-style:none;padding:0;margin:26px 0 8px;max-width:none;border-top:1.5px solid var(--grafito)}
+.cuaderno .indice li{border-bottom:1px solid var(--line-strong)}
+.cuaderno .indice a{display:grid;grid-template-columns:minmax(0,15rem) 1fr;gap:4px 24px;padding:15px 2px;
+  text-decoration:none;color:inherit;align-items:baseline}
+.cuaderno .indice b{font-family:var(--estrecha);font-weight:700;font-size:1.45rem;line-height:1.1;color:var(--grafito)}
+.cuaderno .indice span{color:var(--ink-2);font-size:16.5px}
+.cuaderno .indice a:hover b{color:var(--tinta)}
+@media (max-width:620px){.cuaderno .indice a{grid-template-columns:1fr}}
+
+/* ---- Empezar: tres pasos, que sí son una secuencia --------------- */
+.cuaderno .tres{list-style:none;padding:0;margin:28px 0 34px;max-width:none;display:grid;gap:26px}
+@media (min-width:760px){.cuaderno .tres{grid-template-columns:repeat(3,1fr);gap:30px}}
+.cuaderno .tres li{border-top:1.5px solid var(--grafito);padding-top:12px}
+.cuaderno .tres .n{display:block;font-family:var(--estrecha);font-weight:800;font-size:3.4rem;line-height:1;color:var(--tinta);margin:0 0 8px}
+.cuaderno .tres p{font-size:16.5px;color:var(--ink-2);margin:0}
+
+/* El vídeo de la primera sesión (hueco preparado). */
+.cuaderno .video{margin:6px 0 0;max-width:640px}
+.cuaderno .video .marco{position:relative;display:block;aspect-ratio:16/10;overflow:hidden;border-radius:3px;background:#A9A194}
+.cuaderno .video img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;filter:saturate(.9)}
+.cuaderno .video .play{position:absolute;left:20px;bottom:20px;display:flex;align-items:center;gap:12px;
+  background:#fff;color:var(--grafito);padding:10px 16px 10px 12px;border-radius:99px;font-weight:600;font-size:16px}
+.cuaderno .video .play svg{width:30px;height:30px}
+.cuaderno .video figcaption{font-size:15px;color:var(--ink-2);margin-top:10px}
+
+/* ---- Medir ------------------------------------------------------- */
+@media (min-width:860px){.cuaderno .medir{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}}
+.cuaderno .ejemplo{margin:18px 0 0;background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 16px 10px}
+.cuaderno .ejemplo svg{display:block;width:100%;height:auto}
+.cuaderno .ejemplo figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+.cuaderno .ejemplo .cab{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}
+.cuaderno .ejemplo .cab b{font-family:var(--estrecha);font-size:1.25rem}
+.cuaderno .ejemplo .cab span{font-size:13.5px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){
+  .js-dibujo .ejemplo:not(.dibujado) .linea-ej{clip-path:inset(-6px calc(100% + 6px) -6px -6px)}
+  .ejemplo.dibujado .linea-ej{animation:barrer 2.2s cubic-bezier(.35,.1,.45,1) .2s both}
+}
+
+/* ---- Quién soy --------------------------------------------------- */
+@media (min-width:760px){.cuaderno .quien{display:grid;grid-template-columns:260px 1fr;gap:40px;align-items:start}}
+.cuaderno .quien img{width:100%;max-width:260px;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:3px;display:block;margin:0 0 18px;background:#A9A194}
+.cuaderno .credencial{font-size:15.5px;color:var(--ink-2);border-top:1px solid var(--line-strong);padding-top:12px;margin-top:18px}
+
+/* ---- Precio: el papel que se entrega ----------------------------- */
+.cuaderno .hoja.tinta{color:#E9F1F7}
+.cuaderno .hoja.tinta h2{color:#fff}
+.cuaderno .recibo{background:var(--papel-hoja);color:var(--grafito);border-radius:3px;padding:26px 26px 22px;max-width:560px;
+  box-shadow:0 18px 40px -24px rgba(0,0,0,.55)}
+.cuaderno .recibo .cifra-grande{font-family:var(--estrecha);font-weight:800;font-size:clamp(5rem,16vw,7.5rem);line-height:.85;color:var(--tinta);margin:0}
+.cuaderno .recibo .cifra-grande small{font-size:.42em;vertical-align:top;margin-left:4px}
+.cuaderno .recibo .por{font-weight:600;margin:6px 0 14px}
+.cuaderno .recibo ul{list-style:none;padding:0;margin:0 0 16px;border-top:1px solid var(--line-strong)}
+.cuaderno .recibo li{padding:9px 0;border-bottom:1px solid var(--line);font-size:16.5px}
+.cuaderno .recibo .porque{font-size:15px;color:var(--ink-2);margin:0 0 16px}
+.cuaderno .recibo .boton{background:var(--tinta);color:#fff}
+.cuaderno .recibo .boton:hover{background:var(--tinta-honda)}
+.cuaderno .hoja.tinta a:not(.boton){color:#fff}
+
+/* ---- Sin cerrar del todo: las herramientas ----------------------- */
+.cuaderno .aun{margin-top:34px}
+.cuaderno .aun h3{margin-bottom:10px}
+
+/* ---- Movimiento al pulsar: el botón baja un pelo ----------------- */
+@media (prefers-reduced-motion:no-preference){
+  .cuaderno .indice a b{transition:color .17s cubic-bezier(.2,0,0,1)}
+}
