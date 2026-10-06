@@ -551,7 +551,10 @@ async function panel() {
   pintaAgenda(r.j.agenda, r.j.v);
   pintaProgreso(r.j.progreso, r.j.v);
 
-  const todas = r.j.tareas || [];
+  /* Lo caducado no se enseña ni se cuenta: un número que no baja
+     solo genera culpa. El servidor ya no lo manda; esto es la red. */
+  const hoy = new Date().toLocaleDateString('sv', {timeZone: 'Europe/Madrid'});
+  const todas = (r.j.tareas || []).filter(t => !t.caduca || String(t.caduca).slice(0, 10) >= hoy);
   const docs = r.j.documentos || [];
   buscaPlan(docs.filter(d => d.clase === 'herramienta'), r.j.v);
   pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'),
@@ -755,19 +758,16 @@ async function pintaHilo(ms, v) {
 
 /* La red de seguridad del mensaje. Si lo que escribe suena a riesgo, la
    misma caja que en el ítem 9 aparece ANTES de enviar, sin bloquearlo.
-   Es la misma lista que mira el sistema clínico al recibirlo (morir,
-   desaparecer, no despertar, ser una carga, hacerse daño…), sin las
-   frases hechas que solo dan falsas alarmas («muerta de cansancio»). */
-const RIESGO_MENSAJE = new RegExp([
-  '\\bmorir(me|se)?\\b', '\\bme quiero morir\\b', '\\bquiero morirme\\b',
-  '\\bmuerte\\b', '\\bmatarme\\b', '\\bsuicid', '\\bquitarme la vida\\b',
-  '\\bacabar con todo\\b', '\\bdesaparecer\\b', '\\bno despertar(me)?\\b',
-  '\\bser una carga\\b', '\\bsoy una carga\\b', '\\bhacerme da[ñn]o\\b',
-  '\\bautolesi', '\\bcortarme\\b', '\\btirarme (por|a|al|desde|de)\\b',
-  '\\bno quiero (seguir )?vivir\\b', '\\bno merece la pena vivir\\b',
-].join('|'), 'i');
-const FALSAS = /\b(muert[oa]s? de (cansancio|sueño|risa|hambre|frío|calor|miedo|vergüenza|asco)|me muero de (ganas|risa|sueño|hambre|vergüenza))\b/gi;
-function suenaARiesgo(t) { return RIESGO_MENSAJE.test(String(t).replace(FALSAS, '')); }
+   Es, carácter por carácter, `_RIESGO_MENSAJE` de ingesta_web.py en el
+   Mac, que la vuelve a pasar al recibir y avisa con «⚠️ RIESGO». Si se
+   cambia, se cambia en los dos sitios a la vez.
+   - Banderas `iu`: sin `u`, `i` no siempre iguala «Á» con «á».
+   - NFC antes de mirar: un iPhone puede mandar la tilde como carácter
+     aparte (NFD) y entonces `[aá]` no casa.
+   - En JS `\b` solo conoce letras ASCII: no ponerlo pegado a una vocal
+     con tilde ni a la ñ si se añaden palabras. */
+const RIESGO_MENSAJE = new RegExp(String.raw`suicid|mat[aá]rme|\bmorir(me|se)?\b|\bmuerte\b|quitarme la vida|acabar con (todo|mi vida|esto)|no quiero (vivir|seguir|estar aqu[ií]|despertar)|no despertar(me)?\b|desaparecer|(hacerme|me hago|me hice) da[ñn]o|autolesi|cortarme|me corto|lesionarme|despedirme|no aguanto m[aá]s|ser una carga|mejor sin m[ií]|tirarme (por|de|a)\b|tomarme (todas )?las pastillas|\b024\b|\b112\b`, 'iu');
+function suenaARiesgo(t) { return RIESGO_MENSAJE.test(String(t).normalize('NFC')); }
 $('m-texto').addEventListener('input', () => {
   $('m-auxilio').hidden = !suenaARiesgo($('m-texto').value);
 });

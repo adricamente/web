@@ -103,8 +103,9 @@ function adr_vencen(PDO $db, array $ADR): int {
         /* Si la anterior sigue sin hacerse, NO se manda otra. Tres
            cuestionarios pendientes del mismo instrumento no miden mejor:
            agobian y se abandonan los tres. */
-        $y = $db->prepare('SELECT 1 FROM tareas WHERE cod = ? AND titulo = ? AND hecho IS NULL');
-        $y->execute([$r['cod'], $r['titulo']]);
+        $y = $db->prepare("SELECT 1 FROM tareas WHERE cod = ? AND titulo = ? AND hecho IS NULL
+                             AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)");
+        $y->execute([$r['cod'], $r['titulo'], adr_hoy()]);
         if (!$y->fetch()) {
             $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, tipo, origen)
                           VALUES (?,?,?,?,'cuestionario','programada')")
@@ -351,9 +352,13 @@ case 'mios': {
     /* Y lo que tiene pendiente. Va aquí y no en otra llamada porque
        el panel las enseña juntas: dos peticiones para pintar una
        pantalla es una pantalla que se dibuja a trozos. */
-    $t = $db->prepare('SELECT id, titulo, creado, caduca, tipo, para_v, plantilla FROM tareas
-                       WHERE cod = ? AND hecho IS NULL ORDER BY id');
-    $t->execute([$cod]);
+    /* Lo caducado no sale: ni se puede hacer a tiempo ni debe quedarse
+       en el contador para siempre. «antes del 10» incluye el día 10. */
+    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla FROM tareas
+                       WHERE cod = ? AND hecho IS NULL
+                         AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)
+                       ORDER BY id");
+    $t->execute([$cod, adr_hoy()]);
     /* Cuántas preguntas tiene cada cuestionario, para decirle cuánto
        le va a llevar («2 min»). La plantilla no sale entera aquí. */
     $tareas = [];

@@ -253,6 +253,9 @@ $pdo->exec('
     return $pdo;
 }
 
+function adr_hoy(): string {
+    return (new DateTimeImmutable('now', new DateTimeZone('Europe/Madrid')))->format('Y-m-d');
+}
 function adr_ahora(): string {
     return (new DateTimeImmutable('now', new DateTimeZone('Europe/Madrid')))
         ->format('Y-m-d\TH:i:sP');
