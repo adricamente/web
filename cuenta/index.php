@@ -145,6 +145,7 @@ $cuerpo .= <<<'HTML'
     <div class="tarjeta-sesion" id="c-agenda" hidden>
       <p class="etiqueta">Tu próxima sesión</p>
       <p class="cuando" id="ag-cuando"></p>
+      <p class="hora" id="ag-hora"></p>
       <p class="botones">
         <a class="boton" id="ag-entrar" target="_blank" rel="noopener">Entrar a la videollamada</a>
         <a class="enlace-boton" id="ag-cambiar" target="_blank" rel="noopener" hidden>Cambiar o cancelar</a>
@@ -583,6 +584,7 @@ async function panel() {
   const ct = $('tareas'); ct.innerHTML = '';
   porFirmar.forEach(d => {
     const f = fila(d.titulo || 'Documento', 'Para leer y firmar');
+    f.classList.add('firmar');
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button'; b.textContent = 'Leer y firmar';
     b.addEventListener('click', () => abrirFirma(d.id, d.titulo));
@@ -701,8 +703,12 @@ async function pintaAgenda(meta, v) {
   const t = d && d.proxima ? new Date(d.proxima) : null;
   if (!t || isNaN(t) || t.getTime() < Date.now() - 60 * 60000) return;
   AGENDA = d;
-  $('ag-cuando').textContent = DIAS[t.getDay()] + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()] +
-    ', a las ' + String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+  /* El día, en grande; la hora, debajo. «jueves» con mayúscula porque
+     abre la línea. */
+  const diaS = DIAS[t.getDay()];
+  $('ag-cuando').textContent = diaS.charAt(0).toUpperCase() + diaS.slice(1) + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()];
+  $('ag-hora').textContent = 'A las ' + String(t.getHours()).padStart(2, '0') + ':' +
+    String(t.getMinutes()).padStart(2, '0') + ', por videollamada.';
   const cambiar = $('ag-cambiar');
   cambiar.hidden = !esHttps(d.cambiar);
   if (!cambiar.hidden) cambiar.href = d.cambiar;
@@ -1131,6 +1137,19 @@ function svgSerie(m, ancho) {
     return e;
   };
 
+  /* La zona amarilla: la primera medida, más y menos lo que el propio
+     cuestionario puede variar por ruido (su cambio fiable). Si el último
+     punto cae dentro, todavía no se puede decir que haya cambiado; si
+     sale, sí. Se ve sin leer el párrafo. */
+  if (pts.length > 1 && m.cambio_fiable != null && Number(m.cambio_fiable) > 0) {
+    const a0 = Number(pts[0].valor), cf = Number(m.cambio_fiable);
+    const arriba = y(Math.min(maxv, a0 + cf)), abajo = y(Math.max(minv, a0 - cf));
+    const z = document.createElementNS(NS, 'rect');
+    z.setAttribute('x', izq); z.setAttribute('y', arriba.toFixed(1));
+    z.setAttribute('width', w); z.setAttribute('height', Math.max(0, abajo - arriba).toFixed(1));
+    z.setAttribute('fill', 'rgba(247,223,114,.5)'); z.setAttribute('class', 'zona-ruido');
+    svg.appendChild(z);
+  }
   svg.appendChild(linea(izq, arr + h, izq + w, arr + h, '#CECCC6', 1));
   svg.appendChild(texto(izq - 8, y(minv) + 4, cifra(minv), 12, '#6C6963', 'end'));
   svg.appendChild(texto(izq - 8, y(maxv) + 4, cifra(maxv), 12, '#6C6963', 'end'));
@@ -1227,6 +1246,28 @@ const QUE_MIDE = {
   'WSAS': 'Cómo afecta a tu día a día', 'AUDIT': 'Consumo de alcohol', 'PSS': 'Estrés',
   'ISI': 'Sueño', 'DERS-28': 'Regulación emocional', 'PCL-5': 'Estrés postraumático',
 };
+/* La línea pequeña de cada cuestionario en el inicio: solo la forma,
+   sin ejes; los números están al lado y en su hoja. */
+function chispa(m) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const pts = (m.puntos || []).filter(p => p && p.valor != null && p.valor !== '');
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 100 26'); svg.setAttribute('preserveAspectRatio', 'none');
+  svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('class', 'chispa');
+  if (!pts.length) return svg;
+  const minv = m.minimo || 0, maxv = m.maximo || 27, r = (maxv - minv) || 1;
+  const xy = pts.map((p, i) => [pts.length === 1 ? 50 : 4 + 92 * i / (pts.length - 1),
+                                23 - (Number(p.valor) - minv) / r * 20]);
+  const l = document.createElementNS(NS, 'polyline');
+  l.setAttribute('points', xy.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' '));
+  l.setAttribute('fill', 'none'); l.setAttribute('stroke', '#1F5474'); l.setAttribute('stroke-width', '2');
+  l.setAttribute('vector-effect', 'non-scaling-stroke');
+  svg.appendChild(l);
+  const u = xy[xy.length - 1], c = document.createElementNS(NS, 'circle');
+  c.setAttribute('cx', u[0]); c.setAttribute('cy', u[1]); c.setAttribute('r', '2.6'); c.setAttribute('fill', '#1F5474');
+  svg.appendChild(c);
+  return svg;
+}
 function ultimaDe(m) {
   const pts = (m.puntos || []).filter(p => p && p.valor != null && p.valor !== '');
   return pts.length ? pts[pts.length - 1] : null;
@@ -1290,7 +1331,7 @@ function dibujaSeries() {
       const n = document.createElement('span'); n.className = 'n'; n.textContent = m.instrumento || 'Cuestionario';
       const v = document.createElement('span'); v.className = 'v'; v.textContent = cifra(u.valor);
       const de = document.createElement('small'); de.textContent = 'de ' + cifra(m.maximo || 27);
-      v.appendChild(de); e.append(n, v); minis.appendChild(e); });
+      v.appendChild(de); e.append(n, v, chispa(m)); minis.appendChild(e); });
     resumenEv.replaceChildren(minis);
     resumenEv.setAttribute('aria-label', 'Última medida: ' + lineas.join('; '));
   }
@@ -1340,8 +1381,19 @@ function dibujaSeries() {
         cambio.textContent = desdeElPrincipio(m);
         fig.appendChild(cambio);
       }
-      const g = svgSerie(m, $('v-panel').clientWidth - 48);
+      const g = svgSerie(m, $('v-panel').clientWidth - 82);
       if (g) fig.appendChild(g);
+      /* La leyenda, solo de lo que está dibujado. */
+      const ley = [];
+      if (m.puntos.length > 1 && m.cambio_fiable != null && Number(m.cambio_fiable) > 0)
+        ley.push(['ruido', 'Zona en la que un cambio aún puede ser ruido del cuestionario']);
+      if (m.corte != null) ley.push(['corte', 'Corte orientativo']);
+      if (g && ley.length) {
+        const le = document.createElement('p'); le.className = 'g-leyenda';
+        ley.forEach(([c, t]) => { const sp = document.createElement('span'); const i = document.createElement('i');
+          i.className = c; sp.append(i, t); le.appendChild(sp); });
+        fig.appendChild(le);
+      }
       const cifras = document.createElement('p');
       cifras.className = 'apunte g-cifras';
       /* La escala, siempre: un 12 no dice nada sin saber si es de 27 o de 140. */

@@ -449,3 +449,115 @@ body{-webkit-font-smoothing:antialiased}
   @keyframes entra-pestana{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .boton:active{transform:translateY(1px)}
 }
+
+
+/* =================================================================
+   El cuaderno (octubre de 2026)
+   -----------------------------------------------------------------
+   El mismo lenguaje que la web, pero más quieto: aquí no se vende,
+   se acompaña. Titulares en Archivo estrecha; lo que hay que hacer en
+   renglones con su casilla; lo trabajado como un diario con la fecha
+   en el margen; y cada cuestionario en su hoja cuadriculada, con la
+   zona en la que un cambio todavía puede ser ruido pintada en
+   amarillo. Sin rachas, sin medallas, sin puntuaciones en las listas.
+   ================================================================= */
+@font-face{font-family:"Archivo estrecha";src:url(fuentes/archivo-estrecha-800.woff2) format('woff2');font-weight:800;font-display:swap}
+@font-face{font-family:"Archivo estrecha";src:url(fuentes/archivo-estrecha-700.woff2) format('woff2');font-weight:700;font-display:swap}
+:root{
+  --estrecha:"Archivo estrecha","Arial Narrow",sans-serif;
+  --rotulador:#F7DF72;
+  --cuadricula:rgba(31,84,116,.08);
+  --hoja:#FCFCFA;
+}
+
+h1,h2,h3{font-family:var(--estrecha);letter-spacing:-.005em}
+h1{font-size:clamp(2.5rem,9vw,3.3rem);font-weight:800;line-height:1}
+h2{font-weight:800;line-height:1.02}
+.caja.bloque > h2{font-size:1.75rem}
+h3{font-weight:700}
+.pestanas a{font-family:var(--estrecha);font-weight:700;font-size:16.5px;letter-spacing:.01em}
+@media (max-width:720px){.pestanas a{font-size:13.5px}}
+.marca{font-family:Archivo,var(--texto)}
+
+/* Las cajas de cada bloque dejan de ser tarjetas blancas: el bloque
+   se separa con una raya, como en una libreta. */
+.caja.bloque{background:none;border:0;border-radius:0;padding:0;margin:0 0 34px}
+.caja.bloque > h2{margin-bottom:4px}
+.caja.bloque > .apunte,.caja.bloque > .resumen{margin:0 0 12px}
+
+/* ---- La próxima sesión ---------------------------------------- */
+.tarjeta-sesion{border-radius:12px;padding:20px 20px 18px}
+.tarjeta-sesion .cuando{font-family:var(--estrecha);font-weight:800;font-size:clamp(2.2rem,8vw,2.7rem);line-height:.98;margin:0 0 4px}
+.tarjeta-sesion .hora{font-size:18px;color:#fff;margin:0 0 16px}
+
+/* ---- Las dos tarjetas del inicio: ahora rayas, no cajas -------- */
+.tarjeta-ir{background:none;border:0;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--line-strong);border-radius:0;
+  padding:14px 4px 16px 2px;margin:0 0 26px}
+.tarjeta-ir .t{font-family:var(--estrecha);font-weight:800;font-size:1.75rem;line-height:1.05}
+.tarjeta-ir:hover,.tarjeta-ir:active{background:rgba(31,84,116,.05)}
+.mini .v{font-family:var(--estrecha)}
+.mini .chispa{display:block;width:100%;max-width:120px;height:24px;margin-top:6px}
+
+/* ---- Renglones ---------------------------------------------------
+   Cada fila es un renglón. Si lleva botón, el renglón entero lo pulsa
+   (el botón se estira por encima, ::before) y se ve como una acción en
+   azul con su chevrón (::after), no como una caja. */
+#tareas,#herramientas,#documentos,#sesiones,#hechas{border-top:1.5px solid var(--ink)}
+.fila{position:relative;padding:15px 4px 15px 2px;border-bottom:1px solid var(--line-strong);gap:6px 14px;border-radius:4px}
+.fila:first-child{padding-top:15px}
+.fila:last-child{border-bottom:1px solid var(--line-strong);padding-bottom:15px}
+.fila strong{font-family:var(--estrecha);font-weight:700;font-size:1.32rem;line-height:1.12}
+.fila:has(> .boton) strong{color:var(--accent)}
+.fila .texto p{font-size:15px}
+.fila > .boton{background:none;color:var(--accent);box-shadow:none;padding:10px 2px 10px 6px;
+  font-family:var(--estrecha);font-weight:700;font-size:1.05rem;display:inline-flex;align-items:center;gap:8px}
+.fila > .boton::before{content:"";position:absolute;inset:0;border-radius:4px}
+.fila > .boton::after{content:"";width:8px;height:8px;border-top:2px solid currentColor;border-right:2px solid currentColor;transform:rotate(45deg)}
+.fila > .boton:hover,.fila > .boton.suave:hover{background:none;color:var(--accent-3)}
+.fila:has(> .boton:hover),.fila:has(> .boton:active){background:rgba(31,84,116,.06)}
+.fila > .boton:focus-visible{outline:none}
+.fila > .boton:focus-visible::before{outline:2.5px solid var(--accent);outline-offset:2px}
+.fila .sello{position:relative;z-index:1}
+
+/* La casilla: lo que hay que hacer lleva un círculo por rellenar; lo
+   que hay que firmar, discontinuo; lo hecho, con su tic. */
+#tareas > .fila::before,#hechas > .fila::before{content:"";flex:0 0 auto;width:24px;height:24px;border-radius:50%;
+  border:2px solid var(--accent);align-self:center}
+#tareas > .fila.firmar::before{border-style:dashed}
+#hechas > .fila::before{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 12.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
+#hechas > .fila strong{color:var(--ink-2)}
+#tareas > .vacio,#hechas > .vacio,#documentos > .vacio,#sesiones > .vacio{border-bottom:1px solid var(--line-strong)}
+
+/* Lo trabajado, como un diario: la fecha en el margen. */
+.linea-tiempo .fila{display:grid;grid-template-columns:64px 1fr auto;align-items:center;border-left:0;padding-left:2px;margin-left:0}
+.linea-tiempo .fila .texto{display:contents}
+.linea-tiempo .fila .texto p{grid-column:1;grid-row:1;margin:0;font-family:var(--estrecha);font-weight:700;font-size:1.15rem;color:var(--accent);line-height:1}
+.linea-tiempo .fila .texto strong{grid-column:2;grid-row:1;color:var(--ink)}
+.linea-tiempo .fila > .boton{grid-column:3;grid-row:1}
+
+/* ---- Evolución: cada cuestionario en su hoja --------------------- */
+#progreso{border-top:0}
+.grafica{background-color:var(--hoja);
+  background-image:linear-gradient(var(--cuadricula) 1px,transparent 1px),linear-gradient(90deg,var(--cuadricula) 1px,transparent 1px);
+  background-size:20px 20px;border:1px solid var(--line);border-radius:6px;padding:18px 16px 14px;margin:0 0 18px}
+.grafica:last-of-type{border-bottom:1px solid var(--line)}
+.g-nombre{font-size:1.9rem;font-weight:800}
+.g-ultimo strong{font-family:var(--estrecha);font-size:3rem;line-height:.9}
+.g-cifras{border-top:1px solid var(--line-strong)}
+.g-leyenda{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13.5px;color:var(--muted);margin:6px 0 4px;max-width:none}
+.g-leyenda i{display:inline-block;width:18px;height:10px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+.g-leyenda i.ruido{background:rgba(247,223,114,.6)}
+.g-leyenda i.corte{height:0;border-top:2px dashed #7B4D13;border-radius:0;vertical-align:3px}
+
+/* ---- Mensajes: notas --------------------------------------------- */
+.burbuja{background:#fff;border:1px solid var(--line)}
+.burbuja.mia{border-color:transparent}
+.burbuja .quien{font-family:var(--estrecha);font-weight:700;font-size:15px;letter-spacing:.01em}
+
+/* El rotulador, para lo único que hay que llevarse. */
+.marcado{background:linear-gradient(var(--rotulador),var(--rotulador)) no-repeat 0 88%/100% 42%;padding:0 .08em;font-weight:600}
+/* Ajustes tras verlo en un móvil de 360 px. */
+.fila{flex-wrap:nowrap}
+.fila .texto{min-width:0}
+.minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:10px 12px}
+#c-accesos{background:none;border:0;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);border-radius:0;padding:14px 2px}

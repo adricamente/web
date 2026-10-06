@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=41">
+  <link rel="stylesheet" href="/estilos.min.css?v=42">
 
 
   <script type="application/ld+json">
@@ -349,7 +349,7 @@
   <h2>Cómo funciona</h2>
   <ol class="pasos">
     <li>
-      <strong>Media hora para contarlo · gratis</strong>
+      <strong>Media hora para contarlo, gratis</strong>
       Me cuentas qué te pasa y te digo con franqueza si creo que puedo
       ayudarte. Si no, te oriento a dónde ir. No tienes que decidir nada
       ese día.
@@ -535,7 +535,7 @@
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
-    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
+    <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
     <p class="apunte" style="margin-bottom:0">¿Prefieres empezar tú solo? <a href="/mapa/">El mapa de lo que evitas</a> son seis preguntas y diez minutos, y no tienes que dar tu correo.</p>
   </section>
 
@@ -696,6 +696,13 @@
         var c = t.querySelector('.importe'); if(c) c.classList.add('visto');
         var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
       });
+
+    /* El rotulador: pasa una vez por debajo de cada frase marcada
+       cuando la frase entra entera en pantalla. Sin este guion (o con
+       movimiento reducido) las frases salen ya subrayadas. */
+    vigila(document.querySelectorAll('main p strong, main figcaption strong'),
+      { threshold: 1, rootMargin: '0px 0px -12% 0px' },
+      function(t){ t.classList.add('subrayado'); });
 
     /* Lo que va atado al scroll, con un solo oyente pasivo. */
     var porCss = window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()');

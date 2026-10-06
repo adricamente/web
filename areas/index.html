@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=41">
+  <link rel="stylesheet" href="/estilos.min.css?v=42">
 
 
   <script type="application/ld+json">
@@ -162,7 +162,7 @@
   </p>
 
   <h2>Los cuatro motivos más frecuentes</h2>
-  <div class="rejilla cinco">
+  <div class="filas">
     <a class="tarjeta" href="/areas/ansiedad/">
       <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg><h3>Ansiedad</h3></span>
       <p>Preocupación que no para, tensión en el cuerpo, evitar lo que la dispara. La evitación <strong>calma hoy y agranda el problema mañana</strong>.</p>
@@ -221,7 +221,7 @@
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
     </p>
-    <p class="tranquiliza">30 minutos &middot; online &middot; sin compromiso &middot; no hace falta tarjeta</p>
+    <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
   </section>
 
   </main>
@@ -381,6 +381,13 @@
         var c = t.querySelector('.importe'); if(c) c.classList.add('visto');
         var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
       });
+
+    /* El rotulador: pasa una vez por debajo de cada frase marcada
+       cuando la frase entra entera en pantalla. Sin este guion (o con
+       movimiento reducido) las frases salen ya subrayadas. */
+    vigila(document.querySelectorAll('main p strong, main figcaption strong'),
+      { threshold: 1, rootMargin: '0px 0px -12% 0px' },
+      function(t){ t.classList.add('subrayado'); });
 
     /* Lo que va atado al scroll, con un solo oyente pasivo. */
     var porCss = window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()');
