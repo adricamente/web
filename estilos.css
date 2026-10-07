@@ -3531,3 +3531,48 @@ main > .cinta:last-child{margin-bottom:0}
   .foto-nota,.cuaderno .portada > .foto-portada{grid-template-columns:minmax(0,54%) 1fr;gap:14px}
 }
 @media (min-width:860px){.cuaderno .portada > h1{max-width:none}}
+
+/* =================================================================
+   16. Repaso de diseño (7-10-2026)
+   ================================================================= */
+/* El rotulador, solo al principio de cada página (la entradilla, la
+   línea del precio de la portada). En el resto, la negrita se queda en
+   seminegrita sin amarillo: con tres y cuatro líneas subrayadas por
+   tarjeta parecían apuntes de estudiante. */
+main p strong,main figcaption strong,.cuaderno strong{background-image:none;padding:0;font-weight:600}
+.cuaderno .portada strong,
+main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
+  background-image:linear-gradient(var(--rotulador),var(--rotulador));
+  background-repeat:no-repeat;background-position:0 92%;background-size:100% 30%;padding:0 .08em;
+}
+
+/* Los iconos de línea de las áreas y de los datos eran de catálogo: el
+   título ya dice de qué va cada uno. */
+.filas .cabeza-tarjeta .icono,.confianza dt .icono{display:none}
+.confianza dt{gap:0}
+
+/* La portada en el ordenador: la foto empieza a la altura del titular,
+   sin el hueco de arriba a la derecha, y la nota con su flecha cabe en
+   la primera pantalla. */
+@media (min-width:860px){
+  .cuaderno .portada > h1{grid-column:1;max-width:none;font-size:clamp(3rem,5.2vw,4.1rem)}
+  .cuaderno .portada > .foto-portada{grid-row:1 / span 7;margin-top:6px}
+}
+
+/* La gráfica de «Lo que se mide», a todo el ancho y legible. */
+.cuaderno .ejemplo.grande{margin-top:22px;padding:20px 20px 14px}
+.cuaderno .ejemplo .cab b{font-size:1.35rem}
+.cuaderno .ejemplo .cab span{font-size:14px}
+.leyenda-ej{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px;color:var(--muted);margin:8px 0 4px;max-width:none}
+.leyenda-ej i{display:inline-block;width:18px;height:10px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+.leyenda-ej i.ruido{background:rgba(247,223,114,.6)}
+.leyenda-ej i.corte{height:0;border-top:2px dashed #7B4D13;border-radius:0;vertical-align:3px}
+.cuaderno .ejemplo figcaption{font-size:15px;color:var(--ink-2)}
+.cuaderno .confianza{margin-top:24px}
+.cuaderno .ejemplo svg.estrecha{display:none}
+@media (max-width:620px){
+  .cuaderno .ejemplo svg.ancha{display:none}
+  .cuaderno .ejemplo svg.estrecha{display:block}
+  .cuaderno .ejemplo.grande{padding:16px 12px 12px}
+}
+.cuaderno .leyenda-ej{font-size:14px}
