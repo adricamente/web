@@ -3259,8 +3259,8 @@ main .franja.marino strong,main .idea strong{background-image:none;font-weight:i
 .cuaderno .portada .precio-linea{font-size:18px;color:var(--grafito);margin:0 0 22px}
 .cuaderno .portada .acciones{margin:0 0 10px}
 .cuaderno .tranquila{font-size:15px;color:var(--ink-2);margin:0 0 4px}
-.cuaderno .yo{display:grid;grid-template-columns:minmax(0,56%) 1fr;gap:16px;align-items:end;margin:30px 0 0}
-.cuaderno .yo img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;
+.cuaderno .foto-portada{display:grid;grid-template-columns:minmax(0,56%) 1fr;gap:16px;align-items:end;margin:30px 0 0}
+.cuaderno .foto-portada img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 20%;
   border-radius:3px;background:#A9A194}
 .cuaderno .nota-margen{font-size:15px;line-height:1.4;color:var(--tinta);font-weight:600;margin:0 0 18px;max-width:16rem}
 .cuaderno .nota-margen svg{display:block;width:46px;height:34px;margin:0 0 4px;fill:none;stroke:var(--tinta);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -3272,9 +3272,9 @@ main .franja.marino strong,main .idea strong{background-image:none;font-weight:i
      foto al lado se partía en siete líneas y el botón caía por debajo
      de la primera pantalla. */
   .cuaderno .portada > h1{grid-column:1 / -1;max-width:19ch}
-  .cuaderno .portada > .yo{grid-column:2;grid-row:2 / span 6;display:block;margin:6px 0 0}
-  .cuaderno .portada > .yo .nota-margen{margin:14px 0 0}
-  .cuaderno .portada > .yo .nota-margen svg{transform:scaleY(-1)}
+  .cuaderno .portada > .foto-portada{grid-column:2;grid-row:2 / span 6;display:block;margin:6px 0 0}
+  .cuaderno .portada > .foto-portada .nota-margen{margin:14px 0 0}
+  .cuaderno .portada > .foto-portada .nota-margen svg{transform:scaleY(-1)}
 }
 
 /* ---- Índice de lo que trabajo: líneas de libreta ----------------- */
@@ -3406,7 +3406,7 @@ main .franja.marino strong,main .idea strong{background-image:none;font-weight:i
 .cuaderno .portada{padding-bottom:20px}
 /* El rotulador, más fino: subraya sin parecer un apunte de estudiante. */
 main p strong,main figcaption strong,.cuaderno strong{background-size:100% 30%;background-position:0 92%}
-.cuaderno .yo img,.retrato,.hero.con-retrato .retrato-hero{border-radius:var(--r-m)}
+.cuaderno .foto-portada img,.retrato,.hero.con-retrato .retrato-hero{border-radius:var(--r-m)}
 /* El botón dentro de la caja blanca del precio: el de la franja marino
    es blanco y ahí no se vería. */
 .franja.marino .tarifa .boton{background:var(--accent);color:var(--sobre-accent)}
@@ -3425,3 +3425,59 @@ main p strong,main figcaption strong,.cuaderno strong{background-size:100% 30%;b
 .filas,.senales,.cuaderno .indice,.cuaderno .tres li{border-top:1px solid var(--line-strong)}
 .llamada{border-top:1px solid var(--line-strong)}
 .cuaderno .franja.marino + .lisa{padding-top:8px}
+
+/* =================================================================
+   14. El espaciado de la portada, con una sola regla (7-10-2026)
+   -----------------------------------------------------------------
+   Él lo vio roto, y tenía razón: cada pieza traía su propio margen de
+   cuando era otra cosa (hoja 56 px, portada 40, lisa 60, franja 44 +
+   38…), y al juntarlas salían huecos de 100-136 px en unos sitios y
+   titulares pegados (15 px) en otros. Ahora hay una medida para
+   separar secciones (--seccion) y otra para un titular dentro de una
+   sección (40 px), y nada más.
+   ================================================================= */
+.cuaderno{--seccion:clamp(48px,7vw,72px)}
+.cuaderno .hoja.portada{padding:0 0 4px}
+.cuaderno .portada{padding-top:0}
+.cuaderno .lisa{padding:var(--seccion) 0 0}
+.cuaderno > .franja,.cuaderno > section.franja{margin:var(--seccion) 0 0}
+.cuaderno > .franja.marino.solo-frase{margin:var(--seccion) 0 0}
+/* Lo que sigue a la frase grande va más cerca: la frase lo presenta. */
+.cuaderno > .franja.marino.solo-frase + .lisa{padding-top:36px}
+.cuaderno > .hoja:last-child{margin-top:var(--seccion);padding:var(--seccion) 0}
+.cuaderno h2{margin:0 0 16px}
+.cuaderno :is(p,ul,ol,figure,div,dl) + h2{margin-top:40px}
+.cuaderno :is(section,.franja,.hoja) > h2:first-child{margin-top:0}
+.cuaderno .confianza{margin:28px 0 0}
+.cuaderno .quien img{margin-bottom:24px}
+.cuaderno .franja > .apunte:last-child,.cuaderno .lisa > .apunte:last-child{margin-bottom:0}
+
+/* En el móvil, la cara justo debajo del titular, como en la portada
+   anterior (al abrir la página se veía la foto), pero a un tamaño que
+   deja el precio y el botón en la primera pantalla: foto pequeña y la
+   nota a su lado. */
+@media (max-width:859px){
+  .cuaderno .portada{display:flex;flex-direction:column}
+  .cuaderno .portada > *{order:2}
+  .cuaderno .portada > h1{order:0;margin-bottom:14px}
+  .cuaderno .portada > .foto-portada{order:1;grid-template-columns:132px 1fr;align-items:center;gap:16px;margin:0 0 18px}
+  .cuaderno .portada > .foto-portada .nota-margen{margin:0}
+  .cuaderno .portada > .foto-portada .nota-margen svg{display:none}
+  .cuaderno .entrada{font-size:1.1rem}
+}
+.cuaderno{--seccion:clamp(44px,5.5vw,60px)}
+.cuaderno > .franja:not(.solo-frase){padding:32px 0 30px}
+.cuaderno > .franja.marino:not(.solo-frase) + .lisa{padding-top:var(--seccion)}
+
+/* La misma regla de espaciado en el resto de la web. Los titulares
+   llegaban a 84 px de margen y las franjas sumaban el suyo (44 + 38),
+   así que al salir de una banda quedaban 115-140 px de vacío. Ahora:
+   una medida para separar secciones, y las bandas usan esa misma. */
+:root{--seccion:clamp(44px,5.5vw,60px)}
+h2{margin-top:var(--seccion)}
+.franja,.cinta,.idea{margin-top:var(--seccion);margin-bottom:var(--seccion)}
+.franja:not(.solo-frase),.cinta,.idea{padding-top:32px;padding-bottom:30px}
+.franja.marino.solo-frase{margin-top:var(--seccion);margin-bottom:var(--seccion);padding:40px 0 36px}
+.franja > :first-child,.cinta > :first-child,.idea > :first-child{margin-top:0}
+.tarifa h2{margin-top:24px}
+main > .cinta:last-child{margin-bottom:0}
