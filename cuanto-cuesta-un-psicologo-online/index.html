@@ -70,7 +70,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=47">
+  <link rel="stylesheet" href="/estilos.min.css?v=48">
 
 
   <script type="application/ld+json">
@@ -567,6 +567,13 @@
         var c = t.querySelector('.importe'); if(c) c.classList.add('visto');
         var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
       });
+
+    /* La guía de lectura de la portada: cada línea se dibuja cuando
+       se ve casi entera. En el escritorio entran las tres a la vez y
+       van una detrás de otra; en el móvil, cada una al llegar. */
+    vigila(document.querySelectorAll('.guia li'),
+      { threshold: .6, rootMargin: '0px 0px -8% 0px' },
+      function(t, n){ t.style.setProperty('--tanda', (n * .4) + 's'); t.classList.add('dibujado'); });
 
     /* El rotulador: pasa una vez por debajo de cada frase marcada
        cuando la frase entra entera en pantalla. Sin este guion (o con

@@ -3591,3 +3591,32 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
   .guia li:last-child{border-bottom:0;padding-bottom:0}
   .cuaderno .guia p{margin:0}
 }
+
+/* --- La guía de lectura se dibuja ------------------------------
+   Las tres líneas de «Cómo se lee» (portada). La franja se abre
+   desde su centro, el trazo avanza de izquierda a derecha a ritmo
+   constante (lineal, para que cada punto salga justo cuando el trazo
+   pasa por él: su retardo es 1,5 s × --p) y, en las dos que salen de
+   la franja, un aro late dos veces sobre el último punto. Ese aro es
+   la lección: «aquí ha cambiado algo». En «Parecido» no hay aro.
+   El texto no se oculta nunca. Sin guion o con movimiento reducido,
+   todo sale completo y quieto, y el aro no se ve. */
+.guia .aro-g{opacity:0}
+/* El aro crece más allá del dibujo: que no lo recorte el borde. Con
+   `forwards` y no `both`, porque `both` le ponía el primer fotograma
+   (opacidad .8) durante la espera y se veía antes de tiempo. */
+.guia svg{overflow:visible}
+.guia :is(.franja-g,.punto-g,.aro-g){transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:no-preference){
+  .js-dibujo .guia li:not(.dibujado) .franja-g{transform:scaleY(0)}
+  .js-dibujo .guia li:not(.dibujado) .trazo-g{clip-path:inset(-12px calc(100% + 12px) -12px -12px)}
+  .js-dibujo .guia li:not(.dibujado) .punto-g{opacity:0}
+  .guia li.dibujado .franja-g{animation:brotar .6s var(--entra) var(--tanda,0s) both}
+  .guia li.dibujado .trazo-g{animation:barrer 1.5s linear calc(var(--tanda,0s) + .45s) both}
+  .guia li.dibujado .punto-g{animation:plantar .5s var(--entra) calc(var(--tanda,0s) + .45s + 1.5s * var(--p,0)) both}
+  .guia li.dibujado .aro-g{animation:latir-aro 1.1s cubic-bezier(.2,.6,.3,1) calc(var(--tanda,0s) + 2.1s) 2 forwards}
+  @keyframes latir-aro{
+    from{opacity:.8;transform:scale(1)}
+    to{opacity:0;transform:scale(3.4)}
+  }
+}
