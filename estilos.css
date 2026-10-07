@@ -3576,3 +3576,18 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
   .cuaderno .ejemplo.grande{padding:16px 12px 12px}
 }
 .cuaderno .leyenda-ej{font-size:14px}
+
+/* La guía de lectura de «Lo que se mide»: tres líneas pequeñas, una al
+   lado de otra; en el móvil, cada una en su renglón con el texto al
+   lado. */
+.guia{list-style:none;padding:0;margin:14px 0 12px;max-width:none;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.guia li{margin:0}
+.guia svg{display:block;width:100%;height:auto}
+.cuaderno .guia p{font-size:15px;line-height:1.4;color:var(--ink-2);margin:8px 0 0}
+.guia b{display:block;font-family:var(--estrecha);font-weight:700;font-size:1.2rem;color:var(--ink);margin-bottom:2px}
+@media (max-width:620px){
+  .guia{grid-template-columns:1fr;gap:14px}
+  .guia li{display:grid;grid-template-columns:46% 1fr;gap:14px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
+  .guia li:last-child{border-bottom:0;padding-bottom:0}
+  .cuaderno .guia p{margin:0}
+}
