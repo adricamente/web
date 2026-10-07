@@ -3481,3 +3481,53 @@ h2{margin-top:var(--seccion)}
 .franja > :first-child,.cinta > :first-child,.idea > :first-child{margin-top:0}
 .tarifa h2{margin-top:24px}
 main > .cinta:last-child{margin-bottom:0}
+
+/* =================================================================
+   15. Fotos con su nota y su flecha (7-10-2026)
+   -----------------------------------------------------------------
+   Lo que funcionó en la portada, en todas las fotos: la foto a un lado
+   y, al otro, una nota corta con una flecha que la señala. En el móvil
+   la foto ya no va centrada con un hueco a cada lado: va a la izquierda
+   y más grande, con la nota a su derecha. En el ordenador la nota va
+   debajo de la foto, con la flecha hacia arriba.
+   ================================================================= */
+.nota-margen{font-size:15px;line-height:1.4;color:var(--accent);font-weight:600;margin:0;max-width:16rem}
+.nota-margen svg{display:block;fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.nota-margen .flecha-arriba{width:46px;height:34px;margin:0 0 4px;transform:scaleY(-1)}
+.nota-margen .flecha-lado{display:none;width:54px;height:30px;margin:0 0 6px}
+.nota-margen small{display:block;font-weight:400;color:var(--ink-2);font-size:14px;margin-top:6px}
+.foto-nota{display:flex;flex-direction:column;gap:12px}
+.foto-nota .nota-margen{max-width:190px}
+.presentacion:has(.retrato.grande) .foto-nota .nota-margen{max-width:230px}
+
+@media (max-width:859px){
+  .nota-margen .flecha-arriba{display:none}
+  .nota-margen .flecha-lado{display:block}
+  .cuaderno .portada > .foto-portada .nota-margen .flecha-lado{display:block}
+  /* La foto a la izquierda, a casi la mitad del ancho; la nota a su
+     derecha, centrada en vertical. */
+  .foto-nota,.cuaderno .portada > .foto-portada{display:grid;grid-template-columns:minmax(0,48%) 1fr;gap:16px;align-items:center}
+  .foto-nota .retrato{width:100%}
+  .foto-nota .nota-margen{max-width:none}
+  .presentacion:has(.foto-nota){justify-items:stretch}
+  .presentacion:has(.foto-nota) .foto-nota{width:100%}
+}
+
+/* El titular de la portada en dos tiempos: lo que se busca, en grande;
+   el resto, debajo y más pequeño. El texto del h1 es el mismo de
+   siempre (para Google no cambia nada) y ocupa menos alto, así que la
+   foto puede ser más grande sin bajar el botón de la primera pantalla. */
+.cuaderno h1 .sub{display:block;font-size:.52em;line-height:1.08;margin-top:8px;font-weight:700;letter-spacing:0}
+@media (max-width:859px){
+  .cuaderno h1{font-size:clamp(2.5rem,11vw,3rem)}
+}
+/* La flecha que toca en cada tamaño, también dentro de la portada
+   (allí .cuaderno .nota-margen svg las mostraba las dos). */
+.cuaderno .nota-margen .flecha-lado{display:none}
+@media (max-width:859px){
+  .cuaderno .nota-margen .flecha-arriba{display:none}
+  .cuaderno .nota-margen .flecha-lado{display:block}
+  /* Foto algo más grande: algo más de la mitad del ancho. */
+  .foto-nota,.cuaderno .portada > .foto-portada{grid-template-columns:minmax(0,54%) 1fr;gap:14px}
+}
+@media (min-width:860px){.cuaderno .portada > h1{max-width:none}}
