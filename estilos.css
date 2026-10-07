@@ -3416,3 +3416,12 @@ main p strong,main figcaption strong,.cuaderno strong{background-size:100% 30%;b
 .cuaderno .confianza{margin-top:8px}
 /* El título de cada paso es un rótulo, no un subrayado. */
 .cuaderno .pasos li > strong:first-child,.pasos li > strong:first-child{background-image:none;padding:0}
+
+/* Las rayas de arriba de cada lista, finas y grises: con las bandas de
+   fondo ya separando secciones, una raya negra de 1,5 px encima de
+   cada lista era un separador de más. Las guías de sistemas de diseño
+   coinciden: primero el espacio, luego el cambio de fondo, y la línea
+   solo dentro de una lista o tabla, nunca de adorno. */
+.filas,.senales,.cuaderno .indice,.cuaderno .tres li{border-top:1px solid var(--line-strong)}
+.llamada{border-top:1px solid var(--line-strong)}
+.cuaderno .franja.marino + .lisa{padding-top:8px}
