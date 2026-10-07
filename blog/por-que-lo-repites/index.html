@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=48">
+  <link rel="stylesheet" href="/estilos.min.css?v=49">
 
 
   <script type="application/ld+json">
@@ -227,6 +227,19 @@
      en las páginas de área, así que medía 120 px en unas y 151 en
      otras —el botón se caía a la fila de abajo— y el visitante veía
      recomponerse lo único que aparece en las veintiséis páginas. -->
+<!-- El acceso de los pacientes a cuenta.adricamente.com. Va en una
+     línea fina ENCIMA de la cabecera y no dentro: la cabecera de
+     escritorio ya va justa en una fila (ver estilos.css, 4.0 bis), y
+     un octavo enlace la partía en dos. Aquí no compite con «Reservar»,
+     que es para quien todavía no viene, y se queda donde todo el mundo
+     busca «entrar»: arriba a la derecha. No se queda pegada al bajar;
+     la cabecera sí. En el móvil no sale: está dentro del menú, y en el
+     pie de todas las páginas. -->
+<div class="acceso-pacientes">
+  <div class="contenedor ancho">
+    <a href="https://cuenta.adricamente.com/" onclick="window.medir&&window.medir('clic_area_pacientes_arriba')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
+  </div>
+</div>
 <div class="franja-cabecera">
   <div class="contenedor ancho">
   <header class="cabecera">
@@ -250,6 +263,8 @@
       <a href="/tarifas/">Tarifas</a>
       <a href="/herramientas/">Herramientas</a>
       <a href="/blog/">Blog</a>
+        <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
+           onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
            href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
       </nav>
@@ -414,9 +429,11 @@
              salía dos veces en este mismo pie, una en cada columna.
              Se queda una, y en el sitio donde tiene sentido: al lado
              de la página de contacto. -->
-        <p style="margin-top:12px">
-          <a href="/reservar/">¿Ya eres paciente? Reserva aquí</a>
-        </p>
+        <p class="titulo-pie" style="margin-top:18px">¿Ya eres paciente?</p>
+        <ul>
+          <li><a href="https://cuenta.adricamente.com/" onclick="window.medir&&window.medir('clic_area_pacientes_pie')">Área de pacientes</a></li>
+          <li><a href="/reservar/">Reservar la próxima sesión</a></li>
+        </ul>
       </div>
     </div>
     <!-- Lo legal y los teléfonos de urgencia estaban aquí en dos

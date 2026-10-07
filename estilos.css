@@ -3620,3 +3620,28 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
     to{opacity:0;transform:scale(3.4)}
   }
 }
+
+/* --- Área de pacientes ------------------------------------------
+   El enlace a cuenta.adricamente.com. Arriba, una línea fina con el
+   enlace a la derecha (solo desde 721 px; en el móvil vive en el
+   menú). Discreto a propósito: quien lo busca ya sabe que está, y
+   quien llega por primera vez no tiene que confundirlo con el botón
+   de reservar, que sigue siendo la única acción en azul. */
+.acceso-pacientes{display:none}
+.ico-pac{flex:0 0 auto}
+@media (min-width:721px){
+  .acceso-pacientes{display:block;border-bottom:1px solid var(--line)}
+  .acceso-pacientes .contenedor{display:flex;justify-content:flex-end}
+  .acceso-pacientes a{
+    display:inline-flex;align-items:center;gap:7px;
+    min-height:32px;padding:4px 0;
+    font-family:"Source Sans 3","Source reserva",sans-serif;
+    font-size:14px;font-weight:600;color:var(--ink-2);text-decoration:none;
+  }
+  .acceso-pacientes a:hover{color:var(--accent-2);text-decoration:underline}
+}
+@media (max-width:920px){
+  .nav-movil > nav .pacientes-menu{
+    gap:9px;margin-top:6px;border-top:1px solid var(--line);padding-top:14px;
+  }
+}
