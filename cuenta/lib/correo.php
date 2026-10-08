@@ -151,16 +151,37 @@ function adr_correo_bienvenida(array $ADR, string $a, string $enlace, string $no
    Lo pide el Mac la víspera de una sesión sin justificante. Explica
    dónde se sube, porque quien no lo ha subido a menudo es quien no
    sabe que se puede. Sin fecha ni hora: eso está en su cuenta. */
-function adr_correo_justificante(array $ADR, string $a): bool {
+function adr_correo_justificante(array $ADR, string $a, bool $hay_pendiente = false,
+                                 string $limite = ''): bool {
     $sitio = $ADR['sitio'];
+    /* Con `limite` (lo calcula el Mac: 24 h antes de la cita), el correo
+       dice hasta cuándo: «como muy tarde el jueves 14 de octubre a las
+       18:00». Sin él, el texto de siempre. */
+    $plazo = '';
+    if ($limite !== '' && ($ts = strtotime($limite)) !== false) {
+        $dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        $meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto',
+                  'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        $d = new DateTime('@' . $ts); $d->setTimezone(new DateTimeZone('Europe/Madrid'));
+        $plazo = $dias[(int)$d->format('w')] . ' ' . $d->format('j') . ' de '
+               . $meses[(int)$d->format('n') - 1] . ' a las ' . $d->format('H:i');
+    }
+    $cuerpo_t = $plazo
+        ? "Te recuerdo que la transferencia de tu próxima sesión hay que hacerla como muy tarde el $plazo, y subir el justificante en tu cuenta.\n\n"
+        : "Todavía no me ha llegado el justificante de la transferencia de tu próxima sesión.\n\n";
+    $cuerpo_h = '<p>' . htmlspecialchars(trim($cuerpo_t), ENT_QUOTES, 'UTF-8') . '</p>';
+    /* Si además tiene algo por hacer en su cuenta, se dice aquí: un
+       correo en vez de dos el mismo día. */
+    $extra_t = $hay_pendiente ? "Ya que entras: tienes también algo pendiente en tu cuenta, en «Tareas».\n\n" : '';
+    $extra_h = $hay_pendiente ? '<p>Ya que entras: tienes también algo pendiente en tu cuenta, en «Tareas».</p>' : '';
     $texto = "Hola:\n\n"
-        . "Todavía no me ha llegado el justificante de la transferencia de tu "
-        . "próxima sesión.\n\n"
+        . $cuerpo_t
         . "Puedes subirlo desde tu cuenta, en un minuto:\n"
         . "1. Entra en $sitio con tu correo y tu contraseña.\n"
         . "2. En Inicio, busca «Adjuntar transferencia».\n"
         . "3. Pulsa «Elegir archivo», elige la foto o el PDF (vale una captura "
         . "de pantalla de la app del banco) y pulsa «Enviar justificante».\n\n"
+        . $extra_t
         . "Si ya lo has hecho o has pagado de otra forma, no hagas caso a este "
         . "correo.\n\n"
         . "Un saludo,\nAdrián\n";
@@ -168,16 +189,26 @@ function adr_correo_justificante(array $ADR, string $a): bool {
     $html = '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;'
         . 'font-size:15px;line-height:1.55;color:#25231F;max-width:560px">'
         . '<p>Hola:</p>'
-        . '<p>Todavía no me ha llegado el justificante de la transferencia de tu próxima sesión.</p>'
+        . $cuerpo_h
         . '<p>Puedes subirlo desde tu cuenta, en un minuto:</p>'
         . '<ol style="padding-left:20px">'
         . '<li>Entra en <a href="' . $e($sitio) . '">tu cuenta</a> con tu correo y tu contraseña.</li>'
         . '<li>En Inicio, busca «Adjuntar transferencia».</li>'
         . '<li>Pulsa «Elegir archivo», elige la foto o el PDF (vale una captura de pantalla de la app del banco) y pulsa «Enviar justificante».</li>'
         . '</ol>'
+        . $extra_h
         . '<p style="font-size:13.5px;color:#5c5a55">Si ya lo has hecho o has pagado de otra forma, no hagas caso a este correo.</p>'
         . '<p>Un saludo,<br>Adrián</p></div>';
     return adr_manda($ADR, $a, 'Tu justificante de pago', $texto, $html);
+}
+
+/** Por dónde saldría un correo: 'prueba' (a un fichero, solo en las
+ *  pruebas), 'brevo' o 'mail' (el del alojamiento, sin firma propia:
+ *  con un SPF que solo autoriza a Google, lo más probable es que acabe
+ *  en spam o ni llegue). */
+function adr_via(array $ADR): string {
+    if (!empty($ADR['correo_carpeta'])) return 'prueba';
+    return empty($ADR['brevo']) ? 'mail' : 'brevo';
 }
 
 function adr_manda(array $ADR, string $a, string $asunto,

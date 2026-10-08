@@ -896,16 +896,27 @@ case 'alta': {
        la consola. Nunca por defecto: mandarle una cuenta a quien dijo
        «me lo pienso» sería insistir. El nombre es solo el de pila y
        solo para el saludo: no se guarda. */
-    $enviado = null;
+    $enviado = null; $via = null; $motivo = null;
     if (!empty($in['enviar'])) {
         require_once __DIR__ . '/lib/correo.php';
-        $nombre = trim((string)($in['nombre'] ?? ''));
-        $nombre = preg_match('/^\p{L}{2,30}$/u', $nombre) ? $nombre : '';
-        $enviado = adr_correo_bienvenida($ADR, $correo, $enlace, $nombre);
-        adr_apunta($db, $cod, $enviado ? 'correo de bienvenida' : 'correo de bienvenida FALLIDO', $enviado);
+        $via = adr_via($ADR);
+        if ($via === 'mail') {
+            /* Sin Brevo NO se manda: por el correo del alojamiento, con
+               remite hola@ y un SPF que solo autoriza a Google, lo más
+               probable es que caiga en spam y que `mail()` diga «ok» de
+               todas formas. Mejor contestar que no ha salido, para que
+               el Mac lo mande por Gmail o se lo deje a Adrián. */
+            $enviado = false; $motivo = 'sin_brevo';
+        } else {
+            $nombre = trim((string)($in['nombre'] ?? ''));
+            $nombre = preg_match('/^\p{L}{2,30}$/u', $nombre) ? $nombre : '';
+            $enviado = adr_correo_bienvenida($ADR, $correo, $enlace, $nombre);
+            if (!$enviado) $motivo = 'fallo_envio';
+        }
+        adr_apunta($db, $cod, $enviado ? 'correo de bienvenida' : 'correo de bienvenida NO enviado', $enviado);
     }
-    adr_json(['ok' => true, 'enlace' => $enlace, 'enviado' => $enviado,
-              'caduca' => date('c', time() + 24 * 7 * 3600)]);
+    adr_json(['ok' => true, 'enlace' => $enlace, 'enviado' => $enviado, 'via' => $via,
+              'motivo' => $motivo, 'caduca' => date('c', time() + 24 * 7 * 3600)]);
 }
 
 /* Un recordatorio que decide el Mac.
@@ -929,9 +940,21 @@ case 'recordar': {
         adr_json(['ok' => true, 'enviado' => false, 'motivo' => 'ya se le recordó hace menos de 20 horas']);
     }
     require_once __DIR__ . '/lib/correo.php';
-    $ok = adr_correo_justificante($ADR, $p['correo']);
+    $via = adr_via($ADR);
+    if ($via === 'mail') {
+        adr_freno_limpia($db, 'rec:' . $motivo . ':' . $cod);
+        adr_json(['ok' => true, 'enviado' => false, 'via' => $via, 'motivo' => 'sin_brevo']);
+    }
+    /* Si tiene algo pendiente, este correo lo dice también, y cuenta
+       como el aviso del día: así no le llegan dos. */
+    $t = $db->prepare("SELECT COUNT(*) c FROM tareas WHERE cod = ? AND hecho IS NULL
+                       AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)");
+    $t->execute([$cod, adr_hoy()]);
+    $pendiente = (int)$t->fetch()['c'] > 0;
+    $ok = adr_correo_justificante($ADR, $p['correo'], $pendiente, (string)($in['limite'] ?? ''));
+    if ($ok) $db->prepare('UPDATE pacientes SET ultimo_aviso = ? WHERE cod = ?')->execute([adr_ahora(), $cod]);
     adr_apunta($db, $cod, 'recordatorio de justificante', $ok);
-    adr_json(['ok' => true, 'enviado' => $ok]);
+    adr_json(['ok' => true, 'enviado' => $ok, 'via' => $via, 'con_pendiente' => $pendiente]);
 }
 
 /* Todo lo que la consola del Mac necesita para pintar su pantalla, en

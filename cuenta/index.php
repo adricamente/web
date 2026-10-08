@@ -748,7 +748,7 @@ async function pintaJustificantes(lista, v) {
         if (r.ok && r.j.cifrado) d = abrirDelMac(r.j.cifrado, miPublica, privada);
       } catch (_) {}
     }
-    out.push({ creado: j.creado, para: d && (d.para_sesion || d.cita) ? String(d.para_sesion || d.cita) : null,
+    out.push({ creado: j.creado, para: d && (d.cita || d.para_sesion) ? String(d.cita || d.para_sesion) : null,
                nombre: d && d.nombre ? String(d.nombre) : null });
   }
   JUSTIS = out;
@@ -841,6 +841,11 @@ async function reducirFoto(f) {
   cv.getContext('2d').drawImage(bm, 0, 0, cv.width, cv.height);
   return await new Promise((ok, mal) => cv.toBlob(b => b ? ok(b) : mal(new Error('no')), 'image/jpeg', 0.85));
 }
+function locMediodia(dia) {
+  const d = new Date(dia + 'T12:00:00'), dd = (n) => (n < 10 ? '0' : '') + n;
+  let off = -d.getTimezoneOffset(); const sg = off >= 0 ? '+' : '-'; off = Math.abs(off);
+  return dia + 'T12:00:00' + sg + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
+}
 function aBase64(blob) {
   return new Promise((ok, mal) => {
     const r = new FileReader();
@@ -879,9 +884,14 @@ $('pago-enviar').addEventListener('click', async () => {
     const contenido = await aBase64(blob);
     msg.textContent = 'Enviando…';
     const ahora = ahoraLocal();
+    /* Si solo se eligió el día, `para_sesion` es ese día a mediodía, con
+       su desfase: el Mac lo casa por la fecha local. El archivo va en
+       `datos` (lo que lee la ingesta del Mac); los nombres de los dos
+       contratos van duplicados porque son cortos. */
+    if (!para && cita) para = locMediodia(cita);
     const cifrado = sellarHaciaElMac({ v: 1, tipo: 'justificante', cod_web: miCod, origen: 'cuenta',
-                                       subido_en: ahora, cita, para_sesion: para,
-                                       nombre_archivo: nombre, mime, contenido_b64: contenido },
+                                       enviado_en: ahora, subido_en: ahora, cita, para_sesion: para,
+                                       nombre, nombre_archivo: nombre, mime, datos: contenido },
                                      macPublica);
     const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_justificante', cita, para_sesion: para, nombre,
                                      enviado_en: ahora }, miPublica);
