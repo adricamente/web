@@ -919,6 +919,24 @@ case 'alta': {
               'motivo' => $motivo, 'caduca' => date('c', time() + 24 * 7 * 3600)]);
 }
 
+/* Cerrar en la cuenta lo que se ha hecho en sesión.
+   -------------------------------------------------------------------
+   Adrián le lee el PHQ-9 en la sesión y apunta sus respuestas en la
+   consola: la medida va directa al Mac, sin pasar por aquí. Lo único
+   que hace falta aquí es que el PHQ-9 que tenía pendiente en su cuenta
+   deje de estarlo — si no, lo rellenaría otra vez esa noche. Queda como
+   hecho, con la fecha de hoy, en «Lo que has completado». */
+case 'cerrar_tarea': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $titulo = trim((string)($in['titulo'] ?? ''));
+    if ($cod === '' || $titulo === '') adr_json(['error' => 'faltan cod o titulo'], 400);
+    $q = $db->prepare("UPDATE tareas SET hecho = ? WHERE cod = ? AND titulo = ? AND hecho IS NULL
+                       AND tipo = 'cuestionario'");
+    $q->execute([adr_ahora(), $cod, $titulo]);
+    adr_json(['ok' => true, 'cerradas' => $q->rowCount()]);
+}
+
 /* Un recordatorio que decide el Mac.
    -------------------------------------------------------------------
    El servidor no sabe cuándo es la sesión de nadie (la agenda va
