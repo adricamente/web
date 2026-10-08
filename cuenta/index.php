@@ -177,17 +177,26 @@ $cuerpo .= <<<'HTML'
          puede abrir. Si la próxima sesión es en menos de 48 horas y no
          hay justificante para ella, la caja se marca. -->
     <section class="caja bloque pago" id="c-pago" aria-labelledby="t-pago">
-      <h2 id="t-pago">Justificante de pago</h2>
-      <p id="pago-estado">Si pagas por transferencia, sube aquí la foto o el PDF del justificante antes de la sesión.</p>
+      <h2 id="t-pago">Adjuntar transferencia</h2>
+      <p id="pago-estado">Si pagas por transferencia, sube aquí la foto o el PDF del justificante.</p>
+      <div class="campo">
+        <label for="pago-cita">¿De qué sesión es?</label>
+        <select id="pago-cita">
+          <option value="">No lo sé (la última que tenga pendiente)</option>
+          <option value="otra">Otra sesión: elijo la fecha</option>
+        </select>
+        <input type="date" id="pago-fecha" hidden aria-label="Fecha de la sesión que pagas">
+      </div>
       <div class="campo elegir">
         <input type="file" id="pago-fichero" class="oculto-visual" aria-describedby="pago-pista"
                accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.heic,.heif,.webp">
         <label for="pago-fichero" class="boton suave">Elegir archivo</label>
         <span id="pago-nombre" class="apunte">Ninguno elegido</span>
-        <p class="pista" id="pago-pista">Foto o PDF. Vale una captura de pantalla de la app del banco. Hasta 8 MB.</p>
+        <p class="pista" id="pago-pista">JPG, PNG, HEIC, WEBP o PDF. Vale una captura de pantalla de la app del banco. Hasta 15 MB.</p>
       </div>
       <p><button class="boton" id="pago-enviar" type="button">Enviar justificante</button>
       <span class="apunte" id="pago-msg" role="status"></span></p>
+      <h3 class="sub-pago" id="t-pago-lista" hidden>Justificantes enviados</h3>
       <div id="pago-lista"></div>
     </section>
 
@@ -739,11 +748,12 @@ async function pintaJustificantes(lista, v) {
         if (r.ok && r.j.cifrado) d = abrirDelMac(r.j.cifrado, miPublica, privada);
       } catch (_) {}
     }
-    out.push({ creado: j.creado, para: d && d.para_sesion ? String(d.para_sesion) : null,
+    out.push({ creado: j.creado, para: d && (d.para_sesion || d.cita) ? String(d.para_sesion || d.cita) : null,
                nombre: d && d.nombre ? String(d.nombre) : null });
   }
   JUSTIS = out;
   const c = $('pago-lista'); c.innerHTML = '';
+  $('t-pago-lista').hidden = !out.length;
   out.slice(0, 6).forEach(j => {
     const pie = 'Enviado el ' + fecha(j.creado) +
       (j.para ? ' · para la sesión del ' + fecha(j.para) : '');
@@ -751,16 +761,48 @@ async function pintaJustificantes(lista, v) {
   });
   estadoPago();
 }
+/* La misma cita: misma hora exacta si se guardó la hora, o el mismo día
+   (en Madrid) si solo se eligió la fecha. */
+function diaMadrid(x) { return new Date(x).toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }); }
 function mismaCita(a, b) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(a) || /^\d{4}-\d{2}-\d{2}$/.test(b)) {
+    const da = /^\d{4}-\d{2}-\d{2}$/.test(a) ? a : diaMadrid(a);
+    const db = /^\d{4}-\d{2}-\d{2}$/.test(b) ? b : diaMadrid(b);
+    return da === db;
+  }
   const x = new Date(a), y = new Date(b);
   return !isNaN(x) && !isNaN(y) && Math.abs(x - y) < 60000;
 }
+/* El desplegable de «¿De qué sesión es?»: la próxima, si la hay,
+   marcada; «no lo sé» (el Mac la casa con la última pendiente); u otra
+   fecha de los últimos 60 días. */
+function pintaCitas() {
+  const sel = $('pago-cita');
+  [...sel.querySelectorAll('option[data-proxima]')].forEach(o => o.remove());
+  if (AGENDA && AGENDA.proxima) {
+    const t = new Date(AGENDA.proxima);
+    const o = document.createElement('option');
+    o.value = diaMadrid(t); o.dataset.proxima = AGENDA.proxima;
+    o.textContent = 'Mi próxima sesión: ' + DIAS[t.getDay()] + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()];
+    sel.insertBefore(o, sel.firstChild);
+    sel.value = o.value;
+  }
+  const hoy = new Date(), f = $('pago-fecha');
+  f.max = diaMadrid(new Date(hoy.getTime() + 60 * 864e5));
+  f.min = diaMadrid(new Date(hoy.getTime() - 60 * 864e5));
+  f.hidden = sel.value !== 'otra';
+}
+$('pago-cita').addEventListener('change', () => {
+  $('pago-fecha').hidden = $('pago-cita').value !== 'otra';
+  if (!$('pago-fecha').hidden) $('pago-fecha').focus();
+});
 function estadoPago() {
   const caja = $('c-pago'), e = $('pago-estado');
   caja.classList.remove('falta');
   $('ir-pago').hidden = true;
+  pintaCitas();
   if (!AGENDA || !AGENDA.proxima) {
-    e.textContent = 'Si pagas por transferencia, sube aquí la foto o el PDF del justificante antes de la sesión.';
+    e.textContent = 'Si pagas por transferencia, sube aquí la foto o el PDF del justificante.';
     return;
   }
   const t = new Date(AGENDA.proxima);
@@ -821,15 +863,28 @@ $('pago-enviar').addEventListener('click', async () => {
         nombre = nombre.replace(/\.[^.]+$/, '') + '.jpg';
       } catch (_) { blob = f; }
     }
-    if (blob.size > 8 * 1024 * 1024) throw new Error('El archivo pasa de 8 MB. Prueba con una captura de pantalla.');
-    const datos = await aBase64(blob);
-    const para = AGENDA && AGENDA.proxima ? AGENDA.proxima : null;
+    if (blob.size > 15 * 1024 * 1024) throw new Error('El archivo pasa de 15 MB. Prueba con una captura de pantalla.');
+    /* De qué sesión es: la próxima (con su hora), una fecha elegida o
+       ninguna (el Mac la casa con la última pendiente). */
+    const sel = $('pago-cita');
+    let cita = null, para = null;
+    if (sel.value === 'otra') {
+      cita = /^\d{4}-\d{2}-\d{2}$/.test($('pago-fecha').value) ? $('pago-fecha').value : null;
+      if (!cita) throw new Error('Elige la fecha de la sesión, o «No lo sé».');
+    } else if (sel.value) {
+      cita = sel.value;
+      const o = sel.selectedOptions[0];
+      para = o && o.dataset.proxima ? o.dataset.proxima : null;
+    }
+    const contenido = await aBase64(blob);
     msg.textContent = 'Enviando…';
-    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'justificante', cod_web: miCod, para_sesion: para,
-                                       nombre, mime, datos, enviado_en: ahoraLocal(), origen: 'cuenta' },
+    const ahora = ahoraLocal();
+    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'justificante', cod_web: miCod, origen: 'cuenta',
+                                       subido_en: ahora, cita, para_sesion: para,
+                                       nombre_archivo: nombre, mime, contenido_b64: contenido },
                                      macPublica);
-    const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_justificante', para_sesion: para, nombre,
-                                     enviado_en: ahoraLocal() }, miPublica);
+    const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_justificante', cita, para_sesion: para, nombre,
+                                     enviado_en: ahora }, miPublica);
     const r = await api('justificante', { cifrado, copia });
     if (!r.ok) throw new Error((r.j && r.j.error) ? 'No se ha podido enviar: ' + r.j.error + '.' : 'No se ha podido enviar.');
     $('pago-fichero').value = '';

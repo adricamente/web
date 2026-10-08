@@ -472,8 +472,9 @@ case 'justificante': {
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
     $cifrado = adr_deb64($in['cifrado'] ?? null);
     if (!$cifrado) adr_json(['error' => 'justificante no válido'], 400);
-    if (strlen($cifrado) > 12 * 1024 * 1024) {
-        adr_json(['error' => 'el archivo es demasiado grande (máximo 8 MB)'], 413);
+    /* 15 MB de archivo son unos 20 MB sellados (va en base64 dentro). */
+    if (strlen($cifrado) > 21 * 1024 * 1024) {
+        adr_json(['error' => 'el archivo es demasiado grande (máximo 15 MB)'], 413);
     }
     $copia = !empty($in['copia']) ? adr_deb64($in['copia']) : null;
     if ($copia !== null && (!$copia || strlen($copia) > 4096)) adr_json(['error' => 'copia no válida'], 400);
@@ -1035,6 +1036,10 @@ case 'mac_publica': {
    CLARO: el PHQ-9 es público y el mismo para todo el mundo. Lo que se
    sella son las respuestas. */
 case 'asignar': {
+    /* `avisar: false`: el Mac ya le manda su propio recordatorio de la
+       víspera (desde hola@, con la hora y «tienes algo en tu cuenta»).
+       Sin esto, el CORE-10 previo a la sesión llegaba con dos correos
+       el mismo día. Por defecto se sigue avisando. */
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $cod = (string)($in['cod'] ?? '');
     $titulo = trim(preg_replace('/\s+/u', ' ', (string)($in['titulo'] ?? '')));
@@ -1060,7 +1065,7 @@ case 'asignar': {
                       json_encode($plantilla, JSON_UNESCAPED_UNICODE),
                       adr_ahora(), $in['caduca'] ?? null]);
         $id = (int)$db->lastInsertId();
-        adr_avisa($db, $ADR, $cod);
+        if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
         adr_json(['ok' => true, 'id' => $id]);
     }
 
@@ -1094,7 +1099,7 @@ case 'asignar': {
                   json_encode($plantilla, JSON_UNESCAPED_UNICODE),
                   adr_ahora(), $in['caduca'] ?? null]);
     $id = (int)$db->lastInsertId();
-    adr_avisa($db, $ADR, $cod);
+    if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
     adr_json(['ok' => true, 'id' => $id]);
 }
 

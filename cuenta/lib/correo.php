@@ -96,8 +96,8 @@ function adr_correo_bienvenida(array $ADR, string $a, string $enlace, string $no
         . "- Tu próxima sesión: el día, la hora y el botón de la videollamada, "
         . "que se activa 10 minutos antes.\n"
         . "- Justificante de pago: si pagas por transferencia, sube ahí la foto o "
-        . "el PDF del justificante antes de la sesión (en Inicio, «Justificante "
-        . "de pago»).\n"
+        . "el PDF del justificante antes de la sesión (en Inicio, «Adjuntar "
+        . "transferencia»).\n"
         . "- Tu evolución y lo que has completado, con sus fechas.\n"
         . "- Mensajes: para lo que quieras contarme entre sesiones. Los leo en mi "
         . "horario de consulta, no al momento.\n\n"
@@ -134,7 +134,7 @@ function adr_correo_bienvenida(array $ADR, string $a, string $enlace, string $no
         . '<ul style="padding-left:20px;margin:0">'
         . '<li><strong>Tareas:</strong> lo que te pida antes de cada sesión (documentos para leer y firmar, formularios breves). Se rellena ahí mismo y se envía con un botón. No hace falta mandarme nada por correo.</li>'
         . '<li><strong>Tu próxima sesión:</strong> el día, la hora y el botón de la videollamada, que se activa 10 minutos antes.</li>'
-        . '<li><strong>Justificante de pago:</strong> si pagas por transferencia, sube ahí la foto o el PDF del justificante antes de la sesión (en Inicio, «Justificante de pago»).</li>'
+        . '<li><strong>Justificante de pago:</strong> si pagas por transferencia, sube ahí la foto o el PDF del justificante antes de la sesión (en Inicio, «Adjuntar transferencia»).</li>'
         . '<li><strong>Tu evolución</strong> y lo que has completado, con sus fechas.</li>'
         . '<li><strong>Mensajes:</strong> para lo que quieras contarme entre sesiones. Los leo en mi horario de consulta, no al momento.</li>'
         . '</ul>'
@@ -158,7 +158,7 @@ function adr_correo_justificante(array $ADR, string $a): bool {
         . "próxima sesión.\n\n"
         . "Puedes subirlo desde tu cuenta, en un minuto:\n"
         . "1. Entra en $sitio con tu correo y tu contraseña.\n"
-        . "2. En Inicio, busca «Justificante de pago».\n"
+        . "2. En Inicio, busca «Adjuntar transferencia».\n"
         . "3. Pulsa «Elegir archivo», elige la foto o el PDF (vale una captura "
         . "de pantalla de la app del banco) y pulsa «Enviar justificante».\n\n"
         . "Si ya lo has hecho o has pagado de otra forma, no hagas caso a este "
@@ -172,7 +172,7 @@ function adr_correo_justificante(array $ADR, string $a): bool {
         . '<p>Puedes subirlo desde tu cuenta, en un minuto:</p>'
         . '<ol style="padding-left:20px">'
         . '<li>Entra en <a href="' . $e($sitio) . '">tu cuenta</a> con tu correo y tu contraseña.</li>'
-        . '<li>En Inicio, busca «Justificante de pago».</li>'
+        . '<li>En Inicio, busca «Adjuntar transferencia».</li>'
         . '<li>Pulsa «Elegir archivo», elige la foto o el PDF (vale una captura de pantalla de la app del banco) y pulsa «Enviar justificante».</li>'
         . '</ol>'
         . '<p style="font-size:13.5px;color:#5c5a55">Si ya lo has hecho o has pagado de otra forma, no hagas caso a este correo.</p>'

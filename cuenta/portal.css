@@ -580,3 +580,7 @@ h3{font-weight:700}
 .caja.pago #pago-fichero:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
 .tarjeta-ir.aviso-pago{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--aviso-soft);border-top-color:#7B4D13}
 .tarjeta-ir.aviso-pago .resumen{color:#5C390E}
+
+.caja.pago select,.caja.pago input[type=date]{max-width:100%}
+.caja.pago input[type=date]{margin-top:8px}
+.caja.pago .sub-pago{font-size:1.2rem;margin:22px 0 4px}
