@@ -324,8 +324,8 @@ case 'mios': {
                                  AND c.direccion = 2 ORDER BY c.id DESC LIMIT 1) AS copia_v
                        FROM sobres s
                        WHERE s.cod = ? AND s.direccion = 2
-                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia')
-                       ORDER BY s.id DESC LIMIT 200");
+                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia','historial')
+                       ORDER BY s.creado DESC, s.id DESC LIMIT 200");
     $q->execute([$cod]);
 
     /* El progreso va aparte: no es una fila de una lista, es una
@@ -342,6 +342,27 @@ case 'mios': {
                         ORDER BY id DESC LIMIT 1");
     $ag->execute([$cod]);
     $agenda = $ag->fetch() ?: null;
+    /* Lo que hizo antes de tener cuenta (en papel, por correo…): una
+       lista que publica el Mac, sellada y sin puntuaciones. Una y la
+       última, como el progreso. Se mezcla en «Lo que has completado». */
+    $hi = $db->prepare("SELECT id, para_v FROM sobres
+                        WHERE cod = ? AND direccion = 2 AND clase = 'historial'
+                        ORDER BY id DESC LIMIT 1");
+    $hi->execute([$cod]);
+    $historial = $hi->fetch() ?: null;
+    /* Sus justificantes de pago. El servidor sabe CUÁNDO subió uno, no
+       qué hay dentro: el justificante va sellado al Mac. Para que ella
+       vea a qué sesión corresponde cada uno, se guarda además una copia
+       mínima sellada a SU clave (sin el fichero), como en los mensajes. */
+    $ju = $db->prepare("SELECT s.id, s.creado,
+                               (SELECT c.id FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
+                                  AND c.clase = 'copia' ORDER BY c.id DESC LIMIT 1) AS copia_id,
+                               (SELECT c.para_v FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
+                                  AND c.clase = 'copia' ORDER BY c.id DESC LIMIT 1) AS copia_v
+                        FROM sobres s
+                        WHERE s.cod = ? AND s.direccion = 1 AND s.clase = 'justificante'
+                        ORDER BY s.id DESC LIMIT 24");
+    $ju->execute([$cod]);
     /* Se devuelve también su propia clave pública: crypto_box_seal_open
        la necesita, y el navegador no la tiene guardada en ningún sitio
        —lo que guarda es la privada envuelta—. No es un secreto: es
@@ -405,6 +426,9 @@ case 'mios': {
                                         'para_v' => (int)$grafica['para_v']] : null,
               'agenda' => $agenda ? ['id' => (int)$agenda['id'],
                                      'para_v' => (int)$agenda['para_v']] : null,
+              'historial' => $historial ? ['id' => (int)$historial['id'],
+                                           'para_v' => (int)$historial['para_v']] : null,
+              'justificantes' => $ju->fetchAll(),
               'documentos' => $q->fetchAll(), 'tareas' => $tareas,
               'hechas' => $h->fetchAll(),
               'mensajes' => array_reverse($ms->fetchAll())]);
@@ -430,6 +454,42 @@ case 'subir': {
     if (!adr_freno($db, 'sub:' . $cod, 40, 3600)) adr_json(['error' => 'despacio'], 429);
     $db->prepare('INSERT INTO sobres (cod, direccion, cifrado, creado) VALUES (?,1,?,?)')
        ->execute([$cod, $cifrado, adr_ahora()]);
+    adr_json(['ok' => true]);
+}
+
+/* --- El justificante de pago ----------------------------------------
+   Una foto o un PDF de la transferencia, sellado en su navegador a la
+   clave del Mac: el servidor guarda algo que no puede abrir, como todo
+   lo demás. Va aparte de `subir` por el tamaño: un cuestionario son
+   500 bytes y una foto, aunque el navegador la reduzca antes, puede
+   llegar a un par de megas; un PDF escaneado, a más.
+
+   La copia que acompaña es mínima —a qué sesión es, cómo se llamaba el
+   fichero, cuándo— y va sellada a SU clave, para que en su cuenta vea
+   «enviado el…» sin que el servidor sepa de qué sesión se trata. */
+case 'justificante': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $cifrado = adr_deb64($in['cifrado'] ?? null);
+    if (!$cifrado) adr_json(['error' => 'justificante no válido'], 400);
+    if (strlen($cifrado) > 12 * 1024 * 1024) {
+        adr_json(['error' => 'el archivo es demasiado grande (máximo 8 MB)'], 413);
+    }
+    $copia = !empty($in['copia']) ? adr_deb64($in['copia']) : null;
+    if ($copia !== null && (!$copia || strlen($copia) > 4096)) adr_json(['error' => 'copia no válida'], 400);
+    if (!adr_freno($db, 'just:' . $cod, 12, 86400)) adr_json(['error' => 'despacio'], 429);
+    $db->prepare("INSERT INTO sobres (cod, direccion, cifrado, creado, clase)
+                  VALUES (?,1,?,?,'justificante')")
+       ->execute([$cod, $cifrado, adr_ahora()]);
+    $jid = (int)$db->lastInsertId();
+    if ($copia) {
+        $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+        $v->execute([$cod]);
+        $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase, copia_de)
+                      VALUES (?,2,'Mi justificante',?,?,?,'copia',?)")
+           ->execute([$cod, $copia, (int)$v->fetch()['publica_v'], adr_ahora(), $jid]);
+    }
+    adr_apunta($db, $cod, 'justificante de pago');
     adr_json(['ok' => true]);
 }
 
@@ -545,11 +605,17 @@ case 'recoger': {
     adr_vencen($db, $ADR);
     adr_recuerda($db, $ADR);
     adr_limpia_altas($db);
-    $q = $db->query('SELECT id, cod, cifrado, creado FROM sobres
+    /* Con los justificantes (fotos y PDF de varios megas) cincuenta
+       sobres pueden ser cientos de megas en una sola respuesta. Se corta
+       por tamaño: lo que no quepa sale en la pasada siguiente, cinco
+       minutos después. Siempre sale al menos uno. */
+    $q = $db->query('SELECT id, cod, cifrado, creado, clase FROM sobres
                      WHERE direccion = 1 AND recogido IS NULL ORDER BY id LIMIT 50');
-    $out = [];
+    $out = []; $bytes = 0;
     foreach ($q->fetchAll() as $s) {
-        $out[] = ['id' => (int)$s['id'], 'cod' => $s['cod'],
+        $bytes += strlen($s['cifrado']);
+        if ($out && $bytes > 20 * 1024 * 1024) break;
+        $out[] = ['id' => (int)$s['id'], 'cod' => $s['cod'], 'clase' => $s['clase'],
                   'creado' => $s['creado'], 'cifrado' => adr_b64($s['cifrado'])];
     }
     adr_json(['sobres' => $out]);
@@ -650,7 +716,20 @@ case 'publicar': {
     }
 
     $clase = (string)($in['clase'] ?? 'documento');
-    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda'], true)) $clase = 'documento';
+    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial'], true)) $clase = 'documento';
+
+    /* Lo de antes del portal (pacientes que llevan meses): el Mac lo
+       publica con `atrasado` y la fecha en que pasó de verdad. Así sale
+       ordenado donde le toca y NO avisa: diecinueve correos de golpe a
+       quien acaba de activar la cuenta serían diecinueve sustos.
+       `firmado` (AAAA-MM-DD) es para el consentimiento firmado en papel:
+       sale en «Documentos» como firmado, igual que si lo hubiera firmado
+       aquí, y no se le pide firmarlo otra vez. */
+    $atrasado = !empty($in['atrasado']);
+    $fecha = (string)($in['fecha'] ?? '');
+    $creado = ($atrasado && preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) ? $fecha . 'T12:00:00' : adr_ahora();
+    $firmado = (string)($in['firmado'] ?? '');
+    $firmado = preg_match('/^\d{4}-\d{2}-\d{2}$/', $firmado) ? $firmado . 'T12:00:00' : null;
 
     /* El progreso es UNO y el último. No es un documento que se
        colecciona: es una foto de cómo va, y tener cinco fotos viejas en
@@ -658,20 +737,20 @@ case 'publicar': {
        nuevo — y se borra de verdad, porque el contenido que sustituye
        es el mismo dato desactualizado. */
     /* La agenda igual: la próxima sesión es una sola. */
-    if ($clase === 'progreso' || $clase === 'agenda') {
+    if ($clase === 'progreso' || $clase === 'agenda' || $clase === 'historial') {
         $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = ?")
            ->execute([$cod, $clase]);
     }
 
     $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase,
-                                    requiere_firma)
-                  VALUES (?,2,?,?,?,?,?,?)')
-       ->execute([$cod, $titulo, $cifrado, $para_v, adr_ahora(), $clase,
-                  (int)!empty($in['requiere_firma'])]);
+                                    requiere_firma, firmado)
+                  VALUES (?,2,?,?,?,?,?,?,?)')
+       ->execute([$cod, $titulo, $cifrado, $para_v, $creado, $clase,
+                  (int)(!empty($in['requiere_firma']) && !$firmado), $firmado]);
     /* La gráfica no se avisa: se republica cada vez que él recoge algo
        y avisaría cada dos por tres de algo que el paciente no ha
        pedido. Lo demás sí. */
-    if ($clase !== 'progreso' && $clase !== 'agenda') adr_avisa($db, $ADR, $cod);
+    if (!in_array($clase, ['progreso', 'agenda', 'historial'], true) && !$atrasado) adr_avisa($db, $ADR, $cod);
     adr_json(['ok' => true]);
 }
 
@@ -809,8 +888,49 @@ case 'alta': {
     /* Ficha nueva siempre, también si la anterior había caducado: el
        enlace que devuelve es válido 7 días desde ahora. */
     $papel = adr_ficha($db, $cod, 'alta', 24 * 7);
-    adr_json(['ok' => true, 'enlace' => $ADR['sitio'] . '/activar.php?p=' . $papel,
+    $enlace = $ADR['sitio'] . '/activar.php?p=' . $papel;
+    /* El correo de bienvenida, solo si el Mac lo pide (`enviar`). Lo
+       pide cuando la persona ha decidido empezar —ha reservado una
+       sesión normal, no la informativa— o cuando Adrián lo manda desde
+       la consola. Nunca por defecto: mandarle una cuenta a quien dijo
+       «me lo pienso» sería insistir. El nombre es solo el de pila y
+       solo para el saludo: no se guarda. */
+    $enviado = null;
+    if (!empty($in['enviar'])) {
+        require_once __DIR__ . '/lib/correo.php';
+        $nombre = trim((string)($in['nombre'] ?? ''));
+        $nombre = preg_match('/^\p{L}{2,30}$/u', $nombre) ? $nombre : '';
+        $enviado = adr_correo_bienvenida($ADR, $correo, $enlace, $nombre);
+        adr_apunta($db, $cod, $enviado ? 'correo de bienvenida' : 'correo de bienvenida FALLIDO', $enviado);
+    }
+    adr_json(['ok' => true, 'enlace' => $enlace, 'enviado' => $enviado,
               'caduca' => date('c', time() + 24 * 7 * 3600)]);
+}
+
+/* Un recordatorio que decide el Mac.
+   -------------------------------------------------------------------
+   El servidor no sabe cuándo es la sesión de nadie (la agenda va
+   sellada) ni si un justificante ya está pagado: eso lo sabe el Mac.
+   Así que el Mac decide —«mañana tiene sesión y no ha subido el
+   justificante»— y el servidor solo escribe el correo, con un texto
+   que no dice nada clínico. Uno por persona y motivo cada 20 horas,
+   por si el Mac pregunta dos veces. */
+case 'recordar': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $motivo = (string)($in['motivo'] ?? '');
+    if ($motivo !== 'justificante') adr_json(['error' => 'motivo no válido'], 400);
+    $q = $db->prepare('SELECT correo FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $p = $q->fetch();
+    if (!$p) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
+    if (!adr_freno($db, 'rec:' . $motivo . ':' . $cod, 1, 20 * 3600)) {
+        adr_json(['ok' => true, 'enviado' => false, 'motivo' => 'ya se le recordó hace menos de 20 horas']);
+    }
+    require_once __DIR__ . '/lib/correo.php';
+    $ok = adr_correo_justificante($ADR, $p['correo']);
+    adr_apunta($db, $cod, 'recordatorio de justificante', $ok);
+    adr_json(['ok' => true, 'enviado' => $ok]);
 }
 
 /* Todo lo que la consola del Mac necesita para pintar su pantalla, en

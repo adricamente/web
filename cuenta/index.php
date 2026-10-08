@@ -153,6 +153,13 @@ $cuerpo .= <<<'HTML'
       <p class="apunte" id="ag-nota"></p>
     </div>
 
+
+    <button class="tarjeta-ir aviso-pago" type="button" id="ir-pago" hidden>
+      <span class="t">Falta el justificante</span>
+      <span class="resumen" id="ir-pago-txt"></span>
+      <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+
     <a class="tarjeta-ir" href="#tareas" id="ir-tareas">
       <span class="t">Lo que te toca</span>
       <span class="resumen" id="resumen" role="status"></span>
@@ -164,6 +171,25 @@ $cuerpo .= <<<'HTML'
       <span class="resumen" id="resumen-evolucion">Aquí verás cómo vas cuando hayas rellenado tus cuestionarios.</span>
       <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>
+
+    <!-- El justificante de pago. Se sella en el navegador a la clave del
+         Mac, como todo lo que entrega; el servidor guarda algo que no
+         puede abrir. Si la próxima sesión es en menos de 48 horas y no
+         hay justificante para ella, la caja se marca. -->
+    <section class="caja bloque pago" id="c-pago" aria-labelledby="t-pago">
+      <h2 id="t-pago">Justificante de pago</h2>
+      <p id="pago-estado">Si pagas por transferencia, sube aquí la foto o el PDF del justificante antes de la sesión.</p>
+      <div class="campo elegir">
+        <input type="file" id="pago-fichero" class="oculto-visual" aria-describedby="pago-pista"
+               accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.heic,.heif,.webp">
+        <label for="pago-fichero" class="boton suave">Elegir archivo</label>
+        <span id="pago-nombre" class="apunte">Ninguno elegido</span>
+        <p class="pista" id="pago-pista">Foto o PDF. Vale una captura de pantalla de la app del banco. Hasta 8 MB.</p>
+      </div>
+      <p><button class="boton" id="pago-enviar" type="button">Enviar justificante</button>
+      <span class="apunte" id="pago-msg" role="status"></span></p>
+      <div id="pago-lista"></div>
+    </section>
 
     <section class="caja bloque" aria-labelledby="t-sesiones">
       <h2 id="t-sesiones">Lo que hemos trabajado</h2>
@@ -554,7 +580,8 @@ async function panel() {
   macPublica = r.j.mac_publica || null;
   miCod = r.j.cod || null;
   miV = r.j.v;
-  pintaAgenda(r.j.agenda, r.j.v);
+  pintaAgenda(r.j.agenda, r.j.v).then(estadoPago);
+  pintaJustificantes(r.j.justificantes || [], r.j.v);
   pintaProgreso(r.j.progreso, r.j.v);
 
   /* Lo caducado no se enseña ni se cuenta: un número que no baja
@@ -615,7 +642,7 @@ async function panel() {
     $('hecho-barra').setAttribute('aria-valuenow', String(recientes));
     $('hecho-barra').setAttribute('aria-valuemax', String(total));
   }
-  pintaHechas(hechas);
+  pintaHechas(hechas, r.j.historial, r.j.v);
 
   /* Lo trabajado (sesiones) y los documentos */
   let viejos = 0;
@@ -667,14 +694,152 @@ async function panel() {
 
 /* Lo completado: qué y cuándo, sin puntuación. La puntuación está en
    «Tu evolución»; aquí se ve que lo que mandas llega a algún sitio. */
-function pintaHechas(hs) {
-  const c = $('hechas'); c.innerHTML = '';
-  if (!hs.length) {
+/* Lo de antes de la cuenta: si llevaba meses viniendo, el Mac publica
+   la lista de lo que hizo en papel o por correo (clase «historial»,
+   sellada, sin puntuaciones) y aquí se mezcla con lo hecho en la
+   cuenta, por fecha. Como si la cuenta hubiera existido desde el
+   primer día. Formato: {completado: [{fecha, titulo, via?, tipo?}]},
+   con tipo «firma» para lo firmado. */
+async function pintaHechas(hs, meta, v) {
+  const c = $('hechas');
+  let todo = hs.map(h => ({ titulo: h.titulo, fecha: h.hecho, firma: false }));
+  if (meta && Number(meta.para_v) === Number(v)) {
+    try {
+      const r = await api('abrir&id=' + encodeURIComponent(meta.id));
+      const d = r.ok && r.j.cifrado ? abrirDelMac(r.j.cifrado, miPublica, privada) : null;
+      (d && Array.isArray(d.completado) ? d.completado : []).forEach(x => {
+        if (x && typeof x.titulo === 'string' && /^\d{4}-\d{2}-\d{2}/.test(String(x.fecha || ''))) {
+          todo.push({ titulo: x.titulo.slice(0, 80), fecha: String(x.fecha), firma: x.tipo === 'firma' });
+        }
+      });
+    } catch (_) {}
+  }
+  todo.sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+  c.innerHTML = '';
+  if (!todo.length) {
     c.appendChild(vacio('Aquí irá quedando lo que vayas haciendo, con su fecha.'));
     return;
   }
-  hs.slice(0, 12).forEach(h => c.appendChild(fila(h.titulo, 'Hecho el ' + fecha(h.hecho))));
+  todo.slice(0, 40).forEach(h => c.appendChild(
+    fila(h.titulo, (h.firma ? 'Firmado el ' : 'Hecho el ') + fecha(h.fecha))));
 }
+
+/* --- El justificante de pago -------------------------------------------
+   Lo que sube se sella a la clave del Mac (el fichero entero) y se
+   guarda además una copia mínima sellada a la suya —a qué sesión es, el
+   nombre del fichero, cuándo— para enseñarle aquí lo que ya mandó. */
+let JUSTIS = [];
+async function pintaJustificantes(lista, v) {
+  const out = [];
+  for (const j of lista) {
+    let d = null;
+    if (j.copia_id && Number(j.copia_v) === Number(v)) {
+      try {
+        const r = await api('abrir&id=' + encodeURIComponent(j.copia_id));
+        if (r.ok && r.j.cifrado) d = abrirDelMac(r.j.cifrado, miPublica, privada);
+      } catch (_) {}
+    }
+    out.push({ creado: j.creado, para: d && d.para_sesion ? String(d.para_sesion) : null,
+               nombre: d && d.nombre ? String(d.nombre) : null });
+  }
+  JUSTIS = out;
+  const c = $('pago-lista'); c.innerHTML = '';
+  out.slice(0, 6).forEach(j => {
+    const pie = 'Enviado el ' + fecha(j.creado) +
+      (j.para ? ' · para la sesión del ' + fecha(j.para) : '');
+    c.appendChild(fila(j.nombre || 'Justificante', pie));
+  });
+  estadoPago();
+}
+function mismaCita(a, b) {
+  const x = new Date(a), y = new Date(b);
+  return !isNaN(x) && !isNaN(y) && Math.abs(x - y) < 60000;
+}
+function estadoPago() {
+  const caja = $('c-pago'), e = $('pago-estado');
+  caja.classList.remove('falta');
+  $('ir-pago').hidden = true;
+  if (!AGENDA || !AGENDA.proxima) {
+    e.textContent = 'Si pagas por transferencia, sube aquí la foto o el PDF del justificante antes de la sesión.';
+    return;
+  }
+  const t = new Date(AGENDA.proxima);
+  const dia = DIAS[t.getDay()] + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()];
+  if (JUSTIS.some(j => j.para && mismaCita(j.para, AGENDA.proxima))) {
+    e.textContent = 'Ya tengo el justificante de tu sesión del ' + dia + '. Gracias.';
+    return;
+  }
+  e.textContent = 'Falta el justificante de tu sesión del ' + dia +
+    '. Si pagas por transferencia, súbelo aquí antes de la sesión.';
+  if (t.getTime() - Date.now() < 48 * 3600e3 && t.getTime() > Date.now() - 3600e3) {
+    caja.classList.add('falta');
+    $('ir-pago-txt').textContent = 'De tu sesión del ' + dia + '. Súbelo en un minuto.';
+    $('ir-pago').hidden = false;
+  }
+}
+$('ir-pago').addEventListener('click', () => {
+  $('c-pago').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => $('pago-fichero').focus({ preventScroll: true }), 400);
+});
+$('pago-fichero').addEventListener('change', () => {
+  const f = $('pago-fichero').files && $('pago-fichero').files[0];
+  $('pago-nombre').textContent = f ? f.name : 'Ninguno elegido';
+  $('pago-msg').textContent = '';
+});
+
+/* Las fotos se reducen en el navegador antes de sellarlas: una foto
+   de móvil son 4 MB y para leer un justificante sobran 2000 píxeles.
+   Lo que no se pueda dibujar (un PDF, un HEIC en un navegador que no
+   lo entiende) va tal cual. */
+async function reducirFoto(f) {
+  const bm = await createImageBitmap(f);
+  const k = Math.min(1, 2000 / Math.max(bm.width, bm.height));
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(bm.width * k); cv.height = Math.round(bm.height * k);
+  cv.getContext('2d').drawImage(bm, 0, 0, cv.width, cv.height);
+  return await new Promise((ok, mal) => cv.toBlob(b => b ? ok(b) : mal(new Error('no')), 'image/jpeg', 0.85));
+}
+function aBase64(blob) {
+  return new Promise((ok, mal) => {
+    const r = new FileReader();
+    r.onload = () => ok(String(r.result).split(',')[1] || '');
+    r.onerror = () => mal(new Error('No he podido leer el archivo.'));
+    r.readAsDataURL(blob);
+  });
+}
+$('pago-enviar').addEventListener('click', async () => {
+  const msg = $('pago-msg'), b = $('pago-enviar');
+  const f = $('pago-fichero').files && $('pago-fichero').files[0];
+  if (!f) { msg.textContent = 'Elige primero la foto o el PDF.'; $('pago-fichero').focus(); return; }
+  if (!macPublica) { msg.textContent = 'Ahora mismo no se puede enviar. Prueba en un rato.'; return; }
+  b.disabled = true; msg.textContent = 'Preparando…';
+  try {
+    let blob = f, mime = f.type || 'application/octet-stream', nombre = (f.name || 'justificante').slice(0, 80);
+    if (/^image\//.test(mime) && !/hei[cf]/i.test(mime)) {
+      try {
+        blob = await reducirFoto(f); mime = 'image/jpeg';
+        nombre = nombre.replace(/\.[^.]+$/, '') + '.jpg';
+      } catch (_) { blob = f; }
+    }
+    if (blob.size > 8 * 1024 * 1024) throw new Error('El archivo pasa de 8 MB. Prueba con una captura de pantalla.');
+    const datos = await aBase64(blob);
+    const para = AGENDA && AGENDA.proxima ? AGENDA.proxima : null;
+    msg.textContent = 'Enviando…';
+    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'justificante', cod_web: miCod, para_sesion: para,
+                                       nombre, mime, datos, enviado_en: ahoraLocal(), origen: 'cuenta' },
+                                     macPublica);
+    const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_justificante', para_sesion: para, nombre,
+                                     enviado_en: ahoraLocal() }, miPublica);
+    const r = await api('justificante', { cifrado, copia });
+    if (!r.ok) throw new Error((r.j && r.j.error) ? 'No se ha podido enviar: ' + r.j.error + '.' : 'No se ha podido enviar.');
+    $('pago-fichero').value = '';
+    $('pago-nombre').textContent = 'Ninguno elegido';
+    await panel();
+    $('pago-msg').textContent = 'Enviado. Gracias.';
+  } catch (e) {
+    msg.textContent = e.message || 'No se ha podido enviar.';
+  } finally { b.disabled = false; }
+});
 
 /* --- La próxima sesión ------------------------------------------------
    La publica el Mac sellada: {proxima: ISO, meet: url, cambiar?: url,

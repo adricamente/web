@@ -1,6 +1,8 @@
 <?php
 /* ===================================================================
-   El único correo que manda el portal: «recuperar contraseña».
+   Los correos que manda el portal: recuperar la contraseña, el aviso
+   de «tienes algo», la bienvenida con su cuenta y el recordatorio del
+   justificante.
    -------------------------------------------------------------------
    Por la API de Brevo y no por SMTP: en alojamiento compartido los
    puertos de salida suelen estar cerrados, y una petición HTTPS no.
@@ -63,6 +65,121 @@ function adr_correo_reset(array $ADR, string $a, string $enlace): bool {
     return adr_manda($ADR, $a, 'Tu contraseña de adricamente', $texto, $html);
 }
 
+/* --- La bienvenida: su cuenta y cómo se usa -------------------------
+   Sale cuando la persona ha decidido empezar (lo decide el Mac, o
+   Adrián desde la consola), desde la dirección de `remite`
+   (hola@adricamente.com). Explica lo justo para que entre sola: el
+   enlace, la contraseña, qué hay dentro y dónde se sube el
+   justificante.
+
+   Las primeras líneas son las que se ven en la pantalla bloqueada, así
+   que no dicen nada que no pueda leer cualquiera: «tu cuenta en
+   adricamente». Ni diagnósticos, ni cuestionarios por su nombre. */
+function adr_correo_bienvenida(array $ADR, string $a, string $enlace, string $nombre = ''): bool {
+    $hola = $nombre !== '' ? "Hola, $nombre:" : 'Hola:';
+    $volver = rtrim($ADR['sitio'], '/');
+    $texto = "$hola\n\n"
+        . "Ya tienes tu cuenta en adricamente: un espacio privado para lo que "
+        . "necesitamos entre una sesión y la siguiente.\n\n"
+        . "Para activarla, abre este enlace y elige tu contraseña:\n$enlace\n\n"
+        . "El enlace vale 7 días y una sola vez. Si caduca, pídeme otro.\n\n"
+        . "CÓMO EMPEZAR\n"
+        . "1. Abre el enlace y elige una contraseña. Mejor una frase de tres o "
+        . "cuatro palabras que solo sepas tú que una palabra con símbolos.\n"
+        . "2. Lee la información sobre tus datos y acéptala.\n"
+        . "3. Ya estás dentro. Para volver otro día: adricamente.com, «Área de "
+        . "pacientes», con tu correo y tu contraseña ($volver).\n\n"
+        . "QUÉ VAS A ENCONTRAR\n"
+        . "- Tareas: lo que te pida antes de cada sesión (documentos para leer y "
+        . "firmar, formularios breves). Se rellena ahí mismo y se envía con un "
+        . "botón. No hace falta mandarme nada por correo.\n"
+        . "- Tu próxima sesión: el día, la hora y el botón de la videollamada, "
+        . "que se activa 10 minutos antes.\n"
+        . "- Justificante de pago: si pagas por transferencia, sube ahí la foto o "
+        . "el PDF del justificante antes de la sesión (en Inicio, «Justificante "
+        . "de pago»).\n"
+        . "- Tu evolución y lo que has completado, con sus fechas.\n"
+        . "- Mensajes: para lo que quieras contarme entre sesiones. Los leo en mi "
+        . "horario de consulta, no al momento.\n\n"
+        . "SOBRE TU CONTRASEÑA\n"
+        . "Lo que hay en tu cuenta va cifrado con ella: el servidor guarda solo "
+        . "cosas que no puede leer. Por eso no te la puedo recordar. Si la "
+        . "olvidas, puedes poner otra desde «He olvidado mi contraseña»; lo que "
+        . "ya tenías dentro tardará un poco en volver a aparecer, pero no se "
+        . "pierde.\n\n"
+        . "Esto no es un canal de urgencias. Si en algún momento estás en "
+        . "peligro, llama al 024 (24 horas, gratuito) o al 112.\n\n"
+        . "Si no esperabas este correo, puedes ignorarlo: sin abrir el enlace "
+        . "no se activa nada.\n\n"
+        . "Un saludo,\nAdrián\nadricamente.com\n";
+
+    $e = fn($x) => htmlspecialchars($x, ENT_QUOTES, 'UTF-8');
+    $boton = 'display:inline-block;background:#1F5474;color:#ffffff;text-decoration:none;'
+           . 'padding:12px 20px;border-radius:8px;font-weight:bold';
+    $h3 = 'font-size:15px;margin:22px 0 6px;color:#1F5474';
+    $html = '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;'
+        . 'font-size:15px;line-height:1.55;color:#25231F;max-width:560px">'
+        . '<p>' . $e($hola) . '</p>'
+        . '<p>Ya tienes tu cuenta en adricamente: un espacio privado para lo que '
+        . 'necesitamos entre una sesión y la siguiente.</p>'
+        . '<p style="margin:22px 0"><a href="' . $e($enlace) . '" style="' . $boton . '">Activar mi cuenta</a></p>'
+        . '<p style="font-size:13.5px;color:#5c5a55">El enlace vale 7 días y una sola vez. Si caduca, pídeme otro.</p>'
+        . '<h3 style="' . $h3 . '">Cómo empezar</h3>'
+        . '<ol style="padding-left:20px;margin:0">'
+        . '<li>Abre el enlace y elige una contraseña. Mejor una frase de tres o cuatro palabras que solo sepas tú que una palabra con símbolos.</li>'
+        . '<li>Lee la información sobre tus datos y acéptala.</li>'
+        . '<li>Ya estás dentro. Para volver otro día: <a href="https://adricamente.com">adricamente.com</a>, «Área de pacientes», con tu correo y tu contraseña.</li>'
+        . '</ol>'
+        . '<h3 style="' . $h3 . '">Qué vas a encontrar</h3>'
+        . '<ul style="padding-left:20px;margin:0">'
+        . '<li><strong>Tareas:</strong> lo que te pida antes de cada sesión (documentos para leer y firmar, formularios breves). Se rellena ahí mismo y se envía con un botón. No hace falta mandarme nada por correo.</li>'
+        . '<li><strong>Tu próxima sesión:</strong> el día, la hora y el botón de la videollamada, que se activa 10 minutos antes.</li>'
+        . '<li><strong>Justificante de pago:</strong> si pagas por transferencia, sube ahí la foto o el PDF del justificante antes de la sesión (en Inicio, «Justificante de pago»).</li>'
+        . '<li><strong>Tu evolución</strong> y lo que has completado, con sus fechas.</li>'
+        . '<li><strong>Mensajes:</strong> para lo que quieras contarme entre sesiones. Los leo en mi horario de consulta, no al momento.</li>'
+        . '</ul>'
+        . '<h3 style="' . $h3 . '">Sobre tu contraseña</h3>'
+        . '<p>Lo que hay en tu cuenta va cifrado con ella: el servidor guarda solo cosas que no puede leer. Por eso no te la puedo recordar. Si la olvidas, puedes poner otra desde «He olvidado mi contraseña»; lo que ya tenías dentro tardará un poco en volver a aparecer, pero no se pierde.</p>'
+        . '<p style="background:#F4F2EC;padding:12px 14px;border-radius:8px">Esto no es un canal de urgencias. Si en algún momento estás en peligro, llama al <strong>024</strong> (24 horas, gratuito) o al <strong>112</strong>.</p>'
+        . '<p style="font-size:13.5px;color:#5c5a55">Si no esperabas este correo, puedes ignorarlo: sin abrir el enlace no se activa nada.</p>'
+        . '<p>Un saludo,<br>Adrián<br><a href="https://adricamente.com">adricamente.com</a></p>'
+        . '</div>';
+    return adr_manda($ADR, $a, 'Tu cuenta en adricamente', $texto, $html);
+}
+
+/* --- El recordatorio del justificante --------------------------------
+   Lo pide el Mac la víspera de una sesión sin justificante. Explica
+   dónde se sube, porque quien no lo ha subido a menudo es quien no
+   sabe que se puede. Sin fecha ni hora: eso está en su cuenta. */
+function adr_correo_justificante(array $ADR, string $a): bool {
+    $sitio = $ADR['sitio'];
+    $texto = "Hola:\n\n"
+        . "Todavía no me ha llegado el justificante de la transferencia de tu "
+        . "próxima sesión.\n\n"
+        . "Puedes subirlo desde tu cuenta, en un minuto:\n"
+        . "1. Entra en $sitio con tu correo y tu contraseña.\n"
+        . "2. En Inicio, busca «Justificante de pago».\n"
+        . "3. Pulsa «Elegir archivo», elige la foto o el PDF (vale una captura "
+        . "de pantalla de la app del banco) y pulsa «Enviar justificante».\n\n"
+        . "Si ya lo has hecho o has pagado de otra forma, no hagas caso a este "
+        . "correo.\n\n"
+        . "Un saludo,\nAdrián\n";
+    $e = fn($x) => htmlspecialchars($x, ENT_QUOTES, 'UTF-8');
+    $html = '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;'
+        . 'font-size:15px;line-height:1.55;color:#25231F;max-width:560px">'
+        . '<p>Hola:</p>'
+        . '<p>Todavía no me ha llegado el justificante de la transferencia de tu próxima sesión.</p>'
+        . '<p>Puedes subirlo desde tu cuenta, en un minuto:</p>'
+        . '<ol style="padding-left:20px">'
+        . '<li>Entra en <a href="' . $e($sitio) . '">tu cuenta</a> con tu correo y tu contraseña.</li>'
+        . '<li>En Inicio, busca «Justificante de pago».</li>'
+        . '<li>Pulsa «Elegir archivo», elige la foto o el PDF (vale una captura de pantalla de la app del banco) y pulsa «Enviar justificante».</li>'
+        . '</ol>'
+        . '<p style="font-size:13.5px;color:#5c5a55">Si ya lo has hecho o has pagado de otra forma, no hagas caso a este correo.</p>'
+        . '<p>Un saludo,<br>Adrián</p></div>';
+    return adr_manda($ADR, $a, 'Tu justificante de pago', $texto, $html);
+}
+
 function adr_manda(array $ADR, string $a, string $asunto,
                    string $texto, string $html): bool {
     /* --- Sin Brevo también funciona ---------------------------------
@@ -78,6 +195,16 @@ function adr_manda(array $ADR, string $a, string $asunto,
        Así que se empieza sin Brevo para no bloquear nada, y se pone
        Brevo cuando se pueda, que son dos minutos. Mientras tanto,
        dile a quien lo pida que mire en spam. */
+    /* Solo en las pruebas: con `correo_carpeta` en la configuración,
+       el correo se escribe en un fichero en vez de salir. En Hostinger
+       no se pone nunca. */
+    if (!empty($ADR['correo_carpeta'])) {
+        @mkdir($ADR['correo_carpeta'], 0700, true);
+        file_put_contents($ADR['correo_carpeta'] . '/' . microtime(true) . '.json',
+            json_encode(['a' => $a, 'asunto' => $asunto, 'texto' => $texto, 'html' => $html,
+                         'de' => $ADR['remite']], JSON_UNESCAPED_UNICODE));
+        return true;
+    }
     if (empty($ADR['brevo'])) {
         $cabeceras = "From: adricamente <{$ADR['remite']}>\r\n"
                    . "Reply-To: {$ADR['remite']}\r\n"
