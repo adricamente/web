@@ -333,7 +333,7 @@ case 'mios': {
                                  AND c.direccion = 2 ORDER BY c.id DESC LIMIT 1) AS copia_v
                        FROM sobres s
                        WHERE s.cod = ? AND s.direccion = 2
-                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia','historial','objetivos')
+                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia','historial','objetivos','pago')
                        ORDER BY s.creado DESC, s.id DESC LIMIT 200");
     $q->execute([$cod]);
 
@@ -365,6 +365,14 @@ case 'mios': {
                         ORDER BY id DESC LIMIT 1");
     $ob->execute([$cod]);
     $objetivos = $ob->fetch() ?: null;
+    /* Cómo pagar (titular, IBAN, importe, concepto): lo publica el Mac
+       sellado a su llave. El IBAN no está en el código (el repositorio
+       es público) ni en claro en el servidor. Uno y el último. */
+    $pa = $db->prepare("SELECT id, para_v FROM sobres
+                        WHERE cod = ? AND direccion = 2 AND clase = 'pago'
+                        ORDER BY id DESC LIMIT 1");
+    $pa->execute([$cod]);
+    $pago = $pa->fetch() ?: null;
     /* Sus justificantes de pago. El servidor sabe CUÁNDO subió uno, no
        qué hay dentro: el justificante va sellado al Mac. Para que ella
        vea a qué sesión corresponde cada uno, se guarda además una copia
@@ -445,6 +453,8 @@ case 'mios': {
                                            'para_v' => (int)$historial['para_v']] : null,
               'objetivos' => $objetivos ? ['id' => (int)$objetivos['id'],
                                            'para_v' => (int)$objetivos['para_v']] : null,
+              'pago' => $pago ? ['id' => (int)$pago['id'],
+                                 'para_v' => (int)$pago['para_v']] : null,
               'justificantes' => $ju->fetchAll(),
               'documentos' => $q->fetchAll(), 'tareas' => $tareas,
               'hechas' => $h->fetchAll(),
@@ -734,7 +744,7 @@ case 'publicar': {
     }
 
     $clase = (string)($in['clase'] ?? 'documento');
-    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial', 'objetivos'], true)) $clase = 'documento';
+    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial', 'objetivos', 'pago'], true)) $clase = 'documento';
 
     /* Lo de antes del portal (pacientes que llevan meses): el Mac lo
        publica con `atrasado` y la fecha en que pasó de verdad. Así sale
@@ -755,7 +765,7 @@ case 'publicar': {
        nuevo — y se borra de verdad, porque el contenido que sustituye
        es el mismo dato desactualizado. */
     /* La agenda igual: la próxima sesión es una sola. */
-    if (in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos'], true)) {
+    if (in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago'], true)) {
         $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = ?")
            ->execute([$cod, $clase]);
     }
@@ -768,7 +778,7 @@ case 'publicar': {
     /* La gráfica no se avisa: se republica cada vez que él recoge algo
        y avisaría cada dos por tres de algo que el paciente no ha
        pedido. Lo demás sí. */
-    if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos'], true) && !$atrasado) adr_avisa($db, $ADR, $cod);
+    if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago'], true) && !$atrasado) adr_avisa($db, $ADR, $cod);
     adr_json(['ok' => true]);
 }
 

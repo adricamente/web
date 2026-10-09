@@ -179,6 +179,21 @@ $cuerpo .= <<<'HTML'
     <section class="caja bloque pago" id="c-pago" aria-labelledby="t-pago">
       <h2 id="t-pago">Adjuntar transferencia</h2>
       <p id="pago-estado">Si pagas por transferencia, sube aquí la foto o el PDF del justificante.</p>
+      <!-- Cómo pagar: lo publica el Mac sellado a su llave («pago»). El
+           IBAN no está en este código ni en claro en el servidor. -->
+      <div class="como-pagar" id="pago-como" hidden>
+        <h3 class="sub-pago">Cómo pagar</h3>
+        <dl class="datos-pago">
+          <div id="pc-importe-f" hidden><dt>Importe</dt><dd id="pc-importe"></dd></div>
+          <div><dt>Cuándo</dt><dd id="pc-plazo">Como muy tarde 24 horas antes de la sesión</dd></div>
+          <div id="pc-titular-f" hidden><dt>Titular</dt><dd id="pc-titular"></dd></div>
+          <div id="pc-iban-f" hidden><dt>IBAN</dt><dd><span id="pc-iban" class="iban"></span>
+            <button type="button" class="boton suave mini" id="pc-copiar">Copiar</button>
+            <span class="apunte" id="pc-copiado" role="status"></span></dd></div>
+          <div id="pc-concepto-f" hidden><dt>Concepto</dt><dd id="pc-concepto"></dd></div>
+        </dl>
+        <p class="apunte" id="pc-nota" hidden></p>
+      </div>
       <div class="campo">
         <label for="pago-cita">¿De qué sesión es?</label>
         <select id="pago-cita">
@@ -612,6 +627,7 @@ async function panel() {
   miV = r.j.v;
   pintaAgenda(r.j.agenda, r.j.v).then(estadoPago);
   pintaJustificantes(r.j.justificantes || [], r.j.v);
+  pintaPago(r.j.pago, r.j.v);
   pintaProgreso(r.j.progreso, r.j.v);
 
   /* Lo caducado no se enseña ni se cuenta: un número que no baja
@@ -895,6 +911,43 @@ async function pintaJustificantes(lista, v) {
   });
   estadoPago();
 }
+/* Cómo pagar. {titular, iban, importe, concepto, plazo?, nota?}, sellado
+   por el Mac a su llave. Sin él, la caja sigue como estaba. */
+let IBAN = '';
+async function pintaPago(meta, v) {
+  const caja = $('pago-como');
+  caja.hidden = true; IBAN = '';
+  if (!meta || Number(meta.para_v) !== Number(v)) return;
+  let d = null;
+  try {
+    const r = await api('abrir&id=' + encodeURIComponent(meta.id));
+    d = r.ok && r.j.cifrado ? abrirDelMac(r.j.cifrado, miPublica, privada) : null;
+  } catch (_) {}
+  if (!d || (!d.iban && !d.importe)) return;
+  const pon = (k, val) => {
+    const t = val == null ? '' : String(val).trim();
+    $('pc-' + k).textContent = t; $('pc-' + k + '-f').hidden = !t;
+  };
+  pon('importe', d.importe);
+  pon('titular', d.titular);
+  pon('concepto', d.concepto);
+  IBAN = String(d.iban || '').replace(/\s+/g, '').toUpperCase();
+  pon('iban', IBAN.replace(/(.{4})/g, '$1 ').trim());
+  if (d.plazo) $('pc-plazo').textContent = String(d.plazo);
+  $('pc-nota').textContent = d.nota ? String(d.nota) : '';
+  $('pc-nota').hidden = !d.nota;
+  caja.hidden = false;
+}
+$('pc-copiar').addEventListener('click', async () => {
+  const m = $('pc-copiado');
+  try { await navigator.clipboard.writeText(IBAN); m.textContent = 'Copiado'; }
+  catch (_) {
+    const r = document.createRange(); r.selectNodeContents($('pc-iban'));
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    m.textContent = 'Seleccionado: cópialo';
+  }
+  setTimeout(() => { m.textContent = ''; }, 4000);
+});
 /* La misma cita: misma hora exacta si se guardó la hora, o el mismo día
    (en Madrid) si solo se eligió la fecha. */
 function diaMadrid(x) { return new Date(x).toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }); }
