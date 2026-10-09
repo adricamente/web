@@ -7,7 +7,7 @@
    ¿Por qué arriba y no aquí? Porque aquí es una carpeta pública. Un
    día alguien desactiva PHP por un error de configuración y todos los
    .php del sitio se sirven como texto plano — pasa, y ese día el
-   secreto del servidor y la clave de Brevo se leen desde el
+   secreto del servidor se lee desde el
    navegador. Un nivel más arriba no hay URL que apunte.
 
    Y no está en el repositorio, a propósito. Un secreto en git está
@@ -37,18 +37,10 @@ return [
      en el Mac. Mismo comando que arriba. */
   'mac' => 'PEGA_AQUI_OTROS_64_CARACTERES',
 
-  /* Brevo, para el correo de «he olvidado la contraseña».
-     Panel de Brevo -> SMTP & API -> API Keys.
-
-     DÉJALO VACÍO Y EL PORTAL FUNCIONA IGUAL: sale por el correo del
-     propio alojamiento. La diferencia no es si llega, es dónde: sin
-     Brevo hay bastantes papeletas de caer en spam, y un correo de
-     recuperar contraseña en spam es una función rota, porque quien lo
-     necesita es justo quien no va a ir a buscarlo.
-
-     O sea: empieza vacío, que no bloquea nada, y rellénalo cuando
-     tengas dos minutos. */
-  'brevo'  => '',
+  /* Sin clave de correo (09-10). El portal no envía correos: los deja
+     en una cola, sellados a la clave del Mac, y el Mac los manda por el
+     Gmail de hola@. En este fichero NO va ninguna clave de Brevo ni de
+     Google. 'remite' es solo informativo. */
   'remite' => 'hola@adricamente.com',
 
   /* Cuántos días se guarda en el servidor un cuestionario DESPUÉS de

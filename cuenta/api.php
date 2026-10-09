@@ -19,7 +19,7 @@ $db = adr_db($ADR);
 /** Avisa por correo de que hay algo pendiente, como mucho una vez cada
  *  N horas. Sin esto, asignar un cuestionario es hablarle a una pared:
  *  el paciente no entra «por si acaso». */
-function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 6): bool {
+function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 20): bool {
     $q = $db->prepare('SELECT correo, ultimo_aviso FROM pacientes
                        WHERE cod = ? AND activado IS NOT NULL');
     $q->execute([$cod]);
@@ -27,7 +27,12 @@ function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 6): bool {
     if (!$p) return false;
     if ($p['ultimo_aviso'] && strtotime($p['ultimo_aviso']) > time() - $horas * 3600) return false;
     require_once __DIR__ . '/lib/correo.php';
-    adr_correo_aviso($ADR, $p['correo']);
+    /* Solo cuenta como avisado si el correo ha salido de verdad: si no,
+       la próxima vez se vuelve a intentar en vez de darlo por hecho. */
+    $r = adr_correo_aviso($ADR, $p['correo'], $cod);
+    /* En la cola cuenta como avisado: lo manda el Mac en su pasada. Si
+       no, cada pasada encolaría otro igual. */
+    if (!$r['enviado'] && ($r['error'] ?? '') !== 'en_cola') return false;
     $db->prepare('UPDATE pacientes SET ultimo_aviso = ? WHERE cod = ?')
        ->execute([adr_ahora(), $cod]);
     return true;
@@ -298,8 +303,12 @@ case 'olvide': {
     $q->execute([$correo]);
     if ($f = $q->fetch()) {
         require_once __DIR__ . '/lib/correo.php';
-        $papel = adr_ficha($db, $f['cod'], 'reset', 2);
-        adr_correo_reset($ADR, $correo, $ADR['sitio'] . '/clave.php?p=' . $papel);
+        /* Lo manda el Mac en su pasada (5 minutos, o lo que tarde en
+           despertarse): el enlace vale 24 horas y no 2, para no llegar ya
+           caducado. */
+        $horas = 24;
+        $papel = adr_ficha($db, $f['cod'], 'reset', $horas);
+        adr_correo_reset($ADR, $correo, $ADR['sitio'] . '/clave.php?p=' . $papel, $horas);
     }
     adr_json(['ok' => true]);
 }
@@ -890,33 +899,13 @@ case 'alta': {
        enlace que devuelve es válido 7 días desde ahora. */
     $papel = adr_ficha($db, $cod, 'alta', 24 * 7);
     $enlace = $ADR['sitio'] . '/activar.php?p=' . $papel;
-    /* El correo de bienvenida, solo si el Mac lo pide (`enviar`). Lo
-       pide cuando la persona ha decidido empezar —ha reservado una
-       sesión normal, no la informativa— o cuando Adrián lo manda desde
-       la consola. Nunca por defecto: mandarle una cuenta a quien dijo
-       «me lo pienso» sería insistir. El nombre es solo el de pila y
-       solo para el saludo: no se guarda. */
-    $enviado = null; $via = null; $motivo = null;
-    if (!empty($in['enviar'])) {
-        require_once __DIR__ . '/lib/correo.php';
-        $via = adr_via($ADR);
-        if ($via === 'mail') {
-            /* Sin Brevo NO se manda: por el correo del alojamiento, con
-               remite hola@ y un SPF que solo autoriza a Google, lo más
-               probable es que caiga en spam y que `mail()` diga «ok» de
-               todas formas. Mejor contestar que no ha salido, para que
-               el Mac lo mande por Gmail o se lo deje a Adrián. */
-            $enviado = false; $motivo = 'sin_brevo';
-        } else {
-            $nombre = trim((string)($in['nombre'] ?? ''));
-            $nombre = preg_match('/^\p{L}{2,30}$/u', $nombre) ? $nombre : '';
-            $enviado = adr_correo_bienvenida($ADR, $correo, $enlace, $nombre);
-            if (!$enviado) $motivo = 'fallo_envio';
-        }
-        adr_apunta($db, $cod, $enviado ? 'correo de bienvenida' : 'correo de bienvenida NO enviado', $enviado);
-    }
-    adr_json(['ok' => true, 'enlace' => $enlace, 'enviado' => $enviado, 'via' => $via,
-              'motivo' => $motivo, 'caduca' => date('c', time() + 24 * 7 * 3600)]);
+    /* El portal NO manda la bienvenida (09-10): la manda el Mac por el
+       Gmail de hola@ con este enlace. Si alguien pide `enviar`, se le
+       contesta que no ha salido, para que nadie lo dé por enviado. */
+    adr_json(['ok' => true, 'enlace' => $enlace,
+              'enviado' => !empty($in['enviar']) ? false : null,
+              'error' => !empty($in['enviar']) ? 'el_portal_no_envia' : null,
+              'caduca' => date('c', time() + 24 * 7 * 3600)]);
 }
 
 /* Cerrar en la cuenta lo que se ha hecho en sesión.
@@ -937,43 +926,6 @@ case 'cerrar_tarea': {
     adr_json(['ok' => true, 'cerradas' => $q->rowCount()]);
 }
 
-/* Un recordatorio que decide el Mac.
-   -------------------------------------------------------------------
-   El servidor no sabe cuándo es la sesión de nadie (la agenda va
-   sellada) ni si un justificante ya está pagado: eso lo sabe el Mac.
-   Así que el Mac decide —«mañana tiene sesión y no ha subido el
-   justificante»— y el servidor solo escribe el correo, con un texto
-   que no dice nada clínico. Uno por persona y motivo cada 20 horas,
-   por si el Mac pregunta dos veces. */
-case 'recordar': {
-    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
-    $cod = (string)($in['cod'] ?? '');
-    $motivo = (string)($in['motivo'] ?? '');
-    if ($motivo !== 'justificante') adr_json(['error' => 'motivo no válido'], 400);
-    $q = $db->prepare('SELECT correo FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
-    $q->execute([$cod]);
-    $p = $q->fetch();
-    if (!$p) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
-    if (!adr_freno($db, 'rec:' . $motivo . ':' . $cod, 1, 20 * 3600)) {
-        adr_json(['ok' => true, 'enviado' => false, 'motivo' => 'ya se le recordó hace menos de 20 horas']);
-    }
-    require_once __DIR__ . '/lib/correo.php';
-    $via = adr_via($ADR);
-    if ($via === 'mail') {
-        adr_freno_limpia($db, 'rec:' . $motivo . ':' . $cod);
-        adr_json(['ok' => true, 'enviado' => false, 'via' => $via, 'motivo' => 'sin_brevo']);
-    }
-    /* Si tiene algo pendiente, este correo lo dice también, y cuenta
-       como el aviso del día: así no le llegan dos. */
-    $t = $db->prepare("SELECT COUNT(*) c FROM tareas WHERE cod = ? AND hecho IS NULL
-                       AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)");
-    $t->execute([$cod, adr_hoy()]);
-    $pendiente = (int)$t->fetch()['c'] > 0;
-    $ok = adr_correo_justificante($ADR, $p['correo'], $pendiente, (string)($in['limite'] ?? ''));
-    if ($ok) $db->prepare('UPDATE pacientes SET ultimo_aviso = ? WHERE cod = ?')->execute([adr_ahora(), $cod]);
-    adr_apunta($db, $cod, 'recordatorio de justificante', $ok);
-    adr_json(['ok' => true, 'enviado' => $ok, 'via' => $via, 'con_pendiente' => $pendiente]);
-}
 
 /* Todo lo que la consola del Mac necesita para pintar su pantalla, en
    una sola llamada.
@@ -1354,10 +1306,69 @@ case 'pendientes': {
 /* El estado de la instalación, para que el Mac pueda comprobarlo sin
    que nadie abra el panel de Hostinger. Ningún secreto: si hay clave
    de Brevo, no cuál es. */
+/* La cola de correos, para el Mac: lo pendiente, sellado a su clave.
+   El Mac lo abre, lo manda por el Gmail de hola@ y contesta con
+   `correo_enviado`. Lo enviado se borra a los 30 días y lo que lleve
+   7 días sin poder salir, también (y queda en el registro del Mac). */
+case 'correos_pendientes':
+case 'cola_correo': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $db->exec("DELETE FROM correos_cola WHERE (enviado IS NOT NULL AND enviado < datetime('now','-30 days'))
+               OR (enviado IS NULL AND creado < datetime('now','-7 days'))");
+    $q = $db->query('SELECT id, cod, tipo, cifrado, creado, intentos FROM correos_cola
+                     WHERE enviado IS NULL ORDER BY id LIMIT 50');
+    $out = [];
+    foreach ($q->fetchAll() as $f) {
+        $out[] = ['id' => (int)$f['id'], 'cod' => $f['cod'], 'tipo' => $f['tipo'], 'creado' => $f['creado'],
+                  'intentos' => (int)$f['intentos'], 'cifrado' => adr_b64($f['cifrado'])];
+    }
+    adr_json(['correos' => $out]);
+}
+
+case 'correo_fallido':
+case 'correo_enviado': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $id = (int)($in['id'] ?? 0);
+    $mid = $a === 'correo_enviado' ? trim((string)($in['message_id'] ?? '')) : '';
+    if ($mid !== '') {
+        $db->prepare('UPDATE correos_cola SET enviado = ?, message_id = ?, error = NULL WHERE id = ?')
+           ->execute([adr_ahora(), mb_substr($mid, 0, 200), $id]);
+        require_once __DIR__ . '/lib/correo.php';
+        adr_correo_apunta($ADR, ['enviado' => true, 'message_id' => $mid, 'error' => null]);
+    } else {
+        $err = mb_substr((string)($in['error'] ?? 'sin message_id'), 0, 300);
+        $db->prepare('UPDATE correos_cola SET intentos = intentos + 1, error = ? WHERE id = ?')
+           ->execute([$err, $id]);
+        require_once __DIR__ . '/lib/correo.php';
+        adr_correo_apunta($ADR, ['enviado' => false, 'message_id' => null, 'error' => 'gmail'], 0, $err);
+    }
+    adr_json(['ok' => true]);
+}
+
+/* ¿Salen los correos del portal? Lo que pregunta el Mac cada hora. */
+case 'estado_correo': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/correo.php';
+    $ok = adr_correo_lee($ADR, 'correo_ultimo_ok');
+    $er = adr_correo_lee($ADR, 'correo_ultimo_error');
+    $c = $db->query("SELECT COUNT(*) n, MIN(creado) m FROM correos_cola WHERE enviado IS NULL")->fetch();
+    $tiene_mac = (bool)$db->query("SELECT 1 FROM ajustes WHERE clave = 'mac_publica'")->fetch();
+    /* El portal no envía: encola. Funciona si tiene la clave del Mac (para
+       sellar) y si la cola no lleva nada esperando más de 30 minutos (el
+       Mac pasa cada 5). `ultimo_ok`/`ultimo_error` son los que el Mac
+       informa con correo_enviado / correo_fallido. */
+    $atascada = (int)$c['n'] > 0 && strtotime($c['m']) < time() - 1800;
+    adr_json(['ok' => true, 'modo' => 'cola', 'envia_el_portal' => false,
+              'configurado' => $tiene_mac, 'operativo' => $tiene_mac && !$atascada,
+              'cola' => ['pendientes' => (int)$c['n'], 'mas_antiguo' => $c['m']],
+              'ultimo_ok' => $ok, 'ultimo_error' => $er]);
+}
+
 case 'estado': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/correo.php';
     adr_json(['ok' => true,
-              'correo' => empty($ADR['brevo']) ? 'mail' : 'brevo',
+              'correo' => adr_via($ADR),
               'remite' => $ADR['remite'] ?? null,
               'php' => PHP_VERSION,
               'pacientes' => (int)$db->query("SELECT COUNT(*) FROM pacientes WHERE cod <> 'hoja'")->fetchColumn(),

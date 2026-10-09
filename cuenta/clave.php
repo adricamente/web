@@ -36,8 +36,9 @@ if ($papel === '') {
 
   <div class="nota bien" id="hecho" hidden role="status">
     <p><strong>Mira tu correo.</strong> Si esa dirección tiene cuenta
-    aquí, acabas de recibir un enlace. Vale dos horas y una sola vez.</p>
-    <p>Si no lo ves, mira en la carpeta de spam: a veces cae ahí.</p>
+    aquí, te llega un enlace desde hola@adricamente.com en unos minutos.
+    Vale un día y una sola vez.</p>
+    <p>Si no lo ves en un rato, mira en la carpeta de spam.</p>
   </div>
 
   <form id="f">

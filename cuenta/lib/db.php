@@ -243,6 +243,25 @@ $pdo->exec('
         usada   TEXT
       )');
 
+    /* La cola de correos (09-10). El portal no manda correos: los deja
+       aquí SELLADOS a la clave del Mac (destinatario, asunto, texto…) y
+       el Mac los manda por el Gmail de hola@ en su siguiente pasada. En
+       el servidor no queda ninguna credencial de correo, y si alguien
+       se lleva la base de datos no se lleva ni a quién se escribió. */
+    $pdo->exec('
+      CREATE TABLE IF NOT EXISTS correos_cola (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        cod        TEXT,
+        tipo       TEXT NOT NULL,
+        cifrado    BLOB NOT NULL,
+        creado     TEXT NOT NULL,
+        enviado    TEXT,
+        message_id TEXT,
+        intentos   INTEGER NOT NULL DEFAULT 0,
+        error      TEXT
+      )');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS i_cola ON correos_cola(enviado, creado)');
+
     $pdo->exec('
       CREATE TABLE IF NOT EXISTS intentos (
         clave  TEXT NOT NULL,

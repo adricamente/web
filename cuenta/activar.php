@@ -63,7 +63,8 @@ $cuerpo = <<<HTML
         la fecha de cada entrada y tus documentos <strong>cifrados de
         extremo a extremo</strong>: el servidor no puede leerlos.</li>
         <li><strong>Quién más interviene:</strong> Hostinger, que aloja el
-        portal, y Brevo, que envía los correos de aviso, como encargados
+        portal, y Google (Google Workspace), desde cuya cuenta
+        hola@adricamente.com salen los correos de aviso, como encargados
         del tratamiento.</li>
         <li><strong>Tus derechos:</strong> acceso, rectificación,
         supresión, oposición, limitación y portabilidad, escribiendo a
@@ -114,7 +115,7 @@ $('f').addEventListener('submit', async (ev) => {
       body: JSON.stringify({
         papel, sal: id.sal, auth: id.auth,
         publica: id.publica, envuelta: id.privadaEnvuelta,
-        aviso: 'portal-v1',
+        aviso: 'portal-v2',
       }),
     });
     const j = await r.json().catch(() => ({}));
