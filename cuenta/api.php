@@ -759,6 +759,30 @@ case 'publicar': {
     $firmado = (string)($in['firmado'] ?? '');
     $firmado = preg_match('/^\d{4}-\d{2}-\d{2}$/', $firmado) ? $firmado . 'T12:00:00' : null;
 
+    /* Sustituir un resumen o documento ya publicado por su versión
+       corregida: se borra el anterior (mismo título, misma clase, sin
+       firma de por medio), el nuevo queda en su misma fecha y NO avisa,
+       que no es nada nuevo. Si no hay ninguno que sustituir, error: no
+       se publica un duplicado sin querer. */
+    $sustituye = trim(preg_replace('/\s+/u', ' ', (string)($in['sustituye'] ?? '')));
+    $sustituidos = 0;
+    if ($sustituye !== '') {
+        if (!in_array($clase, ['sesion', 'documento'], true)) adr_json(['error' => 'solo se sustituyen sesiones o documentos'], 400);
+        $v = $db->prepare("SELECT id, creado FROM sobres WHERE cod = ? AND direccion = 2 AND titulo = ?
+                           AND clase IN ('sesion','documento') AND requiere_firma = 0 AND firmado IS NULL
+                           ORDER BY creado ASC");
+        $v->execute([$cod, mb_substr($sustituye, 0, 80, 'UTF-8')]);
+        $viejos = $v->fetchAll();
+        if (!$viejos) adr_json(['error' => 'no encuentro ningún documento publicado con ese título para sustituir'], 404);
+        $creado = $viejos[0]['creado'];
+        $atrasado = true;
+        foreach ($viejos as $x) {
+            $db->prepare('DELETE FROM sobres WHERE copia_de = ? AND cod = ?')->execute([$x['id'], $cod]);
+            $db->prepare('DELETE FROM sobres WHERE id = ?')->execute([$x['id']]);
+            $sustituidos++;
+        }
+    }
+
     /* El progreso es UNO y el último. No es un documento que se
        colecciona: es una foto de cómo va, y tener cinco fotos viejas en
        la lista no ayuda a nadie. Se borra el anterior al publicar el
@@ -779,7 +803,7 @@ case 'publicar': {
        y avisaría cada dos por tres de algo que el paciente no ha
        pedido. Lo demás sí. */
     if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago'], true) && !$atrasado) adr_avisa($db, $ADR, $cod);
-    adr_json(['ok' => true]);
+    adr_json(['ok' => true, 'sustituidos' => $sustituidos]);
 }
 
 /* Adrián le escribe al paciente. Sellado a la clave del paciente, con
