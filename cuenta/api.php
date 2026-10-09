@@ -969,6 +969,18 @@ case 'cerrar_tarea': {
 }
 
 
+/* Los títulos de lo que ya tiene publicado (sesiones y documentos), para
+   elegir cuál sustituye una versión mejorada. Títulos y fechas: lo que
+   el servidor ya ve en claro, nada más. */
+case 'publicados': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->prepare("SELECT titulo, clase, creado FROM sobres WHERE cod = ? AND direccion = 2
+                       AND clase IN ('sesion','documento') AND requiere_firma = 0 AND firmado IS NULL
+                       ORDER BY creado DESC LIMIT 200");
+    $q->execute([(string)($in['cod'] ?? '')]);
+    adr_json(['publicados' => $q->fetchAll()]);
+}
+
 /* Anular una prueba pendiente (Adrián decide que ya no hace falta).
    Desaparece de sus «Tareas». Solo lo que aún no ha hecho. */
 case 'anular_tarea': {
