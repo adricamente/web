@@ -252,6 +252,14 @@ $cuerpo .= <<<'HTML'
     <h1>Tu evolución</h1>
     <p class="apunte">Lo que dicen tus cuestionarios con el tiempo. Cada
     gráfica es uno, con su escala; no se comparan entre sí.</p>
+    <!-- Mis objetivos: los que elegimos juntos, con su línea de 0 a 10
+         (lo que tú valoras cada semana) y lo que ha ido cambiando. Lo
+         publica el Mac, sellado («objetivos»); sin él no se enseña. -->
+    <section class="caja bloque" id="c-objetivos" aria-labelledby="t-obj" hidden>
+      <h2 id="t-obj">Mis objetivos</h2>
+      <p class="foco" id="ob-foco" hidden></p>
+      <div id="objetivos"></div>
+    </section>
     <section class="caja bloque" id="c-progreso" aria-label="Tus gráficas">
       <div id="progreso"></div>
     </section>
@@ -305,6 +313,19 @@ $cuerpo .= <<<'HTML'
   </div>
   <p><button class="boton suave" id="doc-imprimir" type="button" hidden>Guardar o imprimir una copia</button></p>
   <p><button class="enlace-boton" id="doc-volver" type="button">← Volver</button></p>
+</section>
+
+<section id="v-valorar" class="vista" hidden>
+  <p class="etiqueta">Tus objetivos</p>
+  <h1 id="vo-titulo">¿Cuánto has avanzado?</h1>
+  <p class="apunte">Para cada objetivo, de 0 (nada todavía) a 10 (conseguido). No hay
+  respuestas buenas ni malas: es tu valoración de esta semana.</p>
+  <div class="caja"><div id="vo-items"></div></div>
+  <p>
+    <button class="boton" id="vo-enviar" type="button">Enviar</button>
+    <button class="enlace-boton" id="vo-volver" type="button">← Volver</button>
+    <span class="apunte" id="vo-estado" role="status"></span>
+  </p>
 </section>
 
 <section id="v-deber" class="vista" hidden>
@@ -435,7 +456,7 @@ let macPublica = null;
 let miCod = null;
 
 const $ = (id) => document.getElementById(id);
-const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr'];
+const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr', 'v-valorar'];
 let PLAN = null;   // id de su plan de seguridad enviado, si tiene
 function ver(cual) {
   VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
@@ -629,13 +650,14 @@ async function panel() {
   });
   ts.forEach(t => {
     const esDeber = (t.tipo === 'deber');
+    const esValorar = (t.tipo === 'objetivos');
     const pie = [t.preguntas ? 'unos ' + Math.max(1, Math.round(t.preguntas * 10 / 60)) + ' min' : null,
                  t.caduca ? 'antes del ' + fecha(t.caduca) : null].filter(Boolean).join(' · ');
     const f = fila(t.titulo, pie || null);
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button';
-    b.textContent = esDeber ? 'Ver' : 'Rellenar';
-    b.addEventListener('click', () => esDeber ? abrirDeber(t) : abrirTarea(t.id));
+    b.textContent = esDeber ? 'Ver' : esValorar ? 'Valorar' : 'Rellenar';
+    b.addEventListener('click', () => esDeber ? abrirDeber(t) : esValorar ? abrirValorar(t) : abrirTarea(t.id));
     f.appendChild(b);
     ct.appendChild(f);
   });
@@ -652,6 +674,7 @@ async function panel() {
     $('hecho-barra').setAttribute('aria-valuemax', String(total));
   }
   pintaHechas(hechas, r.j.historial, r.j.v);
+  pintaObjetivos(r.j.objetivos, r.j.v);
 
   /* Lo trabajado (sesiones) y los documentos */
   let viejos = 0;
@@ -732,6 +755,117 @@ async function pintaHechas(hs, meta, v) {
   todo.slice(0, 40).forEach(h => c.appendChild(
     fila(h.titulo, (h.firma ? 'Firmado el ' : 'Hecho el ') + fecha(h.fecha))));
 }
+
+/* --- Mis objetivos -----------------------------------------------------
+   El Mac publica {actualizado, foco_actual, objetivos: [{id, titulo,
+   para_que, como_sabremos, estado, desde, valoraciones: [{fecha, valor}],
+   historial: [{fecha, texto}]}]}. Los activos, abiertos y con su línea
+   de 0 a 10; los demás (conseguido, en pausa, sustituido), plegados y
+   con su historia. Nada se borra: así se ven los cambios de foco. Sin
+   etiquetas de «bien» o «mal». */
+let OBJETIVOS = null;
+const ESTADO_OB = { conseguido: 'Conseguido', en_pausa: 'En pausa', sustituido: 'Lo cambiamos por otro' };
+async function pintaObjetivos(meta, v) {
+  const caja = $('c-objetivos'), c = $('objetivos');
+  OBJETIVOS = null;
+  if (!meta || Number(meta.para_v) !== Number(v)) { caja.hidden = true; return; }
+  let d = null;
+  try {
+    const r = await api('abrir&id=' + encodeURIComponent(meta.id));
+    d = r.ok && r.j.cifrado ? abrirDelMac(r.j.cifrado, miPublica, privada) : null;
+  } catch (_) {}
+  const obs = d && Array.isArray(d.objetivos) ? d.objetivos.filter(o => o && o.id && o.titulo) : [];
+  if (!obs.length) { caja.hidden = true; return; }
+  OBJETIVOS = obs;
+  c.innerHTML = '';
+  $('ob-foco').hidden = !d.foco_actual;
+  $('ob-foco').textContent = d.foco_actual ? 'Ahora estamos con: ' + d.foco_actual : '';
+  const linea = (o) => {
+    const vs = (o.valoraciones || []).filter(x => x && x.valor != null);
+    const w = document.createElement('div'); w.className = 'ob-linea';
+    w.appendChild(chispa({ puntos: vs.map(x => ({ valor: Number(x.valor) })), minimo: 0, maximo: 10 }));
+    const u = vs[vs.length - 1];
+    const t = document.createElement('span'); t.className = 'apunte';
+    t.textContent = u ? 'Última: ' + u.valor + ' de 10 (' + fecha(u.fecha) + ')' : 'Todavía sin valorar';
+    w.appendChild(t);
+    return w;
+  };
+  const historia = (o) => {
+    const ul = document.createElement('ul'); ul.className = 'ob-historia';
+    (o.historial || []).forEach(h => { const li = document.createElement('li'); li.textContent = fecha(h.fecha) + ' · ' + h.texto; ul.appendChild(li); });
+    return ul;
+  };
+  obs.filter(o => (o.estado || 'activo') === 'activo').forEach(o => {
+    const a = document.createElement('article'); a.className = 'objetivo';
+    const h = document.createElement('h3'); h.textContent = o.titulo; a.appendChild(h);
+    if (o.para_que) { const p = document.createElement('p'); p.innerHTML = '<strong>Para qué:</strong> '; p.append(o.para_que); a.appendChild(p); }
+    if (o.como_sabremos) { const p = document.createElement('p'); p.innerHTML = '<strong>Cómo lo sabremos:</strong> '; p.append(o.como_sabremos); a.appendChild(p); }
+    a.appendChild(linea(o));
+    if ((o.historial || []).length) a.appendChild(historia(o));
+    c.appendChild(a);
+  });
+  const otros = obs.filter(o => (o.estado || 'activo') !== 'activo');
+  if (otros.length) {
+    const det = document.createElement('details'); det.className = 'ob-otros';
+    const sm = document.createElement('summary'); sm.textContent = 'Otros objetivos (' + otros.length + ')'; det.appendChild(sm);
+    otros.forEach(o => {
+      const a = document.createElement('article'); a.className = 'objetivo plegado';
+      const h = document.createElement('h3'); h.textContent = o.titulo + ' · ' + (ESTADO_OB[o.estado] || o.estado); a.appendChild(h);
+      a.appendChild(linea(o));
+      if ((o.historial || []).length) a.appendChild(historia(o));
+      det.appendChild(a);
+    });
+    c.appendChild(det);
+  }
+  caja.hidden = false;
+}
+
+/* La valoración de la semana: un deslizador de 0 a 10 por objetivo. Los
+   títulos salen del documento sellado; la tarea solo trae los ids. */
+let VALORAR = null;
+async function abrirValorar(t) {
+  VALORAR = t;
+  $('vo-titulo').textContent = t.titulo || '¿Cuánto has avanzado?';
+  $('vo-estado').textContent = '';
+  const c = $('vo-items'); c.innerHTML = 'Abriendo…';
+  ver('v-valorar');
+  const r = await api('tarea&id=' + encodeURIComponent(t.id));
+  if (!r.ok) { c.textContent = 'No se ha podido traer.'; return; }
+  const ids = (r.j.plantilla && r.j.plantilla.ids) || [];
+  const por = {}; (OBJETIVOS || []).forEach(o => { por[o.id] = o; });
+  c.innerHTML = '';
+  ids.forEach(id => {
+    const o = por[id];
+    if (!o) return;
+    const f = document.createElement('div'); f.className = 'campo valorar';
+    const lb = document.createElement('label'); lb.setAttribute('for', 'vo-' + id); lb.textContent = o.titulo;
+    const fila = document.createElement('div'); fila.className = 'deslizador';
+    const inp = document.createElement('input'); inp.type = 'range'; inp.min = '0'; inp.max = '10'; inp.step = '1';
+    inp.id = 'vo-' + id; inp.dataset.id = id;
+    const prev = (o.valoraciones || []).filter(x => x && x.valor != null).pop();
+    inp.value = prev ? String(prev.valor) : '5';
+    const out = document.createElement('output'); out.htmlFor = inp.id; out.textContent = inp.value;
+    inp.setAttribute('aria-valuetext', inp.value + ' de 10');
+    inp.addEventListener('input', () => { out.textContent = inp.value; inp.setAttribute('aria-valuetext', inp.value + ' de 10'); inp.dataset.tocado = '1'; });
+    fila.append(inp, out); f.append(lb, fila); c.appendChild(f);
+  });
+  if (!c.children.length) c.textContent = 'Todavía no tengo tus objetivos en esta cuenta. Lo vemos en sesión.';
+}
+$('vo-volver').addEventListener('click', panel);
+$('vo-enviar').addEventListener('click', async () => {
+  const valores = {};
+  document.querySelectorAll('#vo-items input[type=range]').forEach(i => { valores[i.dataset.id] = Number(i.value); });
+  if (!Object.keys(valores).length) { await panel(); return; }
+  $('vo-enviar').disabled = true;
+  try {
+    const sobre = { v: 1, tipo: 'objetivos_valoracion', valores, completado_en: ahoraLocal(),
+                    tarea: VALORAR.id, cod_web: miCod, origen: 'cuenta' };
+    const r = await api('entregar', { id: VALORAR.id, cifrado: sellarHaciaElMac(sobre, macPublica) });
+    if (!r.ok) { $('vo-estado').textContent = 'No se ha podido enviar. Inténtalo otra vez.'; return; }
+    await panel();
+    $('recibido').hidden = false; setTimeout(() => { $('recibido').hidden = true; }, 12000);
+  } finally { $('vo-enviar').disabled = false; }
+});
 
 /* --- El justificante de pago -------------------------------------------
    Lo que sube se sella a la clave del Mac (el fichero entero) y se
@@ -1713,22 +1847,58 @@ async function abrirTarea(id) {
   const cont = $('t-items'); cont.innerHTML = '';
   const inicioBloque = {};
   (P.bloques || []).forEach(b => { inicioBloque[Math.min(...b.items)] = b.titulo; });
+  const NUM = new Set(P.items_numericos || []);
+  const OPC = new Set(P.items_opcionales || []);
+  const COND = P.items_condicionales || {};
   P.items.forEach((texto, i) => {
     const n = i + 1;
     if (inicioBloque[n]) {
+      /* Un bloque puede traer una explicación larga con ejemplos (DOCS):
+         la primera línea es el título; el resto va debajo, entero y con
+         sus saltos. Sin ella, las preguntas de ese bloque no se
+         entienden. */
+      const [primera, ...resto] = String(inicioBloque[n]).split('\n');
       const h = document.createElement('h2');
       h.className = 'bloque-titulo';
-      h.textContent = inicioBloque[n];
+      h.textContent = primera;
+      cont.appendChild(h);
+      if (resto.join('').trim()) {
+        const d = document.createElement('p');
+        d.className = 'bloque-texto';
+        d.textContent = resto.join('\n').trim();
+        cont.appendChild(d);
+      }
+    }
+    /* Rótulos que van antes de un ítem (ITQ: 7, 10 y 16). */
+    if (P.secciones && P.secciones[String(n)]) {
+      const h = document.createElement('p');
+      h.className = 'seccion-titulo';
+      h.textContent = P.secciones[String(n)];
       cont.appendChild(h);
     }
     const caja = document.createElement('div');
     caja.className = 'item';
+    /* «En caso afirmativo…»: solo se pregunta si la anterior lo abre. */
+    if (COND[String(n)]) {
+      caja.dataset.cond = COND[String(n)].item + ':' + COND[String(n)].valor;
+      caja.hidden = true;
+    }
     const fs = document.createElement('fieldset');
     const lg = document.createElement('legend');
-    lg.textContent = n + '. ' + texto;
+    lg.textContent = n + '. ' + texto + (OPC.has(n) ? ' (opcional)' : '');
     fs.appendChild(lg);
     const ops = document.createElement('div');
     ops.className = 'opciones';
+    if (NUM.has(n)) {
+      /* Respuesta abierta: un número entero (¿cuántas veces?). */
+      const inp = document.createElement('input');
+      inp.type = 'number'; inp.min = '0'; inp.step = '1'; inp.inputMode = 'numeric';
+      inp.name = 'i' + n; inp.className = 'numero';
+      inp.setAttribute('aria-label', 'Número de veces');
+      ops.appendChild(inp);
+      fs.appendChild(ops); caja.appendChild(fs); cont.appendChild(caja);
+      return;
+    }
     /* AUDIT, OASIS, ODSIS: cada pregunta tiene sus propias respuestas.
        Si el ítem trae las suyas, mandan; si no, las comunes. */
     const suyas = (P.opciones_por_item && P.opciones_por_item[i]) || P.opciones;
@@ -1786,18 +1956,38 @@ async function abrirTarea(id) {
   ver('v-tarea');
 }
 
+/* Un ítem condicional está cerrado si la pregunta que lo abre no tiene
+   la respuesta que lo abre. Cerrado no se pregunta, no falta y no va
+   en el sobre. */
+function cerrado(n) {
+  const c = (TAREA.plantilla.items_condicionales || {})[String(n)];
+  if (!c) return false;
+  const m = document.querySelector('input[name=i' + c.item + ']:checked');
+  return !(m && Number(m.value) === Number(c.valor));
+}
 function respuestas() {
   const out = [];
   for (let n = 1; n <= TAREA.plantilla.items.length; n++) {
+    if (cerrado(n)) continue;
     const m = document.querySelector('input[name=i' + n + ']:checked');
-    if (m) out.push({ item: n, valor: Number(m.value) });
+    if (m) { out.push({ item: n, valor: Number(m.value) }); continue; }
+    const num = document.querySelector('input.numero[name=i' + n + ']');
+    if (num && num.value !== '' && Number(num.value) >= 0) out.push({ item: n, valor: Math.round(Number(num.value)) });
   }
   return out;
 }
 function noContestados() {
   const hechas = new Set(respuestas().map(r => r.item));
+  const opc = new Set(TAREA.plantilla.items_opcionales || []);
   const out = [];
-  for (let n = 1; n <= TAREA.plantilla.items.length; n++) if (!hechas.has(n)) out.push(n);
+  for (let n = 1; n <= TAREA.plantilla.items.length; n++) {
+    if (!hechas.has(n) && !cerrado(n) && !opc.has(n)) out.push(n);
+  }
+  return out;
+}
+function noAplica() {
+  const out = [];
+  for (let n = 1; n <= TAREA.plantilla.items.length; n++) if (cerrado(n)) out.push(n);
   return out;
 }
 function bloqueRiesgo() {
@@ -1811,9 +2001,15 @@ function bloqueRiesgo() {
 }
 
 function repintar() {
+  /* Abrir o cerrar lo condicional según lo que se va contestando. */
+  document.querySelectorAll('#t-items .item[data-cond]').forEach(c => {
+    const n = Number(c.querySelector('[name]').name.slice(1));
+    c.hidden = cerrado(n);
+  });
   const hechas = respuestas().length;
-  const total = TAREA.plantilla.items.length;
+  const total = hechas + noContestados().length;
   $('t-barra').setAttribute('aria-valuenow', String(hechas));
+  $('t-barra').setAttribute('aria-valuemax', String(total));
   $('t-barra-i').style.width = (hechas / total * 100) + '%';
   $('t-cuenta').textContent = hechas + ' de ' + total + ' contestadas';
 
@@ -1846,12 +2042,15 @@ function recuperar() {
     JSON.parse(s).forEach(r => {
       const el = document.querySelector(
         'input[name=i' + r.item + '][value="' + r.valor + '"]');
-      if (el) el.checked = true;
+      if (el) { el.checked = true; return; }
+      const num = document.querySelector('input.numero[name=i' + r.item + ']');
+      if (num) num.value = String(r.valor);
     });
   } catch (_) {}
 }
 
 $('t-items').addEventListener('change', () => { guardar(); repintar(); });
+$('t-items').addEventListener('input', (ev) => { if (ev.target.classList.contains('numero')) { guardar(); repintar(); } });
 $('t-luego').addEventListener('click', () => { guardar(); panel(); });
 
 $('t-form').addEventListener('submit', async (ev) => {
@@ -1879,6 +2078,7 @@ $('t-form').addEventListener('submit', async (ev) => {
     completado_en: momento,
     respuestas: respuestas(),
     no_contestados: noContestados(),
+    no_aplica: noAplica(),
     riesgo: bloqueRiesgo(),
     tarea: TAREA.id,
     /* El código va DENTRO del sobre. El servidor sabe de quién es esta

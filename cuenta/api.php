@@ -333,7 +333,7 @@ case 'mios': {
                                  AND c.direccion = 2 ORDER BY c.id DESC LIMIT 1) AS copia_v
                        FROM sobres s
                        WHERE s.cod = ? AND s.direccion = 2
-                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia','historial')
+                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia','historial','objetivos')
                        ORDER BY s.creado DESC, s.id DESC LIMIT 200");
     $q->execute([$cod]);
 
@@ -359,6 +359,12 @@ case 'mios': {
                         ORDER BY id DESC LIMIT 1");
     $hi->execute([$cod]);
     $historial = $hi->fetch() ?: null;
+    /* «Mis objetivos»: uno y el último, sellado, sin aviso. */
+    $ob = $db->prepare("SELECT id, para_v FROM sobres
+                        WHERE cod = ? AND direccion = 2 AND clase = 'objetivos'
+                        ORDER BY id DESC LIMIT 1");
+    $ob->execute([$cod]);
+    $objetivos = $ob->fetch() ?: null;
     /* Sus justificantes de pago. El servidor sabe CUÁNDO subió uno, no
        qué hay dentro: el justificante va sellado al Mac. Para que ella
        vea a qué sesión corresponde cada uno, se guarda además una copia
@@ -437,6 +443,8 @@ case 'mios': {
                                      'para_v' => (int)$agenda['para_v']] : null,
               'historial' => $historial ? ['id' => (int)$historial['id'],
                                            'para_v' => (int)$historial['para_v']] : null,
+              'objetivos' => $objetivos ? ['id' => (int)$objetivos['id'],
+                                           'para_v' => (int)$objetivos['para_v']] : null,
               'justificantes' => $ju->fetchAll(),
               'documentos' => $q->fetchAll(), 'tareas' => $tareas,
               'hechas' => $h->fetchAll(),
@@ -726,7 +734,7 @@ case 'publicar': {
     }
 
     $clase = (string)($in['clase'] ?? 'documento');
-    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial'], true)) $clase = 'documento';
+    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial', 'objetivos'], true)) $clase = 'documento';
 
     /* Lo de antes del portal (pacientes que llevan meses): el Mac lo
        publica con `atrasado` y la fecha en que pasó de verdad. Así sale
@@ -747,7 +755,7 @@ case 'publicar': {
        nuevo — y se borra de verdad, porque el contenido que sustituye
        es el mismo dato desactualizado. */
     /* La agenda igual: la próxima sesión es una sola. */
-    if ($clase === 'progreso' || $clase === 'agenda' || $clase === 'historial') {
+    if (in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos'], true)) {
         $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = ?")
            ->execute([$cod, $clase]);
     }
@@ -760,7 +768,7 @@ case 'publicar': {
     /* La gráfica no se avisa: se republica cada vez que él recoge algo
        y avisaría cada dos por tres de algo que el paciente no ha
        pedido. Lo demás sí. */
-    if (!in_array($clase, ['progreso', 'agenda', 'historial'], true) && !$atrasado) adr_avisa($db, $ADR, $cod);
+    if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos'], true) && !$atrasado) adr_avisa($db, $ADR, $cod);
     adr_json(['ok' => true]);
 }
 
@@ -1062,6 +1070,25 @@ case 'asignar': {
         adr_json(['ok' => true, 'id' => $id]);
     }
 
+    /* La valoración de objetivos («¿cuánto has avanzado hacia cada uno?»,
+       de 0 a 10). En claro solo van los identificadores (o1, o2…): los
+       títulos de los objetivos dicen algo de alguien y viajan sellados
+       en el documento «objetivos», que la cuenta abre con su llave. */
+    if (($in['tipo'] ?? '') === 'objetivos') {
+        $ids = is_array($plantilla) ? ($plantilla['ids'] ?? null) : null;
+        if (!is_array($ids) || !$ids || count($ids) > 12
+            || array_filter($ids, fn($x) => !is_string($x) || !preg_match('/^[A-Za-z0-9_-]{1,24}$/', $x))) {
+            adr_json(['error' => 'la valoración necesita «ids» de los objetivos'], 400);
+        }
+        $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo)
+                      VALUES (?,?,?,?,?,'objetivos')")
+           ->execute([$cod, mb_substr($titulo ?: '¿Cuánto has avanzado?', 0, 80, 'UTF-8'),
+                      json_encode(['ids' => array_values($ids)]), adr_ahora(), $in['caduca'] ?? null]);
+        $id = (int)$db->lastInsertId();
+        if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
+        adr_json(['ok' => true, 'id' => $id]);
+    }
+
     /* Se valida la forma aquí, no en el navegador. Una plantilla sin
        `items` pinta una pantalla vacía, y una con el bloque `riesgo`
        apuntando al ítem que no es vigila la pregunta equivocada — y
@@ -1116,7 +1143,7 @@ case 'tarea': {
                   'cifrado' => adr_b64($t['cifrado']), 'para_v' => (int)$t['para_v']]);
     }
     adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'],
-              'tipo' => $t['tipo'] === 'herramienta' ? 'herramienta' : 'cuestionario',
+              'tipo' => in_array($t['tipo'], ['herramienta', 'objetivos'], true) ? $t['tipo'] : 'cuestionario',
               'plantilla' => json_decode($t['plantilla'], true)]);
 }
 

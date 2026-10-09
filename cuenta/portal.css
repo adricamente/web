@@ -584,3 +584,24 @@ h3{font-weight:700}
 .caja.pago select,.caja.pago input[type=date]{max-width:100%}
 .caja.pago input[type=date]{margin-top:8px}
 .caja.pago .sub-pago{font-size:1.2rem;margin:22px 0 4px}
+
+/* Cuestionarios del 09-10: explicación larga de un bloque (DOCS), rótulos
+   de sección (ITQ) y respuesta numérica (S-EDE-Q). */
+.bloque-texto{white-space:pre-line;font-size:15.5px;color:var(--ink-2);margin:0 0 10px;padding:12px 14px;background:var(--surface-2);border-radius:var(--r-s)}
+.seccion-titulo{font-weight:700;margin:22px 0 4px}
+.item input.numero{width:8rem;font:inherit;font-size:18px;padding:8px 10px;border:1.5px solid var(--borde-campo);border-radius:var(--r-s)}
+
+/* Mis objetivos */
+#c-objetivos .foco{font-weight:600;margin:0 0 14px}
+.objetivo{padding:14px 0;border-top:1px solid var(--line)}
+.objetivo h3{font-size:1.25rem;margin:0 0 6px}
+.objetivo p{margin:0 0 4px;font-size:15.5px;color:var(--ink-2)}
+.ob-linea{display:flex;align-items:center;gap:12px;margin-top:8px}
+.ob-linea .chispa{width:140px;height:30px;flex:0 0 auto}
+.ob-historia{margin:8px 0 0;padding-left:18px;font-size:14.5px;color:var(--ink-2)}
+.ob-otros{margin-top:12px}
+.ob-otros summary{cursor:pointer;font-weight:600}
+.campo.valorar{margin-bottom:20px}
+.deslizador{display:flex;align-items:center;gap:14px}
+.deslizador input[type=range]{flex:1;min-width:0;accent-color:var(--accent)}
+.deslizador output{font-weight:700;font-size:20px;min-width:2.2ch;text-align:right}
