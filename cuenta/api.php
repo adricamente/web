@@ -945,6 +945,19 @@ case 'cerrar_tarea': {
 }
 
 
+/* Anular una prueba pendiente (Adrián decide que ya no hace falta).
+   Desaparece de sus «Tareas». Solo lo que aún no ha hecho. */
+case 'anular_tarea': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $titulo = trim((string)($in['titulo'] ?? ''));
+    if ($cod === '' || $titulo === '') adr_json(['error' => 'faltan cod o titulo'], 400);
+    $q = $db->prepare("DELETE FROM tareas WHERE cod = ? AND titulo = ? AND hecho IS NULL
+                       AND tipo = 'cuestionario'");
+    $q->execute([$cod, $titulo]);
+    adr_json(['ok' => true, 'anuladas' => $q->rowCount()]);
+}
+
 /* Todo lo que la consola del Mac necesita para pintar su pantalla, en
    una sola llamada.
    -------------------------------------------------------------------
