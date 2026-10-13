@@ -37,10 +37,18 @@ return [
      en el Mac. Mismo comando que arriba. */
   'mac' => 'PEGA_AQUI_OTROS_64_CARACTERES',
 
-  /* Sin clave de correo (09-10). El portal no envía correos: los deja
-     en una cola, sellados a la clave del Mac, y el Mac los manda por el
-     Gmail de hola@. En este fichero NO va ninguna clave de Brevo ni de
-     Google. 'remite' es solo informativo. */
+  /* Correo (13-10). Lo normal es NO poner nada aquí: el Mac le da al
+     portal el permiso de Gmail de hola@ (solo enviar) con la acción
+     `correo_google`, y queda guardado cifrado en la base de datos. Con
+     él, «he olvidado mi contraseña» y los avisos salen al momento por
+     Gmail, aunque el Mac esté apagado; si Gmail falla, a la cola del Mac.
+     Alternativa a mano (fuera de public_html, NUNCA en el repositorio):
+       'google' => ['client_id' => '…', 'client_secret' => '…',
+                    'refresh_token' => '…', 'remite' => 'hola@adricamente.com'],
+     o con cuenta de servicio y delegación de dominio:
+       'google' => ['cuenta_servicio' => '/home/…/adr-google.json',
+                    'remite' => 'hola@adricamente.com'],
+     'remite' es la dirección desde la que salen. */
   'remite' => 'hola@adricamente.com',
 
   /* Cuántos días se guarda en el servidor un cuestionario DESPUÉS de

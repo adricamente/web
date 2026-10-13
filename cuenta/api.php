@@ -1456,15 +1456,61 @@ case 'estado_correo': {
     $er = adr_correo_lee($ADR, 'correo_ultimo_error');
     $c = $db->query("SELECT COUNT(*) n, MIN(creado) m FROM correos_cola WHERE enviado IS NULL")->fetch();
     $tiene_mac = (bool)$db->query("SELECT 1 FROM ajustes WHERE clave = 'mac_publica'")->fetch();
-    /* El portal no envía: encola. Funciona si tiene la clave del Mac (para
-       sellar) y si la cola no lleva nada esperando más de 30 minutos (el
-       Mac pasa cada 5). `ultimo_ok`/`ultimo_error` son los que el Mac
-       informa con correo_enviado / correo_fallido. */
+    $google = adr_google_cred($ADR);
+    /* Con Google, el portal manda al momento y la cola es solo el plan B
+       (lo que Gmail no aceptó). Funciona si el último intento salió bien
+       y no hay nada atascado en la cola. Sin Google, como antes: la cola
+       la vacía el Mac cada 5 minutos. */
     $atascada = (int)$c['n'] > 0 && strtotime($c['m']) < time() - 1800;
-    adr_json(['ok' => true, 'modo' => 'cola', 'envia_el_portal' => false,
-              'configurado' => $tiene_mac, 'operativo' => $tiene_mac && !$atascada,
+    $cuando = fn($x) => (float)($x['ts'] ?? strtotime($x['fecha'] ?? '') ?: 0);
+    $ultimo_falla = $er && (!$ok || $cuando($er) > $cuando($ok));
+    adr_json(['ok' => true, 'modo' => $google ? 'google' : 'cola', 'envia_el_portal' => (bool)$google,
+              'remite' => $google['remite'] ?? null,
+              'configurado' => $google ? true : $tiene_mac,
+              'operativo' => $google ? (!$ultimo_falla && !$atascada) : ($tiene_mac && !$atascada),
               'cola' => ['pendientes' => (int)$c['n'], 'mas_antiguo' => $c['m']],
               'ultimo_ok' => $ok, 'ultimo_error' => $er]);
+}
+
+/* El Mac le da al portal la credencial de Google de hola@ (solo
+   gmail.send) para que «he olvidado mi contraseña» y los avisos salgan al
+   momento, sin depender de que el Mac esté encendido. Se comprueba
+   pidiendo un token antes de guardarla, y se guarda cifrada.
+   {client_id, client_secret, refresh_token, remite} o {quitar: true}. */
+case 'correo_google': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/correo.php';
+    if (!empty($in['quitar'])) {
+        adr_google_guarda($ADR, null);
+        adr_apunta($db, 'mac', 'correo_google_quitado');
+        adr_json(['ok' => true, 'modo' => 'cola']);
+    }
+    $cred = ['client_id' => (string)($in['client_id'] ?? ''), 'client_secret' => (string)($in['client_secret'] ?? ''),
+             'refresh_token' => (string)($in['refresh_token'] ?? ''),
+             'remite' => adr_correo_normal((string)($in['remite'] ?? ($ADR['remite'] ?? 'hola@adricamente.com')))];
+    if (!$cred['client_id'] || !$cred['refresh_token'] || !filter_var($cred['remite'], FILTER_VALIDATE_EMAIL)) {
+        adr_json(['error' => 'faltan client_id, refresh_token o remite'], 400);
+    }
+    $t = adr_google_token($ADR, $cred, true);
+    if (empty($t['token'])) adr_json(['error' => 'Google no ha aceptado la credencial', 'detalle' => $t], 400);
+    adr_google_guarda($ADR, $cred);
+    adr_apunta($db, 'mac', 'correo_google_puesto');
+    adr_json(['ok' => true, 'modo' => 'google', 'remite' => $cred['remite']]);
+}
+
+/* Un correo de prueba, para comprobar de verdad que sale (con su id de
+   Gmail). Solo el Mac, y a la dirección que diga. */
+case 'probar_correo': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/correo.php';
+    $a = adr_correo_normal((string)($in['a'] ?? ''));
+    if (!filter_var($a, FILTER_VALIDATE_EMAIL)) adr_json(['error' => 'correo no válido'], 400);
+    if (adr_via($ADR) !== 'google') adr_json(['error' => 'el portal no tiene Google configurado', 'modo' => adr_via($ADR)], 409);
+    $r = adr_google_envia($ADR, $a, 'Prueba del portal de adricamente',
+        "Esto es una prueba: si lo lees, los correos del portal salen bien.\n",
+        '<p>Esto es una prueba: si lo lees, los correos del portal salen bien.</p>');
+    adr_correo_apunta($ADR, $r, (int)($r['codigo'] ?? 0), (string)($r['detalle'] ?? ''));
+    adr_json($r, $r['enviado'] ? 200 : 502);
 }
 
 case 'estado': {

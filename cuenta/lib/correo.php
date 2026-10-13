@@ -1,8 +1,9 @@
 <?php
 /* ===================================================================
    Los correos que el portal necesita escribir por su cuenta: recuperar
-   la contraseña y el aviso de «tienes algo». No los envía: los deja en
-   la cola y los manda el Mac por el Gmail de hola@ (ver adr_manda).
+   la contraseña y el aviso de «tienes algo». Salen al momento por el
+   Gmail de hola@ (API de Gmail, solo enviar); si eso falla, van a la
+   cola y los manda el Mac (ver adr_manda).
 
    Lo que este correo NO dice, y es deliberado: no nombra a nadie, no
    dice «tu terapeuta», no menciona cuestionarios ni sesiones. Un
@@ -61,31 +62,45 @@ function adr_correo_reset(array $ADR, string $a, string $enlace, int $horas = 2)
     return adr_manda($ADR, $a, 'Tu contraseña de adricamente', $texto, $html, 'reset');
 }
 
-/** Por dónde sale un correo del portal: siempre por la cola, que vacía
- *  el Mac por el Gmail de hola@. 'prueba' en las pruebas (además se
- *  escribe a un fichero para poder leerlo). */
+/** Por dónde sale un correo del portal.
+ *  'google': lo manda el propio servidor, al momento, por la API de Gmail
+ *            de hola@ (solo permiso de ENVIAR). Si falla, va a la cola.
+ *  'cola':   lo deja en la cola y lo manda el Mac en su pasada.
+ *  'prueba': en las pruebas (además se escribe a un fichero). */
 function adr_via(array $ADR): string {
-    return !empty($ADR['correo_carpeta']) ? 'prueba' : 'cola';
+    if (!empty($ADR['correo_carpeta']) && empty($ADR['google_prueba'])) return 'prueba';
+    return adr_google_cred($ADR) ? 'google' : 'cola';
 }
 
-/** El portal NO envía correos (decisión del 09-10).
+/** Manda un correo del portal.
  *
- *  Los correos a pacientes salen solo por el Gmail de hola@ (Google
- *  Workspace), desde el Mac: así quedan en «Enviados», las respuestas
- *  llegan a hola@ y en Hostinger no hay ninguna credencial de correo.
- *  Lo que el servidor tiene que escribir por su cuenta («he olvidado mi
- *  contraseña», «tienes algo» de lo que no decide el Mac) se deja en la
- *  cola, sellado a la clave del Mac, y el Mac lo manda en su pasada.
+ *  Historia: hasta el 08-10 había Brevo y, sin Brevo, el `mail()` del
+ *  alojamiento, que decía «ok» y no salía nada. El 09-10 se quitó todo
+ *  envío del servidor y se dejó una cola que vaciaba el Mac. Pero un
+ *  «he olvidado mi contraseña» tiene que llegar AL MOMENTO, esté el Mac
+ *  encendido o no (13-10: una paciente no podía entrar).
  *
- *  Antes había aquí Brevo y, sin Brevo, el `mail()` del alojamiento.
- *  Fue el error del 08-10: `mail()` decía «ok» y no salía nada. Ahora
- *  nadie dice «enviado» salvo el Mac, con el identificador de Gmail.
+ *  Ahora, si hay credencial de Google (de hola@, solo `gmail.send`), lo
+ *  manda el servidor por la API de Gmail y solo dice «enviado» cuando
+ *  Gmail devuelve el identificador del mensaje. Queda en «Enviados» de
+ *  hola@ y las respuestas llegan a hola@, como si lo mandara el Mac. Si
+ *  Gmail falla, no se pierde: va a la cola y lo manda el Mac.
  *
- *  Devuelve ['enviado' => false, 'error' => 'en_cola', 'cola_id' => n]
- *  o un error si no se ha podido encolar. */
+ *  Devuelve ['enviado' => true, 'message_id' => …, 'via' => 'google']
+ *  o ['enviado' => false, 'error' => 'en_cola', 'cola_id' => n, …]. */
 function adr_manda(array $ADR, string $a, string $asunto, string $texto, string $html,
                    string $tipo = 'aviso', ?string $cod = null): array {
-    $r = adr_correo_encola($ADR, $a, $asunto, $texto, $html, $tipo, $cod);
+    $r = null;
+    if (adr_via($ADR) === 'google') {
+        $r = adr_google_envia($ADR, $a, $asunto, $texto, $html);
+        adr_correo_apunta($ADR, $r, (int)($r['codigo'] ?? 0), (string)($r['detalle'] ?? ''));
+        if (!$r['enviado']) {
+            $c = adr_correo_encola($ADR, $a, $asunto, $texto, $html, $tipo, $cod);
+            $r = $c + ['fallo_google' => $r['error']];
+        }
+    } else {
+        $r = adr_correo_encola($ADR, $a, $asunto, $texto, $html, $tipo, $cod);
+    }
     if (!empty($ADR['correo_carpeta'])) {
         @mkdir($ADR['correo_carpeta'], 0700, true);
         file_put_contents($ADR['correo_carpeta'] . '/' . microtime(true) . '.json',
@@ -93,6 +108,160 @@ function adr_manda(array $ADR, string $a, string $asunto, string $texto, string 
                          'tipo' => $tipo, 'cola' => $r], JSON_UNESCAPED_UNICODE));
     }
     return $r;
+}
+
+/* --- Google (Gmail API, solo enviar) ----------------------------------
+   La credencial puede venir de dos sitios:
+   · adr-config.php: 'google' => ['client_id','client_secret','refresh_token','remite']
+     o 'google' => ['cuenta_servicio' => '/ruta/fuera/de/public_html.json', 'remite']
+   · la que sube el Mac con `correo_google` (refresh token de hola@ con
+     permiso gmail.send), guardada CIFRADA en la base de datos con una
+     llave que sale del secreto de adr-config.php. */
+
+function adr_google_llave(array $ADR): string {
+    return sodium_crypto_generichash('adr-correo-google|' . $ADR['secreto'], '', SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+}
+
+function adr_google_cred(array $ADR): ?array {
+    static $cache = [];
+    $k = $ADR['datos'] ?? '';
+    if (array_key_exists($k, $cache)) return $cache[$k];
+    $c = null;
+    if (!empty($ADR['google']) && is_array($ADR['google'])) {
+        $c = $ADR['google'];
+    } else {
+        try {
+            $f = adr_db($ADR)->query("SELECT valor FROM ajustes WHERE clave = 'google_cred'")->fetch();
+            if ($f) {
+                $b = base64_decode($f['valor'], true);
+                $n = substr($b, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+                $claro = sodium_crypto_secretbox_open(substr($b, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES), $n, adr_google_llave($ADR));
+                $c = $claro !== false ? json_decode($claro, true) : null;
+            }
+        } catch (Throwable $e) { $c = null; }
+    }
+    return $cache[$k] = ($c ?: null);
+}
+
+function adr_google_guarda(array $ADR, ?array $cred): void {
+    $db = adr_db($ADR);
+    if ($cred === null) {
+        $db->exec("DELETE FROM ajustes WHERE clave IN ('google_cred','google_token')");
+        return;
+    }
+    $n = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+    $v = base64_encode($n . sodium_crypto_secretbox(json_encode($cred), $n, adr_google_llave($ADR)));
+    $db->prepare("INSERT INTO ajustes (clave, valor, puesto) VALUES ('google_cred', ?, ?)
+                  ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor, puesto = excluded.puesto")
+       ->execute([$v, date('c')]);
+    $db->exec("DELETE FROM ajustes WHERE clave = 'google_token'");
+}
+
+function adr_http(string $url, array $cabeceras, string $cuerpo): array {
+    if (function_exists('curl_init')) {
+        $h = curl_init($url);
+        curl_setopt_array($h, [CURLOPT_POST => true, CURLOPT_POSTFIELDS => $cuerpo,
+            CURLOPT_HTTPHEADER => $cabeceras, CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 15]);
+        $r = curl_exec($h);
+        $c = (int)curl_getinfo($h, CURLINFO_HTTP_CODE);
+        $e = curl_error($h);
+        curl_close($h);
+        return [$c, $r === false ? $e : (string)$r];
+    }
+    $ctx = stream_context_create(['http' => ['method' => 'POST', 'header' => implode("\r\n", $cabeceras),
+        'content' => $cuerpo, 'timeout' => 15, 'ignore_errors' => true]]);
+    $r = @file_get_contents($url, false, $ctx);
+    $c = 0;
+    foreach ($http_response_header ?? [] as $l) if (preg_match('#^HTTP/\S+ (\d{3})#', $l, $m)) $c = (int)$m[1];
+    return [$c, (string)$r];
+}
+
+function adr_b64url(string $s): string { return rtrim(strtr(base64_encode($s), '+/', '-_'), '='); }
+
+/** Un token de acceso de Gmail (vale una hora; se guarda hasta entonces). */
+function adr_google_token(array $ADR, array $cred, bool $nuevo = false): array {
+    $db = adr_db($ADR);
+    if (!$nuevo) {
+        $f = $db->query("SELECT valor FROM ajustes WHERE clave = 'google_token'")->fetch();
+        $t = $f ? json_decode($f['valor'], true) : null;
+        if ($t && ($t['caduca'] ?? 0) > time() + 60) return ['token' => $t['token']];
+    }
+    $uri = $ADR['google_token_uri'] ?? 'https://oauth2.googleapis.com/token';
+    if (!empty($cred['cuenta_servicio'])) {
+        $sa = json_decode((string)@file_get_contents($cred['cuenta_servicio']), true);
+        if (!$sa || empty($sa['private_key'])) return ['error' => 'cuenta_servicio_ilegible'];
+        $ahora = time();
+        $jwt = adr_b64url(json_encode(['alg' => 'RS256', 'typ' => 'JWT'])) . '.'
+             . adr_b64url(json_encode(['iss' => $sa['client_email'], 'sub' => $cred['remite'],
+                 'scope' => 'https://www.googleapis.com/auth/gmail.send', 'aud' => $uri,
+                 'iat' => $ahora, 'exp' => $ahora + 3600]));
+        if (!openssl_sign($jwt, $firma, $sa['private_key'], OPENSSL_ALGO_SHA256)) return ['error' => 'firma_jwt'];
+        $cuerpo = http_build_query(['grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                                    'assertion' => $jwt . '.' . adr_b64url($firma)]);
+    } else {
+        $cuerpo = http_build_query(['grant_type' => 'refresh_token', 'client_id' => $cred['client_id'] ?? '',
+                                    'client_secret' => $cred['client_secret'] ?? '',
+                                    'refresh_token' => $cred['refresh_token'] ?? '']);
+    }
+    [$c, $r] = adr_http($uri, ['Content-Type: application/x-www-form-urlencoded'], $cuerpo);
+    $j = json_decode($r, true);
+    if ($c !== 200 || empty($j['access_token'])) {
+        return ['error' => 'token', 'codigo' => $c, 'detalle' => substr((string)($j['error'] ?? $r), 0, 160)];
+    }
+    $db->prepare("INSERT INTO ajustes (clave, valor, puesto) VALUES ('google_token', ?, ?)
+                  ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor, puesto = excluded.puesto")
+       ->execute([json_encode(['token' => $j['access_token'], 'caduca' => time() + (int)($j['expires_in'] ?? 3600)]), date('c')]);
+    return ['token' => $j['access_token']];
+}
+
+function adr_mime(string $remite, string $a, string $asunto, string $texto, string $html): string {
+    $frontera = 'adr-' . bin2hex(random_bytes(8));
+    $cab = fn($s) => '=?UTF-8?B?' . base64_encode($s) . '?=';
+    return "From: " . $cab('adricamente') . " <$remite>\r\n"
+         . "To: $a\r\n"
+         . "Reply-To: $remite\r\n"
+         . "Subject: " . $cab($asunto) . "\r\n"
+         . "MIME-Version: 1.0\r\n"
+         . "Content-Type: multipart/alternative; boundary=\"$frontera\"\r\n\r\n"
+         . "--$frontera\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+         . chunk_split(base64_encode($texto)) . "\r\n"
+         . "--$frontera\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
+         . chunk_split(base64_encode('<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#25231F">'
+                                     . $html . '</div>')) . "\r\n"
+         . "--$frontera--\r\n";
+}
+
+/** Lo manda por la API de Gmail. «Enviado» solo con el id que da Gmail. */
+function adr_google_envia(array $ADR, string $a, string $asunto, string $texto, string $html): array {
+    $cred = adr_google_cred($ADR);
+    if (!$cred) return ['enviado' => false, 'message_id' => null, 'error' => 'sin_google'];
+    if (!filter_var($a, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $a)) {
+        return ['enviado' => false, 'message_id' => null, 'error' => 'destinatario_no_valido'];
+    }
+    $remite = $cred['remite'] ?? ($ADR['remite'] ?? 'hola@adricamente.com');
+    $api = $ADR['google_api'] ?? 'https://gmail.googleapis.com';
+    $raw = adr_b64url(adr_mime($remite, $a, $asunto, $texto, $html));
+    foreach ([false, true] as $nuevo) {
+        $t = adr_google_token($ADR, $cred, $nuevo);
+        if (empty($t['token'])) {
+            return ['enviado' => false, 'message_id' => null, 'error' => 'google_' . $t['error'],
+                    'codigo' => $t['codigo'] ?? 0, 'detalle' => $t['detalle'] ?? ''];
+        }
+        [$c, $r] = adr_http($api . '/gmail/v1/users/me/messages/send',
+            ['Authorization: Bearer ' . $t['token'], 'Content-Type: application/json'],
+            json_encode(['raw' => $raw]));
+        $j = json_decode($r, true);
+        if ($c === 200 && !empty($j['id'])) {
+            return ['enviado' => true, 'message_id' => $j['id'], 'error' => null, 'via' => 'google'];
+        }
+        if ($c !== 401) {
+            return ['enviado' => false, 'message_id' => null, 'error' => 'google_envio', 'codigo' => $c,
+                    'detalle' => substr((string)($j['error']['message'] ?? $r), 0, 160)];
+        }
+        // 401: el token guardado ya no vale; se pide otro una vez.
+    }
+    return ['enviado' => false, 'message_id' => null, 'error' => 'google_401', 'codigo' => 401];
 }
 
 /** Deja un correo en la cola, sellado a la clave pública del Mac. */
@@ -124,8 +293,8 @@ function adr_correo_lee(array $ADR, string $clave): ?array {
 function adr_correo_apunta(array $ADR, array $res, int $codigo = 0, string $texto = ''): array {
     $clave = $res['enviado'] ? 'correo_ultimo_ok' : 'correo_ultimo_error';
     $valor = $res['enviado']
-        ? ['fecha' => date('c'), 'message_id' => $res['message_id']]
-        : ['fecha' => date('c'), 'codigo' => $codigo, 'error' => $res['error'], 'texto' => $texto];
+        ? ['fecha' => date('c'), 'ts' => microtime(true), 'message_id' => $res['message_id']]
+        : ['fecha' => date('c'), 'ts' => microtime(true), 'codigo' => $codigo, 'error' => $res['error'], 'texto' => $texto];
     adr_db($ADR)->prepare('INSERT INTO ajustes (clave, valor, puesto) VALUES (?,?,?)
                            ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor,
                                                             puesto = excluded.puesto')
