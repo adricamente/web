@@ -38,7 +38,9 @@ if ($papel === '') {
     <p><strong>Mira tu correo.</strong> Si esa dirección tiene cuenta
     aquí, te llega un enlace desde hola@adricamente.com en unos minutos.
     Vale un día y una sola vez.</p>
-    <p>Si no lo ves en un rato, mira en la carpeta de spam.</p>
+    <p>Si no lo ves en un rato, mira en la carpeta de spam. Y si en
+    diez minutos sigue sin llegar, escríbeme por WhatsApp y te paso el
+    enlace directamente.</p>
   </div>
 
   <form id="f">

@@ -950,6 +950,23 @@ case 'alta': {
               'caduca' => date('c', time() + 24 * 7 * 3600)]);
 }
 
+/* Un enlace para poner contraseña nueva, para que Adrián se lo dé en
+   mano (WhatsApp) a quien ya activó su cuenta y no puede entrar. Es el
+   mismo papel que «He olvidado mi contraseña», pero no depende de que
+   el correo llegue. Vale 72 horas y una sola vez. */
+case 'enlace_clave': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $q = $db->prepare('SELECT cod FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    if (!$q->fetch()) adr_json(['error' => 'esa cuenta no está activada: usa su enlace de activación'], 404);
+    $horas = 72;
+    $papel = adr_ficha($db, $cod, 'reset', $horas);
+    adr_apunta($db, 'mac', 'enlace_clave');
+    adr_json(['ok' => true, 'enlace' => $ADR['sitio'] . '/clave.php?p=' . $papel,
+              'caduca' => date('c', time() + $horas * 3600)]);
+}
+
 /* Cerrar en la cuenta lo que se ha hecho en sesión.
    -------------------------------------------------------------------
    Adrián le lee el PHQ-9 en la sesión y apunta sus respuestas en la

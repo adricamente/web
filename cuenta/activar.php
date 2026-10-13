@@ -120,7 +120,7 @@ $('f').addEventListener('submit', async (ev) => {
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) { falla(j.error === 'ese enlace ya no vale'
-        ? 'Este enlace ya se ha usado o ha caducado. Escríbeme y te mando otro.'
+        ? 'Este enlace ya se ha usado o ha caducado. Si ya creaste tu cuenta, entra en cuenta.adricamente.com con tu correo y tu contraseña. Si no la recuerdas, escríbeme y te paso un enlace para poner otra.'
         : 'No hemos podido crear la cuenta. Inténtalo otra vez.'); return; }
 
     /* A entrar con la contraseña recién elegida. Ver el comentario de
