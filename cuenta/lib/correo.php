@@ -90,6 +90,14 @@ function adr_via(array $ADR): string {
  *  o ['enviado' => false, 'error' => 'en_cola', 'cola_id' => n, …]. */
 function adr_manda(array $ADR, string $a, string $asunto, string $texto, string $html,
                    string $tipo = 'aviso', ?string $cod = null): array {
+    /* Freno: que un bucle o una cuenta robada no use hola@ para mandar en
+       masa. Como mucho 6 por hora a la misma dirección y 60 por hora en
+       total. Lo frenado no se manda ni se encola, y queda apuntado. */
+    $db = adr_db($ADR);
+    if (!adr_freno($db, 'correo:' . strtolower($a), 6, 3600) || !adr_freno($db, 'correo:todo', 60, 3600)) {
+        error_log('adr: correo frenado (' . $tipo . ')');
+        return adr_correo_apunta($ADR, ['enviado' => false, 'message_id' => null, 'error' => 'freno'], 429, $tipo);
+    }
     $r = null;
     if (adr_via($ADR) === 'google') {
         $r = adr_google_envia($ADR, $a, $asunto, $texto, $html);
@@ -118,8 +126,25 @@ function adr_manda(array $ADR, string $a, string $asunto, string $texto, string 
      permiso gmail.send), guardada CIFRADA en la base de datos con una
      llave que sale del secreto de adr-config.php. */
 
+/* La credencial se guarda cifrada con AES-256-GCM (openssl), con una
+   llave que sale del secreto de adr-config.php. No usa la extensión
+   sodium: el 13-10 «correo_google» dio un 500 mudo y es posible que el
+   PHP de Hostinger no la tenga. */
 function adr_google_llave(array $ADR): string {
-    return sodium_crypto_generichash('adr-correo-google|' . $ADR['secreto'], '', SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+    return hash_hmac('sha256', 'adr-correo-google', (string)($ADR['secreto'] ?? ''), true);
+}
+function adr_cifra_ajuste(array $ADR, string $claro): string {
+    $iv = random_bytes(12);
+    $c = openssl_encrypt($claro, 'aes-256-gcm', adr_google_llave($ADR), OPENSSL_RAW_DATA, $iv, $tag);
+    if ($c === false) throw new RuntimeException('openssl_encrypt ha fallado');
+    return base64_encode($iv . $tag . $c);
+}
+function adr_descifra_ajuste(array $ADR, string $b64): ?string {
+    $b = base64_decode($b64, true);
+    if ($b === false || strlen($b) < 29) return null;
+    $r = openssl_decrypt(substr($b, 28), 'aes-256-gcm', adr_google_llave($ADR), OPENSSL_RAW_DATA,
+                         substr($b, 0, 12), substr($b, 12, 16));
+    return $r === false ? null : $r;
 }
 
 function adr_google_cred(array $ADR): ?array {
@@ -133,10 +158,8 @@ function adr_google_cred(array $ADR): ?array {
         try {
             $f = adr_db($ADR)->query("SELECT valor FROM ajustes WHERE clave = 'google_cred'")->fetch();
             if ($f) {
-                $b = base64_decode($f['valor'], true);
-                $n = substr($b, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-                $claro = sodium_crypto_secretbox_open(substr($b, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES), $n, adr_google_llave($ADR));
-                $c = $claro !== false ? json_decode($claro, true) : null;
+                $claro = adr_descifra_ajuste($ADR, (string)$f['valor']);
+                $c = $claro !== null ? json_decode($claro, true) : null;
             }
         } catch (Throwable $e) { $c = null; }
     }
@@ -149,8 +172,7 @@ function adr_google_guarda(array $ADR, ?array $cred): void {
         $db->exec("DELETE FROM ajustes WHERE clave IN ('google_cred','google_token')");
         return;
     }
-    $n = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-    $v = base64_encode($n . sodium_crypto_secretbox(json_encode($cred), $n, adr_google_llave($ADR)));
+    $v = adr_cifra_ajuste($ADR, json_encode($cred));
     $db->prepare("INSERT INTO ajustes (clave, valor, puesto) VALUES ('google_cred', ?, ?)
                   ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor, puesto = excluded.puesto")
        ->execute([$v, date('c')]);
@@ -270,8 +292,15 @@ function adr_correo_encola(array $ADR, string $a, string $asunto, string $texto,
     $db = adr_db($ADR);
     $m = $db->query("SELECT valor FROM ajustes WHERE clave = 'mac_publica'")->fetch();
     $pub = $m ? base64_decode($m['valor'], true) : false;
-    if (!$pub || strlen($pub) !== 32 || !function_exists('sodium_crypto_box_seal')) {
-        error_log('adr: no se puede encolar un correo: sin clave pública del Mac o sin sodium');
+    if (!function_exists('sodium_crypto_box_seal')) {
+        /* Sin la extensión sodium no se puede sellar para el Mac. Se dice
+           (estado y estado_correo lo enseñan) en vez de fallar callado. */
+        error_log('adr: no se puede encolar un correo: el PHP del servidor no tiene sodium');
+        return adr_correo_apunta($ADR, ['enviado' => false, 'message_id' => null, 'error' => 'cola_sin_sodium'], 0,
+                                 'el PHP del servidor no tiene la extensión sodium');
+    }
+    if (!$pub || strlen($pub) !== 32) {
+        error_log('adr: no se puede encolar un correo: sin clave pública del Mac');
         return ['enviado' => false, 'message_id' => null, 'error' => 'cola_sin_clave_mac'];
     }
     $claro = json_encode(['v' => 1, 'para' => $a, 'remite' => $ADR['remite'] ?? null, 'asunto' => $asunto,

@@ -14,6 +14,32 @@ declare(strict_types=1);
 const ADR_DENTRO = true;
 require __DIR__ . '/lib/arranque.php';
 
+/* Un fallo interno nunca más mudo (13-10: «correo_google» dio un 500 sin
+   cuerpo y no había forma de saber qué era). Siempre JSON; al Mac,
+   además, qué ha fallado y dónde (nunca datos: el mensaje del error y
+   la línea). Al navegador, solo «error interno». */
+function adr_fallo_interno(string $tipo, string $msg, string $fichero, int $linea): void {
+    error_log("adr: $tipo: $msg en $fichero:$linea");
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+    }
+    $mac = ($_SERVER['HTTP_X_ADR_MAC'] ?? '') !== '' && isset($GLOBALS['ADR'])
+        && !empty($GLOBALS['ADR']['mac']) && hash_equals((string)$GLOBALS['ADR']['mac'], (string)$_SERVER['HTTP_X_ADR_MAC']);
+    echo json_encode(['error' => 'error interno del servidor'] + ($mac ? [
+        'tipo' => $tipo, 'detalle' => mb_substr($msg, 0, 300), 'donde' => basename($fichero) . ':' . $linea] : []),
+        JSON_UNESCAPED_UNICODE);
+}
+set_exception_handler(function (Throwable $e) {
+    adr_fallo_interno(get_class($e), $e->getMessage(), $e->getFile(), $e->getLine());
+});
+register_shutdown_function(function () {
+    $e = error_get_last();
+    if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        adr_fallo_interno('fatal', $e['message'], $e['file'], $e['line']);
+    }
+});
+
 $db = adr_db($ADR);
 
 /** Avisa por correo de que hay algo pendiente, como mucho una vez cada
@@ -1491,8 +1517,13 @@ case 'correo_google': {
     if (!$cred['client_id'] || !$cred['refresh_token'] || !filter_var($cred['remite'], FILTER_VALIDATE_EMAIL)) {
         adr_json(['error' => 'faltan client_id, refresh_token o remite'], 400);
     }
+    if (!function_exists('openssl_encrypt')) adr_json(['error' => 'el PHP del servidor no tiene openssl: no puedo guardarla cifrada'], 500);
     $t = adr_google_token($ADR, $cred, true);
-    if (empty($t['token'])) adr_json(['error' => 'Google no ha aceptado la credencial', 'detalle' => $t], 400);
+    if (empty($t['token'])) {
+        adr_json(['error' => ($t['codigo'] ?? 0) === 0
+                      ? 'el servidor no ha podido conectar con Google (' . ($t['detalle'] ?? '') . ')'
+                      : 'Google no ha aceptado la credencial', 'detalle' => $t], ($t['codigo'] ?? 0) === 0 ? 502 : 400);
+    }
     adr_google_guarda($ADR, $cred);
     adr_apunta($db, 'mac', 'correo_google_puesto');
     adr_json(['ok' => true, 'modo' => 'google', 'remite' => $cred['remite']]);
@@ -1518,6 +1549,12 @@ case 'estado': {
     require_once __DIR__ . '/lib/correo.php';
     adr_json(['ok' => true,
               'correo' => adr_via($ADR),
+              /* Lo que el portal necesita del PHP del alojamiento, para que
+                 un fallo se vea aquí y no como un 500. */
+              'extensiones' => ['sodium' => function_exists('sodium_crypto_box_seal'),
+                                'openssl' => function_exists('openssl_encrypt'),
+                                'curl' => function_exists('curl_init'),
+                                'allow_url_fopen' => (bool)ini_get('allow_url_fopen')],
               'remite' => $ADR['remite'] ?? null,
               'php' => PHP_VERSION,
               'pacientes' => (int)$db->query("SELECT COUNT(*) FROM pacientes WHERE cod <> 'hoja'")->fetchColumn(),
