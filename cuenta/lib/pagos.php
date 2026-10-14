@@ -273,7 +273,7 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
         . 'Nadie aquí ve los datos de tu tarjeta. El recibo te llega por correo.</p>'
         . '<p style="margin:0 0 6px;font-weight:700">Si necesitas cambiarla o cancelarla</p>'
         . '<p style="margin:0 0 18px">Hazlo desde el correo de confirmación de la reserva, o contesta a este correo. '
-        . 'Hasta 24 horas antes, sin coste (si ya habías pagado, se te devuelve). Con menos de 24 horas, o si no te presentas, la sesión no se devuelve.</p>'
+        . 'Hasta 24 horas antes, sin coste (si ya habías pagado, se te devuelve). Con menos de 24 horas, o si no te presentas, la sesión se cobra, salvo causa justificada.</p>'
         . '<p style="margin:0 0 18px">Si ya la has pagado, no tienes que hacer nada más. Si no has reservado tú esta sesión, contesta a este correo y lo miro.</p>'
         . '<p style="margin:0">Un saludo,</p>'
         . '<p style="margin:4px 0 0"><strong>Adrián Cuñat Andrés</strong><br>'
@@ -289,7 +289,7 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
         . "Importe: $imp,00 € (exento de IVA)\n\n"
         . "Pagar $imp € de forma segura (tarjeta, Apple Pay o Google Pay, en Stripe):\n$url\n\n"
         . "Si necesitas cambiarla o cancelarla, hazlo desde el correo de confirmación de la reserva o contesta a este correo. "
-        . "Hasta 24 horas antes, sin coste (si ya habías pagado, se te devuelve). Con menos de 24 horas, o si no te presentas, la sesión no se devuelve.\n\n"
+        . "Hasta 24 horas antes, sin coste (si ya habías pagado, se te devuelve). Con menos de 24 horas, o si no te presentas, la sesión se cobra, salvo causa justificada.\n\n"
         . "Si ya la has pagado, no tienes que hacer nada más.\n\n"
         . "Un saludo,\nAdrián Cuñat Andrés\nPsicólogo colegiado nº CM03836\nhola@adricamente.com · adricamente.com\n\n"
         . "--\nAdrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos (Gandia). "
