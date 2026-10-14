@@ -66,6 +66,19 @@ if ($cita['estado'] !== 'activa') {
 if ($ok !== '') {
     pagar_pagina('Estamos confirmando el pago', 'En unos segundos quedará marcado y Stripe te mandará el recibo. Puedes cerrar esta página.');
 }
+/* Mientras el cobro está en modo PRUEBA, un paciente de verdad no tiene
+   que acabar en la página de pago de prueba (su tarjeta no vale ahí y
+   parece un timo). Se le dice que no tiene que hacer nada; el mismo
+   enlace valdrá en cuanto se ponga la clave real. Para probar, Adrián
+   sigue con «?prueba=1». */
+$cfgp = adr_pagos_cfg($ADR) ?: [];
+if (str_contains((string)($cfgp['stripe_clave'] ?? ''), '_test_') && ($_GET['prueba'] ?? '') !== '1') {
+    pagar_pagina('El pago con tarjeta se abre en unos días',
+        'Tu sesión del ' . htmlspecialchars($dia) . ' a las ' . $hora . ' está reservada. Ahora mismo no tienes que hacer nada: '
+        . 'cuando el pago esté listo, este mismo enlace te llevará a pagar. Si tienes cualquier duda, escribe a '
+        . '<a href="mailto:hola@adricamente.com">hola@adricamente.com</a>.'
+        . '<br><br><a class="apunte" href="pagar.php?t=' . htmlspecialchars($t, ENT_QUOTES) . '&amp;prueba=1">Solo para pruebas: continuar al pago de prueba</a>');
+}
 [$url, $err] = adr_cita_checkout($ADR, $db, $cita);
 if (!$url) {
     adr_pagos_alerta($ADR, $db, (string)$err);
