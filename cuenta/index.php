@@ -1177,8 +1177,10 @@ const esConsentimiento = (titulo) => /consentimiento/i.test(String(titulo || '')
    videollamada que decía «no se graban» (contradecía el apartado 4 del
    texto, que autoriza el audio: corregida el 14-10); 3 = la buena. */
 const FIRMA_V = 3;
-const faltanDatos = (d) => !!d.firmado && esConsentimiento(d.titulo) && Number(d.firma_v || 1) < FIRMA_V;
-const soloFrase = (d) => Number(d.firma_v || 1) === 2;
+/* Volver a firmar solo si faltan los datos (v1). Las v2 valen: Adrián no
+   quiere molestar a nadie por la frase corregida (14-10). */
+const faltanDatos = (d) => !!d.firmado && esConsentimiento(d.titulo) && Number(d.firma_v || 1) < 2;
+const soloFrase = (d) => false;
 
 /* Las dos primeras cifras del código postal → provincia. */
 const PROVINCIAS = ['Álava','Albacete','Alicante','Almería','Ávila','Badajoz','Illes Balears','Barcelona','Burgos',

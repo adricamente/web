@@ -649,7 +649,7 @@ case 'firmar': {
     }
     /* Volver a firmar solo vale para completar los datos de un
        consentimiento firmado con el formulario antiguo. */
-    if ($f['firmado'] && !($es_ci && (int)($f['firma_v'] ?? 1) < 3)) adr_json(['error' => 'ya estaba firmado'], 409);
+    if ($f['firmado'] && !($es_ci && (int)($f['firma_v'] ?? 1) < 2)) adr_json(['error' => 'ya estaba firmado'], 409);
     $refirma = (bool)$f['firmado'];
 
     $db->beginTransaction();
@@ -1107,8 +1107,8 @@ case 'consentimientos': {
                      ORDER BY s.cod, s.creado DESC");
     $filas = []; $avisados = 0;
     foreach ($q->fetchAll() as $f) {
-        $falta = $f['firmado'] && (int)$f['firma_v'] < 3;
-        $f['motivo'] = !$falta ? null : ((int)$f['firma_v'] === 2 ? 'frase' : 'datos');
+        $falta = $f['firmado'] && (int)$f['firma_v'] < 2;
+        $f['motivo'] = $falta ? 'datos' : null;
         if ($falta && !empty($in['avisar']) && adr_freno($db, 'aviso_ci:' . $f['cod'], 1, 86400)) {
             $r = adr_correo_aviso($ADR, (string)$f['correo'], (string)$f['cod']);
             if ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') $avisados++;
