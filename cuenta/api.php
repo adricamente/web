@@ -353,7 +353,7 @@ case 'mios': {
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
     /* La copia firmada no sale como fila propia: va colgada del documento
        que firmó (copia_id), que es donde la persona la va a buscar. */
-    $q = $db->prepare("SELECT s.id, s.titulo, s.creado, s.para_v, s.clase, s.requiere_firma, s.firmado,
+    $q = $db->prepare("SELECT s.id, s.titulo, s.creado, s.para_v, s.clase, s.requiere_firma, s.firmado, s.firma_v,
                               (SELECT c.id FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
                                  AND c.direccion = 2 ORDER BY c.id DESC LIMIT 1) AS copia_id,
                               (SELECT c.para_v FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
@@ -593,6 +593,29 @@ case 'escribir': {
 
    Y se guarda además un sobre sellado con lo que el paciente teclea
    como firma, para que el Mac tenga la prueba completa. */
+/* Antes de firmar el consentimiento, la contraseña otra vez: se
+   comprueba como al entrar y se devuelve un permiso de diez minutos para
+   firmar, más lo que el servidor ve en ese momento (su hora, la IP y el
+   navegador), que el navegador mete DENTRO del sobre sellado al Mac. */
+case 'confirmar_firma': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    if (!adr_freno($db, 'firma:' . $cod, 10, 900)) adr_json(['error' => 'demasiados intentos'], 429);
+    $q = $db->prepare('SELECT envuelta, verificador FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $f = $q->fetch();
+    if (!$f || !password_verify((string)($in['auth'] ?? ''), $f['verificador'])) {
+        adr_apunta($db, $cod, 'contraseña mal al firmar', false);
+        adr_json(['error' => 'la contraseña no es correcta'], 401);
+    }
+    $hasta = time() + 600;
+    $ip = trim(explode(',', (string)($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? ''))[0]);
+    adr_json(['ok' => true, 'envuelta' => adr_b64($f['envuelta']),
+              'permiso' => $hasta . '.' . hash_hmac('sha256', "firma:$cod|$hasta", $ADR['secreto']),
+              'servidor' => ['hora' => adr_ahora(), 'ip' => mb_substr($ip, 0, 45),
+                             'navegador' => mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 200)]]);
+}
+
 case 'firmar': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
@@ -604,21 +627,36 @@ case 'firmar': {
        guarda otro bloque que no puede leer. */
     $copia = !empty($in['copia']) ? adr_deb64($in['copia']) : null;
     if ($copia !== null && (!$copia || strlen($copia) > 512 * 1024)) adr_json(['error' => 'copia no válida'], 400);
+    $version = (int)($in['version'] ?? 1) === 2 ? 2 : 1;
+    $huella = preg_match('/^[0-9a-f]{64}$/', (string)($in['huella'] ?? '')) ? (string)$in['huella'] : null;
 
-    $q = $db->prepare("SELECT requiere_firma, firmado FROM sobres
+    $q = $db->prepare("SELECT titulo, requiere_firma, firmado, firma_v FROM sobres
                        WHERE id = ? AND cod = ? AND direccion = 2");
     $q->execute([$id, $cod]);
     $f = $q->fetch();
     if (!$f || !(int)$f['requiere_firma']) adr_json(['error' => 'ese documento no se firma'], 400);
-    if ($f['firmado']) adr_json(['error' => 'ya estaba firmado'], 409);
+    $es_ci = (bool)preg_match('/consentimiento/iu', (string)$f['titulo']);
+    /* El consentimiento solo se firma con el formulario completo y la
+       contraseña recién comprobada. */
+    if ($es_ci) {
+        if ($version !== 2) adr_json(['error' => 'Actualiza la página: el consentimiento pide ahora tus datos.'], 409);
+        [$hasta, $mac] = array_pad(explode('.', (string)($in['permiso'] ?? ''), 2), 2, '');
+        if ((int)$hasta < time() || !hash_equals(hash_hmac('sha256', "firma:$cod|" . (int)$hasta, $ADR['secreto']), $mac)) {
+            adr_json(['error' => 'Vuelve a escribir tu contraseña y firma otra vez.'], 403);
+        }
+    }
+    /* Volver a firmar solo vale para completar los datos de un
+       consentimiento firmado con el formulario antiguo. */
+    if ($f['firmado'] && !($es_ci && (int)($f['firma_v'] ?? 1) < 2)) adr_json(['error' => 'ya estaba firmado'], 409);
+    $refirma = (bool)$f['firmado'];
 
     $db->beginTransaction();
     try {
-        $db->prepare('UPDATE sobres SET firmado = ? WHERE id = ?')
-           ->execute([adr_ahora(), $id]);
+        $db->prepare('UPDATE sobres SET firmado = ?, firma_v = ?, firma_huella = ? WHERE id = ?')
+           ->execute([adr_ahora(), $version, $huella, $id]);
         $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase)
                       VALUES (?,1,?,?,?,'firma')")
-           ->execute([$cod, 'Firma del documento ' . $id, $cifrado, adr_ahora()]);
+           ->execute([$cod, ($refirma ? 'Firma con datos del documento ' : 'Firma del documento ') . $id, $cifrado, adr_ahora()]);
         if ($copia) {
             $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
             $v->execute([$cod]);
@@ -631,7 +669,26 @@ case 'firmar': {
         $db->rollBack();
         adr_json(['error' => 'no se ha podido guardar'], 500);
     }
-    adr_json(['ok' => true, 'firmado' => adr_ahora()]);
+    /* El acuse por correo: un registro independiente y con fecha (queda
+       en Gmail). Sin título ni nada clínico, como todos los del portal. */
+    if ($es_ci) {
+        require_once __DIR__ . '/lib/correo.php';
+        $c = $db->prepare('SELECT correo FROM pacientes WHERE cod = ?');
+        $c->execute([$cod]);
+        if ($a = ($c->fetch()['correo'] ?? null)) {
+            $cuando = (new DateTimeImmutable('now', new DateTimeZone('Europe/Madrid')))->format('d/m/Y \a \l\a\s H:i');
+            $t = "Has firmado un documento en tu cuenta de adricamente el $cuando.\n\n"
+               . ($huella ? "Huella del texto firmado (SHA-256): $huella\n\n" : '')
+               . "Tienes la copia firmada en tu cuenta, en «Documentos»: " . $ADR['sitio'] . "\n\n"
+               . "Si no has sido tú, contesta a este correo cuanto antes.\n";
+            adr_manda($ADR, $a, 'Has firmado un documento en tu cuenta', $t,
+                '<p>Has firmado un documento en tu cuenta de adricamente el <strong>' . $cuando . '</strong>.</p>'
+                . ($huella ? '<p style="font-size:13px;color:#6C6963;word-break:break-all">Huella del texto firmado (SHA-256): ' . $huella . '</p>' : '')
+                . '<p>Tienes la copia firmada en tu cuenta, en «Documentos»: <a href="' . htmlspecialchars($ADR['sitio'], ENT_QUOTES) . '">entrar en mi cuenta</a>.</p>'
+                . '<p>Si no has sido tú, contesta a este correo cuanto antes.</p>', 'firma', $cod);
+        }
+    }
+    adr_json(['ok' => true, 'firmado' => adr_ahora(), 'version' => $version]);
 }
 
 /* Marcar un deber como hecho. Sin nota: la nota, si la hay, se manda
@@ -1027,6 +1084,34 @@ case 'publicados': {
                        ORDER BY creado DESC LIMIT 200");
     $q->execute([(string)($in['cod'] ?? '')]);
     adr_json(['publicados' => $q->fetchAll()]);
+}
+
+/* Los consentimientos firmados y con qué formulario: quién lo firmó solo
+   con el nombre (firma_v < 2) y le falta completar los datos. Con
+   {avisar: true}, a esos les manda el aviso de siempre («tienes algo en
+   tu cuenta»), como mucho uno al día por persona. */
+case 'consentimientos': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/correo.php';
+    $q = $db->query("SELECT s.cod, s.titulo, s.creado, s.firmado, COALESCE(s.firma_v, CASE WHEN s.firmado IS NULL THEN NULL ELSE 1 END) AS firma_v,
+                            p.correo
+                     FROM sobres s JOIN pacientes p ON p.cod = s.cod
+                     WHERE s.direccion = 2 AND s.requiere_firma = 1 AND s.titulo LIKE '%onsentimiento%'
+                       AND p.activado IS NOT NULL
+                     ORDER BY s.cod, s.creado DESC");
+    $filas = []; $avisados = 0;
+    foreach ($q->fetchAll() as $f) {
+        $falta = $f['firmado'] && (int)$f['firma_v'] < 2;
+        if ($falta && !empty($in['avisar']) && adr_freno($db, 'aviso_ci:' . $f['cod'], 1, 86400)) {
+            $r = adr_correo_aviso($ADR, (string)$f['correo'], (string)$f['cod']);
+            if ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') $avisados++;
+        }
+        unset($f['correo']);
+        $f['faltan_datos'] = $falta;
+        $filas[] = $f;
+    }
+    adr_json(['consentimientos' => $filas, 'faltan_datos' => count(array_filter($filas, fn($x) => $x['faltan_datos'])),
+              'avisados' => $avisados]);
 }
 
 /* Anular una prueba pendiente (Adrián decide que ya no hace falta).

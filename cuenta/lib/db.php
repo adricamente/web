@@ -141,6 +141,12 @@ function adr_db(array $ADR): PDO {
                por SU navegador a SU clave, con el texto y la firma. Apunta
                al documento del que es copia. */
             'copia_de'       => 'INTEGER',
+            /* 14-10: con qué formulario se firmó (1 = solo el nombre;
+               2 = consentimiento con los datos de identificación, que van
+               sellados al Mac) y la huella SHA-256 del texto firmado,
+               que no dice nada del contenido. */
+            'firma_v'        => 'INTEGER',
+            'firma_huella'   => 'TEXT',
         ],
         'tareas' => [
             /* cuestionario | deber. El cuestionario lleva su plantilla

@@ -289,6 +289,7 @@ $cuerpo .= <<<'HTML'
   <div class="caja doc-caja"><div id="doc-cuerpo"></div>
     <div class="doc-firma" id="doc-firma" hidden>
       <p id="doc-firma-t"></p>
+      <p class="apunte" id="doc-firma-d" hidden></p>
       <p class="apunte" id="doc-firma-h"></p>
     </div>
   </div>
@@ -322,17 +323,104 @@ $cuerpo .= <<<'HTML'
 <section id="v-firmar" class="vista" hidden>
   <p class="etiqueta">Documento para firmar</p>
   <h1 id="s-titulo">…</h1>
+  <div class="nota bien" id="s-refirma" hidden><p>Ya lo firmaste, pero faltaban tus datos
+  de identificación. Revisa el texto, completa el formulario y vuelve a firmarlo. Tu firma
+  anterior se conserva.</p></div>
   <div class="caja"><div id="s-cuerpo"></div></div>
+
+  <form class="caja ci" id="s-datos" hidden novalidate autocomplete="on">
+    <h2 class="ci-t">Tus datos</h2>
+    <p class="apunte">Los necesita el centro para identificarte en tu historia clínica. Van
+    cifrados desde este dispositivo hasta el centro: el servidor de esta web no los puede leer.
+    Los campos con * son obligatorios.</p>
+    <div class="ci-fila">
+      <div class="campo"><label for="ci-nombre">Nombre *</label>
+        <input type="text" id="ci-nombre" autocomplete="given-name" maxlength="60" required></div>
+      <div class="campo"><label for="ci-apellidos">Apellidos *</label>
+        <input type="text" id="ci-apellidos" autocomplete="family-name" maxlength="80" required></div>
+    </div>
+    <div class="ci-fila">
+      <div class="campo"><label for="ci-doc-tipo">Documento *</label>
+        <select id="ci-doc-tipo"><option value="DNI">DNI</option><option value="NIE">NIE</option>
+        <option value="Pasaporte">Pasaporte</option></select></div>
+      <div class="campo"><label for="ci-doc">Número *</label>
+        <input type="text" id="ci-doc" autocomplete="off" maxlength="20" spellcheck="false"
+               autocapitalize="characters" required aria-describedby="ci-doc-p">
+        <p class="pista" id="ci-doc-p">Con la letra. Por ejemplo, 12345678Z.</p></div>
+    </div>
+    <div class="ci-fila">
+      <div class="campo"><label for="ci-nac">Fecha de nacimiento *</label>
+        <input type="date" id="ci-nac" autocomplete="bday" required></div>
+      <div class="campo"><label for="ci-tel">Teléfono *</label>
+        <input type="tel" id="ci-tel" autocomplete="tel" maxlength="20" required aria-describedby="ci-tel-p">
+        <p class="pista" id="ci-tel-p">Por si se corta la videollamada.</p></div>
+    </div>
+    <h3 class="ci-st">Domicilio</h3>
+    <div class="campo"><label for="ci-dir">Dirección *</label>
+      <input type="text" id="ci-dir" autocomplete="street-address" maxlength="120" required
+             placeholder="Calle, número, piso"></div>
+    <div class="ci-fila ci-tres">
+      <div class="campo"><label for="ci-cp">Código postal *</label>
+        <input type="text" id="ci-cp" autocomplete="postal-code" inputmode="numeric" maxlength="5" required></div>
+      <div class="campo"><label for="ci-loc">Localidad *</label>
+        <input type="text" id="ci-loc" autocomplete="address-level2" maxlength="60" required></div>
+      <div class="campo"><label for="ci-prov">Provincia *</label>
+        <input type="text" id="ci-prov" autocomplete="address-level1" maxlength="40" required></div>
+    </div>
+    <p class="pista ci-pista">Este servicio es solo para personas que residen en España.</p>
+
+    <h3 class="ci-st">Persona de contacto en una emergencia <span class="ci-op">(opcional)</span></h3>
+    <p class="apunte">Solo se usaría si hubiera un riesgo grave para tu vida. Si pones a alguien,
+    díselo.</p>
+    <div class="ci-fila ci-tres">
+      <div class="campo"><label for="ci-em-nombre">Nombre</label>
+        <input type="text" id="ci-em-nombre" maxlength="80" autocomplete="off"></div>
+      <div class="campo"><label for="ci-em-rel">Relación</label>
+        <input type="text" id="ci-em-rel" maxlength="40" autocomplete="off" placeholder="Pareja, madre…"></div>
+      <div class="campo"><label for="ci-em-tel">Teléfono</label>
+        <input type="tel" id="ci-em-tel" maxlength="20" autocomplete="off"></div>
+    </div>
+
+    <h3 class="ci-st">Lo que confirmas *</h3>
+    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-atencion">
+      <span>He leído este documento, he podido preguntar mis dudas y consiento la atención psicológica.</span></label>
+    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-online">
+      <span>Sé que las sesiones pueden ser por videollamada (Google Meet), en las condiciones que explica
+      el documento, y que no se graban.</span></label>
+    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-practicas">
+      <span>Sé que me atiende Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en
+      Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos; que mi
+      caso se revisa con un profesional colegiado del centro, sujeto a secreto profesional; y que puedo
+      pedir que me atienda otro profesional del centro.</span></label>
+    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-mayor">
+      <span>Soy mayor de 18 años y resido en España.</span></label>
+
+    <h3 class="ci-st">Opcional</h3>
+    <p class="apunte">Puedes decir que no. No cambia nada en tu atención y puedes cambiarlo cuando quieras.</p>
+    <label class="opcion ci-casilla"><input type="checkbox" id="ci-o-resultados">
+      <span>Acepto que mis puntuaciones en los cuestionarios se usen de forma anónima y agregada para valorar
+      los resultados del servicio.</span></label>
+    <label class="opcion ci-casilla"><input type="checkbox" id="ci-o-memoria">
+      <span>Acepto que mi caso, sin ningún dato que me identifique, pueda usarse en la memoria de prácticas
+      del máster.</span></label>
+  </form>
+
   <div class="caja">
-    <p class="apunte">Para firmarlo, escribe tu nombre y apellidos tal
+    <h2 class="ci-t" id="s-firma-t">Firma</h2>
+    <p class="apunte" id="s-firma-a">Para firmarlo, escribe tu nombre y apellidos tal
     como aparecen en tu DNI. Queda registrada la fecha y la hora.</p>
     <div class="campo">
       <label for="s-nombre">Nombre y apellidos</label>
       <input type="text" id="s-nombre" autocomplete="name">
     </div>
+    <div class="campo" id="s-clave-c" hidden>
+      <label for="s-clave">Tu contraseña de esta cuenta</label>
+      <input type="password" id="s-clave" autocomplete="current-password">
+      <p class="pista">Para confirmar que eres tú quien firma.</p>
+    </div>
     <p><button class="boton" id="s-firmar" type="button">Firmar</button>
     <button class="enlace-boton" id="s-volver" type="button">← Volver</button></p>
-    <p class="apunte" id="s-estado" role="status"></p>
+    <p class="apunte" id="s-estado" role="status" aria-live="polite"></p>
   </div>
 </section>
 
@@ -417,7 +505,7 @@ HTML;
 
 $guion = adr_sodio() . <<<'HTML'
 <script type="module">
-import { listo, entrarConServidor, abrirDelMac, sellarHaciaElMac, vigilarSesion }
+import { listo, entrarConServidor, abrirDelMac, sellarHaciaElMac, vigilarSesion, olvidarPrivada }
   from './cripto.js';
 
 /* --- Lo que se queda aquí dentro y no sale ---------------------------
@@ -435,6 +523,8 @@ let miPublica = null;
 let miV = null;
 let macPublica = null;
 let miCod = null;
+let miCorreo = null;   /* para volver a pedir la contraseña al firmar el consentimiento */
+let DOCS = [];        /* los documentos de la última vuelta del panel */
 
 const $ = (id) => document.getElementById(id);
 const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr', 'v-valorar'];
@@ -512,6 +602,7 @@ $('f-entrar').addEventListener('submit', async (ev) => {
     });
 
     $('clave').value = '';
+    miCorreo = correo;
 
     /* vigilarSesion() borra la clave al salir, al cerrar la pestaña y
        tras un rato sin tocar nada. Recibe un GETTER, y el getter solo
@@ -608,8 +699,9 @@ async function panel() {
      documento por firmar si lo hay. Lo de las herramientas va en su
      caja; aquí se cuenta igual. */
   const ts = todas.filter(t => t.tipo !== 'herramienta');
-  const porFirmar = docs.filter(d => Number(d.requiere_firma) && !d.firmado
-                                     && Number(d.para_v) === Number(r.j.v));
+  DOCS = docs;
+  const porFirmar = docs.filter(d => Number(d.requiere_firma) && Number(d.para_v) === Number(r.j.v)
+                                     && (!d.firmado || faltanDatos(d)));
   const n = todas.length + porFirmar.length;
   $('resumen').textContent = n
     ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.')
@@ -621,11 +713,12 @@ async function panel() {
   $('globo-tareas').textContent = n ? String(n) : '';
   const ct = $('tareas'); ct.innerHTML = '';
   porFirmar.forEach(d => {
-    const f = fila(d.titulo || 'Documento', 'Para leer y firmar');
+    const re = !!d.firmado;
+    const f = fila(d.titulo || 'Documento', re ? 'Faltan tus datos: complétalos y vuelve a firmar' : 'Para leer y firmar');
     f.classList.add('firmar');
     const b = document.createElement('button');
-    b.className = 'boton'; b.type = 'button'; b.textContent = 'Leer y firmar';
-    b.addEventListener('click', () => abrirFirma(d.id, d.titulo));
+    b.className = 'boton'; b.type = 'button'; b.textContent = re ? 'Completar y firmar' : 'Leer y firmar';
+    b.addEventListener('click', () => abrirFirma(d.id, d.titulo, re));
     f.appendChild(b);
     ct.appendChild(f);
   });
@@ -692,6 +785,12 @@ async function panel() {
              empujaba «Abrir» a otra línea y cada fila salía distinta. */
           const pie = f.querySelector('.texto p');
           if (pie) pie.append(' ', e); else f.appendChild(e);
+        }
+        if (faltanDatos(d)) {
+          const b2 = document.createElement('button');
+          b2.className = 'boton'; b2.type = 'button'; b2.textContent = 'Completar datos';
+          b2.addEventListener('click', () => abrirFirma(d.id, d.titulo, true));
+          f.appendChild(b2);
         }
         const b = document.createElement('button');
         b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
@@ -1062,15 +1161,158 @@ $('d-hecho').addEventListener('click', async () => {
   finally { $('d-hecho').disabled = false; }
 });
 
-/* --- Firmar ---------------------------------------------------------- */
+/* --- Firmar ----------------------------------------------------------
+   Dos maneras. Un documento cualquiera se firma con el nombre, como
+   siempre. El CONSENTIMIENTO INFORMADO (lo dice su título) pide además
+   los datos de identificación (14-10: el centro los necesita en la
+   historia clínica), las casillas de lo que se confirma y la contraseña
+   otra vez. Todo va sellado al Mac: el servidor no ve ni el DNI ni la
+   dirección. Quien firmó el consentimiento antes de esto, solo con el
+   nombre, lo ve otra vez en pendientes para completarlo (firma_v < 2). */
 let FIRMA = null;
-async function abrirFirma(id, titulo) {
-  FIRMA = { id, titulo, texto: null };
+const esConsentimiento = (titulo) => /consentimiento/i.test(String(titulo || ''));
+const faltanDatos = (d) => !!d.firmado && esConsentimiento(d.titulo) && Number(d.firma_v || 1) < 2;
+
+/* Las dos primeras cifras del código postal → provincia. */
+const PROVINCIAS = ['Álava','Albacete','Alicante','Almería','Ávila','Badajoz','Illes Balears','Barcelona','Burgos',
+  'Cáceres','Cádiz','Castellón','Ciudad Real','Córdoba','A Coruña','Cuenca','Girona','Granada','Guadalajara',
+  'Gipuzkoa','Huelva','Huesca','Jaén','León','Lleida','La Rioja','Lugo','Madrid','Málaga','Murcia','Navarra',
+  'Ourense','Asturias','Palencia','Las Palmas','Pontevedra','Salamanca','Santa Cruz de Tenerife','Cantabria',
+  'Segovia','Sevilla','Soria','Tarragona','Teruel','Toledo','Valencia','Valladolid','Bizkaia','Zamora',
+  'Zaragoza','Ceuta','Melilla'];
+
+const CI = ['ci-nombre','ci-apellidos','ci-doc-tipo','ci-doc','ci-nac','ci-tel','ci-dir','ci-cp','ci-loc','ci-prov',
+            'ci-em-nombre','ci-em-rel','ci-em-tel'];
+const CASILLAS = { atencion: 'ci-c-atencion', online: 'ci-c-online', practicas: 'ci-c-practicas', mayor_y_residente: 'ci-c-mayor' };
+const OPCIONALES = { resultados_anonimos: 'ci-o-resultados', memoria_practicas: 'ci-o-memoria' };
+
+function documentoValido(tipo, n) {
+  const L = 'TRWAGMYFPDXBNJZSQVHLCKE';
+  if (tipo === 'DNI') { const m = /^(\d{8})([A-Z])$/.exec(n); return !!m && L[Number(m[1]) % 23] === m[2]; }
+  if (tipo === 'NIE') { const m = /^([XYZ])(\d{7})([A-Z])$/.exec(n);
+    return !!m && L[Number('XYZ'.indexOf(m[1]) + m[2]) % 23] === m[3]; }
+  return /^[A-Z0-9]{5,20}$/.test(n);
+}
+const sinMarcas = (t) => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-zñ ]/g, ' ').replace(/\s+/g, ' ').trim();
+function edad(iso) {
+  const n = new Date(iso + 'T12:00:00'), h = new Date();
+  let e = h.getFullYear() - n.getFullYear();
+  if (h.getMonth() < n.getMonth() || (h.getMonth() === n.getMonth() && h.getDate() < n.getDate())) e--;
+  return e;
+}
+function marcaMal(id, msg) {
+  const e = $(id);
+  e.setAttribute('aria-invalid', 'true');
+  let p = e.parentElement.querySelector('.ci-mal');
+  if (!p) { p = document.createElement('p'); p.className = 'ci-mal'; e.parentElement.appendChild(p); }
+  p.textContent = msg;
+  return id;
+}
+function limpiaMal() {
+  document.querySelectorAll('#s-datos [aria-invalid]').forEach(e => e.removeAttribute('aria-invalid'));
+  document.querySelectorAll('#s-datos .ci-mal').forEach(e => e.remove());
+}
+
+/* Lee y comprueba el formulario. Devuelve {datos, casillas, opcionales}
+   o null (y deja marcado lo que falla, con el foco en el primero). */
+function leeDatos() {
+  limpiaMal();
+  const v = (id) => $(id).value.trim();
+  const malos = [];
+  if (v('ci-nombre').length < 2) malos.push(marcaMal('ci-nombre', 'Escribe tu nombre.'));
+  if (v('ci-apellidos').length < 2) malos.push(marcaMal('ci-apellidos', 'Escribe tus apellidos.'));
+  const tipo = $('ci-doc-tipo').value, num = v('ci-doc').toUpperCase().replace(/[\s.-]/g, '');
+  if (!documentoValido(tipo, num)) malos.push(marcaMal('ci-doc', tipo === 'Pasaporte'
+    ? 'Revisa el número del pasaporte.' : 'Revisa el número: la letra no cuadra con los números.'));
+  const nac = $('ci-nac').value;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(nac) || edad(nac) > 110 || edad(nac) < 0) malos.push(marcaMal('ci-nac', 'Pon tu fecha de nacimiento.'));
+  else if (edad(nac) < 18) malos.push(marcaMal('ci-nac', 'Este servicio es para mayores de 18 años. Escríbeme a hola@adricamente.com y te digo a quién acudir.'));
+  const tel = v('ci-tel');
+  if ((tel.match(/\d/g) || []).length < 9 || !/^[+\d\s().-]+$/.test(tel)) malos.push(marcaMal('ci-tel', 'Revisa el teléfono.'));
+  if (v('ci-dir').length < 5) malos.push(marcaMal('ci-dir', 'Escribe la calle y el número.'));
+  const cp = v('ci-cp');
+  if (!/^(0[1-9]|[1-4]\d|5[0-2])\d{3}$/.test(cp)) malos.push(marcaMal('ci-cp', 'Un código postal de España, de 5 cifras.'));
+  if (v('ci-loc').length < 2) malos.push(marcaMal('ci-loc', 'Escribe la localidad.'));
+  if (v('ci-prov').length < 2) malos.push(marcaMal('ci-prov', 'Escribe la provincia.'));
+  const em = { nombre: v('ci-em-nombre'), relacion: v('ci-em-rel'), telefono: v('ci-em-tel') };
+  const hayEm = em.nombre || em.relacion || em.telefono;
+  if (hayEm && (!em.nombre || (em.telefono.match(/\d/g) || []).length < 9))
+    malos.push(marcaMal(em.nombre ? 'ci-em-tel' : 'ci-em-nombre', 'Si pones a alguien, con su nombre y su teléfono.'));
+  const casillas = {};
+  Object.entries(CASILLAS).forEach(([k, id]) => { casillas[k] = $(id).checked; });
+  const faltaCasilla = Object.entries(CASILLAS).find(([k]) => !casillas[k]);
+  if (faltaCasilla) malos.push(marcaMal(faltaCasilla[1], 'Para firmar hay que marcar las cuatro casillas de «Lo que confirmas».'));
+  const opcionales = {};
+  Object.entries(OPCIONALES).forEach(([k, id]) => { opcionales[k] = $(id).checked; });
+  if (malos.length) { $(malos[0]).focus(); return null; }
+  return {
+    datos: { nombre: v('ci-nombre'), apellidos: v('ci-apellidos'), documento_tipo: tipo, documento_numero: num,
+             fecha_nacimiento: nac, telefono: tel,
+             domicilio: { direccion: v('ci-dir'), codigo_postal: cp, localidad: v('ci-loc'), provincia: v('ci-prov'), pais: 'España' },
+             correo: miCorreo || null, contacto_emergencia: hayEm ? em : null },
+    casillas, opcionales };
+}
+
+/* Si ya firmó antes con datos (otra versión, otro documento), se le
+   rellenan desde SU copia firmada, que solo abre su llave. */
+async function rellenaDeAntes() {
+  for (const d of DOCS) {
+    if (!d.copia_id || Number(d.copia_v) !== Number(miV)) continue;
+    try {
+      const r = await api('abrir&id=' + encodeURIComponent(d.copia_id));
+      const c = r.ok && r.j.cifrado ? abrirDelMac(r.j.cifrado, miPublica, privada) : null;
+      const x = c && c.firma && c.firma.datos;
+      if (!x) continue;
+      const pon = (id, val) => { if (val && !$(id).value) $(id).value = val; };
+      pon('ci-nombre', x.nombre); pon('ci-apellidos', x.apellidos); pon('ci-doc', x.documento_numero);
+      if (x.documento_tipo) $('ci-doc-tipo').value = x.documento_tipo;
+      pon('ci-nac', x.fecha_nacimiento); pon('ci-tel', x.telefono);
+      const dm = x.domicilio || {};
+      pon('ci-dir', dm.direccion); pon('ci-cp', dm.codigo_postal); pon('ci-loc', dm.localidad); pon('ci-prov', dm.provincia);
+      const e = x.contacto_emergencia || {};
+      pon('ci-em-nombre', e.nombre); pon('ci-em-rel', e.relacion); pon('ci-em-tel', e.telefono);
+      return true;
+    } catch (_) { /* una copia con una llave anterior: se sigue buscando */ }
+  }
+  return false;
+}
+
+$('ci-cp').addEventListener('input', () => {
+  const cp = $('ci-cp').value.trim();
+  const n = Number(cp.slice(0, 2));
+  if (/^\d{5}$/.test(cp) && n >= 1 && n <= 52) $('ci-prov').value = PROVINCIAS[n - 1];
+});
+$('ci-doc-tipo').addEventListener('change', () => {
+  $('ci-doc-p').textContent = { DNI: 'Con la letra. Por ejemplo, 12345678Z.', NIE: 'Con las dos letras. Por ejemplo, X1234567L.',
+                                Pasaporte: 'Solo si no tienes DNI ni NIE.' }[$('ci-doc-tipo').value];
+});
+['ci-nombre', 'ci-apellidos'].forEach(id => $(id).addEventListener('input', () => {
+  if (!FIRMA || !FIRMA.consentimiento || FIRMA.nombreTocado) return;
+  $('s-nombre').value = ($('ci-nombre').value.trim() + ' ' + $('ci-apellidos').value.trim()).trim();
+}));
+$('s-nombre').addEventListener('input', () => { if (FIRMA) FIRMA.nombreTocado = true; });
+
+async function abrirFirma(id, titulo, refirma = false) {
+  const consentimiento = esConsentimiento(titulo);
+  FIRMA = { id, titulo, texto: null, consentimiento, refirma, nombreTocado: false };
   $('s-firmar').disabled = true;
   $('s-titulo').textContent = titulo || 'Documento';
   $('s-cuerpo').textContent = 'Abriendo…';
   $('s-estado').textContent = '';
   $('s-nombre').value = '';
+  $('s-clave').value = '';
+  $('s-refirma').hidden = !refirma;
+  $('s-datos').hidden = !consentimiento;
+  $('s-clave-c').hidden = !consentimiento;
+  $('s-firma-a').textContent = consentimiento
+    ? 'Escribe tu nombre y apellidos como en tu documento de identidad y tu contraseña. Queda registrada la fecha y la hora, y te llega un correo de confirmación.'
+    : 'Para firmarlo, escribe tu nombre y apellidos tal como aparecen en tu DNI. Queda registrada la fecha y la hora.';
+  if (consentimiento) {
+    $('s-datos').reset(); limpiaMal();
+    $('s-firmar').textContent = refirma ? 'Firmar otra vez con mis datos' : 'Firmar el consentimiento';
+  } else {
+    $('s-firmar').textContent = 'Firmar';
+  }
   ver('v-firmar');
   const r = await api('abrir&id=' + encodeURIComponent(id));
   if (!r.ok || !r.j.cifrado) { $('s-cuerpo').textContent = 'No se ha podido traer.'; return; }
@@ -1083,11 +1325,23 @@ async function abrirFirma(id, titulo) {
     /* Solo se puede firmar lo que se ha podido leer. */
     $('s-firmar').disabled = !FIRMA.texto;
   } catch (_) { $('s-cuerpo').textContent = 'No se ha podido abrir.'; }
+  if (consentimiento && await rellenaDeAntes() && !FIRMA.nombreTocado) {
+    $('s-nombre').value = ($('ci-nombre').value.trim() + ' ' + $('ci-apellidos').value.trim()).trim();
+  }
 }
 $('s-volver').addEventListener('click', panel);
 $('s-firmar').addEventListener('click', async () => {
-  const nombre = $('s-nombre').value.trim();
-  if (nombre.length < 5) {
+  const nombre = $('s-nombre').value.trim().replace(/\s+/g, ' ');
+  let extra = null;
+  if (FIRMA.consentimiento) {
+    extra = leeDatos();
+    if (!extra) { $('s-estado').textContent = 'Revisa lo que está marcado en rojo.'; return; }
+    if (sinMarcas(nombre) !== sinMarcas(extra.datos.nombre + ' ' + extra.datos.apellidos)) {
+      $('s-estado').textContent = 'La firma tiene que ser tu nombre y tus apellidos, igual que arriba.';
+      $('s-nombre').focus(); return;
+    }
+    if (!$('s-clave').value) { $('s-estado').textContent = 'Escribe tu contraseña para confirmar que eres tú.'; $('s-clave').focus(); return; }
+  } else if (nombre.length < 5) {
     $('s-estado').textContent = 'Escribe tu nombre y apellidos completos.';
     return;
   }
@@ -1096,27 +1350,49 @@ $('s-firmar').addEventListener('click', async () => {
   try {
     /* La huella del texto EXACTO que tenía delante: así la firma dice
        qué se firmó, no solo cuándo. */
-    const bytes = new TextEncoder().encode(FIRMA.texto);
-    const h = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
-      .map(b => b.toString(16).padStart(2, '0')).join('');
+    const h = await huellaDe(FIRMA.texto);
+    /* El consentimiento: la contraseña otra vez. El servidor la comprueba
+       como al entrar y devuelve un permiso de diez minutos para esta
+       firma, con su hora, la IP y el navegador que ve, que van DENTRO
+       del sobre sellado. */
+    let servidor = null, permiso = null;
+    if (FIRMA.consentimiento) {
+      $('s-estado').textContent = 'Comprobando…';
+      try {
+        const s = await api('sal', { correo: miCorreo });
+        const otra = await entrarConServidor($('s-clave').value, s.j.sal, async (auth) => {
+          const c = await api('confirmar_firma', { auth });
+          if (!c.ok) throw new Error(c.j.error || 'no');
+          servidor = c.j.servidor; permiso = c.j.permiso;
+          return c.j.envuelta;
+        });
+        olvidarPrivada(otra);
+      } catch (_) {
+        $('s-estado').textContent = 'La contraseña no es correcta.'; $('s-clave').focus(); return;
+      } finally { $('s-clave').value = ''; }
+    }
+    const firmado_en = ahoraLocal();
+    const firma = { nombre, firmado_en, documento_sha256: h };
+    if (extra) Object.assign(firma, { datos: extra.datos, casillas: extra.casillas, opcionales: extra.opcionales });
     /* La firma va sellada al Mac: él tiene la prueba completa de qué
-       nombre se escribió y cuándo. El servidor solo apunta que se
-       firmó y la hora, que es lo que puede saber sin leer nada. */
-    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'firma', documento: FIRMA.id,
+       se firmó, con qué datos y cuándo. El servidor solo apunta que se
+       firmó, la hora y la huella, que es lo que puede saber sin leer nada. */
+    const cifrado = sellarHaciaElMac(Object.assign({ v: extra ? 2 : 1, tipo: 'firma', documento: FIRMA.id,
                                        titulo: FIRMA.titulo, documento_sha256: h, nombre,
-                                       firmado_en: ahoraLocal(), origen: 'cuenta',
-                                       cod_web: miCod },
+                                       firmado_en, origen: 'cuenta', cod_web: miCod },
+                                     extra ? { datos: extra.datos, casillas: extra.casillas, opcionales: extra.opcionales,
+                                               verificacion: 'contraseña', servidor, refirma: FIRMA.refirma } : {}),
                                      macPublica);
-    /* Y su copia: el texto, su nombre, la hora y la huella, sellados a
-       SU clave. Se queda en «Documentos», legible y para imprimir. */
+    /* Y su copia: el texto, su firma y sus datos, sellados a SU clave.
+       Se queda en «Documentos», legible y para imprimir. */
     const copia = sellarHaciaElMac({ v: 1, tipo: 'copia_firmada', titulo: FIRMA.titulo,
-                                     texto: FIRMA.texto,
-                                     firma: { nombre, firmado_en: ahoraLocal(), documento_sha256: h } },
+                                     texto: FIRMA.texto, firma },
                                    miPublica);
-    const r = await api('firmar', { id: FIRMA.id, cifrado, copia });
+    const r = await api('firmar', { id: FIRMA.id, cifrado, copia, huella: h,
+                                    version: extra ? 2 : 1, permiso, refirma: FIRMA.refirma });
     if (!r.ok) { $('s-estado').textContent = r.j.error || 'No se ha podido firmar.'; return; }
     await panel();
-    $('panel-estado').textContent = 'Firmado. Gracias.';
+    $('panel-estado').textContent = FIRMA.consentimiento ? 'Firmado. Te llega un correo de confirmación.' : 'Firmado. Gracias.';
   } finally { $('s-firmar').disabled = false; }
 });
 
@@ -1167,6 +1443,20 @@ async function abrir(id, titulo, clase, doc) {
       $('doc-firma-t').textContent =
         'Firmado' + (f.nombre ? ' por ' + f.nombre : '') + ' el ' +
         fecha(f.firmado_en || doc.firmado) + ' a las ' + String(f.firmado_en || doc.firmado).slice(11, 16) + '.';
+      const x = f.datos;
+      $('doc-firma-d').hidden = !x;
+      if (x) {
+        const dm = x.domicilio || {};
+        $('doc-firma-d').textContent = [x.documento_tipo + ': ' + x.documento_numero,
+          'Fecha de nacimiento: ' + fecha(x.fecha_nacimiento),
+          'Domicilio: ' + [dm.direccion, dm.codigo_postal + ' ' + dm.localidad, dm.provincia].filter(Boolean).join(', '),
+          'Teléfono: ' + x.telefono,
+          x.contacto_emergencia ? 'Contacto en una emergencia: ' + x.contacto_emergencia.nombre +
+            (x.contacto_emergencia.relacion ? ' (' + x.contacto_emergencia.relacion + ')' : '') + ', ' + x.contacto_emergencia.telefono : null,
+          f.opcionales ? 'Uso anónimo de puntuaciones: ' + (f.opcionales.resultados_anonimos ? 'sí' : 'no') +
+            ' · Memoria de prácticas: ' + (f.opcionales.memoria_practicas ? 'sí' : 'no') : null
+        ].filter(Boolean).join(' · ');
+      }
       $('doc-firma-h').textContent = 'Huella del texto firmado (SHA-256): ' +
         (f.documento_sha256 || await huellaDe(texto));
       $('doc-firma').hidden = false;

@@ -112,7 +112,7 @@ main{max-width:var(--ancho);margin:0 auto;padding:30px 20px 70px}
 }
 
 label{display:block;font-weight:600;font-size:15px;margin-bottom:6px}
-input[type=text],input[type=email],input[type=password],input[type=number],textarea,select{
+input[type=text],input[type=email],input[type=password],input[type=number],input[type=tel],input[type=date],textarea,select{
   width:100%; padding:11px 13px; font:inherit;
   background:var(--surface); color:var(--ink);
   border:1px solid var(--borde-campo); border-radius:var(--r-s);
@@ -618,3 +618,18 @@ h3{font-weight:700}
 /* Pagos (14-10) */
 .caja.pago .pago-fila .boton,.caja.pago .pago-fila .sello{white-space:nowrap}
 .caja.pago.falta #pago-estado{color:var(--ink-2);font-weight:400}
+
+/* --- Consentimiento informado: los datos de quien firma ------------ */
+.ci-t{font-size:19px;margin:0 0 6px}
+.ci-st{font-size:16.5px;margin:22px 0 8px}
+.ci-op{font-weight:400;color:var(--muted);font-size:15px}
+.ci-fila{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.ci-fila.ci-tres{grid-template-columns:1fr 1.4fr 1.2fr}
+.ci-fila .campo{min-width:0}
+.ci-casilla{align-items:flex-start;padding:9px 6px;margin:0 -6px}
+.ci-casilla input{margin-top:2px}
+.ci-pista{margin:-6px 0 0}
+.campo input[aria-invalid=true],.campo select[aria-invalid=true]{border-color:var(--error);box-shadow:0 0 0 1px var(--error)}
+.ci-mal{color:var(--error);font-size:14px;margin:5px 0 0}
+@media (max-width:560px){ .ci-fila,.ci-fila.ci-tres{grid-template-columns:1fr} }
+.ci-casilla{font-weight:400;font-size:15.5px}
