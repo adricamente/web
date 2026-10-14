@@ -288,8 +288,8 @@ $cuerpo .= <<<'HTML'
   <h1 id="doc-titulo">…</h1>
   <div class="caja doc-caja"><div id="doc-cuerpo"></div>
     <div class="doc-firma" id="doc-firma" hidden>
-      <p id="doc-firma-t"></p>
-      <p class="apunte" id="doc-firma-d" hidden></p>
+      <div id="doc-firma-d" hidden></div>
+      <div id="doc-firma-t"></div>
       <p class="apunte" id="doc-firma-h"></p>
     </div>
   </div>
@@ -1440,23 +1440,41 @@ async function abrir(id, titulo, clase, doc) {
     pintaTexto($('doc-cuerpo'), texto);
     if (doc && doc.firmado) {
       const f = (usaCopia && d.firma) || {};
-      $('doc-firma-t').textContent =
-        'Firmado' + (f.nombre ? ' por ' + f.nombre : '') + ' el ' +
-        fecha(f.firmado_en || doc.firmado) + ' a las ' + String(f.firmado_en || doc.firmado).slice(11, 16) + '.';
+      const cuando = f.firmado_en || doc.firmado;
       const x = f.datos;
-      $('doc-firma-d').hidden = !x;
+      $('doc-firma-t').replaceChildren();
+      /* Como en papel: los datos de quien firma en una tabla, lo que
+         marcó, y la firma en su recuadro con la fecha y la hora. */
+      const caja = $('doc-firma-d');
+      caja.replaceChildren();
+      caja.hidden = !x;
+      const nuevo = (tag, txt, cls) => { const e = document.createElement(tag); if (txt != null) e.textContent = txt; if (cls) e.className = cls; return e; };
       if (x) {
-        const dm = x.domicilio || {};
-        $('doc-firma-d').textContent = [x.documento_tipo + ': ' + x.documento_numero,
-          'Fecha de nacimiento: ' + fecha(x.fecha_nacimiento),
-          'Domicilio: ' + [dm.direccion, dm.codigo_postal + ' ' + dm.localidad, dm.provincia].filter(Boolean).join(', '),
-          'Teléfono: ' + x.telefono,
-          x.contacto_emergencia ? 'Contacto en una emergencia: ' + x.contacto_emergencia.nombre +
-            (x.contacto_emergencia.relacion ? ' (' + x.contacto_emergencia.relacion + ')' : '') + ', ' + x.contacto_emergencia.telefono : null,
-          f.opcionales ? 'Uso anónimo de puntuaciones: ' + (f.opcionales.resultados_anonimos ? 'sí' : 'no') +
-            ' · Memoria de prácticas: ' + (f.opcionales.memoria_practicas ? 'sí' : 'no') : null
-        ].filter(Boolean).join(' · ');
+        const dm = x.domicilio || {}, em = x.contacto_emergencia;
+        caja.appendChild(nuevo('h3', 'Datos de la persona firmante', 'firma-st'));
+        const t = nuevo('table', null, 'firma-datos');
+        [['Nombre y apellidos', (x.nombre || '') + ' ' + (x.apellidos || '')],
+         [x.documento_tipo || 'Documento', x.documento_numero],
+         ['Fecha de nacimiento', String(x.fecha_nacimiento || '').split('-').reverse().join('/')],
+         ['Domicilio', [dm.direccion, [dm.codigo_postal, dm.localidad].filter(Boolean).join(' '), dm.provincia].filter(Boolean).join(', ')],
+         ['Teléfono', x.telefono], ['Correo electrónico', x.correo],
+         ['Contacto en una emergencia', em ? em.nombre + (em.relacion ? ' (' + em.relacion + ')' : '') + ' · ' + em.telefono : 'No indicado']
+        ].forEach(([k, v]) => { const tr = nuevo('tr'); tr.append(nuevo('th', k), nuevo('td', v || '—')); t.appendChild(tr); });
+        caja.appendChild(t);
+        const ETQ = { atencion: 'Consiento la atención psicológica.', online: 'Sesiones por videollamada, sin grabar.',
+          practicas: 'Me atiende un psicólogo en prácticas supervisadas en Neurococos.', mayor_y_residente: 'Soy mayor de 18 años y resido en España.',
+          resultados_anonimos: 'Uso anónimo de mis puntuaciones', memoria_practicas: 'Mi caso, anonimizado, en la memoria de prácticas' };
+        const ul = nuevo('ul', null, 'firma-casillas');
+        Object.entries(f.casillas || {}).forEach(([k, v]) => ul.appendChild(nuevo('li', (v ? '☑ ' : '☐ ') + (ETQ[k] || k))));
+        Object.entries(f.opcionales || {}).forEach(([k, v]) => ul.appendChild(nuevo('li', (v ? '☑ ' : '☐ ') + (ETQ[k] || k) + (v ? ': sí' : ': no'))));
+        caja.appendChild(ul);
       }
+      const recuadro = nuevo('div', null, 'firma-recuadro');
+      recuadro.appendChild(nuevo('p', 'Firmado electrónicamente por', 'firma-et'));
+      recuadro.appendChild(nuevo('p', f.nombre || '—', 'firma-nombre'));
+      recuadro.appendChild(nuevo('p', 'Firmado' + (f.nombre ? ' por ' + f.nombre : '') + ' el ' + fecha(cuando) + ' a las ' +
+        String(cuando).slice(11, 16) + '.' + (x ? ' ' + x.documento_tipo + ': ' + x.documento_numero + '.' : '')));
+      $('doc-firma-t').appendChild(recuadro);
       $('doc-firma-h').textContent = 'Huella del texto firmado (SHA-256): ' +
         (f.documento_sha256 || await huellaDe(texto));
       $('doc-firma').hidden = false;

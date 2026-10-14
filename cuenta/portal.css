@@ -633,3 +633,16 @@ h3{font-weight:700}
 .ci-mal{color:var(--error);font-size:14px;margin:5px 0 0}
 @media (max-width:560px){ .ci-fila,.ci-fila.ci-tres{grid-template-columns:1fr} }
 .ci-casilla{font-weight:400;font-size:15.5px}
+
+/* La firma en la copia del paciente, como en papel */
+.firma-st{font-size:15.5px;margin:6px 0 8px}
+.firma-datos{border-collapse:collapse;width:100%;font-size:14.5px;margin-bottom:12px}
+.firma-datos th,.firma-datos td{border:1px solid var(--line-strong);padding:7px 10px;text-align:left;vertical-align:top}
+.firma-datos th{width:38%;background:var(--surface-2);font-weight:600;color:var(--ink-2)}
+.firma-casillas{list-style:none;padding:0;margin:0 0 14px;font-size:14.5px}
+.firma-casillas li{margin:3px 0}
+.firma-recuadro{border:1px solid var(--accent);border-radius:var(--r-s);padding:12px 16px;margin:4px 0 10px}
+.firma-recuadro p{margin:0 0 4px;max-width:none}
+.firma-et{font-size:13px;color:var(--muted)}
+.firma-nombre{font-family:"Snell Roundhand","Brush Script MT","Segoe Script",cursive;font-size:28px;color:var(--accent-3);line-height:1.2}
+@media print{.firma-datos th{background:#F5F3EF !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
