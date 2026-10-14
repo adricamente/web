@@ -45,7 +45,7 @@ function adr_pagos_tabla(PDO $db): void {
     /* 14-10, tarde: el nombre del invitado (para el cliente de Stripe: la
        directora ve quién pagó), el cliente de Stripe y la comisión. */
     $hay = array_column($db->query('PRAGMA table_info(citas)')->fetchAll(), 'name');
-    foreach (['nombre' => 'TEXT', 'cliente' => 'TEXT', 'comision' => 'REAL'] as $col => $tipo) {
+    foreach (['nombre' => 'TEXT', 'cliente' => 'TEXT', 'comision' => 'REAL', 'lugar' => 'TEXT'] as $col => $tipo) {
         if (!in_array($col, $hay, true)) $db->exec("ALTER TABLE citas ADD COLUMN $col $tipo");
     }
 }
@@ -230,25 +230,93 @@ function adr_cita_pagada(PDO $db, string $uid, string $ref, ?string $cuando = nu
        ->execute([$cuando ?: date('c'), $ref, $uid]);
 }
 
-/** El correo de «sesión reservada · pagar la sesión», al momento. */
+/** «online» o «presencial», de lo que manda Cal.com en la reserva. */
+function adr_cita_lugar(array $p): ?string {
+    $l = strtolower(is_string($p['location'] ?? null) ? $p['location'] : '');
+    if (!empty($p['videoCallData']['url']) || preg_match('/meet|video|zoom|daily|integrations:|https?:/', $l)) return 'online';
+    return $l !== '' ? 'presencial' : null;
+}
+
+/** El correo de «tu sesión está reservada · falta el pago», al momento.
+ *  Tiene que parecer lo que es: un correo de una consulta de verdad. Con
+ *  el detalle de la cita, quién atiende, por qué Stripe, qué pasa si hay
+ *  que cambiarla y a quién escribir. */
 function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
     [$dia, $hora] = adr_dia_hora($cita['inicio']);
+    $anio = (new DateTime($cita['inicio']))->setTimezone(new DateTimeZone('Europe/Madrid'))->format('Y');
     $url = adr_pagos_url($ADR, $cita['token']);
-    $texto = "Sesión reservada el $dia a las $hora.\n\n"
-        . "Pagar la sesión (" . $cita['importe'] . " €, con tarjeta, Apple Pay o Google Pay):\n$url\n\n"
-        . "Si ya la has pagado, no hace falta que hagas nada.\n\n"
-        . "Adrián Cuñat · adricamente\n";
-    $html = '<p>Sesión reservada el <strong>' . htmlspecialchars($dia) . '</strong> a las <strong>' . $hora . '</strong>.</p>'
-        . '<p><a href="' . htmlspecialchars($url, ENT_QUOTES) . '" style="display:inline-block;padding:12px 20px;'
-        . 'background:#1F5474;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">Pagar la sesión</a></p>'
-        . '<p>' . $cita['importe'] . ' €, con tarjeta, Apple Pay o Google Pay.</p>'
-        . '<p>Si ya la has pagado, no hace falta que hagas nada.</p>'
-        . '<p>Adrián Cuñat · adricamente</p>';
-    $r = adr_manda($ADR, $cita['correo'], 'Sesión reservada el ' . $dia, $texto, $html, 'cita', $cita['cod']);
+    $imp = (int)$cita['importe'];
+    $pila = trim(explode(' ', trim((string)($cita['nombre'] ?? '')))[0] ?? '');
+    $pila = $pila !== '' ? mb_convert_case(mb_strtolower($pila), MB_CASE_TITLE) : '';
+    $lugar = match ($cita['lugar'] ?? null) {
+        'online' => 'Videollamada (Google Meet). El enlace está en la invitación de calendario.',
+        'presencial' => 'Presencial, en el centro sanitario Neurococos (Gandia).',
+        default => null,
+    };
+    $h = fn($x) => htmlspecialchars((string)$x, ENT_QUOTES);
+    $fila = fn($k, $v) => '<tr><td style="padding:9px 0;color:#6C6963;width:92px;vertical-align:top;border-top:1px solid #EEECE7">' . $k
+        . '</td><td style="padding:9px 0;vertical-align:top;border-top:1px solid #EEECE7;font-weight:600">' . $v . '</td></tr>';
+    $asunto = 'Tu sesión del ' . $dia . ' a las ' . $hora . ': falta el pago';
+
+    $html = '<p style="margin:0 0 14px;font-size:22px;line-height:1.25;font-weight:700;color:#173F58">Tu sesión está reservada</p>'
+        . '<p style="margin:0 0 18px">' . ($pila !== '' ? 'Hola, ' . $h($pila) . ':<br>' : '')
+        . 'Para dejarla confirmada solo falta el pago. Puedes hacerlo ahora o en cualquier momento antes de la sesión.</p>'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15.5px;line-height:1.4">'
+        . $fila('Sesión', 'Sesión individual · 60 minutos')
+        . $fila('Fecha', $h(mb_strtoupper(mb_substr($dia, 0, 1)) . mb_substr($dia, 1)) . ' de ' . $anio)
+        . $fila('Hora', $hora . ' <span style="font-weight:400;color:#6C6963">(hora peninsular)</span>')
+        . ($lugar ? $fila('Dónde', $h($lugar)) : '')
+        . $fila('Importe', $imp . ',00 € <span style="font-weight:400;color:#6C6963">(exento de IVA)</span>')
+        . '</table>'
+        . adr_correo_boton($url, 'Pagar ' . $imp . ' € de forma segura')
+        . '<p style="margin:0 0 20px;font-size:14px;color:#6C6963">Con tarjeta, Apple Pay o Google Pay, en la página de pago de Stripe. '
+        . 'Nadie aquí ve los datos de tu tarjeta. El recibo te llega por correo.</p>'
+        . '<p style="margin:0 0 6px;font-weight:700">Si necesitas cambiarla o cancelarla</p>'
+        . '<p style="margin:0 0 18px">Hazlo desde el correo de confirmación de la reserva, o contesta a este correo. '
+        . 'Hasta 24 horas antes, sin coste (si ya habías pagado, se te devuelve). Con menos de 24 horas, o si no te presentas, la sesión no se devuelve.</p>'
+        . '<p style="margin:0 0 18px">Si ya la has pagado, no tienes que hacer nada más. Si no has reservado tú esta sesión, contesta a este correo y lo miro.</p>'
+        . '<p style="margin:0">Un saludo,</p>'
+        . '<p style="margin:4px 0 0"><strong>Adrián Cuñat Andrés</strong><br>'
+        . '<span style="color:#6C6963;font-size:14.5px">Psicólogo colegiado nº CM03836<br>'
+        . '<a href="mailto:hola@adricamente.com" style="color:#1F5474">hola@adricamente.com</a> · '
+        . '<a href="https://adricamente.com" style="color:#1F5474">adricamente.com</a></span></p>';
+
+    $texto = ($pila !== '' ? "Hola, $pila:\n\n" : '')
+        . "Tu sesión está reservada. Para dejarla confirmada solo falta el pago. Puedes hacerlo ahora o en cualquier momento antes de la sesión.\n\n"
+        . "Sesión: Sesión individual · 60 minutos\n"
+        . "Fecha: $dia de $anio\nHora: $hora (hora peninsular)\n"
+        . ($lugar ? "Dónde: $lugar\n" : '')
+        . "Importe: $imp,00 € (exento de IVA)\n\n"
+        . "Pagar $imp € de forma segura (tarjeta, Apple Pay o Google Pay, en Stripe):\n$url\n\n"
+        . "Si necesitas cambiarla o cancelarla, hazlo desde el correo de confirmación de la reserva o contesta a este correo. "
+        . "Hasta 24 horas antes, sin coste (si ya habías pagado, se te devuelve). Con menos de 24 horas, o si no te presentas, la sesión no se devuelve.\n\n"
+        . "Si ya la has pagado, no tienes que hacer nada más.\n\n"
+        . "Un saludo,\nAdrián Cuñat Andrés\nPsicólogo colegiado nº CM03836\nhola@adricamente.com · adricamente.com\n\n"
+        . "--\nAdrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos (Gandia). "
+        . "Los pagos y las facturas son de Clínica Neurococos. Este correo no es un canal de urgencias: si estás en peligro, llama al 024 o al 112.\n";
+
+    $r = adr_manda($ADR, $cita['correo'], $asunto, $texto,
+                   adr_correo_marco($asunto, $html, 'Para dejarla confirmada solo falta el pago: ' . $imp . ' €, con tarjeta, Apple Pay o Google Pay.'),
+                   'cita', $cita['cod'], 'Adrián Cuñat · Psicólogo');
     if ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') {
         $db->prepare('UPDATE citas SET avisado = ? WHERE uid = ?')->execute([date('c'), $cita['uid']]);
     }
     return $r;
+}
+
+/** Si no se puede abrir el pago, Adrián se entera al momento por correo,
+ *  con el motivo que da Stripe (nada clínico: ni nombre ni correo del
+ *  paciente). Como mucho uno cada media hora. */
+function adr_pagos_alerta(array $ADR, PDO $db, string $motivo): void {
+    if (!adr_freno($db, 'alerta_pago', 1, 1800)) return;
+    $a = (string)((adr_google_cred($ADR) ?: [])['remite'] ?? ($ADR['remite'] ?? 'hola@adricamente.com'));
+    $t = "Un paciente ha abierto su enlace de pago y Stripe no ha dejado crear el pago.\n\n"
+       . "Motivo que da Stripe:\n$motivo\n\n"
+       . "Lo más habitual: a la clave restringida le falta un permiso (en Stripe, Desarrolladores → Claves de API → la clave → Editar). "
+       . "Necesita, en Escritura: Checkout Sessions, Customers, Products, Prices y PaymentIntents; en Lectura: Charges y Balance.\n\n"
+       . "Lo verás también en la consola, en «Cobro con Stripe».\n";
+    adr_manda($ADR, $a, 'Aviso del portal: un pago no se ha podido abrir', $t,
+              '<p>' . nl2br(htmlspecialchars($t)) . '</p>', 'alerta');
 }
 
 /** Firma de Stripe: «t=…,v1=…», HMAC-SHA256 de «t.cuerpo», 5 minutos. */

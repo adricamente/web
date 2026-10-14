@@ -89,7 +89,7 @@ function adr_via(array $ADR): string {
  *  Devuelve ['enviado' => true, 'message_id' => …, 'via' => 'google']
  *  o ['enviado' => false, 'error' => 'en_cola', 'cola_id' => n, …]. */
 function adr_manda(array $ADR, string $a, string $asunto, string $texto, string $html,
-                   string $tipo = 'aviso', ?string $cod = null): array {
+                   string $tipo = 'aviso', ?string $cod = null, string $nombre = 'adricamente'): array {
     /* Freno: que un bucle o una cuenta robada no use hola@ para mandar en
        masa. Como mucho 6 por hora a la misma dirección y 60 por hora en
        total. Lo frenado no se manda ni se encola, y queda apuntado. */
@@ -100,7 +100,7 @@ function adr_manda(array $ADR, string $a, string $asunto, string $texto, string 
     }
     $r = null;
     if (adr_via($ADR) === 'google') {
-        $r = adr_google_envia($ADR, $a, $asunto, $texto, $html);
+        $r = adr_google_envia($ADR, $a, $asunto, $texto, $html, $nombre);
         adr_correo_apunta($ADR, $r, (int)($r['codigo'] ?? 0), (string)($r['detalle'] ?? ''));
         if (!$r['enviado']) {
             $c = adr_correo_encola($ADR, $a, $asunto, $texto, $html, $tipo, $cod);
@@ -237,25 +237,70 @@ function adr_google_token(array $ADR, array $cred, bool $nuevo = false): array {
     return ['token' => $j['access_token']];
 }
 
-function adr_mime(string $remite, string $a, string $asunto, string $texto, string $html): string {
+function adr_mime(string $remite, string $a, string $asunto, string $texto, string $html,
+                  string $nombre = 'adricamente'): string {
     $frontera = 'adr-' . bin2hex(random_bytes(8));
     $cab = fn($s) => '=?UTF-8?B?' . base64_encode($s) . '?=';
-    return "From: " . $cab('adricamente') . " <$remite>\r\n"
+    /* Un correo con marco propio (empieza por <!doctype) va tal cual; el
+       resto, con la letra de siempre. */
+    $cuerpo = stripos(ltrim($html), '<!doctype') === 0 ? $html
+        : '<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#25231F">' . $html . '</div>';
+    return "From: " . $cab($nombre) . " <$remite>\r\n"
          . "To: $a\r\n"
          . "Reply-To: $remite\r\n"
          . "Subject: " . $cab($asunto) . "\r\n"
+         . "Date: " . date('r') . "\r\n"
+         . "Message-ID: <" . bin2hex(random_bytes(12)) . '@' . (explode('@', $remite)[1] ?? 'adricamente.com') . ">\r\n"
          . "MIME-Version: 1.0\r\n"
          . "Content-Type: multipart/alternative; boundary=\"$frontera\"\r\n\r\n"
          . "--$frontera\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
          . chunk_split(base64_encode($texto)) . "\r\n"
          . "--$frontera\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n"
-         . chunk_split(base64_encode('<div style="font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#25231F">'
-                                     . $html . '</div>')) . "\r\n"
+         . chunk_split(base64_encode($cuerpo)) . "\r\n"
          . "--$frontera--\r\n";
 }
 
+/** El marco de los correos «de consulta» (la reserva y el pago): cabecera
+ *  con el nombre, tarjeta blanca, firma profesional y pie legal. Tablas y
+ *  estilos en línea, que es lo único que respetan Gmail, Outlook y el
+ *  correo del iPhone. $previa es la línea que se ve en la bandeja. */
+function adr_correo_marco(string $titulo, string $cuerpo, string $previa): string {
+    $f = "font-family:'Source Sans 3','Segoe UI',Helvetica,Arial,sans-serif";
+    $h = fn($s) => htmlspecialchars($s, ENT_QUOTES);
+    return '<!doctype html><html lang="es"><head><meta charset="utf-8">'
+        . '<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">'
+        . '<title>' . $h($titulo) . '</title></head>'
+        . '<body style="margin:0;padding:0;background:#F2F0EB">'
+        . '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' . $h($previa) . str_repeat('&#847;&zwnj;&nbsp;', 40) . '</div>'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F2F0EB"><tr><td align="center" style="padding:28px 12px">'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">'
+        . '<tr><td style="padding:0 4px 16px;' . $f . '">'
+        .   '<div style="font-size:19px;font-weight:700;color:#173F58;letter-spacing:-.2px">Adrián Cuñat</div>'
+        .   '<div style="font-size:14px;color:#6C6963">Psicólogo · adricamente.com</div></td></tr>'
+        . '<tr><td style="background:#FFFFFF;border:1px solid #E6E4DF;border-radius:14px;padding:30px 28px;' . $f . ';font-size:16px;line-height:1.55;color:#25231F">'
+        .   $cuerpo
+        . '</td></tr>'
+        . '<tr><td style="padding:18px 6px 0;' . $f . ';font-size:12.5px;line-height:1.5;color:#6C6963">'
+        .   'Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, '
+        .   'en prácticas supervisadas en el centro sanitario Neurococos (Gandia). Los pagos y las facturas son de Clínica Neurococos.<br><br>'
+        .   'Este correo no es un canal de urgencias. Si estás en peligro ahora mismo, llama al 024 o al 112.<br>'
+        .   'Datos tratados por Clínica Neurococos para gestionar tu cita. Más información en '
+        .   '<a href="https://adricamente.com/privacidad.html" style="color:#6C6963">adricamente.com/privacidad</a>.'
+        . '</td></tr></table></td></tr></table></body></html>';
+}
+
+/** Un botón que se ve como botón también en Outlook. */
+function adr_correo_boton(string $url, string $texto): string {
+    return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:26px 0 10px"><tr>'
+        . '<td style="border-radius:10px;background:#1F5474">'
+        . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '" style="display:inline-block;padding:14px 28px;'
+        . "font-family:'Source Sans 3','Segoe UI',Helvetica,Arial,sans-serif;font-size:17px;font-weight:700;"
+        . 'color:#FFFFFF;text-decoration:none;border-radius:10px">' . htmlspecialchars($texto) . '</a></td></tr></table>';
+}
+
 /** Lo manda por la API de Gmail. «Enviado» solo con el id que da Gmail. */
-function adr_google_envia(array $ADR, string $a, string $asunto, string $texto, string $html): array {
+function adr_google_envia(array $ADR, string $a, string $asunto, string $texto, string $html,
+                          string $nombre = 'adricamente'): array {
     $cred = adr_google_cred($ADR);
     if (!$cred) return ['enviado' => false, 'message_id' => null, 'error' => 'sin_google'];
     if (!filter_var($a, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $a)) {
@@ -263,7 +308,7 @@ function adr_google_envia(array $ADR, string $a, string $asunto, string $texto, 
     }
     $remite = $cred['remite'] ?? ($ADR['remite'] ?? 'hola@adricamente.com');
     $api = $ADR['google_api'] ?? 'https://gmail.googleapis.com';
-    $raw = adr_b64url(adr_mime($remite, $a, $asunto, $texto, $html));
+    $raw = adr_b64url(adr_mime($remite, $a, $asunto, $texto, $html, $nombre));
     foreach ([false, true] as $nuevo) {
         $t = adr_google_token($ADR, $cred, $nuevo);
         if (empty($t['token'])) {

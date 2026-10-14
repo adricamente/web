@@ -19,7 +19,8 @@ function pagar_pagina(string $titulo, string $texto, int $codigo = 200): never {
     http_response_code($codigo);
     adr_pagina('Pago | adricamente',
         '<div class="centrado"><h1>' . htmlspecialchars($titulo) . '</h1><p>' . $texto . '</p>'
-        . '<p class="apunte"><a href="index.php">Ir a mi cuenta</a></p></div>');
+        . '<p class="apunte">Adrián Cuñat Andrés · Psicólogo colegiado nº CM03836 · '
+        . '<a href="mailto:hola@adricamente.com">hola@adricamente.com</a></p></div>');
 }
 
 $t = (string)($_GET['t'] ?? '');
@@ -46,18 +47,22 @@ if ($ok !== '' && $cita['pagado_en'] === null && preg_match('/^cs_[A-Za-z0-9_]+$
 }
 
 if ($cita['pagado_en'] !== null) {
-    pagar_pagina('Esta sesión ya está pagada. ¡Gracias!',
-        'Sesión del ' . htmlspecialchars($dia) . ' a las ' . $hora . '. El recibo te llega por correo desde Stripe.');
+    pagar_pagina('Pago recibido. ¡Gracias!',
+        'Tu sesión del ' . htmlspecialchars($dia) . ' a las ' . $hora . ' queda confirmada. Stripe te manda el recibo por correo.');
 }
 if ($cita['estado'] !== 'activa') {
-    pagar_pagina('Esta cita ya no está activa', 'Si crees que es un error, escríbeme.');
+    pagar_pagina('Esta cita ya no está activa', 'Se canceló o se cambió de hora. Si crees que es un error, escribe a <a href="mailto:hola@adricamente.com">hola@adricamente.com</a>.');
 }
 if ($ok !== '') {
-    pagar_pagina('Estamos confirmando el pago', 'En un momento quedará marcado. Puedes cerrar esta página.');
+    pagar_pagina('Estamos confirmando el pago', 'En unos segundos quedará marcado y Stripe te mandará el recibo. Puedes cerrar esta página.');
 }
 [$url, $err] = adr_cita_checkout($ADR, $db, $cita);
 if (!$url) {
-    pagar_pagina('Ahora mismo no se puede pagar', 'Prueba otra vez en unos minutos. Si sigue igual, escríbeme y lo miro.', 503);
+    adr_pagos_alerta($ADR, $db, (string)$err);
+    pagar_pagina('No hemos podido abrir la página de pago',
+        'Tu sesión del ' . htmlspecialchars($dia) . ' a las ' . $hora . ' sigue reservada: no pierdes la cita. '
+        . 'Me acaba de llegar un aviso y lo estoy mirando. Prueba de nuevo con este mismo enlace dentro de un rato; '
+        . 'si prefieres, contesta al correo de la reserva o escribe a <a href="mailto:hola@adricamente.com">hola@adricamente.com</a>.', 503);
 }
 header('Location: ' . $url, true, 303);
 exit;

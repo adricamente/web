@@ -1536,6 +1536,10 @@ case 'cal_webhook': {
     $cod = ($q->fetch()['cod'] ?? null);
     $cita = adr_cita_crea($db, $uid, $cod, $correo, $inicio, (int)($cfg['importe'] ?? 30), 'cal',
                           (string)($p['attendees'][0]['name'] ?? '') ?: null);
+    if (empty($cita['lugar']) && ($lugar = adr_cita_lugar($p))) {
+        $db->prepare('UPDATE citas SET lugar = ? WHERE uid = ?')->execute([$lugar, $uid]);
+        $cita['lugar'] = $lugar;
+    }
     $r = null;
     if (!$cita['avisado'] && $cita['pagado_en'] === null) $r = adr_cita_avisa($ADR, $db, $cita);
     adr_json(['ok' => true, 'cita' => $uid, 'avisado' => $r ? ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') : null]);
