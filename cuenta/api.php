@@ -681,11 +681,15 @@ case 'firmar': {
                . ($huella ? "Huella del texto firmado (SHA-256): $huella\n\n" : '')
                . "Tienes la copia firmada en tu cuenta, en «Documentos»: " . $ADR['sitio'] . "\n\n"
                . "Si no has sido tú, contesta a este correo cuanto antes.\n";
+            $hh = adr_correo_t('Documento firmado')
+                . adr_correo_p('Has firmado un documento en tu cuenta de adricamente el <strong>' . $cuando . '</strong>.')
+                . adr_correo_p('Tienes la copia firmada en tu cuenta, en «Documentos».')
+                . adr_correo_boton($ADR['sitio'], 'Ver mi copia firmada')
+                . ($huella ? adr_correo_p('Huella del texto firmado (SHA-256):<br><span style="word-break:break-all">' . $huella . '</span>', true) : '')
+                . adr_correo_p('Si no has sido tú, contesta a este correo cuanto antes.');
             adr_manda($ADR, $a, 'Has firmado un documento en tu cuenta', $t,
-                '<p>Has firmado un documento en tu cuenta de adricamente el <strong>' . $cuando . '</strong>.</p>'
-                . ($huella ? '<p style="font-size:13px;color:#6C6963;word-break:break-all">Huella del texto firmado (SHA-256): ' . $huella . '</p>' : '')
-                . '<p>Tienes la copia firmada en tu cuenta, en «Documentos»: <a href="' . htmlspecialchars($ADR['sitio'], ENT_QUOTES) . '">entrar en mi cuenta</a>.</p>'
-                . '<p>Si no has sido tú, contesta a este correo cuanto antes.</p>', 'firma', $cod);
+                adr_correo_marco('Has firmado un documento', $hh, 'Firmado el ' . $cuando . '. Tienes la copia en tu cuenta.', true),
+                'firma', $cod);
         }
     }
     adr_json(['ok' => true, 'firmado' => adr_ahora(), 'version' => $version]);
@@ -1832,7 +1836,8 @@ case 'probar_correo': {
     if (adr_via($ADR) !== 'google') adr_json(['error' => 'el portal no tiene Google configurado', 'modo' => adr_via($ADR)], 409);
     $r = adr_google_envia($ADR, $a, 'Prueba del portal de adricamente',
         "Esto es una prueba: si lo lees, los correos del portal salen bien.\n",
-        '<p>Esto es una prueba: si lo lees, los correos del portal salen bien.</p>');
+        adr_correo_marco('Prueba del portal', adr_correo_t('Correo de prueba')
+            . adr_correo_p('Esto es una prueba: si lo lees, los correos del portal salen bien.'), 'Los correos del portal salen bien.', true));
     adr_correo_apunta($ADR, $r, (int)($r['codigo'] ?? 0), (string)($r['detalle'] ?? ''));
     adr_json($r, $r['enviado'] ? 200 : 502);
 }

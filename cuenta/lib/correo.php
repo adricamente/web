@@ -29,12 +29,13 @@ function adr_correo_aviso(array $ADR, string $a, ?string $cod = null): array {
         . "Si te viene mal ahora, no pasa nada: se queda ahí.\n\n"
         . "Esto no es un canal de urgencias. Si estás en peligro ahora "
         . "mismo, llama al 024 o al 112.\n";
+    $html = adr_correo_t('Tienes algo en tu cuenta')
+        . adr_correo_p('Te espera algo nuevo en tu cuenta de adricamente. Entra cuando te venga bien.')
+        . adr_correo_boton($ADR['sitio'], 'Entrar en mi cuenta')
+        . adr_correo_p('Si te viene mal ahora, no pasa nada: se queda ahí.', true);
     return adr_manda($ADR, $a, 'Tienes algo en tu cuenta', $texto,
-        '<p>Tienes algo esperándote en tu cuenta de adricamente.</p>'
-        . '<p><a href="' . htmlspecialchars($ADR['sitio'], ENT_QUOTES) . '">Entrar en mi cuenta</a></p>'
-        . '<p>Si te viene mal ahora, no pasa nada: se queda ahí.</p>'
-        . '<p>Esto no es un canal de urgencias. Si estás en peligro ahora '
-        . 'mismo, llama al <strong>024</strong> o al <strong>112</strong>.</p>', 'aviso', $cod);
+        adr_correo_marco('Tienes algo en tu cuenta', $html, 'Te espera algo nuevo en tu cuenta. Entra cuando te venga bien.', true),
+        'aviso', $cod);
 }
 
 function adr_correo_reset(array $ADR, string $a, string $enlace, int $horas = 2): array {
@@ -48,16 +49,14 @@ function adr_correo_reset(array $ADR, string $a, string $enlace, int $horas = 2)
         . "documentos que ya tuvieras dentro tardan un rato en volver "
         . "a aparecer. No se pierden.\n";
 
-    $html = '<p>Has pedido una contraseña nueva para tu cuenta en '
-        . 'adricamente.com.</p>'
-        . '<p><a href="' . htmlspecialchars($enlace, ENT_QUOTES) . '">'
-        . 'Poner una contraseña nueva</a></p>'
-        . '<p>El enlace vale ' . $vale . ' y una sola vez.</p>'
-        . '<p>Si no has sido tú, no hace falta que hagas nada: sin abrir '
-        . 'ese enlace no cambia nada.</p>'
-        . '<p><strong>Un aviso importante:</strong> al poner una contraseña '
-        . 'nueva, los documentos que ya tuvieras dentro tardan un rato en '
-        . 'volver a aparecer. No se pierden.</p>';
+    $html = adr_correo_t('Tu contraseña nueva')
+        . adr_correo_p('Has pedido una contraseña nueva para tu cuenta en adricamente.com.')
+        . adr_correo_boton($enlace, 'Poner una contraseña nueva')
+        . adr_correo_p('El enlace vale ' . $vale . ' y una sola vez.', true)
+        . adr_correo_p('Si no has sido tú, no hace falta que hagas nada: sin abrir ese enlace no cambia nada.')
+        . adr_correo_p('<strong>Un aviso importante:</strong> al poner una contraseña nueva, los documentos que ya '
+                       . 'tuvieras dentro tardan un rato en volver a aparecer. No se pierden.');
+    $html = adr_correo_marco('Tu contraseña de adricamente', $html, 'El enlace para poner una contraseña nueva vale ' . $vale . '.', true);
 
     return adr_manda($ADR, $a, 'Tu contraseña de adricamente', $texto, $html, 'reset');
 }
@@ -264,7 +263,7 @@ function adr_mime(string $remite, string $a, string $asunto, string $texto, stri
  *  con el nombre, tarjeta blanca, firma profesional y pie legal. Tablas y
  *  estilos en línea, que es lo único que respetan Gmail, Outlook y el
  *  correo del iPhone. $previa es la línea que se ve en la bandeja. */
-function adr_correo_marco(string $titulo, string $cuerpo, string $previa): string {
+function adr_correo_marco(string $titulo, string $cuerpo, string $previa, bool $discreto = false): string {
     $f = "font-family:'Source Sans 3','Segoe UI',Helvetica,Arial,sans-serif";
     $h = fn($s) => htmlspecialchars($s, ENT_QUOTES);
     return '<!doctype html><html lang="es"><head><meta charset="utf-8">'
@@ -275,18 +274,33 @@ function adr_correo_marco(string $titulo, string $cuerpo, string $previa): strin
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F2F0EB"><tr><td align="center" style="padding:28px 12px">'
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">'
         . '<tr><td style="padding:0 4px 16px;' . $f . '">'
-        .   '<div style="font-size:19px;font-weight:700;color:#173F58;letter-spacing:-.2px">Adrián Cuñat</div>'
-        .   '<div style="font-size:14px;color:#6C6963">Psicólogo · adricamente.com</div></td></tr>'
+        .   ($discreto
+              ? '<div style="font-size:19px;font-weight:700;color:#173F58;letter-spacing:-.2px">adricamente</div>'
+              : '<div style="font-size:19px;font-weight:700;color:#173F58;letter-spacing:-.2px">Adrián Cuñat</div>'
+              . '<div style="font-size:14px;color:#6C6963">Psicólogo · adricamente.com</div>')
+        .   '</td></tr>'
         . '<tr><td style="background:#FFFFFF;border:1px solid #E6E4DF;border-radius:14px;padding:30px 28px;' . $f . ';font-size:16px;line-height:1.55;color:#25231F">'
         .   $cuerpo
         . '</td></tr>'
         . '<tr><td style="padding:18px 6px 0;' . $f . ';font-size:12.5px;line-height:1.5;color:#6C6963">'
-        .   'Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, '
-        .   'en prácticas supervisadas en el centro sanitario Neurococos (Gandia). Los pagos y las facturas son de Clínica Neurococos.<br><br>'
-        .   'Este correo no es un canal de urgencias. Si estás en peligro ahora mismo, llama al 024 o al 112.<br>'
-        .   'Datos tratados por Clínica Neurococos para gestionar tu cita. Más información en '
-        .   '<a href="https://adricamente.com/privacidad.html" style="color:#6C6963">adricamente.com/privacidad</a>.'
+        .   ($discreto
+              ? 'Correo automático de adricamente.com. Si no esperabas este correo, puedes ignorarlo o contestar y lo miro.<br><br>'
+              . 'Este correo no es un canal de urgencias. Si estás en peligro ahora mismo, llama al 024 o al 112.<br>'
+              . '<a href="https://adricamente.com/privacidad.html" style="color:#6C6963">Privacidad</a>'
+              : 'Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, '
+              . 'en prácticas supervisadas en el centro sanitario Neurococos (Gandia). Los pagos y las facturas son de Clínica Neurococos.<br><br>'
+              . 'Este correo no es un canal de urgencias. Si estás en peligro ahora mismo, llama al 024 o al 112.<br>'
+              . 'Datos tratados por Clínica Neurococos para gestionar tu cita. Más información en '
+              . '<a href="https://adricamente.com/privacidad.html" style="color:#6C6963">adricamente.com/privacidad</a>.')
         . '</td></tr></table></td></tr></table></body></html>';
+}
+
+/** Piezas de los correos con marco: título grande, párrafo y nota pequeña. */
+function adr_correo_t(string $t): string {
+    return '<p style="margin:0 0 14px;font-size:22px;line-height:1.25;font-weight:700;color:#173F58">' . htmlspecialchars($t) . '</p>';
+}
+function adr_correo_p(string $html, bool $pequeno = false): string {
+    return '<p style="margin:0 0 16px' . ($pequeno ? ';font-size:14px;color:#6C6963' : '') . '">' . $html . '</p>';
 }
 
 /** Un botón que se ve como botón también en Outlook. */

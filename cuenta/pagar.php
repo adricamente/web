@@ -15,10 +15,15 @@ require __DIR__ . '/lib/pagos.php';
 $db = adr_db($ADR);
 adr_pagos_tabla($db);
 
+/* Si la cita es de alguien con cuenta, un botón para entrar en ella
+   (si ya tiene la sesión abierta, entra directo; si no, le pide la
+   contraseña). A quien no tiene cuenta no se le ofrece. */
+$GLOBALS['pagar_cuenta'] = false;
 function pagar_pagina(string $titulo, string $texto, int $codigo = 200): never {
     http_response_code($codigo);
+    $boton = $GLOBALS['pagar_cuenta'] ? '<p><a class="boton" href="index.php">Ir a mi cuenta</a></p>' : '';
     adr_pagina('Pago | adricamente',
-        '<div class="centrado"><h1>' . htmlspecialchars($titulo) . '</h1><p>' . $texto . '</p>'
+        '<div class="centrado"><h1>' . htmlspecialchars($titulo) . '</h1><p>' . $texto . '</p>' . $boton
         . '<p class="apunte">Adrián Cuñat Andrés · Psicólogo colegiado nº CM03836 · '
         . '<a href="mailto:hola@adricamente.com">hola@adricamente.com</a></p></div>');
 }
@@ -32,6 +37,11 @@ $q->execute([$t]);
 $cita = $q->fetch();
 if (!$cita) pagar_pagina('Este enlace no es válido', 'Revisa que lo hayas copiado entero, o escríbeme y te mando otro.', 404);
 [$dia, $hora] = adr_dia_hora($cita['inicio']);
+if (!empty($cita['cod'])) {
+    $q = $db->prepare('SELECT 1 FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cita['cod']]);
+    $GLOBALS['pagar_cuenta'] = (bool)$q->fetch();
+}
 
 /* Vuelta desde Stripe: se comprueba allí mismo, sin esperar al webhook. */
 $ok = (string)($_GET['ok'] ?? '');

@@ -227,7 +227,11 @@ function adr_cita_checkout(array $ADR, PDO $db, array $cita): array {
                'success_url' => $vuelta . '&ok={CHECKOUT_SESSION_ID}', 'cancel_url' => $vuelta,
                'expires_at' => time() + 23 * 3600, 'metadata' => $meta,
                'payment_intent_data' => ['metadata' => $meta, 'description' => $desc],
-               'client_reference_id' => $cita['uid']];
+               'client_reference_id' => $cita['uid'],
+               /* Solo tarjeta: Apple Pay y Google Pay van dentro. Fuera Klarna
+                  (pagar a plazos una sesión de terapia no) y los métodos de
+                  otros países que Stripe enseña por defecto. */
+               'payment_method_types' => ['card']];
     $cliente = adr_stripe_cliente($ADR, $db, $cita);
     if ($cliente) $campos['customer'] = $cliente; else $campos['customer_email'] = $cita['correo'];
     $precio = $cfg['precio'] ?? null;
@@ -344,7 +348,9 @@ function adr_pagos_alerta(array $ADR, PDO $db, string $motivo): void {
        . "Al guardar, la clave no cambia: no hay que volver a pegarla. En la consola, «Comprobar permisos» dice si falta alguno.\n\n"
        . "Lo verás también en la consola, en «Cobro con Stripe».\n";
     adr_manda($ADR, $a, 'Aviso del portal: un pago no se ha podido abrir', $t,
-              '<p>' . nl2br(htmlspecialchars($t)) . '</p>', 'alerta');
+              adr_correo_marco('Un pago no se ha podido abrir', adr_correo_t('Un pago no se ha podido abrir')
+                  . adr_correo_p(nl2br(htmlspecialchars($t))), 'Stripe no ha dejado crear el pago: ' . mb_substr($motivo, 0, 80), true),
+              'alerta');
 }
 
 /** Firma de Stripe: «t=…,v1=…», HMAC-SHA256 de «t.cuerpo», 5 minutos. */
