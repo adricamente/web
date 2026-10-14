@@ -1685,7 +1685,8 @@ case 'estado_pagos': {
                   'reembolsado' => (bool)$c['reembolsado'], 'cancelada' => $c['estado'] !== 'activa',
                   'stripe_id' => $c['pago_ref'] ?: null,
                   'comision' => $c['comision'] !== null ? (float)$c['comision'] : null,
-                  'avisado' => $c['avisado']];
+                  'avisado' => $c['avisado'], 'correo' => $c['correo'], 'nombre' => $c['nombre'] ?? null,
+                  'origen' => $c['origen']];
     }
     $er = $db->query("SELECT valor FROM ajustes WHERE clave = 'pagos_ultimo_error'")->fetch();
     adr_json(['pagos' => $out, 'configurado' => (bool)($cfg['stripe_clave'] ?? null),
@@ -1699,19 +1700,52 @@ case 'crear_pago': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     require_once __DIR__ . '/lib/pagos.php';
     adr_pagos_tabla($db);
-    $cod = (string)($in['cod'] ?? '');
+    /* Con cuenta (cod) o, para quien no la tiene, solo con su correo. Con
+       {avisar: true} le manda el mismo correo que al reservar en Cal.com
+       (con el botón de pago); sin él, solo devuelve el enlace, para
+       mandarlo por WhatsApp. */
+    $cod = trim((string)($in['cod'] ?? '')) ?: null;
     $inicio = (string)($in['inicio'] ?? '');
-    if ($cod === '' || strtotime($inicio) === false) adr_json(['error' => 'faltan cod o inicio'], 400);
-    $q = $db->prepare('SELECT correo FROM pacientes WHERE cod = ?');
-    $q->execute([$cod]);
-    $correo = $q->fetch()['correo'] ?? adr_correo_normal((string)($in['correo'] ?? ''));
+    if (strtotime($inicio) === false || $inicio === '') adr_json(['error' => 'falta la fecha y la hora de la sesión'], 400);
+    $correo = null;
+    if ($cod) {
+        $q = $db->prepare('SELECT correo FROM pacientes WHERE cod = ?');
+        $q->execute([$cod]);
+        $correo = $q->fetch()['correo'] ?? null;
+    }
+    $correo = $correo ?: adr_correo_normal((string)($in['correo'] ?? ''));
     if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) adr_json(['error' => 'esa cuenta no existe y no me has dado su correo'], 404);
     $inicio = adr_inicio_madrid($inicio);
-    $uid = 'mac-' . substr(hash('sha256', $cod . '|' . $inicio), 0, 24);
+    $uid = 'mac-' . substr(hash('sha256', ($cod ?: $correo) . '|' . $inicio), 0, 24);
     $cfg = adr_pagos_cfg($ADR) ?: [];
-    $cita = adr_cita_crea($db, $uid, $cod, $correo, $inicio, (int)($in['importe'] ?? ($cfg['importe'] ?? 30)), 'mac');
+    $nombre = trim((string)($in['nombre'] ?? '')) ?: null;
+    $cita = adr_cita_crea($db, $uid, $cod, $correo, $inicio, max(1, (int)($in['importe'] ?? ($cfg['importe'] ?? 30))), 'mac', $nombre);
+    if (!empty($in['lugar']) && in_array($in['lugar'], ['online', 'presencial'], true) && empty($cita['lugar'])) {
+        $db->prepare('UPDATE citas SET lugar = ? WHERE uid = ?')->execute([$in['lugar'], $uid]);
+        $cita['lugar'] = $in['lugar'];
+    }
+    if ($cita['estado'] !== 'activa') {
+        $db->prepare("UPDATE citas SET estado = 'activa' WHERE uid = ?")->execute([$uid]);
+        $cita['estado'] = 'activa';
+    }
+    $aviso = null;
+    if (!empty($in['avisar']) && $cita['pagado_en'] === null) {
+        $r = adr_cita_avisa($ADR, $db, $cita);
+        $aviso = ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') ? 'enviado' : ($r['error'] ?? 'no ha salido');
+    }
     adr_json(['ok' => true, 'uid' => $uid, 'url_pago' => $cita['pagado_en'] === null ? adr_pagos_url($ADR, $cita['token']) : null,
-              'pagado_en' => $cita['pagado_en']]);
+              'pagado_en' => $cita['pagado_en'], 'correo' => $correo, 'aviso' => $aviso,
+              'modo' => str_contains((string)($cfg['stripe_clave'] ?? ''), '_live_') ? 'real' : 'prueba']);
+}
+
+/* Anular una cita de pago (Adrián la quita: no se cobra). */
+case 'anular_pago': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $q = $db->prepare("UPDATE citas SET estado = 'cancelada' WHERE uid = ? AND pagado_en IS NULL");
+    $q->execute([(string)($in['uid'] ?? '')]);
+    adr_json(['ok' => true, 'anuladas' => $q->rowCount()]);
 }
 
 /* El Mac: poner o ver la configuración de pagos. Las claves se guardan
