@@ -1675,7 +1675,7 @@ case 'estado_pagos': {
     require_once __DIR__ . '/lib/pagos.php';
     adr_pagos_tabla($db);
     $cfg = adr_pagos_cfg($ADR);
-    $q = $db->prepare('SELECT * FROM citas WHERE inicio >= ? AND inicio <= ? ORDER BY inicio');
+    $q = $db->prepare("SELECT * FROM citas WHERE inicio >= ? AND inicio <= ? AND estado != 'prueba' ORDER BY inicio");
     $q->execute([date('c', time() - 90 * 86400), date('c', time() + 60 * 86400)]);
     $out = [];
     foreach ($q->fetchAll() as $c) {
@@ -1734,6 +1734,22 @@ case 'config_pagos': {
     }
     if (!empty($in['stripe_webhook']) && !str_starts_with($nuevo['stripe_webhook'], 'whsec_')) {
         adr_json(['error' => 'el secreto del webhook de Stripe empieza por whsec_'], 400);
+    }
+    /* Clave nueva (sobre todo, de prueba a real): lo que se creó con la
+       anterior no existe con la nueva. Fuera el precio y los clientes de
+       Stripe guardados y las sesiones de pago abiertas (un enlace viejo
+       llevaría a la página de pago de prueba). Y al pasar de prueba a
+       real, lo «pagado» en prueba no es dinero: esas citas quedan como
+       'prueba' y desaparecen de Cobros y de la cuenta del paciente. */
+    $antes = (string)($cfg['stripe_clave'] ?? '');
+    if (!empty($in['stripe_clave']) && $nuevo['stripe_clave'] !== $antes) {
+        unset($nuevo['precio']);
+        $db->exec('UPDATE citas SET cliente = NULL');
+        $db->exec('UPDATE citas SET checkout_id = NULL, checkout_url = NULL, checkout_caduca = NULL WHERE pagado_en IS NULL');
+        if (str_contains($antes, '_test_') && str_contains($nuevo['stripe_clave'], '_live_')) {
+            $db->exec("UPDATE citas SET estado = 'prueba' WHERE pagado_en IS NOT NULL");
+            adr_apunta($db, 'mac', 'pagos: de prueba a real');
+        }
     }
     if ($nuevo !== $cfg) {
         adr_pagos_guarda($ADR, $nuevo);
