@@ -627,7 +627,9 @@ case 'firmar': {
        guarda otro bloque que no puede leer. */
     $copia = !empty($in['copia']) ? adr_deb64($in['copia']) : null;
     if ($copia !== null && (!$copia || strlen($copia) > 512 * 1024)) adr_json(['error' => 'copia no válida'], 400);
-    $version = (int)($in['version'] ?? 1) === 2 ? 2 : 1;
+    /* 1 = solo el nombre; 2 = con datos y la casilla antigua («no se
+       graban», que contradecía el apartado 4); 3 = la buena (14-10). */
+    $version = in_array((int)($in['version'] ?? 1), [1, 2, 3], true) ? (int)$in['version'] : 1;
     $huella = preg_match('/^[0-9a-f]{64}$/', (string)($in['huella'] ?? '')) ? (string)$in['huella'] : null;
 
     $q = $db->prepare("SELECT titulo, requiere_firma, firmado, firma_v FROM sobres
@@ -639,7 +641,7 @@ case 'firmar': {
     /* El consentimiento solo se firma con el formulario completo y la
        contraseña recién comprobada. */
     if ($es_ci) {
-        if ($version !== 2) adr_json(['error' => 'Actualiza la página: el consentimiento pide ahora tus datos.'], 409);
+        if ($version !== 3) adr_json(['error' => 'Actualiza la página (hemos corregido el formulario) y vuelve a firmar.'], 409);
         [$hasta, $mac] = array_pad(explode('.', (string)($in['permiso'] ?? ''), 2), 2, '');
         if ((int)$hasta < time() || !hash_equals(hash_hmac('sha256', "firma:$cod|" . (int)$hasta, $ADR['secreto']), $mac)) {
             adr_json(['error' => 'Vuelve a escribir tu contraseña y firma otra vez.'], 403);
@@ -647,7 +649,7 @@ case 'firmar': {
     }
     /* Volver a firmar solo vale para completar los datos de un
        consentimiento firmado con el formulario antiguo. */
-    if ($f['firmado'] && !($es_ci && (int)($f['firma_v'] ?? 1) < 2)) adr_json(['error' => 'ya estaba firmado'], 409);
+    if ($f['firmado'] && !($es_ci && (int)($f['firma_v'] ?? 1) < 3)) adr_json(['error' => 'ya estaba firmado'], 409);
     $refirma = (bool)$f['firmado'];
 
     $db->beginTransaction();
@@ -1105,7 +1107,8 @@ case 'consentimientos': {
                      ORDER BY s.cod, s.creado DESC");
     $filas = []; $avisados = 0;
     foreach ($q->fetchAll() as $f) {
-        $falta = $f['firmado'] && (int)$f['firma_v'] < 2;
+        $falta = $f['firmado'] && (int)$f['firma_v'] < 3;
+        $f['motivo'] = !$falta ? null : ((int)$f['firma_v'] === 2 ? 'frase' : 'datos');
         if ($falta && !empty($in['avisar']) && adr_freno($db, 'aviso_ci:' . $f['cod'], 1, 86400)) {
             $r = adr_correo_aviso($ADR, (string)$f['correo'], (string)$f['cod']);
             if ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') $avisados++;

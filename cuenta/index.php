@@ -323,7 +323,7 @@ $cuerpo .= <<<'HTML'
 <section id="v-firmar" class="vista" hidden>
   <p class="etiqueta">Documento para firmar</p>
   <h1 id="s-titulo">…</h1>
-  <div class="nota bien" id="s-refirma" hidden><p>Ya lo firmaste, pero faltaban tus datos
+  <div class="nota bien" id="s-refirma" hidden><p id="s-refirma-t">Ya lo firmaste, pero faltaban tus datos
   de identificación. Revisa el texto, completa el formulario y vuelve a firmarlo. Tu firma
   anterior se conserva.</p></div>
   <div class="caja"><div id="s-cuerpo"></div></div>
@@ -386,7 +386,7 @@ $cuerpo .= <<<'HTML'
       <span>He leído este documento, he podido preguntar mis dudas y consiento la atención psicológica.</span></label>
     <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-online">
       <span>Sé que las sesiones pueden ser por videollamada (Google Meet), en las condiciones que explica
-      el documento, y que no se graban.</span></label>
+      el documento, y que no puedo grabarlas por mi cuenta.</span></label>
     <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-practicas">
       <span>Sé que me atiende Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en
       Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos; que mi
@@ -714,11 +714,13 @@ async function panel() {
   const ct = $('tareas'); ct.innerHTML = '';
   porFirmar.forEach(d => {
     const re = !!d.firmado;
-    const f = fila(d.titulo || 'Documento', re ? 'Faltan tus datos: complétalos y vuelve a firmar' : 'Para leer y firmar');
+    const f = fila(d.titulo || 'Documento', !re ? 'Para leer y firmar'
+      : soloFrase(d) ? 'Hemos corregido una frase del formulario: revísalo y vuelve a firmar (tus datos ya están puestos)'
+      : 'Faltan tus datos: complétalos y vuelve a firmar');
     f.classList.add('firmar');
     const b = document.createElement('button');
-    b.className = 'boton'; b.type = 'button'; b.textContent = re ? 'Completar y firmar' : 'Leer y firmar';
-    b.addEventListener('click', () => abrirFirma(d.id, d.titulo, re));
+    b.className = 'boton'; b.type = 'button'; b.textContent = !re ? 'Leer y firmar' : soloFrase(d) ? 'Revisar y firmar' : 'Completar y firmar';
+    b.addEventListener('click', () => abrirFirma(d.id, d.titulo, re, soloFrase(d)));
     f.appendChild(b);
     ct.appendChild(f);
   });
@@ -788,8 +790,8 @@ async function panel() {
         }
         if (faltanDatos(d)) {
           const b2 = document.createElement('button');
-          b2.className = 'boton'; b2.type = 'button'; b2.textContent = 'Completar datos';
-          b2.addEventListener('click', () => abrirFirma(d.id, d.titulo, true));
+          b2.className = 'boton'; b2.type = 'button'; b2.textContent = soloFrase(d) ? 'Revisar y firmar' : 'Completar datos';
+          b2.addEventListener('click', () => abrirFirma(d.id, d.titulo, true, soloFrase(d)));
           f.appendChild(b2);
         }
         const b = document.createElement('button');
@@ -1171,7 +1173,12 @@ $('d-hecho').addEventListener('click', async () => {
    nombre, lo ve otra vez en pendientes para completarlo (firma_v < 2). */
 let FIRMA = null;
 const esConsentimiento = (titulo) => /consentimiento/i.test(String(titulo || ''));
-const faltanDatos = (d) => !!d.firmado && esConsentimiento(d.titulo) && Number(d.firma_v || 1) < 2;
+/* firma_v: 1 = solo el nombre; 2 = con datos, pero con la casilla de la
+   videollamada que decía «no se graban» (contradecía el apartado 4 del
+   texto, que autoriza el audio: corregida el 14-10); 3 = la buena. */
+const FIRMA_V = 3;
+const faltanDatos = (d) => !!d.firmado && esConsentimiento(d.titulo) && Number(d.firma_v || 1) < FIRMA_V;
+const soloFrase = (d) => Number(d.firma_v || 1) === 2;
 
 /* Las dos primeras cifras del código postal → provincia. */
 const PROVINCIAS = ['Álava','Albacete','Alicante','Almería','Ávila','Badajoz','Illes Balears','Barcelona','Burgos',
@@ -1292,7 +1299,7 @@ $('ci-doc-tipo').addEventListener('change', () => {
 }));
 $('s-nombre').addEventListener('input', () => { if (FIRMA) FIRMA.nombreTocado = true; });
 
-async function abrirFirma(id, titulo, refirma = false) {
+async function abrirFirma(id, titulo, refirma = false, frase = false) {
   const consentimiento = esConsentimiento(titulo);
   FIRMA = { id, titulo, texto: null, consentimiento, refirma, nombreTocado: false };
   $('s-firmar').disabled = true;
@@ -1302,6 +1309,9 @@ async function abrirFirma(id, titulo, refirma = false) {
   $('s-nombre').value = '';
   $('s-clave').value = '';
   $('s-refirma').hidden = !refirma;
+  $('s-refirma-t').textContent = frase
+    ? 'Ya lo firmaste con tus datos, pero una frase del formulario estaba mal: la de la videollamada decía que las sesiones no se graban, y el documento explica en qué condiciones se registra el audio. Ya está corregida. Revisa el texto y las casillas y vuelve a firmar: tus datos ya están puestos. Tu firma anterior se conserva.'
+    : 'Ya lo firmaste, pero faltaban tus datos de identificación. Revisa el texto, completa el formulario y vuelve a firmarlo. Tu firma anterior se conserva.';
   $('s-datos').hidden = !consentimiento;
   $('s-clave-c').hidden = !consentimiento;
   $('s-firma-a').textContent = consentimiento
@@ -1377,10 +1387,17 @@ $('s-firmar').addEventListener('click', async () => {
     /* La firma va sellada al Mac: él tiene la prueba completa de qué
        se firmó, con qué datos y cuándo. El servidor solo apunta que se
        firmó, la hora y la huella, que es lo que puede saber sin leer nada. */
-    const cifrado = sellarHaciaElMac(Object.assign({ v: extra ? 2 : 1, tipo: 'firma', documento: FIRMA.id,
+    /* Lo que decía cada casilla, tal cual: la prueba es lo que leyó, no
+       lo que pone hoy en el código. */
+    const casillas_texto = {};
+    if (extra) Object.entries(Object.assign({}, CASILLAS, OPCIONALES)).forEach(([k, id]) => {
+      casillas_texto[k] = $(id).parentElement.querySelector('span').textContent.replace(/\s+/g, ' ').trim();
+    });
+    if (extra) firma.casillas_texto = casillas_texto;
+    const cifrado = sellarHaciaElMac(Object.assign({ v: extra ? FIRMA_V : 1, tipo: 'firma', documento: FIRMA.id,
                                        titulo: FIRMA.titulo, documento_sha256: h, nombre,
                                        firmado_en, origen: 'cuenta', cod_web: miCod },
-                                     extra ? { datos: extra.datos, casillas: extra.casillas, opcionales: extra.opcionales,
+                                     extra ? { datos: extra.datos, casillas: extra.casillas, opcionales: extra.opcionales, casillas_texto,
                                                verificacion: 'contraseña', servidor, refirma: FIRMA.refirma } : {}),
                                      macPublica);
     /* Y su copia: el texto, su firma y sus datos, sellados a SU clave.
@@ -1389,7 +1406,7 @@ $('s-firmar').addEventListener('click', async () => {
                                      texto: FIRMA.texto, firma },
                                    miPublica);
     const r = await api('firmar', { id: FIRMA.id, cifrado, copia, huella: h,
-                                    version: extra ? 2 : 1, permiso, refirma: FIRMA.refirma });
+                                    version: extra ? FIRMA_V : 1, permiso, refirma: FIRMA.refirma });
     if (!r.ok) { $('s-estado').textContent = r.j.error || 'No se ha podido firmar.'; return; }
     await panel();
     $('panel-estado').textContent = FIRMA.consentimiento ? 'Firmado. Te llega un correo de confirmación.' : 'Firmado. Gracias.';
@@ -1461,7 +1478,7 @@ async function abrir(id, titulo, clase, doc) {
          ['Contacto en una emergencia', em ? em.nombre + (em.relacion ? ' (' + em.relacion + ')' : '') + ' · ' + em.telefono : 'No indicado']
         ].forEach(([k, v]) => { const tr = nuevo('tr'); tr.append(nuevo('th', k), nuevo('td', v || '—')); t.appendChild(tr); });
         caja.appendChild(t);
-        const ETQ = { atencion: 'Consiento la atención psicológica.', online: 'Sesiones por videollamada, sin grabar.',
+        const ETQ = { atencion: 'Consiento la atención psicológica.', online: 'Sesiones por videollamada; no puedo grabarlas por mi cuenta.',
           practicas: 'Me atiende un psicólogo en prácticas supervisadas en Neurococos.', mayor_y_residente: 'Soy mayor de 18 años y resido en España.',
           resultados_anonimos: 'Uso anónimo de mis puntuaciones', memoria_practicas: 'Mi caso, anonimizado, en la memoria de prácticas' };
         const ul = nuevo('ul', null, 'firma-casillas');
