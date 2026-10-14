@@ -202,7 +202,8 @@ require __DIR__ . '/lib/sesion.php';
    cada 5 minutos, las claves, el panel) no: con el recolector de fondo
    eran unas 1.500 filas al día que no decían nada y tapaban lo que sí. */
 const ADR_RUTINA = ['recoger', 'recogido', 'claves', 'panel_mac', 'registro',
-                    'firmas', 'pendientes', 'estado', 'por_reenviar'];
+                    'firmas', 'pendientes', 'estado', 'por_reenviar', 'estado_pagos', 'estado_correo',
+                    'correos_pendientes'];
 if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
     adr_apunta($db, 'mac', $a);
 }
@@ -391,14 +392,6 @@ case 'mios': {
                         ORDER BY id DESC LIMIT 1");
     $ob->execute([$cod]);
     $objetivos = $ob->fetch() ?: null;
-    /* Cómo pagar (titular, IBAN, importe, concepto): lo publica el Mac
-       sellado a su llave. El IBAN no está en el código (el repositorio
-       es público) ni en claro en el servidor. Uno y el último. */
-    $pa = $db->prepare("SELECT id, para_v FROM sobres
-                        WHERE cod = ? AND direccion = 2 AND clase = 'pago'
-                        ORDER BY id DESC LIMIT 1");
-    $pa->execute([$cod]);
-    $pago = $pa->fetch() ?: null;
     /* Sus justificantes de pago. El servidor sabe CUÁNDO subió uno, no
        qué hay dentro: el justificante va sellado al Mac. Para que ella
        vea a qué sesión corresponde cada uno, se guarda además una copia
@@ -479,9 +472,21 @@ case 'mios': {
                                            'para_v' => (int)$historial['para_v']] : null,
               'objetivos' => $objetivos ? ['id' => (int)$objetivos['id'],
                                            'para_v' => (int)$objetivos['para_v']] : null,
-              'pago' => $pago ? ['id' => (int)$pago['id'],
-                                 'para_v' => (int)$pago['para_v']] : null,
               'justificantes' => $ju->fetchAll(),
+              'pagos' => (function () use ($db, $ADR, $cod) {
+                  /* Sus citas de pago (de los últimos 90 días y los próximos 60),
+                     con el enlace para pagarlas. Sin datos clínicos: fecha,
+                     importe y si está pagada. */
+                  require_once __DIR__ . '/lib/pagos.php';
+                  adr_pagos_tabla($db);
+                  $q = $db->prepare("SELECT inicio, importe, pagado_en, token, reembolsado FROM citas
+                                     WHERE cod = ? AND estado = 'activa' AND inicio >= ? AND inicio <= ?
+                                     ORDER BY inicio");
+                  $q->execute([$cod, date('c', time() - 90 * 86400), date('c', time() + 60 * 86400)]);
+                  return array_map(fn($c) => ['inicio' => $c['inicio'], 'importe' => (int)$c['importe'],
+                      'pagado' => $c['pagado_en'] !== null, 'reembolsado' => (bool)$c['reembolsado'],
+                      'url_pago' => $c['pagado_en'] === null ? adr_pagos_url($ADR, $c['token']) : null], $q->fetchAll());
+              })(),
               'documentos' => $q->fetchAll(), 'tareas' => $tareas,
               'hechas' => $h->fetchAll(),
               'mensajes' => array_reverse($ms->fetchAll())]);
@@ -1475,6 +1480,207 @@ case 'correo_enviado': {
 }
 
 /* ¿Salen los correos del portal? Lo que pregunta el Mac cada hora. */
+/* --- El cobro con Stripe (14-10) ----------------------------------- */
+
+/* Cal.com avisa de una reserva, un cambio de hora o una cancelación.
+   Firma: X-Cal-Signature-256 = HMAC-SHA256 (hex) del cuerpo con el
+   secreto que se puso al dar de alta el webhook. Solo el tipo de cita
+   de pago (por su slug); la informativa, nunca. */
+case 'cal_webhook': {
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $cfg = adr_pagos_cfg($ADR);
+    $crudo = (string)file_get_contents('php://input');
+    if (!$cfg || empty($cfg['cal_secreto'])) { adr_pagos_apunta_error($ADR, 'cal_sin_configurar'); adr_json(['error' => 'sin configurar'], 503); }
+    $firma = strtolower(trim((string)($_SERVER['HTTP_X_CAL_SIGNATURE_256'] ?? '')));
+    if ($firma === '' || !hash_equals(hash_hmac('sha256', $crudo, $cfg['cal_secreto']), $firma)) {
+        adr_pagos_apunta_error($ADR, 'cal_firma', 'la firma del webhook de Cal.com no casa');
+        adr_json(['error' => 'firma'], 401);
+    }
+    $j = json_decode($crudo, true) ?: [];
+    $ev = (string)($j['triggerEvent'] ?? '');
+    $p = $j['payload'] ?? [];
+    $slug = (string)($p['type'] ?? ($p['eventType']['slug'] ?? ''));
+    if ($ev === 'PING') adr_json(['ok' => true, 'ping' => true]);
+    if (empty($cfg['slug']) || $slug !== $cfg['slug']) adr_json(['ok' => true, 'ignorada' => 'otro tipo de cita']);
+    $uid = (string)($p['uid'] ?? '');
+    if ($uid === '') adr_json(['ok' => true, 'ignorada' => 'sin uid']);
+    $inicio = !empty($p['startTime']) ? adr_inicio_madrid((string)$p['startTime']) : null;
+    $correo = adr_correo_normal((string)($p['attendees'][0]['email'] ?? ''));
+    if ($ev === 'BOOKING_CANCELLED') {
+        $db->prepare("UPDATE citas SET estado = 'cancelada' WHERE uid = ?")->execute([$uid]);
+        adr_json(['ok' => true, 'cancelada' => $uid]);
+    }
+    if ($ev === 'BOOKING_RESCHEDULED') {
+        $viejo = (string)($p['rescheduleUid'] ?? ($p['fromReschedule'] ?? ($p['originalRescheduledBooking']['uid'] ?? '')));
+        $q = $db->prepare('SELECT uid FROM citas WHERE uid = ?');
+        $q->execute([$viejo]);
+        if ($viejo !== '' && $q->fetch()) {
+            $q->execute([$uid]);
+            if (!$q->fetch()) {
+                /* El pago o el enlace se conservan: la misma fila pasa al uid nuevo y a la hora nueva. */
+                $db->prepare("UPDATE citas SET uid = ?, inicio = COALESCE(?, inicio), estado = 'activa' WHERE uid = ?")
+                   ->execute([$uid, $inicio, $viejo]);
+            }
+            adr_json(['ok' => true, 'cambiada' => $uid]);
+        }
+        /* Sin la anterior: se trata como una reserva nueva. */
+    }
+    if (!in_array($ev, ['BOOKING_CREATED', 'BOOKING_RESCHEDULED'], true)) adr_json(['ok' => true, 'ignorada' => $ev]);
+    if (!$inicio || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+        adr_pagos_apunta_error($ADR, 'cal_datos', 'reserva sin hora o sin correo del invitado');
+        adr_json(['ok' => true, 'ignorada' => 'sin hora o sin correo']);
+    }
+    $q = $db->prepare('SELECT cod FROM pacientes WHERE correo = ?');
+    $q->execute([$correo]);
+    $cod = ($q->fetch()['cod'] ?? null);
+    $cita = adr_cita_crea($db, $uid, $cod, $correo, $inicio, (int)($cfg['importe'] ?? 30), 'cal',
+                          (string)($p['attendees'][0]['name'] ?? '') ?: null);
+    $r = null;
+    if (!$cita['avisado'] && $cita['pagado_en'] === null) $r = adr_cita_avisa($ADR, $db, $cita);
+    adr_json(['ok' => true, 'cita' => $uid, 'avisado' => $r ? ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') : null]);
+}
+
+/* Stripe avisa de un pago o de una devolución. Firma comprobada con el
+   secreto del webhook; si no casa, no se toca nada y queda apuntado. */
+case 'stripe_webhook': {
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $cfg = adr_pagos_cfg($ADR);
+    $crudo = (string)file_get_contents('php://input');
+    if (!$cfg || empty($cfg['stripe_webhook'])) { adr_pagos_apunta_error($ADR, 'stripe_sin_configurar'); adr_json(['error' => 'sin configurar'], 503); }
+    if (!adr_stripe_firma_ok((string)($_SERVER['HTTP_STRIPE_SIGNATURE'] ?? ''), $crudo, $cfg['stripe_webhook'])) {
+        adr_pagos_apunta_error($ADR, 'stripe_firma', 'la firma del webhook de Stripe no casa');
+        adr_json(['error' => 'firma'], 400);
+    }
+    $e = json_decode($crudo, true) ?: [];
+    $o = $e['data']['object'] ?? [];
+    $tipo = (string)($e['type'] ?? '');
+    if (in_array($tipo, ['checkout.session.completed', 'checkout.session.async_payment_succeeded'], true)) {
+        if (($o['payment_status'] ?? '') === 'paid') {
+            $uid = (string)($o['metadata']['reserva_uid'] ?? ($o['client_reference_id'] ?? ''));
+            if ($uid !== '') {
+                $pi = (string)($o['payment_intent'] ?? $o['id'] ?? '');
+                adr_cita_pagada($db, $uid, $pi, date('c', (int)($e['created'] ?? time())));
+                /* La comisión, para cuadrar el mes con la directora. Si Stripe
+                   no la da (permisos de la clave), queda vacía. */
+                $fee = adr_stripe_comision($ADR, $pi);
+                if ($fee !== null) $db->prepare('UPDATE citas SET comision = ? WHERE uid = ?')->execute([$fee, $uid]);
+            }
+        }
+    } elseif ($tipo === 'charge.refunded') {
+        $pi = (string)($o['payment_intent'] ?? '');
+        if ($pi !== '') $db->prepare('UPDATE citas SET reembolsado = ? WHERE pago_ref = ?')
+                           ->execute([!empty($o['refunded']) ? 1 : 0, $pi]);
+    }
+    adr_json(['ok' => true]);
+}
+
+/* El Mac: sus citas de pago, para Cobros, recordatorios y WhatsApp. */
+case 'estado_pagos': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $cfg = adr_pagos_cfg($ADR);
+    $q = $db->prepare('SELECT * FROM citas WHERE inicio >= ? AND inicio <= ? ORDER BY inicio');
+    $q->execute([date('c', time() - 90 * 86400), date('c', time() + 60 * 86400)]);
+    $out = [];
+    foreach ($q->fetchAll() as $c) {
+        $vivo = $c['estado'] === 'activa' && $c['pagado_en'] === null;
+        $out[] = ['cod' => $c['cod'], 'uid' => $c['uid'], 'inicio' => $c['inicio'], 'importe' => (int)$c['importe'],
+                  'pagado_en' => $c['pagado_en'], 'url_pago' => $vivo ? adr_pagos_url($ADR, $c['token']) : null,
+                  'reembolsado' => (bool)$c['reembolsado'], 'cancelada' => $c['estado'] !== 'activa',
+                  'stripe_id' => $c['pago_ref'] ?: null,
+                  'comision' => $c['comision'] !== null ? (float)$c['comision'] : null,
+                  'avisado' => $c['avisado']];
+    }
+    $er = $db->query("SELECT valor FROM ajustes WHERE clave = 'pagos_ultimo_error'")->fetch();
+    adr_json(['pagos' => $out, 'configurado' => (bool)($cfg['stripe_clave'] ?? null),
+              'modo' => str_contains((string)($cfg['stripe_clave'] ?? ''), '_test_') ? 'prueba' : (($cfg['stripe_clave'] ?? null) ? 'real' : null),
+              'ultimo_error' => $er ? json_decode($er['valor'], true) : null]);
+}
+
+/* El Mac: enlace de pago para una sesión que no pasó por Cal.com (o de
+   antes del cambio). Idempotente: la misma cita, el mismo enlace. */
+case 'crear_pago': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $cod = (string)($in['cod'] ?? '');
+    $inicio = (string)($in['inicio'] ?? '');
+    if ($cod === '' || strtotime($inicio) === false) adr_json(['error' => 'faltan cod o inicio'], 400);
+    $q = $db->prepare('SELECT correo FROM pacientes WHERE cod = ?');
+    $q->execute([$cod]);
+    $correo = $q->fetch()['correo'] ?? adr_correo_normal((string)($in['correo'] ?? ''));
+    if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) adr_json(['error' => 'esa cuenta no existe y no me has dado su correo'], 404);
+    $inicio = adr_inicio_madrid($inicio);
+    $uid = 'mac-' . substr(hash('sha256', $cod . '|' . $inicio), 0, 24);
+    $cfg = adr_pagos_cfg($ADR) ?: [];
+    $cita = adr_cita_crea($db, $uid, $cod, $correo, $inicio, (int)($in['importe'] ?? ($cfg['importe'] ?? 30)), 'mac');
+    adr_json(['ok' => true, 'uid' => $uid, 'url_pago' => $cita['pagado_en'] === null ? adr_pagos_url($ADR, $cita['token']) : null,
+              'pagado_en' => $cita['pagado_en']]);
+}
+
+/* El Mac: poner o ver la configuración de pagos. Las claves se guardan
+   cifradas y nunca se devuelven: solo si están puestas. La clave de
+   Stripe tiene que ser RESTRINGIDA (rk_…), nunca la secreta completa. */
+case 'config_pagos': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $cfg = adr_pagos_cfg($ADR) ?: ['importe' => 30];
+    $nuevo = $cfg;
+    foreach (['stripe_clave', 'stripe_webhook', 'cal_secreto', 'slug', 'precio'] as $k) {
+        if (isset($in[$k]) && trim((string)$in[$k]) !== '') $nuevo[$k] = trim((string)$in[$k]);
+    }
+    if (isset($in['importe'])) $nuevo['importe'] = max(1, (int)$in['importe']);
+    if (!empty($in['stripe_clave'])) {
+        if (!preg_match('/^rk_(test|live)_[A-Za-z0-9]+$/', $nuevo['stripe_clave'])) {
+            adr_json(['error' => 'la clave de Stripe tiene que ser una clave RESTRINGIDA (empieza por rk_test_ o rk_live_), nunca la secreta completa'], 400);
+        }
+    }
+    if (!empty($in['stripe_webhook']) && !str_starts_with($nuevo['stripe_webhook'], 'whsec_')) {
+        adr_json(['error' => 'el secreto del webhook de Stripe empieza por whsec_'], 400);
+    }
+    if ($nuevo !== $cfg) {
+        adr_pagos_guarda($ADR, $nuevo);
+        // Que la caché estática no devuelva la de antes en esta misma petición.
+        $cfg = $nuevo;
+    }
+    $prueba = null;
+    if (!empty($in['stripe_clave']) || !empty($in['probar'])) {
+        // Se comprueba la clave contra Stripe: leer una sesión de pago basta.
+        [$c, $j] = (function () use ($ADR, $cfg) {
+            $h = curl_init(($ADR['stripe_api'] ?? 'https://api.stripe.com') . '/v1/checkout/sessions?limit=1');
+            curl_setopt_array($h, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 20,
+                CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . ($cfg['stripe_clave'] ?? ''), 'Stripe-Version: 2024-06-20']]);
+            $r = curl_exec($h); $c = (int)curl_getinfo($h, CURLINFO_HTTP_CODE); curl_close($h);
+            return [$c, json_decode((string)$r, true) ?: []];
+        })();
+        $prueba = $c === 200 ? ['ok' => true] : ['ok' => false, 'detalle' => $j['error']['message'] ?? ('HTTP ' . $c)];
+    }
+    if (!empty($nuevo['stripe_clave'])) {
+        /* Con Stripe, fuera los datos bancarios que se publicaban a cada cuenta. */
+        $db->exec("DELETE FROM sobres WHERE clase = 'pago'");
+    }
+    $precio_err = null;
+    if ($prueba && $prueba['ok'] && empty($cfg['precio'])) {
+        /* El producto y el precio los crea el servidor (lookup_key «sesion_individual»). */
+        [$pid, $precio_err] = adr_stripe_precio($ADR, (int)($cfg['importe'] ?? 30));
+        if ($pid) { $cfg['precio'] = $pid; adr_pagos_guarda($ADR, $cfg); }
+    }
+    $base = rtrim($ADR['sitio'], '/');
+    adr_json(['ok' => true, 'configurado' => !empty($cfg['stripe_clave']),
+              'modo' => str_contains((string)($cfg['stripe_clave'] ?? ''), '_test_') ? 'prueba' : (!empty($cfg['stripe_clave']) ? 'real' : null),
+              'slug' => $cfg['slug'] ?? null, 'importe' => (int)($cfg['importe'] ?? 30), 'precio' => $cfg['precio'] ?? null,
+              'tiene' => ['stripe_clave' => !empty($cfg['stripe_clave']), 'stripe_webhook' => !empty($cfg['stripe_webhook']),
+                          'cal_secreto' => !empty($cfg['cal_secreto'])],
+              'webhooks' => ['cal' => $base . '/api.php?a=cal_webhook', 'stripe' => $base . '/api.php?a=stripe_webhook'],
+              'prueba_clave' => $prueba, 'precio_error' => $precio_err,
+              'ultimo_error' => (function () use ($db) { $e = $db->query("SELECT valor FROM ajustes WHERE clave = 'pagos_ultimo_error'")->fetch();
+                                                          return $e ? json_decode($e['valor'], true) : null; })()]);
+}
+
 case 'estado_correo': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     require_once __DIR__ . '/lib/correo.php';

@@ -614,3 +614,7 @@ h3{font-weight:700}
 .deslizador{display:flex;align-items:center;gap:14px}
 .deslizador input[type=range]{flex:1;min-width:0;accent-color:var(--accent)}
 .deslizador output{font-weight:700;font-size:20px;min-width:2.2ch;text-align:right}
+
+/* Pagos (14-10) */
+.caja.pago .pago-fila .boton,.caja.pago .pago-fila .sello{white-space:nowrap}
+.caja.pago.falta #pago-estado{color:var(--ink-2);font-weight:400}

@@ -155,7 +155,7 @@ $cuerpo .= <<<'HTML'
 
 
     <button class="tarjeta-ir aviso-pago" type="button" id="ir-pago" hidden>
-      <span class="t">Falta el justificante</span>
+      <span class="t">Sesión sin pagar</span>
       <span class="resumen" id="ir-pago-txt"></span>
       <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </button>
@@ -172,46 +172,12 @@ $cuerpo .= <<<'HTML'
       <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>
 
-    <!-- El justificante de pago. Se sella en el navegador a la clave del
-         Mac, como todo lo que entrega; el servidor guarda algo que no
-         puede abrir. Si la próxima sesión es en menos de 48 horas y no
-         hay justificante para ella, la caja se marca. -->
-    <section class="caja bloque pago" id="c-pago" aria-labelledby="t-pago">
-      <h2 id="t-pago">Adjuntar transferencia</h2>
-      <p id="pago-estado">Si pagas por transferencia, sube aquí la foto o el PDF del justificante.</p>
-      <!-- Cómo pagar: lo publica el Mac sellado a su llave («pago»). El
-           IBAN no está en este código ni en claro en el servidor. -->
-      <div class="como-pagar" id="pago-como" hidden>
-        <h3 class="sub-pago">Cómo pagar</h3>
-        <dl class="datos-pago">
-          <div id="pc-importe-f" hidden><dt>Importe</dt><dd id="pc-importe"></dd></div>
-          <div><dt>Cuándo</dt><dd id="pc-plazo">Como muy tarde 24 horas antes de la sesión</dd></div>
-          <div id="pc-titular-f" hidden><dt>Titular</dt><dd id="pc-titular"></dd></div>
-          <div id="pc-iban-f" hidden><dt>IBAN</dt><dd><span id="pc-iban" class="iban"></span>
-            <button type="button" class="boton suave mini" id="pc-copiar">Copiar</button>
-            <span class="apunte" id="pc-copiado" role="status"></span></dd></div>
-          <div id="pc-concepto-f" hidden><dt>Concepto</dt><dd id="pc-concepto"></dd></div>
-        </dl>
-        <p class="apunte" id="pc-nota" hidden></p>
-      </div>
-      <div class="campo">
-        <label for="pago-cita">¿De qué sesión es?</label>
-        <select id="pago-cita">
-          <option value="">No lo sé (la última que tenga pendiente)</option>
-          <option value="otra">Otra sesión: elijo la fecha</option>
-        </select>
-        <input type="date" id="pago-fecha" hidden aria-label="Fecha de la sesión que pagas">
-      </div>
-      <div class="campo elegir">
-        <input type="file" id="pago-fichero" class="oculto-visual" aria-describedby="pago-pista"
-               accept="image/*,application/pdf,.pdf,.jpg,.jpeg,.png,.heic,.heif,.webp">
-        <label for="pago-fichero" class="boton suave">Elegir archivo</label>
-        <span id="pago-nombre" class="apunte">Ninguno elegido</span>
-        <p class="pista" id="pago-pista">JPG, PNG, HEIC, WEBP o PDF. Vale una captura de pantalla de la app del banco. Hasta 15 MB.</p>
-      </div>
-      <p><button class="boton" id="pago-enviar" type="button">Enviar justificante</button>
-      <span class="apunte" id="pago-msg" role="status"></span></p>
-      <h3 class="sub-pago" id="t-pago-lista" hidden>Justificantes enviados</h3>
+    <!-- Pagos (14-10): cada sesión de pago con su botón «Pagar la sesión»
+         (Stripe: tarjeta, Apple Pay, Google Pay) o «Pagada ✓». El enlace
+         es el mismo que le llega por correo; no hay datos bancarios aquí. -->
+    <section class="caja bloque pago" id="c-pago" aria-labelledby="t-pago" hidden>
+      <h2 id="t-pago">Pagos</h2>
+      <p id="pago-estado" class="apunte">Con tarjeta, Apple Pay o Google Pay. El recibo te llega por correo.</p>
       <div id="pago-lista"></div>
     </section>
 
@@ -625,9 +591,8 @@ async function panel() {
   macPublica = r.j.mac_publica || null;
   miCod = r.j.cod || null;
   miV = r.j.v;
-  pintaAgenda(r.j.agenda, r.j.v).then(estadoPago);
-  pintaJustificantes(r.j.justificantes || [], r.j.v);
-  pintaPago(r.j.pago, r.j.v);
+  pintaAgenda(r.j.agenda, r.j.v);
+  pintaPagos(r.j.pagos || []);
   pintaProgreso(r.j.progreso, r.j.v);
 
   /* Lo caducado no se enseña ni se cuenta: un número que no baja
@@ -883,215 +848,48 @@ $('vo-enviar').addEventListener('click', async () => {
   } finally { $('vo-enviar').disabled = false; }
 });
 
-/* --- El justificante de pago -------------------------------------------
-   Lo que sube se sella a la clave del Mac (el fichero entero) y se
-   guarda además una copia mínima sellada a la suya —a qué sesión es, el
-   nombre del fichero, cuándo— para enseñarle aquí lo que ya mandó. */
-let JUSTIS = [];
-async function pintaJustificantes(lista, v) {
-  const out = [];
-  for (const j of lista) {
-    let d = null;
-    if (j.copia_id && Number(j.copia_v) === Number(v)) {
-      try {
-        const r = await api('abrir&id=' + encodeURIComponent(j.copia_id));
-        if (r.ok && r.j.cifrado) d = abrirDelMac(r.j.cifrado, miPublica, privada);
-      } catch (_) {}
+/* --- Pagos ------------------------------------------------------------
+   Del servidor: [{inicio, importe, pagado, reembolsado, url_pago}]. Cada
+   sesión con su botón «Pagar la sesión» (va a Stripe; no pide entrar) o
+   «Pagada ✓». Si una sesión de las próximas 48 horas sigue sin pagar,
+   aviso arriba con el mismo botón. */
+function fechaSesion(iso) {
+  const t = new Date(iso);
+  const hora = t.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' });
+  return DIAS[t.getDay()] + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()] + ', ' + hora;
+}
+function pintaPagos(lista) {
+  const caja = $('c-pago'), c = $('pago-lista'), ir = $('ir-pago');
+  c.innerHTML = ''; ir.hidden = true; ir.onclick = null;
+  const ahora = Date.now();
+  /* Lo que importa: lo pendiente (de la más cercana a la más lejana) y lo pagado reciente. */
+  const pend = lista.filter(p => !p.pagado && p.url_pago);
+  const pag = lista.filter(p => p.pagado).slice(-4).reverse();
+  caja.hidden = !(pend.length || pag.length);
+  pend.concat(pag).forEach(p => {
+    const f = document.createElement('div'); f.className = 'fila pago-fila';
+    const t = document.createElement('div'); t.className = 'texto';
+    const n = document.createElement('strong'); n.textContent = 'Sesión del ' + fechaSesion(p.inicio);
+    const q = document.createElement('p'); q.className = 'apunte'; q.textContent = p.importe + ' €' + (p.reembolsado ? ' · devuelto' : '');
+    t.append(n, q); f.appendChild(t);
+    if (p.pagado) {
+      const e = document.createElement('span'); e.className = 'sello ok'; e.textContent = p.reembolsado ? 'Devuelta' : 'Pagada ✓';
+      f.appendChild(e);
+    } else {
+      const a = document.createElement('button'); a.type = 'button'; a.className = 'boton'; a.textContent = 'Pagar la sesión';
+      a.addEventListener('click', () => { location.href = p.url_pago; });
+      f.appendChild(a);
     }
-    out.push({ creado: j.creado, para: d && (d.cita || d.para_sesion) ? String(d.cita || d.para_sesion) : null,
-               nombre: d && d.nombre ? String(d.nombre) : null });
-  }
-  JUSTIS = out;
-  const c = $('pago-lista'); c.innerHTML = '';
-  $('t-pago-lista').hidden = !out.length;
-  out.slice(0, 6).forEach(j => {
-    const pie = 'Enviado el ' + fecha(j.creado) +
-      (j.para ? ' · para la sesión del ' + fecha(j.para) : '');
-    c.appendChild(fila(j.nombre || 'Justificante', pie));
+    c.appendChild(f);
   });
-  estadoPago();
-}
-/* Cómo pagar. {titular, iban, importe, concepto, plazo?, nota?}, sellado
-   por el Mac a su llave. Sin él, la caja sigue como estaba. */
-let IBAN = '';
-async function pintaPago(meta, v) {
-  const caja = $('pago-como');
-  caja.hidden = true; IBAN = '';
-  if (!meta || Number(meta.para_v) !== Number(v)) return;
-  let d = null;
-  try {
-    const r = await api('abrir&id=' + encodeURIComponent(meta.id));
-    d = r.ok && r.j.cifrado ? abrirDelMac(r.j.cifrado, miPublica, privada) : null;
-  } catch (_) {}
-  if (!d || (!d.iban && !d.importe)) return;
-  const pon = (k, val) => {
-    const t = val == null ? '' : String(val).trim();
-    $('pc-' + k).textContent = t; $('pc-' + k + '-f').hidden = !t;
-  };
-  pon('importe', d.importe);
-  pon('titular', d.titular);
-  pon('concepto', d.concepto);
-  IBAN = String(d.iban || '').replace(/\s+/g, '').toUpperCase();
-  pon('iban', IBAN.replace(/(.{4})/g, '$1 ').trim());
-  if (d.plazo) $('pc-plazo').textContent = String(d.plazo);
-  $('pc-nota').textContent = d.nota ? String(d.nota) : '';
-  $('pc-nota').hidden = !d.nota;
-  caja.hidden = false;
-}
-$('pc-copiar').addEventListener('click', async () => {
-  const m = $('pc-copiado');
-  try { await navigator.clipboard.writeText(IBAN); m.textContent = 'Copiado'; }
-  catch (_) {
-    const r = document.createRange(); r.selectNodeContents($('pc-iban'));
-    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
-    m.textContent = 'Seleccionado: cópialo';
-  }
-  setTimeout(() => { m.textContent = ''; }, 4000);
-});
-/* La misma cita: misma hora exacta si se guardó la hora, o el mismo día
-   (en Madrid) si solo se eligió la fecha. */
-function diaMadrid(x) { return new Date(x).toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }); }
-function mismaCita(a, b) {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(a) || /^\d{4}-\d{2}-\d{2}$/.test(b)) {
-    const da = /^\d{4}-\d{2}-\d{2}$/.test(a) ? a : diaMadrid(a);
-    const db = /^\d{4}-\d{2}-\d{2}$/.test(b) ? b : diaMadrid(b);
-    return da === db;
-  }
-  const x = new Date(a), y = new Date(b);
-  return !isNaN(x) && !isNaN(y) && Math.abs(x - y) < 60000;
-}
-/* El desplegable de «¿De qué sesión es?»: la próxima, si la hay,
-   marcada; «no lo sé» (el Mac la casa con la última pendiente); u otra
-   fecha de los últimos 60 días. */
-function pintaCitas() {
-  const sel = $('pago-cita');
-  [...sel.querySelectorAll('option[data-proxima]')].forEach(o => o.remove());
-  if (AGENDA && AGENDA.proxima) {
-    const t = new Date(AGENDA.proxima);
-    const o = document.createElement('option');
-    o.value = diaMadrid(t); o.dataset.proxima = AGENDA.proxima;
-    o.textContent = 'Mi próxima sesión: ' + DIAS[t.getDay()] + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()];
-    sel.insertBefore(o, sel.firstChild);
-    sel.value = o.value;
-  }
-  const hoy = new Date(), f = $('pago-fecha');
-  f.max = diaMadrid(new Date(hoy.getTime() + 60 * 864e5));
-  f.min = diaMadrid(new Date(hoy.getTime() - 60 * 864e5));
-  f.hidden = sel.value !== 'otra';
-}
-$('pago-cita').addEventListener('change', () => {
-  $('pago-fecha').hidden = $('pago-cita').value !== 'otra';
-  if (!$('pago-fecha').hidden) $('pago-fecha').focus();
-});
-function estadoPago() {
-  const caja = $('c-pago'), e = $('pago-estado');
-  caja.classList.remove('falta');
-  $('ir-pago').hidden = true;
-  pintaCitas();
-  if (!AGENDA || !AGENDA.proxima) {
-    e.textContent = 'Si pagas por transferencia, sube aquí la foto o el PDF del justificante.';
-    return;
-  }
-  const t = new Date(AGENDA.proxima);
-  const dia = DIAS[t.getDay()] + ' ' + t.getDate() + ' de ' + MESES_L[t.getMonth()];
-  if (JUSTIS.some(j => j.para && mismaCita(j.para, AGENDA.proxima))) {
-    e.textContent = 'Ya tengo el justificante de tu sesión del ' + dia + '. Gracias.';
-    return;
-  }
-  e.textContent = 'Falta el justificante de tu sesión del ' + dia +
-    '. Si pagas por transferencia, súbelo aquí antes de la sesión.';
-  if (t.getTime() - Date.now() < 48 * 3600e3 && t.getTime() > Date.now() - 3600e3) {
+  const cerca = pend.find(p => { const d = new Date(p.inicio).getTime() - ahora; return d < 48 * 3600e3 && d > -3600e3; });
+  if (cerca) {
+    $('ir-pago-txt').textContent = 'De tu sesión del ' + fechaSesion(cerca.inicio) + '. Págala en un minuto.';
+    ir.hidden = false;
+    ir.onclick = () => { location.href = cerca.url_pago; };
     caja.classList.add('falta');
-    $('ir-pago-txt').textContent = 'De tu sesión del ' + dia + '. Súbelo en un minuto.';
-    $('ir-pago').hidden = false;
-  }
+  } else caja.classList.remove('falta');
 }
-$('ir-pago').addEventListener('click', () => {
-  $('c-pago').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  setTimeout(() => $('pago-fichero').focus({ preventScroll: true }), 400);
-});
-$('pago-fichero').addEventListener('change', () => {
-  const f = $('pago-fichero').files && $('pago-fichero').files[0];
-  $('pago-nombre').textContent = f ? f.name : 'Ninguno elegido';
-  $('pago-msg').textContent = '';
-});
-
-/* Las fotos se reducen en el navegador antes de sellarlas: una foto
-   de móvil son 4 MB y para leer un justificante sobran 2000 píxeles.
-   Lo que no se pueda dibujar (un PDF, un HEIC en un navegador que no
-   lo entiende) va tal cual. */
-async function reducirFoto(f) {
-  const bm = await createImageBitmap(f);
-  const k = Math.min(1, 2000 / Math.max(bm.width, bm.height));
-  const cv = document.createElement('canvas');
-  cv.width = Math.round(bm.width * k); cv.height = Math.round(bm.height * k);
-  cv.getContext('2d').drawImage(bm, 0, 0, cv.width, cv.height);
-  return await new Promise((ok, mal) => cv.toBlob(b => b ? ok(b) : mal(new Error('no')), 'image/jpeg', 0.85));
-}
-function locMediodia(dia) {
-  const d = new Date(dia + 'T12:00:00'), dd = (n) => (n < 10 ? '0' : '') + n;
-  let off = -d.getTimezoneOffset(); const sg = off >= 0 ? '+' : '-'; off = Math.abs(off);
-  return dia + 'T12:00:00' + sg + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
-}
-function aBase64(blob) {
-  return new Promise((ok, mal) => {
-    const r = new FileReader();
-    r.onload = () => ok(String(r.result).split(',')[1] || '');
-    r.onerror = () => mal(new Error('No he podido leer el archivo.'));
-    r.readAsDataURL(blob);
-  });
-}
-$('pago-enviar').addEventListener('click', async () => {
-  const msg = $('pago-msg'), b = $('pago-enviar');
-  const f = $('pago-fichero').files && $('pago-fichero').files[0];
-  if (!f) { msg.textContent = 'Elige primero la foto o el PDF.'; $('pago-fichero').focus(); return; }
-  if (!macPublica) { msg.textContent = 'Ahora mismo no se puede enviar. Prueba en un rato.'; return; }
-  b.disabled = true; msg.textContent = 'Preparando…';
-  try {
-    let blob = f, mime = f.type || 'application/octet-stream', nombre = (f.name || 'justificante').slice(0, 80);
-    if (/^image\//.test(mime) && !/hei[cf]/i.test(mime)) {
-      try {
-        blob = await reducirFoto(f); mime = 'image/jpeg';
-        nombre = nombre.replace(/\.[^.]+$/, '') + '.jpg';
-      } catch (_) { blob = f; }
-    }
-    if (blob.size > 15 * 1024 * 1024) throw new Error('El archivo pasa de 15 MB. Prueba con una captura de pantalla.');
-    /* De qué sesión es: la próxima (con su hora), una fecha elegida o
-       ninguna (el Mac la casa con la última pendiente). */
-    const sel = $('pago-cita');
-    let cita = null, para = null;
-    if (sel.value === 'otra') {
-      cita = /^\d{4}-\d{2}-\d{2}$/.test($('pago-fecha').value) ? $('pago-fecha').value : null;
-      if (!cita) throw new Error('Elige la fecha de la sesión, o «No lo sé».');
-    } else if (sel.value) {
-      cita = sel.value;
-      const o = sel.selectedOptions[0];
-      para = o && o.dataset.proxima ? o.dataset.proxima : null;
-    }
-    const contenido = await aBase64(blob);
-    msg.textContent = 'Enviando…';
-    const ahora = ahoraLocal();
-    /* Si solo se eligió el día, `para_sesion` es ese día a mediodía, con
-       su desfase: el Mac lo casa por la fecha local. El archivo va en
-       `datos` (lo que lee la ingesta del Mac); los nombres de los dos
-       contratos van duplicados porque son cortos. */
-    if (!para && cita) para = locMediodia(cita);
-    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'justificante', cod_web: miCod, origen: 'cuenta',
-                                       enviado_en: ahora, subido_en: ahora, cita, para_sesion: para,
-                                       nombre, nombre_archivo: nombre, mime, datos: contenido },
-                                     macPublica);
-    const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_justificante', cita, para_sesion: para, nombre,
-                                     enviado_en: ahora }, miPublica);
-    const r = await api('justificante', { cifrado, copia });
-    if (!r.ok) throw new Error((r.j && r.j.error) ? 'No se ha podido enviar: ' + r.j.error + '.' : 'No se ha podido enviar.');
-    $('pago-fichero').value = '';
-    $('pago-nombre').textContent = 'Ninguno elegido';
-    await panel();
-    $('pago-msg').textContent = 'Enviado. Gracias.';
-  } catch (e) {
-    msg.textContent = e.message || 'No se ha podido enviar.';
-  } finally { b.disabled = false; }
-});
 
 /* --- La próxima sesión ------------------------------------------------
    La publica el Mac sellada: {proxima: ISO, meet: url, cambiar?: url,
