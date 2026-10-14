@@ -646,3 +646,6 @@ h3{font-weight:700}
 .firma-et{font-size:13px;color:var(--muted)}
 .firma-nombre{font-family:"Snell Roundhand","Brush Script MT","Segoe Script",cursive;font-size:28px;color:var(--accent-3);line-height:1.2}
 @media print{.firma-datos th{background:#F5F3EF !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+
+.ci-declara{margin:0 0 6px;padding-left:20px;font-size:15.5px}
+.ci-declara li{margin:6px 0}

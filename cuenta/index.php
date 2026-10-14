@@ -381,28 +381,17 @@ $cuerpo .= <<<'HTML'
         <input type="tel" id="ci-em-tel" maxlength="20" autocomplete="off"></div>
     </div>
 
-    <h3 class="ci-st">Lo que confirmas *</h3>
-    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-atencion">
-      <span>He leído este documento, he podido preguntar mis dudas y consiento la atención psicológica.</span></label>
-    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-online">
-      <span>Sé que las sesiones pueden ser por videollamada (Google Meet), en las condiciones que explica
-      el documento, y que no puedo grabarlas por mi cuenta.</span></label>
-    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-practicas">
-      <span>Sé que me atiende Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en
-      Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos; que mi
-      caso se revisa con un profesional colegiado del centro, sujeto a secreto profesional; y que puedo
-      pedir que me atienda otro profesional del centro.</span></label>
-    <label class="opcion ci-casilla"><input type="checkbox" id="ci-c-mayor">
-      <span>Soy mayor de 18 años y resido en España.</span></label>
-
-    <h3 class="ci-st">Opcional</h3>
-    <p class="apunte">Puedes decir que no. No cambia nada en tu atención y puedes cambiarlo cuando quieras.</p>
-    <label class="opcion ci-casilla"><input type="checkbox" id="ci-o-resultados">
-      <span>Acepto que mis puntuaciones en los cuestionarios se usen de forma anónima y agregada para valorar
-      los resultados del servicio.</span></label>
-    <label class="opcion ci-casilla"><input type="checkbox" id="ci-o-memoria">
-      <span>Acepto que mi caso, sin ningún dato que me identifique, pueda usarse en la memoria de prácticas
-      del máster.</span></label>
+    <h3 class="ci-st">Al firmar, declaras que</h3>
+    <ul class="ci-declara" id="ci-declara">
+      <li data-k="atencion">Has leído este documento, has podido preguntar tus dudas y consientes la atención psicológica.</li>
+      <li data-k="online">Sabes que las sesiones pueden ser por videollamada (Google Meet), en las condiciones que explica
+      el documento, y que no puedes grabarlas por tu cuenta.</li>
+      <li data-k="practicas">Sabes que te atiende Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en
+      Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos; que tu
+      caso se revisa con un profesional colegiado del centro, sujeto a secreto profesional; y que puedes
+      pedir que te atienda otro profesional del centro.</li>
+      <li data-k="mayor_y_residente">Eres mayor de 18 años y resides en España.</li>
+    </ul>
   </form>
 
   <div class="caja">
@@ -1192,8 +1181,18 @@ const PROVINCIAS = ['Álava','Albacete','Alicante','Almería','Ávila','Badajoz'
 
 const CI = ['ci-nombre','ci-apellidos','ci-doc-tipo','ci-doc','ci-nac','ci-tel','ci-dir','ci-cp','ci-loc','ci-prov',
             'ci-em-nombre','ci-em-rel','ci-em-tel'];
-const CASILLAS = { atencion: 'ci-c-atencion', online: 'ci-c-online', practicas: 'ci-c-practicas', mayor_y_residente: 'ci-c-mayor' };
-const OPCIONALES = { resultados_anonimos: 'ci-o-resultados', memoria_practicas: 'ci-o-memoria' };
+/* Sin casillas que marcar (14-10, Adrián): las declaraciones van en una
+   lista encima de la firma y las hace la propia firma. Al Mac le llegan
+   igual, todas a true, con su texto en primera persona y
+   casillas_modo: 'declaracion_firmada'. Sin opcionales: un
+   consentimiento RGPD no puede venir marcado de antemano (RGPD,
+   considerando 32; TJUE C-673/17), así que esos usos se quitan. */
+const DECLARA_1P = {
+  atencion: 'He leído este documento, he podido preguntar mis dudas y consiento la atención psicológica.',
+  online: 'Sé que las sesiones pueden ser por videollamada (Google Meet), en las condiciones que explica el documento, y que no puedo grabarlas por mi cuenta.',
+  practicas: 'Sé que me atiende Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos; que mi caso se revisa con un profesional colegiado del centro, sujeto a secreto profesional; y que puedo pedir que me atienda otro profesional del centro.',
+  mayor_y_residente: 'Soy mayor de 18 años y resido en España.'
+};
 
 function documentoValido(tipo, n) {
   const L = 'TRWAGMYFPDXBNJZSQVHLCKE';
@@ -1248,11 +1247,8 @@ function leeDatos() {
   if (hayEm && (!em.nombre || (em.telefono.match(/\d/g) || []).length < 9))
     malos.push(marcaMal(em.nombre ? 'ci-em-tel' : 'ci-em-nombre', 'Si pones a alguien, con su nombre y su teléfono.'));
   const casillas = {};
-  Object.entries(CASILLAS).forEach(([k, id]) => { casillas[k] = $(id).checked; });
-  const faltaCasilla = Object.entries(CASILLAS).find(([k]) => !casillas[k]);
-  if (faltaCasilla) malos.push(marcaMal(faltaCasilla[1], 'Para firmar hay que marcar las cuatro casillas de «Lo que confirmas».'));
-  const opcionales = {};
-  Object.entries(OPCIONALES).forEach(([k, id]) => { opcionales[k] = $(id).checked; });
+  Object.keys(DECLARA_1P).forEach(k => { casillas[k] = true; });
+  const opcionales = null;
   if (malos.length) { $(malos[0]).focus(); return null; }
   return {
     datos: { nombre: v('ci-nombre'), apellidos: v('ci-apellidos'), documento_tipo: tipo, documento_numero: num,
@@ -1317,7 +1313,7 @@ async function abrirFirma(id, titulo, refirma = false, frase = false) {
   $('s-datos').hidden = !consentimiento;
   $('s-clave-c').hidden = !consentimiento;
   $('s-firma-a').textContent = consentimiento
-    ? 'Escribe tu nombre y apellidos como en tu documento de identidad y tu contraseña. Queda registrada la fecha y la hora, y te llega un correo de confirmación.'
+    ? 'Al firmar haces las declaraciones de arriba. Escribe tu nombre y apellidos como en tu documento de identidad y tu contraseña. Queda registrada la fecha y la hora, y te llega un correo de confirmación.'
     : 'Para firmarlo, escribe tu nombre y apellidos tal como aparecen en tu DNI. Queda registrada la fecha y la hora.';
   if (consentimiento) {
     $('s-datos').reset(); limpiaMal();
@@ -1391,15 +1387,13 @@ $('s-firmar').addEventListener('click', async () => {
        firmó, la hora y la huella, que es lo que puede saber sin leer nada. */
     /* Lo que decía cada casilla, tal cual: la prueba es lo que leyó, no
        lo que pone hoy en el código. */
-    const casillas_texto = {};
-    if (extra) Object.entries(Object.assign({}, CASILLAS, OPCIONALES)).forEach(([k, id]) => {
-      casillas_texto[k] = $(id).parentElement.querySelector('span').textContent.replace(/\s+/g, ' ').trim();
-    });
-    if (extra) firma.casillas_texto = casillas_texto;
+    const casillas_texto = extra ? Object.assign({}, DECLARA_1P) : {};
+    if (extra) { firma.casillas_texto = casillas_texto; firma.casillas_modo = 'declaracion_firmada'; }
     const cifrado = sellarHaciaElMac(Object.assign({ v: extra ? FIRMA_V : 1, tipo: 'firma', documento: FIRMA.id,
                                        titulo: FIRMA.titulo, documento_sha256: h, nombre,
                                        firmado_en, origen: 'cuenta', cod_web: miCod },
                                      extra ? { datos: extra.datos, casillas: extra.casillas, opcionales: extra.opcionales, casillas_texto,
+                                               casillas_modo: 'declaracion_firmada',
                                                verificacion: 'contraseña', servidor, refirma: FIRMA.refirma } : {}),
                                      macPublica);
     /* Y su copia: el texto, su firma y sus datos, sellados a SU clave.
@@ -1483,8 +1477,11 @@ async function abrir(id, titulo, clase, doc) {
         const ETQ = { atencion: 'Consiento la atención psicológica.', online: 'Sesiones por videollamada; no puedo grabarlas por mi cuenta.',
           practicas: 'Me atiende un psicólogo en prácticas supervisadas en Neurococos.', mayor_y_residente: 'Soy mayor de 18 años y resido en España.',
           resultados_anonimos: 'Uso anónimo de mis puntuaciones', memoria_practicas: 'Mi caso, anonimizado, en la memoria de prácticas' };
+        const decl = f.casillas_modo === 'declaracion_firmada';
+        if (decl) caja.appendChild(nuevo('p', 'Al firmar declaró que:', 'firma-et'));
         const ul = nuevo('ul', null, 'firma-casillas');
-        Object.entries(f.casillas || {}).forEach(([k, v]) => ul.appendChild(nuevo('li', (v ? '☑ ' : '☐ ') + (ETQ[k] || k))));
+        Object.entries(f.casillas || {}).forEach(([k, v]) => ul.appendChild(nuevo('li', decl ? '• ' + ((f.casillas_texto || {})[k] || ETQ[k] || k)
+                                                                                             : (v ? '☑ ' : '☐ ') + (ETQ[k] || k))));
         Object.entries(f.opcionales || {}).forEach(([k, v]) => ul.appendChild(nuevo('li', (v ? '☑ ' : '☐ ') + (ETQ[k] || k) + (v ? ': sí' : ': no'))));
         caja.appendChild(ul);
       }
