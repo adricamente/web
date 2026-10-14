@@ -1738,22 +1738,20 @@ case 'config_pagos': {
     }
     $prueba = null;
     if (!empty($in['stripe_clave']) || !empty($in['probar'])) {
-        // Se comprueba la clave contra Stripe: leer una sesión de pago basta.
-        [$c, $j] = (function () use ($ADR, $cfg) {
-            $h = curl_init(($ADR['stripe_api'] ?? 'https://api.stripe.com') . '/v1/checkout/sessions?limit=1');
-            curl_setopt_array($h, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_TIMEOUT => 20,
-                CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . ($cfg['stripe_clave'] ?? ''), 'Stripe-Version: 2024-06-20']]);
-            $r = curl_exec($h); $c = (int)curl_getinfo($h, CURLINFO_HTTP_CODE); curl_close($h);
-            return [$c, json_decode((string)$r, true) ?: []];
-        })();
-        $prueba = $c === 200 ? ['ok' => true] : ['ok' => false, 'detalle' => $j['error']['message'] ?? ('HTTP ' . $c)];
+        // Se comprueba la clave contra Stripe, permiso por permiso (sin crear nada).
+        require_once __DIR__ . '/lib/pagos.php';
+        $perm = adr_stripe_permisos($ADR);
+        $prueba = ['ok' => $perm['clave_valida'] && !$perm['faltan'] && !$perm['detalle'],
+                   'clave_valida' => $perm['clave_valida'], 'faltan' => $perm['faltan'],
+                   'detalle' => !$perm['clave_valida'] ? $perm['detalle']
+                       : ($perm['faltan'] ? 'a la clave le faltan permisos: ' . implode(', ', $perm['faltan']) : $perm['detalle'])];
     }
     if (!empty($nuevo['stripe_clave'])) {
         /* Con Stripe, fuera los datos bancarios que se publicaban a cada cuenta. */
         $db->exec("DELETE FROM sobres WHERE clase = 'pago'");
     }
     $precio_err = null;
-    if ($prueba && $prueba['ok'] && empty($cfg['precio'])) {
+    if ($prueba && $prueba['clave_valida'] && !array_intersect(['Products (Escritura)', 'Prices (Escritura)'], $prueba['faltan']) && empty($cfg['precio'])) {
         /* El producto y el precio los crea el servidor (lookup_key «sesion_individual»). */
         [$pid, $precio_err] = adr_stripe_precio($ADR, (int)($cfg['importe'] ?? 30));
         if ($pid) { $cfg['precio'] = $pid; adr_pagos_guarda($ADR, $cfg); }

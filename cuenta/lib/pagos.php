@@ -154,6 +154,33 @@ function adr_stripe_precio(array $ADR, int $importe = 30): array {
     return [$j['id'], null];
 }
 
+/** Qué permisos le faltan a la clave restringida. Se pregunta a Stripe
+ *  con peticiones que no crean ni cambian nada: una sesión de pago sin
+ *  artículos, o actualizar un objeto que no existe. Si la clave tiene el
+ *  permiso, Stripe contesta 400 o 404 (petición mala); si no, 403
+ *  «does not have the required permissions». Devuelve la lista de lo
+ *  que falta, en palabras del panel de Stripe. */
+function adr_stripe_permisos(array $ADR): array {
+    $pruebas = [
+        ['Checkout Sessions (Escritura)', 'POST', '/v1/checkout/sessions', ['mode' => 'payment']],
+        ['Customers (Escritura)', 'POST', '/v1/customers/cus_adr_prueba_permisos', ['name' => 'x']],
+        ['Products (Escritura)', 'POST', '/v1/products/prod_adr_prueba_permisos', ['name' => 'x']],
+        ['Prices (Escritura)', 'POST', '/v1/prices/price_adr_prueba_permisos', ['nickname' => 'x']],
+        ['PaymentIntents (Lectura)', 'GET', '/v1/payment_intents', ['limit' => 1]],
+        ['Charges (Lectura)', 'GET', '/v1/charges', ['limit' => 1]],
+        ['Balance (Lectura)', 'GET', '/v1/balance_transactions', ['limit' => 1]],
+    ];
+    $faltan = []; $raro = null;
+    foreach ($pruebas as [$nombre, $metodo, $ruta, $campos]) {
+        [$c, $j] = adr_stripe($ADR, $metodo, $ruta, $campos);
+        $m = (string)($j['error']['message'] ?? '');
+        if ($c === 403 || stripos($m, 'required permissions') !== false) $faltan[] = $nombre;
+        elseif ($c === 401) return ['clave_valida' => false, 'faltan' => [], 'detalle' => $m ?: 'Stripe no acepta la clave'];
+        elseif ($c === 0 && !$raro) $raro = $m ?: 'sin respuesta de Stripe';
+    }
+    return ['clave_valida' => true, 'faltan' => $faltan, 'detalle' => $raro];
+}
+
 /** El cliente de Stripe con el nombre y el correo del invitado: la
  *  directora ve quién pagó, sin ningún código. Se reutiliza por correo. */
 function adr_stripe_cliente(array $ADR, PDO $db, array $cita): ?string {
@@ -313,7 +340,8 @@ function adr_pagos_alerta(array $ADR, PDO $db, string $motivo): void {
     $t = "Un paciente ha abierto su enlace de pago y Stripe no ha dejado crear el pago.\n\n"
        . "Motivo que da Stripe:\n$motivo\n\n"
        . "Lo más habitual: a la clave restringida le falta un permiso (en Stripe, Desarrolladores → Claves de API → la clave → Editar). "
-       . "Necesita, en Escritura: Checkout Sessions, Customers, Products, Prices y PaymentIntents; en Lectura: Charges y Balance.\n\n"
+       . "Necesita, en Escritura: Checkout Sessions, Customers, Products y Prices; en Lectura: PaymentIntents, Charges y Balance. "
+       . "Al guardar, la clave no cambia: no hay que volver a pegarla. En la consola, «Comprobar permisos» dice si falta alguno.\n\n"
        . "Lo verás también en la consola, en «Cobro con Stripe».\n";
     adr_manda($ADR, $a, 'Aviso del portal: un pago no se ha podido abrir', $t,
               '<p>' . nl2br(htmlspecialchars($t)) . '</p>', 'alerta');
