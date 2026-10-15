@@ -126,11 +126,9 @@ $cuerpo .= <<<'HTML'
     <a href="#mensajes" data-p="mensajes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg><span>Mensajes</span></a>
   </nav>
 
-  <div class="nota ojo" id="reenviando" hidden>
-    <p><strong>Tus documentos están volviendo.</strong> Cambiaste la
-    contraseña, así que lo que había estaba cerrado con la llave
-    anterior. No se ha perdido nada: los vuelvo a mandar y van
-    apareciendo aquí.</p>
+  <div class="nota info" id="reenviando" role="status" hidden>
+    <p><strong>Actualizando tus documentos</strong> tras el cambio de contraseña. En unos
+    minutos vuelven a estar aquí. No se ha perdido nada.</p>
   </div>
   <div class="nota bien" id="recibido" role="status" hidden>
     <p><strong>Recibido.</strong> Lo tendré delante en tu próxima sesión.</p>
@@ -750,14 +748,25 @@ async function panel() {
     const mios = docs.filter(d => (d.clase || 'documento') === clase);
     if (!mios.length) { c.appendChild(vacio(cuandoNoHay)); return; }
     mios.forEach(d => {
-      const caduco = Number(d.para_v) !== Number(r.j.v);
+      /* Firmado con la copia ya vuelta a sellar: se abre por la copia
+         aunque el documento original tenga la clave vieja. */
+      const copiaOk = d.firmado && d.copia_id && Number(d.copia_v) === Number(r.j.v);
+      const caduco = Number(d.para_v) !== Number(r.j.v) && !copiaOk;
       if (caduco) viejos++;
       const f = fila(d.titulo || 'Documento', fecha(d.creado));
       if (caduco) {
         /* Un botón que no abre es peor que no tener botón: la persona
-           piensa que está roto y que ha perdido algo. */
+           piensa que está roto y que ha perdido algo. Lo firmado sigue
+           constando como firmado, con su fecha. */
+        if (d.firmado) {
+          const ok = document.createElement('span');
+          ok.className = 'sello ok'; ok.textContent = 'firmado el ' + fecha(d.firmado);
+          const pie = f.querySelector('.texto p');
+          if (pie) pie.append(' ', ok); else f.appendChild(ok);
+        }
         const e = document.createElement('span');
-        e.className = 'sello caduca'; e.textContent = 'volviendo';
+        e.className = 'sello'; e.textContent = 'actualizando';
+        e.title = 'Tras el cambio de contraseña, en unos minutos vuelve a estar aquí.';
         f.appendChild(e);
       } else if (Number(d.requiere_firma) && !d.firmado) {
         const e = document.createElement('span');

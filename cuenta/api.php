@@ -487,7 +487,16 @@ case 'mios': {
                       'pagado' => $c['pagado_en'] !== null, 'reembolsado' => (bool)$c['reembolsado'],
                       'url_pago' => $c['pagado_en'] === null ? adr_pagos_url($ADR, $c['token']) : null], $q->fetchAll());
               })(),
-              'documentos' => $q->fetchAll(), 'tareas' => $tareas,
+              'documentos' => (function () use ($q, $db, $cod) {
+                  /* Un documento para firmar sin firmar con clave vieja que ya
+                     tiene su gemelo con la clave nueva no se enseña: sobra. */
+                  $v = (int)($db->query('SELECT publica_v FROM pacientes WHERE cod = ' . $db->quote($cod))->fetch()['publica_v'] ?? 0);
+                  $filas = $q->fetchAll();
+                  $nuevos = [];
+                  foreach ($filas as $f) if ((int)$f['requiere_firma'] && (int)$f['para_v'] === $v) $nuevos[$f['titulo']] = true;
+                  return array_values(array_filter($filas, fn($f) => !((int)$f['requiere_firma'] && !$f['firmado']
+                      && (int)$f['para_v'] !== $v && isset($nuevos[$f['titulo']]))));
+              })(), 'tareas' => $tareas,
               'hechas' => $h->fetchAll(),
               'mensajes' => array_reverse($ms->fetchAll())]);
 }
@@ -838,6 +847,19 @@ case 'publicar': {
     }
 
     $clase = (string)($in['clase'] ?? 'documento');
+    /* La copia firmada, vuelta a sellar por el Mac tras un cambio de
+       contraseña (la original la selló el navegador del paciente con su
+       clave vieja). Va colgada del documento firmado y no avisa. */
+    if ($clase === 'copia') {
+        $de = (int)($in['copia_de'] ?? 0);
+        $q = $db->prepare('SELECT id FROM sobres WHERE id = ? AND cod = ? AND direccion = 2 AND firmado IS NOT NULL');
+        $q->execute([$de, $cod]);
+        if (!$q->fetch()) adr_json(['error' => 'copia_de no es un documento firmado de esa cuenta'], 404);
+        $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = 'copia' AND copia_de = ?")->execute([$cod, $de]);
+        $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase, copia_de)
+                      VALUES (?,2,'Copia firmada',?,?,?,'copia',?)")->execute([$cod, $cifrado, $para_v, adr_ahora(), $de]);
+        adr_json(['ok' => true, 'copia_de' => $de]);
+    }
     if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial', 'objetivos', 'pago'], true)) $clase = 'documento';
 
     /* Lo de antes del portal (pacientes que llevan meses): el Mac lo
@@ -862,8 +884,11 @@ case 'publicar': {
     $sustituidos = 0;
     if ($sustituye !== '') {
         if (!in_array($clase, ['sesion', 'documento'], true)) adr_json(['error' => 'solo se sustituyen sesiones o documentos'], 400);
+        /* También un documento para firmar que aún NO se ha firmado (15-10:
+           tras un cambio de contraseña el Mac vuelve a sellar el
+           consentimiento pendiente). Lo firmado no se sustituye nunca. */
         $v = $db->prepare("SELECT id, creado FROM sobres WHERE cod = ? AND direccion = 2 AND titulo = ?
-                           AND clase IN ('sesion','documento') AND requiere_firma = 0 AND firmado IS NULL
+                           AND clase IN ('sesion','documento') AND firmado IS NULL
                            ORDER BY creado ASC");
         $v->execute([$cod, mb_substr($sustituye, 0, 80, 'UTF-8')]);
         $viejos = $v->fetchAll();
@@ -888,6 +913,13 @@ case 'publicar': {
            ->execute([$cod, $clase]);
     }
 
+    /* Un documento para firmar con el mismo título que otro sin firmar
+       sellado con una clave ANTERIOR: el viejo ya no lo puede abrir
+       nadie y solo confunde («volviendo» al lado del nuevo). Fuera. */
+    if (!empty($in['requiere_firma']) && $sustituye === '') {
+        $db->prepare('DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND titulo = ? AND requiere_firma = 1
+                      AND firmado IS NULL AND para_v <> ?')->execute([$cod, $titulo, $para_v]);
+    }
     $db->prepare('INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase,
                                     requiere_firma, firmado)
                   VALUES (?,2,?,?,?,?,?,?,?)')
@@ -1208,10 +1240,28 @@ case 'por_reenviar': {
     $q = $db->prepare("SELECT s.id, s.titulo, s.clase, s.creado, s.para_v
                        FROM sobres s JOIN pacientes p ON p.cod = s.cod
                        WHERE s.cod = ? AND s.direccion = 2 AND s.para_v <> p.publica_v
-                         AND s.clase NOT IN ('herramienta', 'copia')
+                         AND s.clase NOT IN ('herramienta', 'copia') AND s.firmado IS NULL
                        ORDER BY s.id");
-    $q->execute([(string)($_GET['cod'] ?? '')]);
-    adr_json(['sobres' => $q->fetchAll()]);
+    $cod_r = (string)($_GET['cod'] ?? '');
+    /* Un documento para firmar sin firmar, con clave vieja, que ya tiene
+       su gemelo con la clave nueva: sobra (se reenvió) y se quita. */
+    $db->prepare("DELETE FROM sobres WHERE id IN (
+                    SELECT s.id FROM sobres s JOIN pacientes p ON p.cod = s.cod
+                    WHERE s.cod = ? AND s.direccion = 2 AND s.requiere_firma = 1 AND s.firmado IS NULL
+                      AND s.para_v <> p.publica_v
+                      AND EXISTS (SELECT 1 FROM sobres n WHERE n.cod = s.cod AND n.direccion = 2 AND n.titulo = s.titulo
+                                  AND n.requiere_firma = 1 AND n.para_v = p.publica_v))")->execute([$cod_r]);
+    $q->execute([$cod_r]);
+    $sobres = $q->fetchAll();
+    /* Lo firmado no se vuelve a mandar para firmar: lo que hay que volver
+       a sellar es su COPIA firmada (clase 'copia', copia_de = id). */
+    $copias = $db->prepare("SELECT s.id, s.titulo, s.firmado, s.firma_huella FROM sobres s JOIN pacientes p ON p.cod = s.cod
+                            WHERE s.cod = ? AND s.direccion = 2 AND s.firmado IS NOT NULL AND s.requiere_firma = 1
+                              AND NOT EXISTS (SELECT 1 FROM sobres c WHERE c.copia_de = s.id AND c.cod = s.cod
+                                              AND c.clase = 'copia' AND c.para_v = p.publica_v)
+                              AND s.para_v <> p.publica_v");
+    $copias->execute([$cod_r]);
+    adr_json(['sobres' => $sobres, 'copias' => $copias->fetchAll()]);
 }
 
 /* El Mac deja aquí su clave PÚBLICA. La sube él, no se copia a mano a
@@ -1593,6 +1643,17 @@ case 'cal_webhook': {
     $ev = (string)($j['triggerEvent'] ?? '');
     $p = $j['payload'] ?? [];
     $slug = (string)($p['type'] ?? ($p['eventType']['slug'] ?? ''));
+    /* Registro de lo que llega (15-10: una cita salía un día distinto
+       del de Cal.com). Solo lo que hace falta para entenderlo: evento,
+       uids, hora y tipo. Sin nombres ni correos. Se guardan los 300
+       últimos. */
+    $db->exec('CREATE TABLE IF NOT EXISTS cal_eventos (id INTEGER PRIMARY KEY, llegado TEXT, evento TEXT, slug TEXT,
+               uid TEXT, uid_anterior TEXT, inicio TEXT, inicio_anterior TEXT)');
+    $db->prepare('INSERT INTO cal_eventos (llegado, evento, slug, uid, uid_anterior, inicio, inicio_anterior) VALUES (?,?,?,?,?,?,?)')
+       ->execute([adr_ahora(), $ev, $slug, (string)($p['uid'] ?? ''),
+                  (string)($p['rescheduleUid'] ?? ($p['fromReschedule'] ?? ($p['originalRescheduledBooking']['uid'] ?? ''))),
+                  (string)($p['startTime'] ?? ''), (string)($p['rescheduleStartTime'] ?? '')]);
+    $db->exec('DELETE FROM cal_eventos WHERE id NOT IN (SELECT id FROM cal_eventos ORDER BY id DESC LIMIT 300)');
     if ($ev === 'PING') adr_json(['ok' => true, 'ping' => true]);
     if (empty($cfg['slug']) || $slug !== $cfg['slug']) adr_json(['ok' => true, 'ignorada' => 'otro tipo de cita']);
     $uid = (string)($p['uid'] ?? '');
@@ -1615,6 +1676,13 @@ case 'cal_webhook': {
                    ->execute([$uid, $inicio, $viejo]);
             }
             adr_json(['ok' => true, 'cambiada' => $uid]);
+        }
+        /* Cal.com a veces reprograma conservando el mismo uid: entonces
+           lo que cambia es solo la hora de esa misma fila. */
+        $q->execute([$uid]);
+        if ($q->fetch() && $inicio) {
+            $db->prepare("UPDATE citas SET inicio = ?, estado = 'activa' WHERE uid = ?")->execute([$inicio, $uid]);
+            adr_json(['ok' => true, 'cambiada' => $uid, 'misma' => true]);
         }
         /* Sin la anterior: se trata como una reserva nueva. */
     }
@@ -1739,6 +1807,62 @@ case 'crear_pago': {
     adr_json(['ok' => true, 'uid' => $uid, 'url_pago' => $cita['pagado_en'] === null ? adr_pagos_url($ADR, $cita['token']) : null,
               'pagado_en' => $cita['pagado_en'], 'correo' => $correo, 'aviso' => $aviso,
               'modo' => str_contains((string)($cfg['stripe_clave'] ?? ''), '_live_') ? 'real' : 'prueba']);
+}
+
+/* Unir una cita de pago a una cuenta (15-10): Adrián reservó con un
+   correo mal escrito y la fila quedó sin cuenta. Idempotente; si ya es de
+   otra cuenta, no. Al unirla, el correo de pago va (una vez) al correo de
+   la cuenta, si no está pagada. */
+case 'vincular_pago': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $uid = (string)($in['uid'] ?? '');
+    $cod = (string)($in['cod'] ?? '');
+    $q = $db->prepare('SELECT * FROM citas WHERE uid = ?');
+    $q->execute([$uid]);
+    $cita = $q->fetch();
+    if (!$cita) adr_json(['error' => 'no existe esa cita'], 404);
+    $q = $db->prepare('SELECT correo FROM pacientes WHERE cod = ?');
+    $q->execute([$cod]);
+    $correo = $q->fetch()['correo'] ?? null;
+    if (!$correo) adr_json(['error' => 'no existe esa cuenta'], 404);
+    if ($cita['cod'] !== null && $cita['cod'] !== $cod) adr_json(['error' => 'esa cita ya es de otra cuenta', 'cod' => $cita['cod']], 409);
+    if ($cita['cod'] === $cod) adr_json(['ok' => true, 'ya' => true, 'reenviado' => false]);
+    $antes = $cita['correo'];
+    $db->prepare('UPDATE citas SET cod = ?, correo = ?, cliente = NULL WHERE uid = ?')->execute([$cod, $correo, $uid]);
+    $cita['cod'] = $cod; $cita['correo'] = $correo;
+    $re = false;
+    if ($cita['pagado_en'] === null && $cita['estado'] === 'activa' && strcasecmp($antes, $correo) !== 0
+        && strtotime($cita['inicio']) > time()) {
+        $r = adr_cita_avisa($ADR, $db, $cita);
+        $re = $r['enviado'] || ($r['error'] ?? '') === 'en_cola';
+    }
+    adr_json(['ok' => true, 'ya' => false, 'reenviado' => $re]);
+}
+
+/* Corregir la hora de una cita de pago (si Cal.com no avisó del cambio). */
+case 'mover_pago': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $inicio = (string)($in['inicio'] ?? '');
+    if ($inicio === '' || strtotime($inicio) === false) adr_json(['error' => 'falta la hora nueva'], 400);
+    $q = $db->prepare('UPDATE citas SET inicio = ? WHERE uid = ?');
+    $q->execute([adr_inicio_madrid($inicio), (string)($in['uid'] ?? '')]);
+    adr_json(['ok' => (bool)$q->rowCount(), 'movidas' => $q->rowCount()]);
+}
+
+/* Lo que ha llegado de Cal.com (para entender un desajuste). */
+case 'eventos_cal': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $db->exec('CREATE TABLE IF NOT EXISTS cal_eventos (id INTEGER PRIMARY KEY, llegado TEXT, evento TEXT, slug TEXT,
+               uid TEXT, uid_anterior TEXT, inicio TEXT, inicio_anterior TEXT)');
+    $u = (string)($in['uid'] ?? '');
+    $q = $u !== '' ? $db->prepare('SELECT * FROM cal_eventos WHERE uid = ? OR uid_anterior = ? ORDER BY id DESC LIMIT 50')
+                   : $db->prepare('SELECT * FROM cal_eventos ORDER BY id DESC LIMIT 100');
+    $q->execute($u !== '' ? [$u, $u] : []);
+    adr_json(['eventos' => $q->fetchAll()]);
 }
 
 /* Anular una cita de pago (Adrián la quita: no se cobra). */

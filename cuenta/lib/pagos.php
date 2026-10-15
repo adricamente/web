@@ -287,11 +287,14 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
     $h = fn($x) => htmlspecialchars((string)$x, ENT_QUOTES);
     $fila = fn($k, $v) => '<tr><td style="padding:9px 0;color:#6C6963;width:92px;vertical-align:top;border-top:1px solid #EEECE7">' . $k
         . '</td><td style="padding:9px 0;vertical-align:top;border-top:1px solid #EEECE7;font-weight:600">' . $v . '</td></tr>';
-    $asunto = 'Tu sesión del ' . $dia . ' a las ' . $hora . ': falta el pago';
+    /* «Pago pendiente» lo primero (15-10): al lado de la confirmación de
+       Cal.com, este es el correo del PAGO, y en el móvil el final del
+       asunto se corta. */
+    $asunto = 'Pago pendiente · sesión del ' . $dia . ' a las ' . $hora;
 
-    $html = '<p style="margin:0 0 14px;font-size:22px;line-height:1.25;font-weight:700;color:#173F58">Tu sesión está reservada</p>'
+    $html = '<p style="margin:0 0 14px;font-size:22px;line-height:1.25;font-weight:700;color:#173F58">Falta el pago de tu sesión</p>'
         . '<p style="margin:0 0 18px">' . ($pila !== '' ? 'Hola, ' . $h($pila) . ':<br>' : '')
-        . 'Para dejarla confirmada solo falta el pago. Puedes hacerlo ahora o en cualquier momento antes de la sesión.</p>'
+        . 'Tu sesión está reservada. Para dejarla confirmada solo falta el pago: puedes hacerlo ahora o en cualquier momento antes de la sesión.</p>'
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15.5px;line-height:1.4">'
         . $fila('Sesión', 'Sesión individual · 60 minutos')
         . $fila('Fecha', $h(mb_strtoupper(mb_substr($dia, 0, 1)) . mb_substr($dia, 1)) . ' de ' . $anio)
@@ -299,7 +302,7 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
         . ($lugar ? $fila('Dónde', $h($lugar)) : '')
         . $fila('Importe', $imp . ',00 € <span style="font-weight:400;color:#6C6963">(exento de IVA)</span>')
         . '</table>'
-        . adr_correo_boton($url, 'Pagar ' . $imp . ' € de forma segura')
+        . adr_correo_boton($url, 'Pagar ' . $imp . ' €')
         . '<p style="margin:0 0 20px;font-size:14px;color:#6C6963">Con tarjeta, Apple Pay o Google Pay, en la página de pago de Stripe. '
         . 'Nadie aquí ve los datos de tu tarjeta. El recibo te llega por correo.</p>'
         . '<p style="margin:0 0 6px;font-weight:700">Si necesitas cambiarla o cancelarla</p>'
@@ -313,12 +316,12 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
         . '<a href="https://adricamente.com" style="color:#1F5474">adricamente.com</a></span></p>';
 
     $texto = ($pila !== '' ? "Hola, $pila:\n\n" : '')
-        . "Tu sesión está reservada. Para dejarla confirmada solo falta el pago. Puedes hacerlo ahora o en cualquier momento antes de la sesión.\n\n"
+        . "Falta el pago de tu sesión. Tu sesión está reservada; para dejarla confirmada solo falta el pago: puedes hacerlo ahora o en cualquier momento antes de la sesión.\n\n"
         . "Sesión: Sesión individual · 60 minutos\n"
         . "Fecha: $dia de $anio\nHora: $hora (hora peninsular)\n"
         . ($lugar ? "Dónde: $lugar\n" : '')
         . "Importe: $imp,00 € (exento de IVA)\n\n"
-        . "Pagar $imp € de forma segura (tarjeta, Apple Pay o Google Pay, en Stripe):\n$url\n\n"
+        . "Pagar $imp € (tarjeta, Apple Pay o Google Pay, en la página de pago segura de Stripe):\n$url\n\n"
         . "Si necesitas cambiarla o cancelarla, hazlo desde el correo de confirmación de la reserva o contesta a este correo. "
         . "Hasta 24 horas antes, sin coste (si ya habías pagado, se te devuelve). Con menos de 24 horas, o si no te presentas, la sesión se cobra, salvo causa justificada.\n\n"
         . "Si ya la has pagado, no tienes que hacer nada más.\n\n"
@@ -327,7 +330,7 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
         . "Los pagos y las facturas son de Clínica Neurococos. Este correo no es un canal de urgencias: si estás en peligro, llama al 024 o al 112.\n";
 
     $r = adr_manda($ADR, $cita['correo'], $asunto, $texto,
-                   adr_correo_marco($asunto, $html, 'Para dejarla confirmada solo falta el pago: ' . $imp . ' €, con tarjeta, Apple Pay o Google Pay.'),
+                   adr_correo_marco($asunto, $html, 'Tu sesión está reservada. Puedes pagarla con tarjeta, Apple Pay o Google Pay.'),
                    'cita', $cita['cod'], 'Adrián Cuñat · Psicólogo');
     if ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') {
         $db->prepare('UPDATE citas SET avisado = ? WHERE uid = ?')->execute([date('c'), $cita['uid']]);
