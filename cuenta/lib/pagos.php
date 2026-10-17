@@ -251,12 +251,15 @@ function adr_cita_checkout(array $ADR, PDO $db, array $cita): array {
         adr_pagos_apunta_error($ADR, 'stripe_checkout', $m);
         return [null, $m];
     }
+    /* Si Stripe deja crear el pago, el último problema ya no está vigente. */
+    $db->exec("DELETE FROM ajustes WHERE clave = 'pagos_ultimo_error'");
     $db->prepare('UPDATE citas SET checkout_id = ?, checkout_url = ?, checkout_caduca = ? WHERE uid = ?')
        ->execute([$j['id'], $j['url'], (int)($j['expires_at'] ?? time() + 23 * 3600), $cita['uid']]);
     return [$j['url'], null];
 }
 
 function adr_cita_pagada(PDO $db, string $uid, string $ref, ?string $cuando = null): void {
+    $db->exec("DELETE FROM ajustes WHERE clave = 'pagos_ultimo_error'");
     $db->prepare('UPDATE citas SET pagado_en = COALESCE(pagado_en, ?), pago_ref = COALESCE(pago_ref, ?) WHERE uid = ?')
        ->execute([$cuando ?: date('c'), $ref, $uid]);
 }
@@ -331,7 +334,7 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
 
     $r = adr_manda($ADR, $cita['correo'], $asunto, $texto,
                    adr_correo_marco($asunto, $html, 'Tu sesión está reservada. Puedes pagarla con tarjeta, Apple Pay o Google Pay.'),
-                   'cita', $cita['cod'], 'Adrián Cuñat · Psicólogo');
+                   'cita', $cita['cod'], 'Adrián Cuñat · adricamente');
     if ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') {
         $db->prepare('UPDATE citas SET avisado = ? WHERE uid = ?')->execute([date('c'), $cita['uid']]);
     }

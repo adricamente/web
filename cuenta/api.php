@@ -931,7 +931,8 @@ case 'publicar': {
     /* La gráfica no se avisa: se republica cada vez que él recoge algo
        y avisaría cada dos por tres de algo que el paciente no ha
        pedido. Lo demás sí. */
-    if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago'], true) && !$atrasado) adr_avisa($db, $ADR, $cod);
+    if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago'], true) && !$atrasado
+        && (($in['avisar'] ?? true) !== false)) adr_avisa($db, $ADR, $cod);
     adr_json(['ok' => true, 'sustituidos' => $sustituidos]);
 }
 
@@ -1180,7 +1181,7 @@ case 'panel_mac': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
 
     /* 'hoja' es el buzón de las hojas sueltas, no un paciente. */
-    $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo, aviso_privacidad
+    $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo, aviso_privacidad, ultimo_aviso
                       FROM pacientes WHERE cod <> 'hoja' ORDER BY alta")->fetchAll();
     $pend = [];
     foreach ($db->query('SELECT cod, COUNT(*) n FROM sobres
@@ -1221,6 +1222,7 @@ case 'panel_mac': {
             /* Desde cuándo tiene algo sin hacer: lo más antiguo. */
             'tareas_desde' => $desde[$p['cod']] ?? null,
             'aviso_privacidad' => $p['aviso_privacidad'],
+            'ultimo_aviso' => $p['ultimo_aviso'],
             'progreso' => $caja[$p['cod']]['progreso'] ?? null,
             'agenda' => $caja[$p['cod']]['agenda'] ?? null,
             /* Cuántos documentos suyos quedaron sellados a una clave
@@ -1842,6 +1844,15 @@ case 'vincular_pago': {
         $re = $r['enviado'] || ($r['error'] ?? '') === 'en_cola';
     }
     adr_json(['ok' => true, 'ya' => false, 'reenviado' => $re]);
+}
+
+/* El Mac ha mandado SU aviso a esta cuenta: que el portal lo cuente para
+   no mandar otro «tienes algo» en las próximas 2 horas. */
+case 'aviso_enviado': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->prepare('UPDATE pacientes SET ultimo_aviso = ? WHERE cod = ?');
+    $q->execute([adr_ahora(), (string)($in['cod'] ?? '')]);
+    adr_json(['ok' => (bool)$q->rowCount()]);
 }
 
 /* Corregir la hora de una cita de pago (si Cal.com no avisó del cambio). */

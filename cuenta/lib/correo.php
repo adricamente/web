@@ -88,7 +88,7 @@ function adr_via(array $ADR): string {
  *  Devuelve ['enviado' => true, 'message_id' => …, 'via' => 'google']
  *  o ['enviado' => false, 'error' => 'en_cola', 'cola_id' => n, …]. */
 function adr_manda(array $ADR, string $a, string $asunto, string $texto, string $html,
-                   string $tipo = 'aviso', ?string $cod = null, string $nombre = 'adricamente'): array {
+                   string $tipo = 'aviso', ?string $cod = null, string $nombre = 'Adrián Cuñat · adricamente'): array {
     /* Freno: que un bucle o una cuenta robada no use hola@ para mandar en
        masa. Como mucho 6 por hora a la misma dirección y 60 por hora en
        total. Lo frenado no se manda ni se encola, y queda apuntado. */
@@ -237,7 +237,7 @@ function adr_google_token(array $ADR, array $cred, bool $nuevo = false): array {
 }
 
 function adr_mime(string $remite, string $a, string $asunto, string $texto, string $html,
-                  string $nombre = 'adricamente'): string {
+                  string $nombre = 'Adrián Cuñat · adricamente'): string {
     $frontera = 'adr-' . bin2hex(random_bytes(8));
     $cab = fn($s) => '=?UTF-8?B?' . base64_encode($s) . '?=';
     /* Un correo con marco propio (empieza por <!doctype) va tal cual; el
@@ -314,7 +314,7 @@ function adr_correo_boton(string $url, string $texto): string {
 
 /** Lo manda por la API de Gmail. «Enviado» solo con el id que da Gmail. */
 function adr_google_envia(array $ADR, string $a, string $asunto, string $texto, string $html,
-                          string $nombre = 'adricamente'): array {
+                          string $nombre = 'Adrián Cuñat · adricamente'): array {
     $cred = adr_google_cred($ADR);
     if (!$cred) return ['enviado' => false, 'message_id' => null, 'error' => 'sin_google'];
     if (!filter_var($a, FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $a)) {
