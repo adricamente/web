@@ -1691,6 +1691,11 @@ case 'resumen_dia': {
    devuelve nada que diga nada. */
 case 'latido': {
     if (!adr_freno($db, 'latido', 30, 600)) adr_json(['ok' => true]);
+    /* 17-10, noche: también las medidas periódicas que ya tocan, el
+       recordatorio de las 48 horas y la limpieza de altas sin activar.
+       Antes solo pasaban cuando el Mac recogía; con el cron, aunque el Mac
+       esté apagado. Nada de esto lee contenido: no necesita la clave. */
+    try { adr_vencen($db, $ADR); adr_recuerda($db, $ADR); adr_limpia_altas($db); } catch (Throwable $e) {}
     try { adr_recordatorios($db, $ADR); adr_resumen_dia($db, $ADR); } catch (Throwable $e) {}
     adr_json(['ok' => true]);
 }
