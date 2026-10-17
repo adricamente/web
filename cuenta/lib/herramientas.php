@@ -1,4 +1,5 @@
 <?php
+if (!defined('ADR_DENTRO')) { http_response_code(404); exit; }
 /* Herramientas que viven (17-10, tarde).
    ---------------------------------------------------------------------
    Hasta hoy, una herramienta se rellenaba y se enviaba UNA vez, y lo

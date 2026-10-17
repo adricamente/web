@@ -1,4 +1,5 @@
 <?php
+if (!defined('ADR_DENTRO')) { http_response_code(404); exit; }
 /* ===================================================================
    Los correos que el portal necesita escribir por su cuenta: recuperar
    la contraseña y el aviso de «tienes algo». Salen al momento por el

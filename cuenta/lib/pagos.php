@@ -45,7 +45,9 @@ function adr_pagos_tabla(PDO $db): void {
     /* 14-10, tarde: el nombre del invitado (para el cliente de Stripe: la
        directora ve quién pagó), el cliente de Stripe y la comisión. */
     $hay = array_column($db->query('PRAGMA table_info(citas)')->fetchAll(), 'name');
-    foreach (['nombre' => 'TEXT', 'cliente' => 'TEXT', 'comision' => 'REAL', 'lugar' => 'TEXT'] as $col => $tipo) {
+    /* 17-10: `vispera` = cuándo salió el recordatorio de la víspera (lo
+       mande el portal o, si el Mac lo mandó antes, lo que él diga). */
+    foreach (['nombre' => 'TEXT', 'cliente' => 'TEXT', 'comision' => 'REAL', 'lugar' => 'TEXT', 'vispera' => 'TEXT'] as $col => $tipo) {
         if (!in_array($col, $hay, true)) $db->exec("ALTER TABLE citas ADD COLUMN $col $tipo");
     }
 }
@@ -337,6 +339,110 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
                    'cita', $cita['cod'], 'Adrián Cuñat · adricamente');
     if ($r['enviado'] || ($r['error'] ?? '') === 'en_cola') {
         $db->prepare('UPDATE citas SET avisado = ? WHERE uid = ?')->execute([date('c'), $cita['uid']]);
+    }
+    return $r;
+}
+
+/* --- El recordatorio de la víspera, desde el portal (17-10) ---------------
+   Antes lo mandaba el Mac, y con el Mac cerrado no salía. Ahora lo manda
+   el portal la tarde anterior (de 18:00 a 23:00), con el cron cada 15
+   minutos: uno por cita, con la hora, dónde, si falta el pago (y el botón
+   para pagar) y si tiene algo en su cuenta para antes (cuántas cosas, no
+   cuáles). Nada clínico. Si el Mac ya lo había mandado (`vispera_enviada`),
+   no sale otro. */
+const ADR_VISPERA_DESDE = '2026-10-19';   // el primer día que lo manda el portal
+
+function adr_visperas(PDO $db, array $ADR, ?DateTimeImmutable $ahora = null): int {
+    adr_pagos_tabla($db);
+    $tz = new DateTimeZone('Europe/Madrid');
+    $ahora = $ahora ? $ahora->setTimezone($tz) : new DateTimeImmutable('now', $tz);
+    $hoy = $ahora->format('Y-m-d');
+    if ($hoy < ADR_VISPERA_DESDE || (int)$ahora->format('G') < 18 || (int)$ahora->format('G') >= 23) return 0;
+    $manana = $ahora->modify('+1 day')->format('Y-m-d');
+    $q = $db->prepare("SELECT * FROM citas WHERE estado = 'activa' AND vispera IS NULL AND inicio >= ? AND inicio <= ?");
+    $q->execute([$hoy, $manana . 'T99']);
+    $n = 0;
+    foreach ($q->fetchAll() as $c) {
+        try { $ini = (new DateTimeImmutable($c['inicio']))->setTimezone($tz); } catch (Throwable $e) { continue; }
+        if ($ini->format('Y-m-d') !== $manana) continue;
+        /* Reservada hace un rato: la confirmación de Cal.com y el correo de
+           pago acaban de llegar; otro más sobra. */
+        if (strtotime((string)$c['creado']) > time() - 6 * 3600) {
+            $db->prepare('UPDATE citas SET vispera = ? WHERE uid = ?')->execute(['omitido:reciente', $c['uid']]);
+            continue;
+        }
+        $r = adr_cita_vispera($ADR, $db, $c);
+        if (!empty($r['enviado']) || ($r['error'] ?? '') === 'en_cola') $n++;
+    }
+    return $n;
+}
+
+function adr_cita_vispera(array $ADR, PDO $db, array $cita): array {
+    [$dia, $hora] = adr_dia_hora($cita['inicio']);
+    $pila = trim(explode(' ', trim((string)($cita['nombre'] ?? '')))[0] ?? '');
+    $pila = $pila !== '' ? mb_convert_case(mb_strtolower($pila), MB_CASE_TITLE) : '';
+    $lugar = match ($cita['lugar'] ?? null) {
+        'online' => 'Videollamada (Google Meet). El enlace está en la invitación de calendario.',
+        'presencial' => 'Presencial, en el centro sanitario Neurococos (Gandia).',
+        default => null,
+    };
+    $pagada = $cita['pagado_en'] !== null;
+    $url = $pagada ? null : adr_pagos_url($ADR, $cita['token']);
+    $imp = (int)$cita['importe'];
+    /* Lo que tiene pendiente en su cuenta: cuántas cosas, nunca cuáles. */
+    $pend = 0;
+    if ($cita['cod']) {
+        $t = $db->prepare("SELECT COUNT(*) AS n FROM tareas t JOIN pacientes p ON p.cod = t.cod AND p.activado IS NOT NULL
+                           WHERE t.cod = ? AND t.hecho IS NULL AND (t.caduca IS NULL OR t.caduca = '' OR substr(t.caduca, 1, 10) >= ?)");
+        $t->execute([$cita['cod'], (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format('Y-m-d')]);
+        $pend = (int)$t->fetch()['n'];
+    }
+    $h = fn($x) => htmlspecialchars((string)$x, ENT_QUOTES);
+    $fila = fn($k, $v) => '<tr><td style="padding:9px 0;color:#6C6963;width:92px;vertical-align:top;border-top:1px solid #EEECE7">' . $k
+        . '</td><td style="padding:9px 0;vertical-align:top;border-top:1px solid #EEECE7;font-weight:600">' . $v . '</td></tr>';
+    $asunto = 'Recordatorio · tu sesión de mañana a las ' . $hora;
+    $cuenta = rtrim($ADR['sitio'], '/');
+    $algo = $pend === 1 ? 'una cosa' : "$pend cosas";
+
+    $html = '<p style="margin:0 0 14px;font-size:22px;line-height:1.25;font-weight:700;color:#173F58">Mañana tienes sesión</p>'
+        . '<p style="margin:0 0 18px">' . ($pila !== '' ? 'Hola, ' . $h($pila) . ':<br>' : '') . 'Te recuerdo tu sesión de mañana.</p>'
+        . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15.5px;line-height:1.4">'
+        . $fila('Fecha', $h(mb_strtoupper(mb_substr($dia, 0, 1)) . mb_substr($dia, 1)))
+        . $fila('Hora', $hora . ' <span style="font-weight:400;color:#6C6963">(hora peninsular)</span>')
+        . ($lugar ? $fila('Dónde', $h($lugar)) : '')
+        . $fila('Pago', $pagada ? 'Pagada ✓' : 'Pendiente · ' . $imp . ',00 €')
+        . '</table>'
+        . ($pagada ? '' : adr_correo_boton($url, 'Pagar ' . $imp . ' €')
+            . '<p style="margin:0 0 18px;font-size:14px;color:#6C6963">Con tarjeta, Apple Pay o Google Pay. Si ya la has pagado, no hagas caso a esto.</p>')
+        . ($pend ? '<p style="margin:18px 0 6px;font-weight:700">Para antes de la sesión</p>'
+            . '<p style="margin:0 0 12px">Tienes ' . $algo . ' en tu cuenta. Te lleva unos minutos y así la aprovechamos mejor.</p>'
+            . ($pagada ? adr_correo_boton($cuenta, 'Entrar en mi cuenta')
+                       : '<p style="margin:0 0 18px"><a href="' . $h($cuenta) . '" style="color:#1F5474;font-weight:700">Entrar en mi cuenta</a></p>') : '')
+        . '<p style="margin:18px 0 18px">Si al final no puedes, avísame cuanto antes contestando a este correo. '
+        . 'Con menos de 24 horas, o si no te presentas, la sesión se cobra, salvo causa justificada.</p>'
+        . '<p style="margin:0">Un saludo,</p>'
+        . '<p style="margin:4px 0 0"><strong>Adrián Cuñat Andrés</strong><br>'
+        . '<span style="color:#6C6963;font-size:14.5px">Psicólogo colegiado nº CM03836<br>'
+        . '<a href="mailto:hola@adricamente.com" style="color:#1F5474">hola@adricamente.com</a> · '
+        . '<a href="https://adricamente.com" style="color:#1F5474">adricamente.com</a></span></p>';
+
+    $texto = ($pila !== '' ? "Hola, $pila:\n\n" : '') . "Te recuerdo tu sesión de mañana.\n\n"
+        . "Fecha: $dia\nHora: $hora (hora peninsular)\n" . ($lugar ? "Dónde: $lugar\n" : '')
+        . 'Pago: ' . ($pagada ? "pagada\n" : "pendiente ($imp,00 €)\n")
+        . ($pagada ? '' : "\nPagar $imp € (tarjeta, Apple Pay o Google Pay):\n$url\n")
+        . ($pend ? "\nPara antes de la sesión: tienes $algo en tu cuenta. Te lleva unos minutos.\n$cuenta\n" : '')
+        . "\nSi al final no puedes, avísame cuanto antes contestando a este correo. Con menos de 24 horas, o si no te presentas, la sesión se cobra, salvo causa justificada.\n\n"
+        . "Un saludo,\nAdrián Cuñat Andrés\nPsicólogo colegiado nº CM03836\nhola@adricamente.com · adricamente.com\n\n"
+        . "--\nAdrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos (Gandia). "
+        . "Este correo no es un canal de urgencias: si estás en peligro, llama al 024 o al 112.\n";
+
+    $r = adr_manda($ADR, $cita['correo'], $asunto, $texto,
+                   adr_correo_marco($asunto, $html, 'Mañana a las ' . $hora . '. ' . ($pagada ? 'Ya está pagada.' : 'Falta el pago.')),
+                   'vispera', $cita['cod'], 'Adrián Cuñat · adricamente');
+    if (!empty($r['enviado']) || ($r['error'] ?? '') === 'en_cola') {
+        $db->prepare('UPDATE citas SET vispera = ? WHERE uid = ?')->execute([date('c'), $cita['uid']]);
+        /* Ya le ha llegado «tienes algo en tu cuenta»: que el aviso suelto no repita. */
+        if ($pend && $cita['cod']) $db->prepare('UPDATE pacientes SET ultimo_aviso = ? WHERE cod = ?')->execute([adr_ahora(), $cita['cod']]);
     }
     return $r;
 }

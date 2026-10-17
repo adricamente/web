@@ -804,6 +804,7 @@ case 'recoger': {
     /* 17-10: los recordatorios que se ponen los pacientes y el correo de
        la mañana a Adrián. Si fallan, la recogida sigue. */
     try { adr_recordatorios($db, $ADR); adr_resumen_dia($db, $ADR); } catch (Throwable $e) {}
+    try { require_once __DIR__ . '/lib/pagos.php'; adr_visperas($db, $ADR); } catch (Throwable $e) {}
     /* Con los justificantes (fotos y PDF de varios megas) cincuenta
        sobres pueden ser cientos de megas en una sola respuesta. Se corta
        por tamaño: lo que no quepa sale en la pasada siguiente, cinco
@@ -1697,6 +1698,7 @@ case 'latido': {
        esté apagado. Nada de esto lee contenido: no necesita la clave. */
     try { adr_vencen($db, $ADR); adr_recuerda($db, $ADR); adr_limpia_altas($db); } catch (Throwable $e) {}
     try { adr_recordatorios($db, $ADR); adr_resumen_dia($db, $ADR); } catch (Throwable $e) {}
+    try { require_once __DIR__ . '/lib/pagos.php'; adr_visperas($db, $ADR); } catch (Throwable $e) {}
     adr_json(['ok' => true]);
 }
 
@@ -2077,7 +2079,7 @@ case 'estado_pagos': {
                   'reembolsado' => (bool)$c['reembolsado'], 'cancelada' => $c['estado'] !== 'activa',
                   'stripe_id' => $c['pago_ref'] ?: null,
                   'comision' => $c['comision'] !== null ? (float)$c['comision'] : null,
-                  'avisado' => $c['avisado'], 'correo' => $c['correo'], 'nombre' => $c['nombre'] ?? null,
+                  'avisado' => $c['avisado'], 'vispera' => $c['vispera'] ?? null, 'correo' => $c['correo'], 'nombre' => $c['nombre'] ?? null,
                   'origen' => $c['origen']];
     }
     $er = $db->query("SELECT valor FROM ajustes WHERE clave = 'pagos_ultimo_error'")->fetch();
@@ -2195,6 +2197,17 @@ case 'aviso_enviado': {
 }
 
 /* Corregir la hora de una cita de pago (si Cal.com no avisó del cambio). */
+/* El Mac ya ha mandado el recordatorio de la víspera de esta cita: que el
+   portal no mande otro. */
+case 'vispera_enviada': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    require_once __DIR__ . '/lib/pagos.php';
+    adr_pagos_tabla($db);
+    $q = $db->prepare("UPDATE citas SET vispera = COALESCE(vispera, ?) WHERE uid = ?");
+    $q->execute(['mac:' . date('c'), (string)($in['uid'] ?? '')]);
+    adr_json(['ok' => true, 'marcadas' => $q->rowCount()]);
+}
+
 case 'mover_pago': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     require_once __DIR__ . '/lib/pagos.php';
