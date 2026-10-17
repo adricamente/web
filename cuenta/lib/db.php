@@ -167,6 +167,14 @@ function adr_db(array $ADR): PDO {
                clave del paciente (17-10), y con qué versión de clave. */
             'borrador'   => 'BLOB',
             'borrador_v' => 'INTEGER',
+            /* 17-10, tarde: cómo se usa una herramienta.
+                 una      → se rellena y se envía una vez (como siempre);
+                 vivo     → un documento que se edita siempre (el plan de
+                            seguridad): `borrador` es lo que tiene ahora;
+                 registro → entradas sueltas (la tarjeta diaria), en
+                            `entradas`. NULL = la de siempre según su id. */
+            'modo'        => 'TEXT',
+            'actualizado' => 'TEXT',
         ],
         'pacientes' => [
             /* Cuándo se le avisó por última vez de que tiene algo
@@ -271,6 +279,38 @@ $pdo->exec('
         error      TEXT
       )');
     $pdo->exec('CREATE INDEX IF NOT EXISTS i_cola ON correos_cola(enviado, creado)');
+
+    /* Las entradas de una herramienta de registro (17-10). Cada una,
+       sellada a la clave del PACIENTE (su copia, para verla y
+       corregirla); la del Mac va en un sobre aparte. El servidor sabe de
+       qué día es cada entrada, nunca lo que pone. `uid` lo pone el
+       navegador: corregir una entrada es volver a mandar la misma. */
+    $pdo->exec('
+      CREATE TABLE IF NOT EXISTS entradas (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        cod        TEXT NOT NULL,
+        tarea      INTEGER NOT NULL,
+        uid        TEXT NOT NULL,
+        fecha      TEXT NOT NULL,
+        cifrado    BLOB NOT NULL,
+        para_v     INTEGER NOT NULL,
+        creado     TEXT NOT NULL,
+        modificado TEXT NOT NULL,
+        borrada    INTEGER NOT NULL DEFAULT 0,
+        UNIQUE (tarea, uid)
+      )');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS i_entradas ON entradas(cod, tarea, fecha)');
+
+    /* El recordatorio que el paciente se pone a sí mismo (17-10): a qué
+       hora, para qué registro. Opcional, lo activa y lo quita él. */
+    $pdo->exec('
+      CREATE TABLE IF NOT EXISTS recordatorios (
+        cod    TEXT NOT NULL,
+        tarea  INTEGER NOT NULL,
+        hora   TEXT NOT NULL,
+        ultimo TEXT,
+        PRIMARY KEY (cod, tarea)
+      )');
 
     $pdo->exec('
       CREATE TABLE IF NOT EXISTS intentos (

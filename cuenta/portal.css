@@ -658,3 +658,48 @@ h3{font-weight:700}
 .adjuntar input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
 .adjuntar label{margin:0;cursor:pointer}
 .burbuja .adjunto{font-size:14px;margin:6px 0 0;color:var(--ink-2)}
+
+/* =================================================================
+   Herramientas que viven (17-10): registros por días y documentos
+   que se editan siempre.
+   ================================================================= */
+.mas-fila{display:inline-block;margin:6px 0 4px;font-weight:600}
+.registro .reg-hoy{background:var(--accent-soft);border-radius:var(--r-s);padding:16px 16px 12px;margin:6px 0 14px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.registro .reg-hoy .boton{font-size:17px}
+.reg-hecho{margin:0;font-weight:700;color:#1E6B45;font-size:17px}
+.reg-msg{margin:0;flex-basis:100%;font-weight:600;color:var(--accent-3)}
+.reg-aviso{border:1px solid var(--line);border-radius:var(--r-s);padding:10px 14px;margin:0 0 16px;font-size:15px;color:var(--ink-2)}
+.reg-aviso p{margin:0 0 6px}
+.reg-aviso p:last-child{margin:0}
+.reg-aviso input[type=time]{font:inherit;padding:6px 8px;border:1px solid var(--borde-campo);border-radius:6px}
+.reg-como{margin:0 0 14px}
+.reg-como > summary,.reg-semana > summary{cursor:pointer;font-weight:700;padding:10px 0;list-style-position:inside}
+.reg-semana{border-top:1px solid var(--line);padding:2px 0 10px}
+.reg-semana > summary{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.reg-semana > summary span{font-weight:500;color:var(--muted)}
+.reg-tira{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:4px 0 12px;max-width:430px}
+.reg-dia{font:inherit;border:1px solid var(--line-strong);background:var(--surface);border-radius:10px;padding:6px 0;
+  display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--ink-2)}
+.reg-dia span{font-size:12px;font-weight:700;color:var(--muted)}
+.reg-dia b{font-size:16px}
+.reg-dia.hecho{background:#E4F2EA;border-color:#9CCDB2;color:#1E6B45}
+.reg-dia.hoy{outline:2px solid var(--accent);outline-offset:1px}
+.reg-dia:disabled{opacity:.4;cursor:default}
+.reg-entrada{display:block;width:100%;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-s);padding:10px 12px;margin:0 0 8px;cursor:pointer;color:var(--ink)}
+.reg-entrada:hover{border-color:var(--accent)}
+.reg-entrada strong{display:block;font-size:15.5px}
+.reg-entrada span{display:block;font-size:14.5px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.reg-resto{margin-top:26px;border-top:1px solid var(--line);padding-top:4px}
+.reg-editor .campo-h{display:block;margin:0 0 14px}
+.reg-editor .campo-h .rotulo{display:block;font-weight:600;margin:0 0 4px}
+.reg-editor input[type=date]{font:inherit;padding:8px 10px;border:1px solid var(--borde-campo);border-radius:6px}
+.reg-dia-t{font-size:18px;font-weight:700;margin:0 0 10px}
+.reg-ejemplo{color:var(--muted);font-size:14.5px;background:var(--surface-2);border-radius:6px;padding:8px 10px}
+.reg-botones{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+@media print{.solo-impresion .hoja .apunte{color:#333}}
+.reg-chips{display:flex;flex-wrap:wrap;gap:8px}
+.reg-chip{font:inherit;font-weight:700;min-width:46px;min-height:44px;padding:0 12px;border:1px solid var(--borde-campo);
+  border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
+.reg-chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}

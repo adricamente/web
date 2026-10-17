@@ -480,6 +480,7 @@ $cuerpo .= <<<'HTML'
       <button class="boton suave" id="h-guardar" type="button" hidden>Guardar y seguir otro día</button>
       <button class="boton suave" id="h-leido" type="button" hidden>Ya lo he leído</button>
       <button class="boton suave" id="h-pdf" type="button">Descargar en PDF</button>
+      <button class="boton suave" id="h-todo" type="button" hidden>Todo en PDF</button>
       <button class="enlace-boton" id="h-volver" type="button">← Volver</button>
     </p>
     <p class="apunte" id="h-estado" role="status"></p>
@@ -522,12 +523,14 @@ let DOCS = [];        /* los documentos de la última vuelta del panel */
 const $ = (id) => document.getElementById(id);
 const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr', 'v-valorar'];
 let PLAN = null;   // id de su plan de seguridad enviado, si tiene
+let HERR_FILAS = {};      // id de tarea → su fila del panel (modo, recordatorio…)
+let PLAN_TAREA = null;    // su plan de seguridad vivo, si lo tiene
 function ver(cual) {
   VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
   /* La ayuda urgente está en todas las pantallas de la cuenta; el
      botón del plan, solo si hay plan. */
   $('plan-fijo').hidden = (cual === 'v-entrar');
-  $('b-plan').hidden = !PLAN;
+  $('b-plan').hidden = !(PLAN || PLAN_TAREA);
   window.scrollTo(0, 0);
 }
 function falla(t) { $('mal-t').textContent = t; $('mal').hidden = false; }
@@ -684,8 +687,15 @@ async function panel() {
   const hoy = new Date().toLocaleDateString('sv', {timeZone: 'Europe/Madrid'});
   const todas = (r.j.tareas || []).filter(t => !t.caduca || String(t.caduca).slice(0, 10) >= hoy);
   const docs = r.j.documentos || [];
-  buscaPlan(docs.filter(d => d.clase === 'herramienta'), r.j.v);
-  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'),
+  const vivas = r.j.herramientas_vivas || [];
+  HERR_FILAS = {};
+  todas.concat(vivas).forEach(t => { HERR_FILAS[t.id] = t; });
+  /* El plan de seguridad: el vivo si lo tiene; si no, el que mandó antes. */
+  const planT = todas.concat(vivas).find(t => t.herr_id === 'plan-seguridad');
+  PLAN_TAREA = planT ? planT.id : null;
+  if (PLAN_TAREA) { PLAN = null; $('b-plan').hidden = false; }
+  else buscaPlan(docs.filter(d => d.clase === 'herramienta'), r.j.v);
+  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'), vivas,
                     docs.filter(d => d.clase === 'herramienta'), r.j.v);
 
   /* «Para antes de tu sesión»: lo pendiente, con cuánto lleva, y el
@@ -2374,13 +2384,24 @@ $('t-form').addEventListener('submit', async (ev) => {
    enviarlo no sirve el día que hace falta. */
 let HERR = null;   // {tarea, def, soloLeer}
 
-function pintaHerramientas(pendientes, copias, v) {
+function pintaHerramientas(pendientes, vivas, copias, v) {
   const c = $('herramientas'); c.innerHTML = '';
-  $('c-herramientas').hidden = !(pendientes.length || copias.length);
-  pendientes.forEach(t => {
-    const f = fila(t.titulo, t.caduca ? ('antes del ' + fecha(t.caduca)) : 'Pendiente');
+  /* Las copias enviadas de algo que ahora vive (el plan de seguridad
+     de antes del 17-10) no salen aparte: están dentro. */
+  const vivos = new Set(pendientes.concat(vivas).filter(t => t.modo !== 'una').map(t => t.titulo));
+  copias = copias.filter(d => !vivos.has(d.titulo));
+  $('c-herramientas').hidden = !(pendientes.length || vivas.length || copias.length);
+  const pie = (t) => {
+    if (t.modo === 'registro') return t.hoy ? 'Registro · hoy: apuntado ✓'
+      : (t.entradas ? 'Registro · último apunte: ' + fecha(t.ultima) : 'Registro · aún sin apuntes');
+    if (t.modo === 'vivo') return t.actualizado ? 'Siempre a mano · cambiado el ' + fecha(t.actualizado) : 'Siempre a mano · por empezar';
+    return t.caduca ? ('antes del ' + fecha(t.caduca)) : 'Pendiente';
+  };
+  pendientes.concat(vivas).forEach(t => {
+    const f = fila(t.titulo, pie(t));
     const b = document.createElement('button');
-    b.className = 'boton'; b.type = 'button'; b.textContent = 'Abrir';
+    b.className = 'boton'; b.type = 'button';
+    b.textContent = (t.modo === 'registro' && !t.hoy) ? 'Apuntar' : 'Abrir';
     b.addEventListener('click', () => abrirHerramienta(t.id));
     f.appendChild(b); c.appendChild(f);
   });
@@ -2485,6 +2506,7 @@ function pintaBloques(def, valores, modo, desactivar) {
       const lectura = b.t === 'tabla_lectura';
       if (b.titulo) raiz.appendChild(el('h3', 'apartado-h', b.titulo));
       const envoltura = el('div', 'tabla-h');
+      if (!lectura && b.id) envoltura.dataset.tabla = b.id;
       const tab = el('table');
       const thead = el('thead'), trh = el('tr');
       const cols = lectura ? b.columnas.map(c => ({ rotulo: c[0], ancho: c[1] })) : b.columnas;
@@ -2543,7 +2565,7 @@ function pintaBloques(def, valores, modo, desactivar) {
 
 function camposDelForm() {
   const out = {};
-  (HERR.def.campos || []).forEach(c => { out[c.id] = ''; });
+  if (HERR.modo !== 'registro') (HERR.def.campos || []).forEach(c => { out[c.id] = ''; });
   document.querySelectorAll('#h-cuerpo [data-campo]').forEach(c => { out[c.dataset.campo] = c.value; });
   return out;
 }
@@ -2557,6 +2579,8 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   const cuerpo = $('h-cuerpo'); cuerpo.innerHTML = '';
   cuerpo.appendChild(pintaBloques(def, valores, soloLeer ? 'texto' : 'form', false));
   const lectura = def.tipo === 'lectura';
+  $('h-enviar').textContent = 'Enviar';
+  $('h-pdf').textContent = 'Descargar en PDF'; $('h-pdf').hidden = false; $('h-todo').hidden = true;
   $('h-enviar').hidden = soloLeer || lectura;
   $('h-guardar').hidden = soloLeer || lectura || !HERR || !HERR.tarea;
   $('h-leido').hidden = !(lectura && !soloLeer);
@@ -2578,6 +2602,8 @@ async function abrirHerramienta(id) {
     try { def = abrirDelMac(r.j.cifrado, miPublica, privada); }
     catch (_) { $('panel-estado').textContent = 'No se ha podido abrir esta tarea. Te la vuelvo a mandar.'; return; }
   }
+  /* 17-10: lo que vive (un documento que se edita siempre, un registro). */
+  if (r.j.modo === 'vivo' || r.j.modo === 'registro') { await abrirViva(r, def); return; }
   HERR = { tarea: r.j.id, def, soloLeer: false };
   /* Lo guardado a medias: lo más reciente entre este dispositivo y lo
      guardado en la cuenta (sellado a su clave). */
@@ -2603,7 +2629,7 @@ async function abrirCopia(id) {
 }
 
 $('h-cuerpo').addEventListener('input', () => {
-  if (!HERR || HERR.soloLeer || !HERR.tarea) return;
+  if (!HERR || HERR.soloLeer || !HERR.tarea || HERR.modo === 'registro') return;
   try { localStorage.setItem(claveHerr(), JSON.stringify({ campos: camposDelForm(), guardado: new Date().toISOString() })); } catch (_) {}
 });
 $('h-guardar').addEventListener('click', async () => {
@@ -2621,8 +2647,17 @@ $('h-guardar').addEventListener('click', async () => {
 
 $('h-form').addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  if (!HERR || HERR.soloLeer) return;
+  if (!HERR || HERR.soloLeer || HERR.modo === 'registro') return;
   $('h-enviar').disabled = true;
+  if (HERR.modo === 'vivo') {
+    try {
+      const x = await guardarVivo();
+      if (!x) { $('h-estado').textContent = 'No se ha podido guardar. Inténtalo otra vez.'; return; }
+      montaVivo(x.campos, x.guardado);
+      $('h-estado').textContent = '✓ Guardado. Puedes volver a cambiarlo cuando quieras.';
+    } finally { $('h-enviar').disabled = false; }
+    return;
+  }
   try {
     const campos = camposDelForm();
     const momento = ahoraLocal();
@@ -2656,6 +2691,7 @@ $('h-leido').addEventListener('click', async () => {
    librerías de fuera, que esta página no carga ninguna. */
 $('h-pdf').addEventListener('click', () => {
   if (!HERR) return;
+  if (HERR.modo === 'registro') { imprimeHojas([hojaSemana(lunesDe(hoyISO()))]); return; }
   const valores = HERR.soloLeer ? (HERR.valores || {}) : camposDelForm();
   const cont = $('h-imprimir'); cont.innerHTML = '';
   /* Hijo directo de <body>, para que al imprimir se pueda esconder todo
@@ -2675,6 +2711,483 @@ $('h-pdf').addEventListener('click', () => {
   window.print();
 });
 
+
+/* =====================================================================
+   Herramientas que viven (17-10, tarde)
+   ---------------------------------------------------------------------
+   · VIVO («Siempre a mano»): un documento que se edita siempre (el plan
+     de seguridad). Guardar es enviar: lo que tiene ahora queda sellado a
+     SU clave y cada versión llega sellada al Mac. Las tablas crecen
+     («+ Añadir otra fila»: una persona más a la que llamar).
+   · REGISTRO: entradas sueltas, una por día (la tarjeta diaria) o una
+     por vez que pasa algo (el autorregistro). La tabla de la ficha de
+     papel se convierte en un formulario corto; lo anterior se pliega por
+     semanas; y el PDF de una semana es la ficha de papel rellena.
+   ===================================================================== */
+const DIAS_L = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+const CABECERA = ['nombre', 'semana', 'fecha'];
+
+function hoyISO() { return new Date().toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }); }
+function deISO(s) { const [y, m, d] = String(s).slice(0, 10).split('-').map(Number); return new Date(y, m - 1, d, 12); }
+function aISO(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function sumaDias(s, n) { const d = deISO(s); d.setDate(d.getDate() + n); return aISO(d); }
+function diaSemana(s) { return (deISO(s).getDay() + 6) % 7; }          // 0 = lunes
+function lunesDe(s) { return sumaDias(s, -diaSemana(s)); }
+function diaLargo(s) {
+  const d = deISO(s);
+  const t = DIAS_L[diaSemana(s)] + ' ' + d.getDate() + ' de ' + d.toLocaleDateString('es-ES', { month: 'long' });
+  return s === hoyISO() ? 'Hoy, ' + t : (s === sumaDias(hoyISO(), -1) ? 'Ayer, ' + t : t.charAt(0).toUpperCase() + t.slice(1));
+}
+function uidNuevo() { const a = new Uint8Array(12); crypto.getRandomValues(a); return Array.from(a, b => b.toString(16).padStart(2, '0')).join(''); }
+function boton(texto, clase, accion) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = clase === 'enlace-boton' ? 'enlace-boton' : ('boton' + (clase ? ' ' + clase : ''));
+  b.textContent = texto; b.addEventListener('click', accion);
+  return b;
+}
+function esAcordadoB(b) { return b.t === 'nota' && /^\s*lo que acordamos/i.test(b.negrita || ''); }
+function esCabecera(b) { return b.t === 'campos' && (b.campos || []).every(k => CABECERA.includes(k.id)); }
+function tieneCampos(bloques) { return bloques.some(b => b.t === 'campos' || (b.t === 'apartado' && b.id) || b.t === 'tabla' || b.t === 'firma'); }
+function tablaPrincipal(def) { return (def.bloques || []).find(b => b.t === 'tabla') || null; }
+function colsFijas(b) {
+  const f = b.fijas || [];
+  if (!f.length) return [];
+  return b.columnas.map((c, j) => j).filter(j => f.every(r => r && r[j] != null && r[j] !== ''));
+}
+function colsEntrada(b) { const fx = colsFijas(b); return b.columnas.filter((c, j) => !fx.includes(j)); }
+function esDiario(b) { return !!b && (b.fijas || []).length === 7; }
+
+/* Más filas en las tablas si lo guardado tiene más. */
+function ampliaDef(def, valores) {
+  const d = JSON.parse(JSON.stringify(def));
+  (d.bloques || []).forEach(b => {
+    if (b.t !== 'tabla') return;
+    const pre = b.id + '.'; let max = 0;
+    Object.keys(valores || {}).forEach(k => {
+      if (k.startsWith(pre) && valores[k]) { const n = parseInt(k.slice(pre.length), 10); if (n > max) max = n; }
+    });
+    b.filas = Math.max(b.filas || 0, max - (b.fijas || []).length);
+  });
+  return d;
+}
+
+/* «+ Añadir otra fila» debajo de cada tabla rellenable. */
+function ponFilasExtra(raiz, defDeTablas, rehacer) {
+  raiz.querySelectorAll('.tabla-h[data-tabla]').forEach(t => {
+    const b = (defDeTablas.bloques || []).find(x => x.t === 'tabla' && x.id === t.dataset.tabla);
+    if (!b) return;
+    const bt = boton('+ Añadir otra fila', 'enlace-boton', () => {
+      const v = camposDelForm(); const y = window.scrollY;
+      b.filas = (b.filas || 0) + 1;
+      rehacer(v);
+      window.scrollTo(0, y);
+    });
+    bt.classList.add('mas-fila');
+    t.after(bt);
+  });
+}
+
+/* La copia que mandó antes del 17-10 (cuando se enviaba una vez): de ahí
+   sale lo que ya tenía escrito, para que no empiece de cero. */
+async function copiaAntigua(titulo) {
+  const d = (DOCS || []).find(x => x.clase === 'herramienta' && x.titulo === titulo && Number(x.para_v) === Number(miV));
+  if (!d) return null;
+  const r = await api('abrir&id=' + encodeURIComponent(d.id));
+  if (!r.ok || !r.j.cifrado) return null;
+  try { const c = abrirDelMac(r.j.cifrado, miPublica, privada); return { campos: c.campos || {}, guardado: c.completado_en || '' }; }
+  catch (_) { return null; }
+}
+
+async function abrirViva(r, def) {
+  HERR = { tarea: r.j.id, def, soloLeer: false, modo: r.j.modo, recordar: (HERR_FILAS[r.j.id] || {}).recordar || null };
+  let guardado = null;
+  if (r.j.borrador) {
+    if (Number(r.j.borrador_v) !== Number(miV)) {
+      $('panel-estado').textContent = 'Esta herramienta se está actualizando tras el cambio de contraseña. En unos minutos la tienes, con todo lo que habías escrito.';
+      HERR = null; return;
+    }
+    try { guardado = abrirDelMac(r.j.borrador, miPublica, privada); } catch (_) {}
+  }
+  if (!guardado && r.j.empezada === false) guardado = null;
+  if (!guardado) guardado = await copiaAntigua(r.j.titulo);
+  let valores = (guardado && (guardado.campos || {})) || {};
+  if (HERR.modo === 'vivo') {
+    let local = null;
+    try { local = JSON.parse(localStorage.getItem(claveHerr()) || 'null'); } catch (_) {}
+    if (local && (!guardado || (local.guardado || '') > (guardado.guardado || ''))) valores = local.campos || {};
+    montaVivo(valores, r.j.actualizado);
+  } else {
+    HERR.resto = valores;
+    await montaRegistro();
+  }
+}
+
+/* --- Vivo ------------------------------------------------------------- */
+function montaVivo(valores, cuando) {
+  HERR.def = ampliaDef(HERR.def, valores);
+  HERR.actualizado = cuando || HERR.actualizado || null;
+  montaHerramienta(HERR.def, valores, false, 'Siempre a mano');
+  $('h-enviar').textContent = 'Guardar';
+  $('h-guardar').hidden = true;
+  $('h-estado').textContent = HERR.actualizado
+    ? 'Guardado el ' + fecha(HERR.actualizado) + ' a las ' + hora(HERR.actualizado) + '. Puedes cambiarlo siempre que quieras: al guardar, Adrián tiene la versión nueva.'
+    : 'Rellénalo con calma. Lo podrás cambiar siempre que quieras: añadir a alguien, quitar lo que ya no sirve…';
+  ponFilasExtra($('h-cuerpo'), HERR.def, (v) => montaVivo(v, HERR.actualizado));
+}
+
+async function guardarVivo() {
+  const campos = camposDelForm();
+  const momento = ahoraLocal();
+  const sobre = { herramienta: HERR.def.id, modo: HERR.modo, parte: HERR.modo === 'registro' ? 'resto' : 'documento',
+                  campos, completado_en: momento, origen: 'cuenta', cod_web: miCod };
+  const copia = { campos, guardado: new Date().toISOString() };
+  const r = await api('guardar_vivo', { id: HERR.tarea, cifrado: sellarHaciaElMac(sobre, macPublica),
+                                       copia: sellarHaciaElMac(copia, miPublica) });
+  if (!r.ok) return null;
+  try { localStorage.removeItem(claveHerr()); } catch (_) {}
+  return { guardado: r.j.guardado, campos };
+}
+
+/* --- Registro ---------------------------------------------------------- */
+async function montaRegistro(msg) {
+  HERR.principal = tablaPrincipal(HERR.def);
+  if (!HERR.principal) { montaVivo(HERR.resto || {}, null); return; }
+  const r = await api('entradas&id=' + encodeURIComponent(HERR.tarea));
+  const ents = []; let viejas = 0;
+  ((r.ok && r.j.entradas) || []).forEach(e => {
+    if (Number(e.para_v) !== Number(miV)) { viejas++; return; }
+    try {
+      const c = abrirDelMac(e.cifrado, miPublica, privada);
+      ents.push({ uid: e.uid, fecha: e.fecha, fila: c.fila || {}, creado: e.creado });
+    } catch (_) { viejas++; }
+  });
+  HERR.entradas = ents; HERR.viejas = viejas;
+  pintaRegistro(msg);
+}
+
+function partesRegistro() {
+  const def = HERR.def, b = HERR.principal;
+  const i = def.bloques.indexOf(b);
+  const antes = def.bloques.slice(0, i).filter(x => !esCabecera(x));
+  const despues = def.bloques.slice(i + 1).filter(x => x.t !== 'fuente');
+  const camposDespues = tieneCampos(despues);
+  return {
+    acordado: antes.filter(esAcordadoB),
+    como: antes.filter(x => !esAcordadoB(x) && !tieneCampos([x])).concat(camposDespues ? [] : despues),
+    resto: antes.filter(x => tieneCampos([x])).concat(camposDespues ? despues : []),
+    fuente: def.bloques.filter(x => x.t === 'fuente'),
+  };
+}
+
+function resumenFila(e) {
+  const cols = colsEntrada(HERR.principal);
+  const trozos = cols.map(c => [c.rotulo, (e.fila[c.id] || '').trim()]).filter(x => x[1]);
+  if (!trozos.length) return 'Sin nada escrito';
+  return trozos.slice(0, 2).map(([r, v]) => r.replace(/\s*\(.*?\)\s*$/, '') + ': ' + (v.length > 70 ? v.slice(0, 68) + '…' : v)).join(' · ');
+}
+
+function tarjetaEntrada(e) {
+  const t = boton('', '', () => editaEntrada(e));
+  t.className = 'reg-entrada';
+  t.append(el('strong', null, diaLargo(e.fecha)), el('span', null, resumenFila(e)));
+  return t;
+}
+
+function tiraSemana(l, es) {
+  const t = el('div', 'reg-tira');
+  const hoy = hoyISO();
+  for (let k = 0; k < 7; k++) {
+    const f = sumaDias(l, k);
+    const hecho = es.some(e => e.fecha === f);
+    const c = el('button', 'reg-dia' + (hecho ? ' hecho' : '') + (f === hoy ? ' hoy' : ''));
+    c.type = 'button';
+    c.append(el('span', null, 'LMXJVSD'[k]), el('b', null, hecho ? '✓' : String(deISO(f).getDate())));
+    c.setAttribute('aria-label', diaLargo(f) + (hecho ? ': apuntado' : ': sin apuntar'));
+    if (f > hoy) c.disabled = true;
+    else c.addEventListener('click', () => editaEntrada(es.find(e => e.fecha === f) || { fecha: f }));
+    t.appendChild(c);
+  }
+  return t;
+}
+
+function cajaRecordatorio() {
+  const d = el('div', 'reg-aviso');
+  const pinta = (editando) => {
+    d.innerHTML = '';
+    if (HERR.recordar && !editando) {
+      d.appendChild(el('p', null, '🔔 Te lo recuerdo por correo cada día a las ' + HERR.recordar + ', solo si aún no lo has apuntado.'));
+      const p = el('p', 'reg-aviso-b');
+      p.append(boton('Cambiar la hora', 'enlace-boton', () => pinta(true)), ' · ',
+               boton('Quitar el recordatorio', 'enlace-boton', () => pon('')));
+      d.appendChild(p);
+      return;
+    }
+    d.appendChild(el('p', null, '¿Quieres que te lo recuerde? Un correo discreto cada día a la hora que elijas, solo si aún no lo has apuntado.'));
+    const f = el('p', 'reg-aviso-b');
+    const h = document.createElement('input'); h.type = 'time'; h.value = HERR.recordar || '21:00'; h.id = 'reg-hora';
+    h.setAttribute('aria-label', 'Hora del recordatorio');
+    f.append(h, ' ', boton(HERR.recordar ? 'Guardar' : 'Recordármelo', 'suave', () => pon(h.value)));
+    if (editando) f.append(' ', boton('Cancelar', 'enlace-boton', () => pinta(false)));
+    d.appendChild(f);
+  };
+  const pon = async (hora) => {
+    const r = await api('recordatorio', { id: HERR.tarea, hora });
+    if (!r.ok) { d.appendChild(el('p', 'apunte', 'No se ha podido guardar. Inténtalo otra vez.')); return; }
+    HERR.recordar = r.j.hora;
+    if (HERR_FILAS[HERR.tarea]) HERR_FILAS[HERR.tarea].recordar = r.j.hora;
+    pinta(false);
+  };
+  pinta(false);
+  return d;
+}
+
+function pintaRegistro(msg) {
+  const def = HERR.def, b = HERR.principal, diario = esDiario(b);
+  const P = partesRegistro();
+  $('h-etiqueta').textContent = 'Registro';
+  $('h-titulo').textContent = def.titulo;
+  $('h-subtitulo').textContent = def.subtitulo || '';
+  document.querySelectorAll('.h-riesgo').forEach(x => { x.hidden = !def.riesgo; });
+  $('h-enviar').hidden = true; $('h-guardar').hidden = true; $('h-leido').hidden = true;
+  $('h-pdf').hidden = false; $('h-pdf').textContent = 'Descargar esta semana en PDF';
+  $('h-todo').hidden = !HERR.entradas.length;
+  $('h-estado').textContent = '';
+  const c = $('h-cuerpo'); c.innerHTML = '';
+  const raiz = el('div', 'herr registro');
+  if (P.acordado.length) raiz.appendChild(pintaBloques(Object.assign({}, def, { bloques: P.acordado }), {}, 'texto', true));
+
+  /* Hoy */
+  const hoy = hoyISO();
+  const caja = el('div', 'reg-hoy');
+  const deHoy = HERR.entradas.filter(e => e.fecha === hoy);
+  if (msg) caja.appendChild(el('p', 'reg-msg', msg));
+  if (diario && deHoy.length) {
+    caja.appendChild(el('p', 'reg-hecho', '✓ Hoy ya lo has apuntado'));
+    caja.appendChild(boton('Ver o corregir lo de hoy', 'suave', () => editaEntrada(deHoy[0])));
+  } else {
+    caja.appendChild(boton(diario ? '+ Apuntar hoy' : '+ Añadir un apunte', '', () => editaEntrada({ fecha: hoy })));
+  }
+  caja.appendChild(boton(diario ? 'Apuntar otro día' : 'Es de otro día', 'enlace-boton',
+    () => editaEntrada({ fecha: sumaDias(hoy, -1), otroDia: true })));
+  raiz.appendChild(caja);
+  raiz.appendChild(cajaRecordatorio());
+
+  if (HERR.viejas) raiz.appendChild(el('p', 'nota info', HERR.viejas + (HERR.viejas === 1 ? ' apunte anterior' : ' apuntes anteriores') +
+    ' al cambio de contraseña se están actualizando. No se ha perdido nada.'));
+
+  /* Cómo se rellena: abierto mientras no haya ningún apunte. */
+  if (P.como.length) {
+    const d = document.createElement('details'); d.className = 'reg-como'; d.open = !HERR.entradas.length;
+    const s = document.createElement('summary'); s.textContent = 'Cómo se rellena';
+    d.append(s, pintaBloques(Object.assign({}, def, { bloques: P.como }), {}, 'texto', true));
+    raiz.appendChild(d);
+  }
+
+  /* Por semanas: la de ahora abierta, las demás plegadas. */
+  const porSemana = {};
+  HERR.entradas.forEach(e => { (porSemana[lunesDe(e.fecha)] = porSemana[lunesDe(e.fecha)] || []).push(e); });
+  const esta = lunesDe(hoy);
+  porSemana[esta] = porSemana[esta] || [];
+  raiz.appendChild(el('h2', 'titulo-h', 'Tus apuntes'));
+  Object.keys(porSemana).sort().reverse().forEach(l => {
+    const es = porSemana[l].slice().sort((a, x) => (a.fecha < x.fecha ? 1 : a.fecha > x.fecha ? -1 : (a.creado < x.creado ? 1 : -1)));
+    const dias = new Set(es.map(e => e.fecha)).size;
+    const d = document.createElement('details'); d.className = 'reg-semana'; d.open = (l === esta);
+    const s = document.createElement('summary');
+    s.append(el('strong', null, l === esta ? 'Esta semana' : 'Semana del ' + fecha(l) + ' al ' + fecha(sumaDias(l, 6))),
+             el('span', null, diario ? dias + ' de 7 días' : es.length + (es.length === 1 ? ' apunte' : ' apuntes')));
+    d.appendChild(s);
+    if (diario) d.appendChild(tiraSemana(l, es));
+    if (!es.length) d.appendChild(el('p', 'apunte', 'Aún nada esta semana.'));
+    es.forEach(e => d.appendChild(tarjetaEntrada(e)));
+    if (es.length) d.appendChild(boton('Esta semana en PDF', 'enlace-boton', () => imprimeHojas([hojaSemana(l)])));
+    raiz.appendChild(d);
+  });
+
+  /* Lo de la ficha que no es un apunte («Esta semana usé mi plan…»,
+     «Mi frase»): se guarda como un documento vivo. */
+  if (P.resto.length) {
+    const sec = el('section', 'reg-resto');
+    sec.appendChild(el('h2', 'titulo-h', 'Lo demás de la ficha'));
+    const dr = ampliaDef(Object.assign({}, def, { bloques: P.resto }), HERR.resto || {});
+    sec.appendChild(pintaBloques(dr, HERR.resto || {}, 'form', false));
+    const est = el('p', 'apunte'); est.setAttribute('role', 'status');
+    const g = boton('Guardar', 'suave', async () => {
+      g.disabled = true;
+      try {
+        const x = await guardarVivo();
+        if (!x) { est.textContent = 'No se ha podido guardar. Inténtalo otra vez.'; return; }
+        HERR.resto = x.campos;
+        est.textContent = 'Guardado.';
+      } finally { g.disabled = false; }
+    });
+    sec.append(g, est);
+    raiz.appendChild(sec);
+    ponFilasExtra(sec, def, (v) => { HERR.resto = v; pintaRegistro(); });
+  }
+  if (P.fuente.length) raiz.appendChild(pintaBloques(Object.assign({}, def, { bloques: P.fuente }), {}, 'texto', true));
+  c.appendChild(raiz);
+  ver('v-herr');
+}
+
+function editaEntrada(e) {
+  const b = HERR.principal, diario = esDiario(b), cols = colsEntrada(b);
+  /* Un día, un apunte: si ese día ya tiene, se abre ése. */
+  if (!e.uid && diario) { const ex = HERR.entradas.find(x => x.fecha === e.fecha); if (ex) e = Object.assign({}, ex, { otroDia: e.otroDia }); }
+  $('h-pdf').hidden = true; $('h-todo').hidden = true;
+  const c = $('h-cuerpo'); c.innerHTML = '';
+  const f = el('div', 'herr reg-editor');
+  f.appendChild(el('h2', 'titulo-h', e.uid ? 'Corregir un apunte' : (diario ? 'Apuntar el día' : 'Nuevo apunte')));
+  const lf = el('label', 'campo-h');
+  lf.appendChild(el('span', 'rotulo', 'Día'));
+  const fi = document.createElement('input'); fi.type = 'date'; fi.id = 'reg-fecha';
+  fi.max = hoyISO(); fi.min = sumaDias(hoyISO(), -60); fi.value = e.fecha || hoyISO();
+  lf.appendChild(fi);
+  if (!e.otroDia && !e.uid) lf.hidden = true;
+  f.appendChild(el('p', 'reg-dia-t', diaLargo(fi.value)));
+  f.appendChild(lf);
+  fi.addEventListener('change', () => {
+    if (!fi.value) return;
+    f.querySelector('.reg-dia-t').textContent = diaLargo(fi.value);
+    if (diario && !e.uid) { const ex = HERR.entradas.find(x => x.fecha === fi.value); if (ex) editaEntrada(Object.assign({}, ex, { otroDia: true })); }
+  });
+  if (b.ejemplo) {
+    const fx = colsFijas(b);
+    const ej = b.columnas.map((col, j) => fx.includes(j) || !b.ejemplo[j] ? null : col.rotulo.replace(/\s*\(.*?\)\s*$/, '') + ': ' + b.ejemplo[j]).filter(Boolean);
+    if (ej.length) f.appendChild(el('p', 'reg-ejemplo', 'Ejemplo · ' + ej.join(' · ')));
+  }
+  cols.forEach(col => {
+    /* Una escala corta («(0-5)», «(sí/no)»): botones, dos toques. */
+    const m = /\((\d+)\s*[-–]\s*(\d+)\)\s*$/.exec(col.rotulo);
+    const sino = /\(sí\/no\)\s*$/i.test(col.rotulo);
+    if ((m && +m[2] > +m[1] && +m[2] - +m[1] <= 10) || sino) {
+      const g = el('div', 'campo-h');
+      const rid = 'reg-r-' + col.id;
+      g.appendChild(el('span', 'rotulo', col.rotulo)).id = rid;
+      const h = document.createElement('input'); h.type = 'hidden'; h.dataset.col = col.id;
+      h.value = (e.fila || {})[col.id] || '';
+      const fila = el('div', 'reg-chips'); fila.setAttribute('role', 'group'); fila.setAttribute('aria-labelledby', rid);
+      const ops = sino ? ['sí', 'no'] : Array.from({ length: +m[2] - +m[1] + 1 }, (_, k) => String(+m[1] + k));
+      ops.forEach(o => {
+        const bt = el('button', 'reg-chip', o); bt.type = 'button';
+        bt.setAttribute('aria-pressed', String(h.value.toLowerCase() === o));
+        bt.addEventListener('click', () => {
+          h.value = h.value.toLowerCase() === o ? '' : o;
+          fila.querySelectorAll('.reg-chip').forEach(x => x.setAttribute('aria-pressed', String(x.textContent === h.value)));
+        });
+        fila.appendChild(bt);
+      });
+      g.append(fila, h); f.appendChild(g);
+      return;
+    }
+    const lab = el('label', 'campo-h');
+    lab.appendChild(el('span', 'rotulo', col.rotulo));
+    const largo = (b.alto || 0) > 1.2 || (col.ancho || 4) >= 8 || col.rotulo.length > 40;
+    const inp = largo ? document.createElement('textarea') : document.createElement('input');
+    if (largo) inp.rows = 3; else inp.type = 'text';
+    inp.dataset.col = col.id; inp.value = (e.fila || {})[col.id] || ''; inp.maxLength = 4000;
+    lab.appendChild(inp); f.appendChild(lab);
+  });
+  const est = el('p', 'apunte'); est.id = 'reg-estado'; est.setAttribute('role', 'status');
+  const bs = el('p', 'reg-botones');
+  const g = boton('Guardar', '', async () => { g.disabled = true; try { await guardaEntrada(e); } finally { g.disabled = false; } });
+  bs.appendChild(g);
+  if (e.uid) {
+    let seguro = false;
+    const q = boton('Quitar este apunte', 'suave', async () => {
+      if (!seguro) { seguro = true; q.textContent = '¿Seguro? Pulsa otra vez para quitarlo'; return; }
+      await quitaEntrada(e);
+    });
+    bs.appendChild(q);
+  }
+  bs.appendChild(boton('Cancelar', 'enlace-boton', () => pintaRegistro()));
+  f.append(bs, est);
+  c.appendChild(f);
+  window.scrollTo(0, 0);
+}
+
+function sobreEntrada(uid, fecha, fila, borrada) {
+  const b = HERR.principal;
+  const n = esDiario(b) ? diaSemana(fecha) + 1 : 1;
+  const campos = {};
+  Object.keys(fila || {}).forEach(k => { campos[b.id + '.' + n + '.' + k] = fila[k]; });
+  return { herramienta: HERR.def.id, modo: 'registro', entrada: { uid, fecha, borrada: !!borrada },
+           tabla: b.id, fila: fila || {}, campos, semana: lunesDe(fecha),
+           completado_en: ahoraLocal(), origen: 'cuenta', cod_web: miCod };
+}
+
+async function guardaEntrada(e) {
+  const est = $('reg-estado');
+  const fecha = $('reg-fecha').value;
+  if (!fecha || fecha > hoyISO()) { est.textContent = 'Elige un día de hoy hacia atrás.'; return; }
+  const fila = {};
+  document.querySelectorAll('#h-cuerpo [data-col]').forEach(i => { fila[i.dataset.col] = i.value; });
+  if (!Object.values(fila).some(v => v.trim())) { est.textContent = 'Escribe algo antes de guardar.'; return; }
+  let uid = e.uid;
+  if (!uid && esDiario(HERR.principal)) { const ex = HERR.entradas.find(x => x.fecha === fecha); if (ex) uid = ex.uid; }
+  uid = uid || uidNuevo();
+  const copia = { fecha, fila, guardado: new Date().toISOString() };
+  const r = await api('entrada', { id: HERR.tarea, uid, fecha,
+    cifrado: sellarHaciaElMac(sobreEntrada(uid, fecha, fila, false), macPublica),
+    copia: sellarHaciaElMac(copia, miPublica) });
+  if (!r.ok) { est.textContent = r.j.error === 'despacio' ? 'Demasiados cambios seguidos: espera un poco.' : 'No se ha podido guardar. Inténtalo otra vez.'; return; }
+  HERR.entradas = HERR.entradas.filter(x => x.uid !== uid).concat([{ uid, fecha, fila, creado: new Date().toISOString() }]);
+  pintaRegistro(fecha === hoyISO() ? '✓ Guardado. Lo de hoy, apuntado.' : '✓ Guardado: ' + diaLargo(fecha).toLowerCase() + '.');
+}
+
+async function quitaEntrada(e) {
+  const r = await api('entrada', { id: HERR.tarea, uid: e.uid, fecha: e.fecha, borrar: true,
+    cifrado: sellarHaciaElMac(sobreEntrada(e.uid, e.fecha, null, true), macPublica) });
+  if (!r.ok) { $('reg-estado').textContent = 'No se ha podido quitar. Inténtalo otra vez.'; return; }
+  HERR.entradas = HERR.entradas.filter(x => x.uid !== e.uid);
+  pintaRegistro('Apunte quitado.');
+}
+
+/* --- PDF ----------------------------------------------------------------
+   Una semana de un registro = la ficha de papel rellena con sus apuntes. */
+function hojaSemana(l) {
+  const def = HERR.def, b = HERR.principal;
+  const es = HERR.entradas.filter(e => lunesDe(e.fecha) === l).sort((a, x) => (a.fecha > x.fecha ? 1 : -1));
+  const valores = Object.assign({}, HERR.resto || {});
+  valores.semana = fecha(l);
+  const primera = colsEntrada(b)[0];
+  es.forEach((e, i) => {
+    const n = esDiario(b) ? diaSemana(e.fecha) + 1 : i + 1;
+    Object.keys(e.fila).forEach(k => { valores[b.id + '.' + n + '.' + k] = e.fila[k]; });
+    /* En una tabla sin días, que se sepa de qué día es cada fila. */
+    if (!esDiario(b) && primera && !e.fila[primera.id]) valores[b.id + '.' + n + '.' + primera.id] = diaLargo(e.fecha);
+  });
+  return { def: ampliaDef(def, valores), valores,
+           sub: 'Semana del ' + fecha(l) + ' al ' + fecha(sumaDias(l, 6)) };
+}
+
+function imprimeHojas(hojas) {
+  if (!hojas.length) return;
+  const cont = $('h-imprimir'); cont.innerHTML = '';
+  if (cont.parentNode !== document.body) document.body.appendChild(cont);
+  hojas.forEach((h, i) => {
+    const s = el('div', 'hoja' + (i ? ' salto' : ''));
+    s.appendChild(el('h1', null, h.def.titulo));
+    if (h.sub || h.def.subtitulo) s.appendChild(el('p', 'apunte', h.sub || h.def.subtitulo));
+    if (h.def.riesgo) {
+      const a = el('div', 'auxilio');
+      a.appendChild(el('p', null, 'Si no puedes mantenerte a salvo: 024 (24 horas, gratuito) o 112.'));
+      s.appendChild(a);
+    }
+    s.appendChild(pintaBloques(h.def, h.valores, 'texto', true));
+    cont.appendChild(s);
+  });
+  let estilo = document.getElementById('h-pagina');
+  if (!estilo) { estilo = document.createElement('style'); estilo.id = 'h-pagina'; document.head.appendChild(estilo); }
+  estilo.textContent = '@page { size: A4 ' + (hojas[0].def.apaisado ? 'landscape' : 'portrait') + '; margin: 14mm; }';
+  window.print();
+}
+$('h-todo').addEventListener('click', () => {
+  if (!HERR || HERR.modo !== 'registro') return;
+  const semanas = [...new Set(HERR.entradas.map(e => lunesDe(e.fecha)))].sort();
+  imprimeHojas(semanas.map(hojaSemana));
+});
+
 $('h-volver').addEventListener('click', panel);
 
 /* El plan de seguridad: se busca entre sus copias enviadas (se abren
@@ -2687,13 +3200,13 @@ function buscaPlan(copias, v) {
       if (PLAN || !r.ok || !r.j.cifrado) return;
       try {
         const c = abrirDelMac(r.j.cifrado, miPublica, privada);
-        if (c.def && c.def.riesgo && !PLAN) { PLAN = d.id; $('b-plan').hidden = false; }
+        if (c.def && (c.def.id === 'plan-seguridad' || (c.def.riesgo && c.def.id !== 'tarjeta-diaria')) && !PLAN) { PLAN = d.id; $('b-plan').hidden = false; }
       } catch (_) {}
     });
   }
   $('b-plan').hidden = true;
 }
-$('b-plan').addEventListener('click', () => { if (PLAN) abrirCopia(PLAN); });
+$('b-plan').addEventListener('click', () => { if (PLAN_TAREA) abrirHerramienta(PLAN_TAREA); else if (PLAN) abrirCopia(PLAN); });
 
 $('c-accesos').addEventListener('toggle', async () => {
   if (!$('c-accesos').open) return;

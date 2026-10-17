@@ -199,6 +199,8 @@ const ADR_SOMBRA = '$argon2id$v=19$m=65536,t=4,p=1$TEJQYmppQXlTQVhjN2JHTg'
                  . '$RP3OLKQyBAojzMUGMWQfp2yJ+VUxJxN7f8vEL1wA/IM';
 
 require __DIR__ . '/lib/sesion.php';
+require_once __DIR__ . '/lib/correo.php';
+require_once __DIR__ . '/lib/herramientas.php';
 
 /* Todo lo que hace el Mac queda apuntado (acción y hora). */
 /* Todo lo que el Mac CAMBIA queda apuntado. Lo que solo mira (recoger
@@ -420,7 +422,7 @@ case 'mios': {
        pantalla es una pantalla que se dibuja a trozos. */
     /* Lo caducado no sale: ni se puede hacer a tiempo ni debe quedarse
        en el contador para siempre. «antes del 10» incluye el día 10. */
-    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla FROM tareas
+    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado FROM tareas
                        WHERE cod = ? AND hecho IS NULL
                          AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)
                        ORDER BY id");
@@ -431,15 +433,56 @@ case 'mios': {
     foreach ($t->fetchAll() as $x) {
         $pl = json_decode((string)$x['plantilla'], true);
         $x['preguntas'] = ($x['tipo'] === 'cuestionario' && is_array($pl)) ? count($pl['items'] ?? []) : null;
+        $x['modo'] = adr_modo_fila($x);
+        $x['herr_id'] = $x['tipo'] === 'herramienta' ? adr_herr_id($x) : null;
         unset($x['plantilla']);
         $tareas[] = $x;
     }
+    /* 17-10: las herramientas que viven después de empezarlas (un
+       documento que se edita siempre, un registro de entradas), con lo
+       justo para pintar la lista: cuántas entradas, de qué días, y su
+       recordatorio si se lo ha puesto. */
+    $vv = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado FROM tareas
+                        WHERE cod = ? AND tipo = 'herramienta' AND hecho IS NOT NULL AND hecho <> 'retirada'
+                        ORDER BY id");
+    $vv->execute([$cod]);
+    $recs = $db->prepare('SELECT tarea, hora FROM recordatorios WHERE cod = ?');
+    $recs->execute([$cod]);
+    $rec = array_column($recs->fetchAll(), 'hora', 'tarea');
+    $vivas = [];
+    foreach ($vv->fetchAll() as $x) {
+        $x['modo'] = adr_modo_fila($x);
+        $x['herr_id'] = adr_herr_id($x);
+        unset($x['plantilla']);
+        if ($x['modo'] === 'una') continue;
+        $vivas[] = $x;
+    }
+    $marca_h = function (array &$x) use ($db, $rec) {
+        if (($x['tipo'] ?? '') !== 'herramienta') return;
+        $x['recordar'] = $rec[$x['id']] ?? null;
+        if ($x['modo'] === 'registro') {
+            $e = $db->prepare("SELECT COUNT(*) AS n, MAX(fecha) AS ultima FROM entradas WHERE tarea = ? AND borrada = 0");
+            $e->execute([$x['id']]);
+            $f = $e->fetch();
+            $x['entradas'] = (int)$f['n']; $x['ultima'] = $f['ultima'];
+            $h = $db->prepare("SELECT 1 FROM entradas WHERE tarea = ? AND borrada = 0 AND fecha = ?");
+            $h->execute([$x['id'], adr_hoy()]);
+            $x['hoy'] = (bool)$h->fetch();
+        }
+    };
+    foreach ($tareas as &$x) $marca_h($x);
+    unset($x);
+    foreach ($vivas as &$x) $marca_h($x);
+    unset($x);
     /* Y lo que ya ha hecho: qué y cuándo, sin puntuación (la puntuación
        vive en la gráfica). Sin esto, lo que entrega cae en un pozo. */
-    $h = $db->prepare("SELECT titulo, tipo, hecho FROM tareas
+    $h = $db->prepare("SELECT titulo, tipo, hecho, plantilla, modo FROM tareas
                        WHERE cod = ? AND hecho IS NOT NULL AND hecho <> 'retirada'
-                       ORDER BY hecho DESC LIMIT 40");
+                       ORDER BY hecho DESC LIMIT 80");
     $h->execute([$cod]);
+    /* Lo vivo y los registros no «se completan»: siguen en «Tus herramientas». */
+    $hechas = array_slice(array_values(array_map(fn($x) => ['titulo' => $x['titulo'], 'tipo' => $x['tipo'], 'hecho' => $x['hecho']],
+        array_filter($h->fetchAll(), fn($x) => adr_modo_fila($x) === 'una'))), 0, 40);
 
     /* Los mensajes, en su propio hilo y en las dos direcciones. */
     $ms = $db->prepare("SELECT s.id, s.direccion, s.para_v, s.creado,
@@ -499,8 +542,8 @@ case 'mios': {
                   foreach ($filas as $f) if ((int)$f['requiere_firma'] && (int)$f['para_v'] === $v) $nuevos[$f['titulo']] = true;
                   return array_values(array_filter($filas, fn($f) => !((int)$f['requiere_firma'] && !$f['firmado']
                       && (int)$f['para_v'] !== $v && isset($nuevos[$f['titulo']]))));
-              })(), 'tareas' => $tareas,
-              'hechas' => $h->fetchAll(),
+              })(), 'tareas' => $tareas, 'herramientas_vivas' => $vivas,
+              'hechas' => $hechas,
               'mensajes' => array_reverse($ms->fetchAll())]);
 }
 
@@ -758,6 +801,9 @@ case 'recoger': {
     adr_vencen($db, $ADR);
     adr_recuerda($db, $ADR);
     adr_limpia_altas($db);
+    /* 17-10: los recordatorios que se ponen los pacientes y el correo de
+       la mañana a Adrián. Si fallan, la recogida sigue. */
+    try { adr_recordatorios($db, $ADR); adr_resumen_dia($db, $ADR); } catch (Throwable $e) {}
     /* Con los justificantes (fotos y PDF de varios megas) cincuenta
        sobres pueden ser cientos de megas en una sola respuesta. Se corta
        por tamaño: lo que no quepa sale en la pasada siguiente, cinco
@@ -1297,12 +1343,30 @@ case 'por_reenviar': {
     $copias->execute([$cod_r]);
     /* Las herramientas selladas (17-10) que siguen pendientes con la
        clave anterior: hay que volver a sellarlas (resellar_tarea). */
-    $ts = $db->prepare("SELECT t.id, t.titulo, t.plantilla FROM tareas t JOIN pacientes p ON p.cod = t.cod
-                        WHERE t.cod = ? AND t.tipo = 'herramienta' AND t.cifrado IS NOT NULL AND t.hecho IS NULL
-                          AND t.para_v <> p.publica_v");
+    $ts = $db->prepare("SELECT t.id, t.titulo, t.plantilla, t.tipo, t.modo, t.hecho, t.cifrado IS NOT NULL AS sellada,
+                               t.borrador IS NOT NULL AS con_contenido
+                        FROM tareas t JOIN pacientes p ON p.cod = t.cod
+                        WHERE t.cod = ? AND t.tipo = 'herramienta' AND (t.hecho IS NULL OR t.hecho <> 'retirada')
+                          AND ((t.cifrado IS NOT NULL AND t.para_v <> p.publica_v)
+                               OR (t.borrador IS NOT NULL AND t.borrador_v <> p.publica_v)
+                               OR EXISTS (SELECT 1 FROM entradas e WHERE e.tarea = t.id AND e.borrada = 0
+                                          AND e.para_v <> p.publica_v))");
     $ts->execute([$cod_r]);
-    $tareas_r = array_map(fn($t) => ['id' => (int)$t['id'], 'titulo' => $t['titulo'],
-                                     'herramienta' => json_decode((string)$t['plantilla'], true)['id'] ?? null], $ts->fetchAll());
+    /* 17-10: también los documentos vivos y los registros. `modo` dice
+       qué hay que rehacer: la definición (si iba sellada), lo que tenía
+       escrito (`con_contenido`: resellar_tarea con `borrador`) y sus
+       entradas (`resellar_entradas`). */
+    $tareas_r = [];
+    foreach ($ts->fetchAll() as $t) {
+        $modo = adr_modo_fila($t);
+        if ($modo === 'una' && $t['hecho'] !== null) continue;
+        $e = $db->prepare('SELECT e.uid, e.fecha FROM entradas e JOIN pacientes p ON p.cod = e.cod
+                           WHERE e.tarea = ? AND e.borrada = 0 AND e.para_v <> p.publica_v');
+        $e->execute([$t['id']]);
+        $tareas_r[] = ['id' => (int)$t['id'], 'titulo' => $t['titulo'], 'herramienta' => adr_herr_id($t),
+                       'modo' => $modo, 'sellada' => (bool)$t['sellada'], 'con_contenido' => (bool)$t['con_contenido'],
+                       'entradas' => $e->fetchAll()];
+    }
     adr_json(['sobres' => $sobres, 'copias' => $copias->fetchAll(), 'tareas' => $tareas_r]);
 }
 
@@ -1360,12 +1424,13 @@ case 'asignar': {
             || !in_array($res['tipo'] ?? '', ['rellenable', 'lectura'], true)) {
             adr_json(['error' => 'falta el resguardo de la herramienta (id y tipo)'], 400);
         }
+        $modo = adr_modo_para($res, $in['modo'] ?? null);
         $res = ['id' => $res['id'], 'tipo' => $res['tipo'], 'titulo' => mb_substr((string)($res['titulo'] ?? ''), 0, 80),
-                'riesgo' => !empty($res['riesgo']), 'sellada' => true];
-        $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, cifrado, para_v)
-                      VALUES (?,?,?,?,?,'herramienta',?,?)")
+                'riesgo' => !empty($res['riesgo']), 'sellada' => true, 'modo' => $modo];
+        $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, cifrado, para_v, modo)
+                      VALUES (?,?,?,?,?,'herramienta',?,?,?)")
            ->execute([$cod, mb_substr($titulo ?: 'Herramienta', 0, 80, 'UTF-8'), json_encode($res, JSON_UNESCAPED_UNICODE),
-                      adr_ahora(), $in['caduca'] ?? null, $cif, (int)$in['para_v']]);
+                      adr_ahora(), $in['caduca'] ?? null, $cif, (int)$in['para_v'], $modo]);
         $id = (int)$db->lastInsertId();
         if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
         adr_json(['ok' => true, 'id' => $id, 'sellada' => true]);
@@ -1376,11 +1441,11 @@ case 'asignar': {
             || !in_array($plantilla['tipo'] ?? '', ['rellenable', 'lectura'], true)) {
             adr_json(['error' => 'la herramienta no tiene una forma válida'], 400);
         }
-        $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo)
-                      VALUES (?,?,?,?,?,'herramienta')")
+        $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, modo)
+                      VALUES (?,?,?,?,?,'herramienta',?)")
            ->execute([$cod, mb_substr($titulo ?: 'Herramienta', 0, 80, 'UTF-8'),
                       json_encode($plantilla, JSON_UNESCAPED_UNICODE),
-                      adr_ahora(), $in['caduca'] ?? null]);
+                      adr_ahora(), $in['caduca'] ?? null, adr_modo_para($plantilla, $in['modo'] ?? null)]);
         $id = (int)$db->lastInsertId();
         if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
         adr_json(['ok' => true, 'id' => $id]);
@@ -1443,12 +1508,15 @@ case 'asignar': {
 case 'tarea': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare('SELECT id, titulo, plantilla, hecho, tipo, cifrado, para_v, borrador, borrador_v
+    $q = $db->prepare('SELECT id, titulo, plantilla, hecho, tipo, cifrado, para_v, borrador, borrador_v, modo, actualizado
                        FROM tareas WHERE id = ? AND cod = ?');
     $q->execute([(int)($_GET['id'] ?? 0), $cod]);
     $t = $q->fetch();
     if (!$t) adr_json(['error' => 'no existe'], 404);
-    if ($t['hecho'] !== null) adr_json(['error' => 'ya la habías entregado'], 409);
+    $modo = adr_modo_fila($t);
+    /* Un documento vivo o un registro se siguen abriendo después de
+       empezarlos: es su gracia. Lo de una vez, no. */
+    if ($t['hecho'] === 'retirada' || ($t['hecho'] !== null && $modo === 'una')) adr_json(['error' => 'ya la habías entregado'], 409);
 
     /* Un deber lleva su texto CIFRADO; un cuestionario, su plantilla en
        claro. No es incoherencia: el PHQ-9 es público y el mismo para
@@ -1464,7 +1532,8 @@ case 'tarea': {
               /* La herramienta sellada y lo que lleve guardado a medias
                  (sellado a SU clave): el servidor no lee ninguno de los dos. */
               'cifrado' => $t['tipo'] === 'herramienta' && $t['cifrado'] ? adr_b64($t['cifrado']) : null,
-              'para_v' => (int)$t['para_v'],
+              'para_v' => (int)$t['para_v'], 'modo' => $modo, 'empezada' => $t['hecho'] !== null,
+              'actualizado' => $t['actualizado'],
               'borrador' => $t['borrador'] ? adr_b64($t['borrador']) : null, 'borrador_v' => (int)($t['borrador_v'] ?? 0)]);
 }
 
@@ -1489,6 +1558,164 @@ case 'guardar_borrador': {
    transacción: si se guardara el sobre y fallara la marca, la persona
    volvería a ver la tarea pendiente y la contestaría dos veces; al
    revés, se perdería lo que acaba de escribir. */
+/* --- Herramientas vivas y registros (17-10, tarde) ------------------- */
+
+/* Un documento vivo (o la parte fija de un registro) se guarda: lo que
+   tiene ahora, sellado a SU clave (lo vuelve a abrir y lo sigue
+   cambiando), y una versión sellada al Mac, que así guarda el historial
+   de versiones. Nada de «enviar»: guardar ES enviar. */
+case 'guardar_vivo': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $id = (int)($in['id'] ?? 0);
+    $mac = adr_deb64($in['cifrado'] ?? null);
+    $mio = adr_deb64($in['copia'] ?? null);
+    if (!$mac || !$mio || strlen($mac) > 512 * 1024 || strlen($mio) > 512 * 1024) adr_json(['error' => 'no válido'], 400);
+    if (!adr_freno($db, 'viv:' . $cod, 120, 3600)) adr_json(['error' => 'despacio'], 429);
+    $q = $db->prepare('SELECT * FROM tareas WHERE id = ? AND cod = ?');
+    $q->execute([$id, $cod]);
+    $t = $q->fetch();
+    if (!$t || $t['hecho'] === 'retirada' || adr_modo_fila($t) === 'una') adr_json(['error' => 'no existe'], 404);
+    $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+    $v->execute([$cod]);
+    $pv = (int)$v->fetch()['publica_v'];
+    $ahora = adr_ahora();
+    $db->beginTransaction();
+    $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase) VALUES (?,1,?,?,?,'ejercicio')")
+       ->execute([$cod, $t['titulo'], $mac, $ahora]);
+    $db->prepare('UPDATE tareas SET borrador = ?, borrador_v = ?, actualizado = ?, hecho = COALESCE(hecho, ?) WHERE id = ?')
+       ->execute([$mio, $pv, $ahora, $ahora, $id]);
+    $db->commit();
+    adr_json(['ok' => true, 'guardado' => $ahora]);
+}
+
+/* Una entrada de un registro: nueva o corregida (mismo `uid`), o
+   quitada (`borrar`). Siempre con su sobre al Mac, que se entera de la
+   corrección o de que se ha quitado. */
+case 'entrada': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $id = (int)($in['id'] ?? 0);
+    $uid = (string)($in['uid'] ?? '');
+    $fecha = (string)($in['fecha'] ?? '');
+    $mac = adr_deb64($in['cifrado'] ?? null);
+    $mio = adr_deb64($in['copia'] ?? null);
+    $borrar = !empty($in['borrar']);
+    if (!preg_match('/^[A-Za-z0-9_-]{8,40}$/', $uid) || !$mac || strlen($mac) > 256 * 1024
+        || (!$borrar && (!$mio || strlen($mio) > 256 * 1024))) adr_json(['error' => 'no válido'], 400);
+    $hoy = adr_hoy();
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha) || $fecha > $hoy
+        || $fecha < adr_madrid()->modify('-62 days')->format('Y-m-d')) adr_json(['error' => 'esa fecha no vale'], 400);
+    if (!adr_freno($db, 'entr:' . $cod, 200, 3600)) adr_json(['error' => 'despacio'], 429);
+    $q = $db->prepare('SELECT * FROM tareas WHERE id = ? AND cod = ?');
+    $q->execute([$id, $cod]);
+    $t = $q->fetch();
+    if (!$t || $t['hecho'] === 'retirada' || adr_modo_fila($t) !== 'registro') adr_json(['error' => 'no existe'], 404);
+    $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+    $v->execute([$cod]);
+    $pv = (int)$v->fetch()['publica_v'];
+    $ahora = adr_ahora();
+    $db->beginTransaction();
+    $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase) VALUES (?,1,?,?,?,'ejercicio')")
+       ->execute([$cod, $t['titulo'], $mac, $ahora]);
+    if ($borrar) {
+        $db->prepare('UPDATE entradas SET borrada = 1, modificado = ? WHERE tarea = ? AND uid = ? AND cod = ?')
+           ->execute([$ahora, $id, $uid, $cod]);
+    } else {
+        $db->prepare('INSERT INTO entradas (cod, tarea, uid, fecha, cifrado, para_v, creado, modificado)
+                      VALUES (?,?,?,?,?,?,?,?)
+                      ON CONFLICT(tarea, uid) DO UPDATE SET fecha = excluded.fecha, cifrado = excluded.cifrado,
+                        para_v = excluded.para_v, modificado = excluded.modificado, borrada = 0')
+           ->execute([$cod, $id, $uid, $fecha, $mio, $pv, $ahora, $ahora]);
+        $db->prepare('UPDATE tareas SET actualizado = ?, hecho = COALESCE(hecho, ?) WHERE id = ?')
+           ->execute([$ahora, $ahora, $id]);
+    }
+    $db->commit();
+    adr_json(['ok' => true]);
+}
+
+case 'entradas': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $q = $db->prepare('SELECT uid, fecha, cifrado, para_v, creado, modificado FROM entradas
+                       WHERE tarea = ? AND cod = ? AND borrada = 0 ORDER BY fecha DESC, creado DESC LIMIT 500');
+    $q->execute([(int)($_GET['id'] ?? 0), $cod]);
+    adr_json(['entradas' => array_map(fn($e) => ['uid' => $e['uid'], 'fecha' => $e['fecha'],
+        'cifrado' => adr_b64($e['cifrado']), 'para_v' => (int)$e['para_v'],
+        'creado' => $e['creado'], 'modificado' => $e['modificado']], $q->fetchAll())]);
+}
+
+/* Su recordatorio: la hora («21:00») o nada para quitarlo. */
+case 'recordatorio': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $id = (int)($in['id'] ?? 0);
+    $hora = (string)($in['hora'] ?? '');
+    $q = $db->prepare('SELECT 1 FROM tareas WHERE id = ? AND cod = ?');
+    $q->execute([$id, $cod]);
+    if (!$q->fetch()) adr_json(['error' => 'no existe'], 404);
+    if ($hora === '') {
+        $db->prepare('DELETE FROM recordatorios WHERE cod = ? AND tarea = ?')->execute([$cod, $id]);
+        adr_json(['ok' => true, 'hora' => null]);
+    }
+    if (!preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $hora)) adr_json(['error' => 'hora no válida'], 400);
+    /* Si la pone para una hora que ya ha pasado hoy, empieza mañana. */
+    $ultimo = $hora <= adr_madrid()->format('H:i') ? adr_hoy() : null;
+    $db->prepare('INSERT INTO recordatorios (cod, tarea, hora, ultimo) VALUES (?,?,?,?)
+                  ON CONFLICT(cod, tarea) DO UPDATE SET hora = excluded.hora, ultimo = excluded.ultimo')
+       ->execute([$cod, $id, $hora, $ultimo]);
+    adr_json(['ok' => true, 'hora' => $hora]);
+}
+
+/* Para el Mac: «Antes de la sesión» de las citas entre dos momentos
+   (por defecto, hoy y mañana). */
+case 'antes_sesion': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $hoy = adr_madrid()->setTime(0, 0);
+    try {
+        $desde = isset($in['desde']) ? adr_madrid((string)$in['desde']) : $hoy;
+        $hasta = isset($in['hasta']) ? adr_madrid((string)$in['hasta']) : $hoy->modify('+1 day')->setTime(23, 59, 59);
+    } catch (Throwable $e) { adr_json(['error' => 'fechas no válidas'], 400); }
+    adr_json(['citas' => adr_antes_sesion($db, $desde, $hasta)]);
+}
+
+/* Para el Mac: mandar YA el correo de la mañana (para probarlo). */
+case 'resumen_dia': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    adr_json(adr_resumen_dia($db, $ADR, true) ?? ['citas' => 0]);
+}
+
+/* El latido: lo mismo que hace cada pasada del Mac con los
+   recordatorios y el correo de la mañana, para que un cron del
+   alojamiento (si lo hay) lo dispare aunque el Mac esté apagado. No
+   devuelve nada que diga nada. */
+case 'latido': {
+    if (!adr_freno($db, 'latido', 30, 600)) adr_json(['ok' => true]);
+    try { adr_recordatorios($db, $ADR); adr_resumen_dia($db, $ADR); } catch (Throwable $e) {}
+    adr_json(['ok' => true]);
+}
+
+/* Tras un cambio de contraseña, el Mac vuelve a sellar las entradas de
+   un registro a la clave nueva (las tiene todas: le llegó cada una). */
+case 'resellar_entradas': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $id = (int)($in['tarea'] ?? 0);
+    $q = $db->prepare("SELECT t.cod, p.publica_v FROM tareas t JOIN pacientes p ON p.cod = t.cod WHERE t.id = ?");
+    $q->execute([$id]);
+    $f = $q->fetch();
+    if (!$f) adr_json(['error' => 'no existe'], 404);
+    if ((int)($in['para_v'] ?? -1) !== (int)$f['publica_v']) adr_json(['error' => 'clave caducada'], 409);
+    $n = 0;
+    foreach ((array)($in['entradas'] ?? []) as $e) {
+        $c = adr_deb64($e['cifrado'] ?? null);
+        if (!$c || strlen($c) > 256 * 1024) continue;
+        $u = $db->prepare('UPDATE entradas SET cifrado = ?, para_v = ? WHERE tarea = ? AND uid = ?');
+        $u->execute([$c, (int)$in['para_v'], $id, (string)($e['uid'] ?? '')]);
+        $n += $u->rowCount();
+    }
+    adr_json(['ok' => true, 'reselladas' => $n]);
+}
+
 case 'entregar': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
@@ -1935,16 +2162,21 @@ case 'vincular_pago': {
    clave vieja, ya no se puede abrir: se quita. */
 case 'resellar_tarea': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
-    $cif = adr_deb64($in['cifrado'] ?? null);
-    if (!$cif || strlen($cif) > 1024 * 1024) adr_json(['error' => 'sobre no válido'], 400);
-    $q = $db->prepare("SELECT p.publica_v FROM tareas t JOIN pacientes p ON p.cod = t.cod
-                       WHERE t.id = ? AND t.tipo = 'herramienta' AND t.hecho IS NULL");
+    $cif = isset($in['cifrado']) ? adr_deb64($in['cifrado']) : null;
+    if (isset($in['cifrado']) && (!$cif || strlen($cif) > 1024 * 1024)) adr_json(['error' => 'sobre no válido'], 400);
+    /* 17-10: un documento vivo o un registro también, aunque ya esté
+       empezado; y con `borrador` (lo que tenía escrito, sellado a la
+       clave nueva) para que no lo pierda. */
+    $q = $db->prepare("SELECT t.*, p.publica_v AS pv FROM tareas t JOIN pacientes p ON p.cod = t.cod
+                       WHERE t.id = ? AND t.tipo = 'herramienta' AND (t.hecho IS NULL OR t.hecho <> 'retirada')");
     $q->execute([(int)($in['id'] ?? 0)]);
     $f = $q->fetch();
-    if (!$f) adr_json(['error' => 'no existe o ya está hecha'], 404);
-    if ((int)($in['para_v'] ?? -1) !== (int)$f['publica_v']) adr_json(['error' => 'clave caducada'], 409);
-    $db->prepare('UPDATE tareas SET cifrado = ?, para_v = ?, borrador = NULL, borrador_v = NULL WHERE id = ?')
-       ->execute([$cif, (int)$in['para_v'], (int)$in['id']]);
+    if (!$f || ($f['hecho'] !== null && adr_modo_fila($f) === 'una')) adr_json(['error' => 'no existe o ya está hecha'], 404);
+    if ((int)($in['para_v'] ?? -1) !== (int)$f['pv']) adr_json(['error' => 'clave caducada'], 409);
+    if (!$cif && $f['cifrado'] !== null) adr_json(['error' => 'falta la definición sellada'], 400);
+    $bor = isset($in['borrador']) ? adr_deb64($in['borrador']) : null;
+    $db->prepare('UPDATE tareas SET cifrado = COALESCE(?, cifrado), para_v = ?, borrador = ?, borrador_v = ? WHERE id = ?')
+       ->execute([$cif, (int)$in['para_v'], $bor, $bor ? (int)$in['para_v'] : null, (int)$in['id']]);
     adr_json(['ok' => true]);
 }
 
