@@ -1645,6 +1645,16 @@ function pintaPdf(d) {
   fila.append(abrirA, ' ', bajar);
   caja.append(p, fila);
 }
+/* El logo de arriba lleva a Inicio (17-10), desde cualquier pantalla y
+   sin recargar: recargar obligaría a volver a poner la contraseña,
+   porque la llave solo vive en la memoria de esta pestaña. */
+document.querySelectorAll('.barra .marca').forEach(m => m.addEventListener('click', ev => {
+  ev.preventDefault();
+  if (!privada || $('v-entrar').hidden === false) return;
+  if (URL_PDF) { URL.revokeObjectURL(URL_PDF); URL_PDF = null; }
+  if (location.hash !== '#inicio') history.replaceState(null, '', '#inicio');
+  panel();
+}));
 $('doc-volver').addEventListener('click', () => {
   if (URL_PDF) { URL.revokeObjectURL(URL_PDF); URL_PDF = null; }
   panel();

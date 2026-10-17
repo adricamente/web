@@ -29,18 +29,18 @@ function adr_pagina(string $titulo, string $cuerpo, string $guion = '',
     header('Content-Type: text/html; charset=utf-8');
     $nav = '';
     if ($dentro) {
-        $enlaces = ['panel.php' => 'Inicio', 'clave.php' => 'Contraseña',
+        $enlaces = ['index.php' => 'Inicio', 'clave.php' => 'Contraseña',
                     'salir.php' => 'Salir'];
         foreach ($enlaces as $u => $t) {
             $act = ($u === $aqui) ? ' aria-current="page"' : '';
             $nav .= '<a href="' . $u . '"' . $act . '>' . $t . '</a>';
         }
         $nav = '<header class="barra"><div class="dentro">'
-             . '<a class="marca" href="panel.php">adricamente</a>'
+             . '<a class="marca" href="index.php#inicio">adricamente</a>'
              . '<nav aria-label="Tu cuenta">' . $nav . '</nav></div></header>';
     } else {
         $nav = '<header class="barra"><div class="dentro">'
-             . '<span class="marca">adricamente</span></div></header>';
+             . '<a class="marca" href="index.php#inicio">adricamente</a></div></header>';
     }
     echo '<!doctype html>
 <html lang="es">
