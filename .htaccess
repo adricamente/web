@@ -147,4 +147,16 @@
   RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 </IfModule>
 
+# --- 6. Enlaces cortos de las redes (17-10) ------------------
+#  TikTok y muchas apps abren la web sin decir de dónde viene la
+#  visita: en Umami salía como «directa» (el 85 % del lanzamiento).
+#  Con estos enlaces en cada biografía se sabe cuánta gente llega de
+#  cada red y cuántos de ellos pulsan «Reservar». 302: son enlaces de
+#  campaña, no páginas, y no deben quedarse en la caché de nadie.
+<IfModule mod_rewrite.c>
+  RewriteRule ^ig/?$ /?utm_source=instagram&utm_medium=bio [R=302,L]
+  RewriteRule ^tt/?$ /?utm_source=tiktok&utm_medium=bio [R=302,L]
+  RewriteRule ^dr/?$ /?utm_source=doctoralia&utm_medium=perfil [R=302,L]
+</IfModule>
+
 ErrorDocument 404 /404.html
