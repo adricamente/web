@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://adricamente.com/</loc>
-    <lastmod>2026-10-14</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/sobre-mi/</loc>
-    <lastmod>2026-10-07</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/terapia-online/</loc>
@@ -14,7 +14,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/areas/</loc>
-    <lastmod>2026-10-07</lastmod>
+    <lastmod>2026-10-17</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/areas/ansiedad/</loc>
@@ -87,5 +87,13 @@
   <url>
     <loc>https://adricamente.com/quien-es-quien-en-salud-mental/</loc>
     <lastmod>2026-10-07</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/tu-cuenta/</loc>
+    <lastmod>2026-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/lgtbi/</loc>
+    <lastmod>2026-10-17</lastmod>
   </url>
 </urlset>
