@@ -266,6 +266,11 @@ $cuerpo .= <<<'HTML'
         (atención a la conducta suicida, 24 horas, gratuito) <strong>o al
         112</strong>. Si puedes, díselo a alguien que tengas cerca.</p>
       </div>
+      <div class="adjuntar">
+        <label class="boton suave" for="m-archivo">Adjuntar un archivo</label>
+        <input type="file" id="m-archivo" accept="image/*,application/pdf,.doc,.docx,.txt">
+        <span class="apunte" id="m-archivo-nombre">Foto, PDF o documento, hasta 15 MB. Va cifrado.</span>
+      </div>
       <p><button class="boton" id="m-enviar" type="button">Enviar</button>
       <span class="apunte" id="m-estado" role="status"></span></p>
     </section>
@@ -472,6 +477,7 @@ $cuerpo .= <<<'HTML'
     <div id="h-cuerpo"></div>
     <p style="margin-top:22px" id="h-botones">
       <button class="boton" id="h-enviar" type="submit">Enviar</button>
+      <button class="boton suave" id="h-guardar" type="button" hidden>Guardar y seguir otro día</button>
       <button class="boton suave" id="h-leido" type="button" hidden>Ya lo he leído</button>
       <button class="boton suave" id="h-pdf" type="button">Descargar en PDF</button>
       <button class="enlace-boton" id="h-volver" type="button">← Volver</button>
@@ -1054,7 +1060,9 @@ async function abreMio(m, v) {
   if (!m.copia_id || Number(m.copia_v) !== Number(v)) return null;
   const r = await api('abrir&id=' + encodeURIComponent(m.copia_id));
   if (!r.ok || !r.j.cifrado) return null;
-  try { const x = abrirDelMac(r.j.cifrado, miPublica, privada); return (x && x.texto) || null; }
+  try { const x = abrirDelMac(r.j.cifrado, miPublica, privada);
+        if (!x) return null;
+        return (x.texto || '') + (x.adjunto ? (x.texto ? '\n' : '') + '📎 ' + x.adjunto : '') || null; }
   catch (_) { return null; }
 }
 async function pintaHilo(ms, v) {
@@ -1116,22 +1124,61 @@ $('m-texto').addEventListener('input', () => {
   $('m-auxilio').hidden = !suenaARiesgo($('m-texto').value);
 });
 
+/* Adjuntar un archivo al mensaje (17-10). Va sellado a la clave del Mac
+   como el texto: el servidor transporta y no lee. Las fotos se reducen
+   antes (una foto de móvil son 4 MB y para leerla sobran 2000 píxeles). */
+async function reducirFoto(f) {
+  const bm = await createImageBitmap(f);
+  const k = Math.min(1, 2000 / Math.max(bm.width, bm.height));
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(bm.width * k); cv.height = Math.round(bm.height * k);
+  cv.getContext('2d').drawImage(bm, 0, 0, cv.width, cv.height);
+  return await new Promise((ok, mal) => cv.toBlob(b => b ? ok(b) : mal(new Error('no')), 'image/jpeg', 0.85));
+}
+function aBase64(blob) {
+  return new Promise((ok, mal) => {
+    const r = new FileReader();
+    r.onload = () => ok(String(r.result).split(',')[1] || '');
+    r.onerror = () => mal(new Error('No he podido leer el archivo.'));
+    r.readAsDataURL(blob);
+  });
+}
+$('m-archivo').addEventListener('change', () => {
+  const f = $('m-archivo').files && $('m-archivo').files[0];
+  $('m-archivo-nombre').textContent = f ? '📎 ' + f.name : 'Foto, PDF o documento, hasta 15 MB. Va cifrado.';
+});
 $('m-enviar').addEventListener('click', async () => {
   const texto = $('m-texto').value.trim();
-  if (!texto) return;
+  const f = $('m-archivo').files && $('m-archivo').files[0];
+  if (!texto && !f) return;
   if (suenaARiesgo(texto)) $('m-auxilio').hidden = false;
   $('m-enviar').disabled = true;
-  $('m-estado').textContent = '';
+  $('m-estado').textContent = f ? 'Preparando el archivo…' : '';
   try {
-    const cifrado = sellarHaciaElMac({ v: 1, tipo: 'mensaje', texto,
-                                       escrito_en: ahoraLocal(), origen: 'cuenta',
-                                       cod_web: miCod },
+    let adjunto = null;
+    if (f) {
+      let blob = f, mime = f.type || 'application/octet-stream', nombre = (f.name || 'archivo').slice(0, 100);
+      if (/^image\//.test(mime) && !/hei[cf]/i.test(mime)) {
+        try { blob = await reducirFoto(f); mime = 'image/jpeg'; nombre = nombre.replace(/\.[^.]+$/, '') + '.jpg'; } catch (_) { blob = f; }
+      }
+      if (blob.size > 15 * 1024 * 1024) { $('m-estado').textContent = 'El archivo pasa de 15 MB. Prueba con una foto o una captura.'; return; }
+      adjunto = { nombre, mime, tamano: blob.size, datos: await aBase64(blob) };
+      $('m-estado').textContent = 'Enviando…';
+    }
+    const escrito_en = ahoraLocal();
+    const cifrado = sellarHaciaElMac(Object.assign({ v: 1, tipo: 'mensaje', texto,
+                                       escrito_en, origen: 'cuenta', cod_web: miCod },
+                                       adjunto ? { adjuntos: [adjunto] } : {}),
                                      macPublica);
-    /* Y una copia a su propia clave, para poder releerlo. */
-    const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_mensaje', texto, escrito_en: ahoraLocal() }, miPublica);
-    const r = await api('escribir', { cifrado, copia });
-    if (!r.ok) { $('m-estado').textContent = 'No se ha podido enviar.'; return; }
+    /* Y una copia a su propia clave, para poder releerlo (del archivo,
+       solo el nombre). */
+    const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_mensaje', texto, escrito_en,
+                                     adjunto: adjunto ? adjunto.nombre : null }, miPublica);
+    const r = await api('escribir', { cifrado, copia, adjunto: !!adjunto });
+    if (!r.ok) { $('m-estado').textContent = (r.j && r.j.error) ? 'No se ha podido enviar: ' + r.j.error + '.' : 'No se ha podido enviar.'; return; }
     $('m-texto').value = '';
+    $('m-archivo').value = '';
+    $('m-archivo-nombre').textContent = 'Foto, PDF o documento, hasta 15 MB. Va cifrado.';
     $('m-estado').textContent = 'Enviado. Lo leeré en mi horario de consulta.';
     await panel();
   } finally { $('m-enviar').disabled = false; }
@@ -2388,8 +2435,14 @@ function pintaBloques(def, valores, modo, desactivar) {
     if (desactivar || bloqueada) c.disabled = true;
     return c;
   };
-  (def.bloques || []).forEach(b => {
-    if (b.t === 'campos') {
+  /* «Lo que acordamos en sesión» va el primero y destacado: es lo que
+     más se lee (tareas para casa, 14-10). */
+  const esAcordado = (b) => b.t === 'nota' && /^\s*lo que acordamos/i.test(b.negrita || '');
+  const bloques = (def.bloques || []).filter(esAcordado).concat((def.bloques || []).filter(b => !esAcordado(b)));
+  bloques.forEach(b => {
+    if (esAcordado(b)) {
+      raiz.appendChild(parrafo(b, 'acordado-h'));
+    } else if (b.t === 'campos') {
       const fila = el('div', 'campos-fila');
       b.campos.forEach(k => {
         const caja = el('label', 'campo-h');
@@ -2495,19 +2548,38 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   cuerpo.appendChild(pintaBloques(def, valores, soloLeer ? 'texto' : 'form', false));
   const lectura = def.tipo === 'lectura';
   $('h-enviar').hidden = soloLeer || lectura;
+  $('h-guardar').hidden = soloLeer || lectura || !HERR || !HERR.tarea;
   $('h-leido').hidden = !(lectura && !soloLeer);
   $('h-estado').textContent = (soloLeer || lectura) ? '' :
-    'Lo que escribes se queda en este dispositivo hasta que envíes. No sale de aquí sin cifrar.';
+    'Puedes rellenarla poco a poco: «Guardar y seguir otro día» la guarda cifrada y la retomas desde cualquier dispositivo. Cuando esté completa, «Enviar».';
   ver('v-herr');
 }
 
 async function abrirHerramienta(id) {
   const r = await api('tarea&id=' + encodeURIComponent(id));
   if (!r.ok || r.j.tipo !== 'herramienta') { await panel(); return; }
-  HERR = { tarea: r.j.id, def: r.j.plantilla, soloLeer: false };
-  let borrador = {};
-  try { borrador = JSON.parse(localStorage.getItem(claveHerr()) || '{}'); } catch (_) {}
-  montaHerramienta(HERR.def, borrador, false, 'Herramienta');
+  /* Sellada (17-10): la definición viaja cifrada a SU clave. */
+  let def = r.j.plantilla;
+  if (r.j.cifrado) {
+    if (Number(r.j.para_v) !== Number(miV)) {
+      $('panel-estado').textContent = 'Esta tarea se está actualizando tras el cambio de contraseña. En unos minutos la tienes.';
+      return;
+    }
+    try { def = abrirDelMac(r.j.cifrado, miPublica, privada); }
+    catch (_) { $('panel-estado').textContent = 'No se ha podido abrir esta tarea. Te la vuelvo a mandar.'; return; }
+  }
+  HERR = { tarea: r.j.id, def, soloLeer: false };
+  /* Lo guardado a medias: lo más reciente entre este dispositivo y lo
+     guardado en la cuenta (sellado a su clave). */
+  let local = null, remoto = null;
+  try { local = JSON.parse(localStorage.getItem(claveHerr()) || 'null'); } catch (_) {}
+  if (r.j.borrador && Number(r.j.borrador_v) === Number(miV)) {
+    try { remoto = abrirDelMac(r.j.borrador, miPublica, privada); } catch (_) {}
+  }
+  const campos = (x) => x ? (x.campos || x) : null;
+  const cuando = (x) => (x && x.guardado) || '';
+  const elegido = (remoto && (!local || cuando(remoto) > cuando(local))) ? remoto : local;
+  montaHerramienta(HERR.def, campos(elegido) || {}, false, 'Herramienta');
 }
 
 async function abrirCopia(id) {
@@ -2522,7 +2594,19 @@ async function abrirCopia(id) {
 
 $('h-cuerpo').addEventListener('input', () => {
   if (!HERR || HERR.soloLeer || !HERR.tarea) return;
-  try { localStorage.setItem(claveHerr(), JSON.stringify(camposDelForm())); } catch (_) {}
+  try { localStorage.setItem(claveHerr(), JSON.stringify({ campos: camposDelForm(), guardado: new Date().toISOString() })); } catch (_) {}
+});
+$('h-guardar').addEventListener('click', async () => {
+  if (!HERR || HERR.soloLeer || !HERR.tarea) return;
+  $('h-guardar').disabled = true;
+  try {
+    const x = { campos: camposDelForm(), guardado: new Date().toISOString() };
+    try { localStorage.setItem(claveHerr(), JSON.stringify(x)); } catch (_) {}
+    const r = await api('guardar_borrador', { id: HERR.tarea, cifrado: sellarHaciaElMac(x, miPublica) });
+    if (!r.ok) { $('h-estado').textContent = 'No se ha podido guardar en tu cuenta; se queda en este dispositivo.'; return; }
+    await panel();
+    $('panel-estado').textContent = 'Guardada. La retomas cuando quieras desde «Tareas».';
+  } finally { $('h-guardar').disabled = false; }
 });
 
 $('h-form').addEventListener('submit', async (ev) => {

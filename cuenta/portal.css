@@ -650,3 +650,11 @@ h3{font-weight:700}
 .ci-declara{margin:0 0 6px;padding-left:20px;font-size:15.5px}
 .ci-declara li{margin:6px 0}
 .nota.info{background:var(--accent-soft);color:var(--accent-3);border:1px solid #C9D9E8}
+/* Tareas para casa: lo acordado en sesión, primero y destacado */
+.acordado-h{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:var(--r-s);padding:12px 14px;margin:0 0 16px;font-size:16px;max-width:none}
+.acordado-h strong{color:var(--accent-3)}
+/* Adjuntar en mensajes */
+.adjuntar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.adjuntar input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.adjuntar label{margin:0;cursor:pointer}
+.burbuja .adjunto{font-size:14px;margin:6px 0 0;color:var(--ink-2)}

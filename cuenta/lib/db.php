@@ -163,6 +163,10 @@ function adr_db(array $ADR): PDO {
             'origen'    => 'TEXT',
             /* Cuándo se le recordó. Uno solo por tarea, nunca dos. */
             'recordada' => 'TEXT',
+            /* Lo rellenado a medias de una herramienta, sellado a la
+               clave del paciente (17-10), y con qué versión de clave. */
+            'borrador'   => 'BLOB',
+            'borrador_v' => 'INTEGER',
         ],
         'pacientes' => [
             /* Cuándo se le avisó por última vez de que tiene algo

@@ -576,8 +576,13 @@ case 'escribir': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
     $cifrado = adr_deb64($in['cifrado'] ?? null);
-    if (!$cifrado || strlen($cifrado) > 65536) adr_json(['error' => 'mensaje no válido'], 400);
+    /* Con archivo adjunto (17-10): hasta 15 MB de archivo, unos 21 MB sellados. */
+    $adj = !empty($in['adjunto']);
+    if (!$cifrado || strlen($cifrado) > ($adj ? 21 * 1024 * 1024 : 65536)) {
+        adr_json(['error' => $adj ? 'el archivo es demasiado grande (máximo 15 MB)' : 'mensaje no válido'], $adj ? 413 : 400);
+    }
     if (!adr_freno($db, 'msg:' . $cod, 30, 3600)) adr_json(['error' => 'despacio'], 429);
+    if ($adj && !adr_freno($db, 'adj:' . $cod, 20, 86400)) adr_json(['error' => 'demasiados archivos hoy'], 429);
     /* La copia para releerlo, sellada en su navegador a SU clave. Va
        colgada del mensaje (copia_de) y se borra con él. */
     $copia = !empty($in['copia']) ? adr_deb64($in['copia']) : null;
@@ -592,6 +597,20 @@ case 'escribir': {
         $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase, copia_de)
                       VALUES (?,2,'Mi mensaje',?,?,?,'copia',?)")
            ->execute([$cod, $copia, (int)$v->fetch()['publica_v'], adr_ahora(), $mid]);
+    }
+    adr_apunta($db, $cod, $adj ? 'mensaje con archivo' : 'mensaje');
+    /* A Adrián le llega un correo (17-10: si alguien escribe, puede ser
+       algo). Sin contenido: el servidor no lo puede leer. Como mucho uno
+       cada 10 minutos por cuenta. */
+    require_once __DIR__ . '/lib/correo.php';
+    if (adr_freno($db, 'avisoadr:' . $cod, 1, 600)) {
+        $a = (string)((adr_google_cred($ADR) ?: [])['remite'] ?? ($ADR['remite'] ?? 'hola@adricamente.com'));
+        $t = "Te han escrito en el portal" . ($adj ? ", con un archivo adjunto" : "") . ".\n\nCuenta: $cod\n"
+           . "Hora: " . (new DateTimeImmutable('now', new DateTimeZone('Europe/Madrid')))->format('d/m/Y H:i') . "\n\n"
+           . "Ábrelo en la consola (Hoy → Mensajes). Por seguridad, el correo no lleva el contenido.\n";
+        adr_manda($ADR, $a, 'Mensaje nuevo en el portal' . ($adj ? ' (con archivo)' : ''), $t,
+                  adr_correo_marco('Mensaje nuevo', adr_correo_t('Te han escrito en el portal')
+                      . adr_correo_p(nl2br(htmlspecialchars($t))), 'Ábrelo en la consola.', true), 'aviso_adrian');
     }
     adr_json(['ok' => true]);
 }
@@ -1266,7 +1285,15 @@ case 'por_reenviar': {
                                               AND c.clase = 'copia' AND c.para_v = p.publica_v)
                               AND s.para_v <> p.publica_v");
     $copias->execute([$cod_r]);
-    adr_json(['sobres' => $sobres, 'copias' => $copias->fetchAll()]);
+    /* Las herramientas selladas (17-10) que siguen pendientes con la
+       clave anterior: hay que volver a sellarlas (resellar_tarea). */
+    $ts = $db->prepare("SELECT t.id, t.titulo, t.plantilla FROM tareas t JOIN pacientes p ON p.cod = t.cod
+                        WHERE t.cod = ? AND t.tipo = 'herramienta' AND t.cifrado IS NOT NULL AND t.hecho IS NULL
+                          AND t.para_v <> p.publica_v");
+    $ts->execute([$cod_r]);
+    $tareas_r = array_map(fn($t) => ['id' => (int)$t['id'], 'titulo' => $t['titulo'],
+                                     'herramienta' => json_decode((string)$t['plantilla'], true)['id'] ?? null], $ts->fetchAll());
+    adr_json(['sobres' => $sobres, 'copias' => $copias->fetchAll(), 'tareas' => $tareas_r]);
 }
 
 /* El Mac deja aquí su clave PÚBLICA. La sube él, no se copia a mano a
@@ -1308,6 +1335,31 @@ case 'asignar': {
        cuestionario: no tiene ítems ni opciones, tiene bloques y campos.
        La valida a fondo la consola; aquí lo justo para no guardar algo
        que el navegador no pueda pintar. */
+    if (($in['tipo'] ?? '') === 'herramienta' && !empty($in['cifrado'])) {
+        /* 17-10: la herramienta SELLADA a la clave del paciente. Las tareas
+           para casa llevan «Lo que acordamos en sesión», y eso dice algo de
+           alguien: no puede guardarse en claro. En claro solo queda un
+           resguardo sin contenido (id, título y tipo) para la lista. */
+        $cif = adr_deb64($in['cifrado']);
+        if (!$cif || strlen($cif) > 1024 * 1024) adr_json(['error' => 'herramienta sellada no válida'], 400);
+        $pv = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+        $pv->execute([$cod]);
+        if ((int)($in['para_v'] ?? -1) !== (int)$pv->fetch()['publica_v']) adr_json(['error' => 'clave caducada'], 409);
+        $res = is_array($plantilla) ? $plantilla : [];
+        if (!preg_match('/^[a-z0-9-]{2,60}$/', (string)($res['id'] ?? ''))
+            || !in_array($res['tipo'] ?? '', ['rellenable', 'lectura'], true)) {
+            adr_json(['error' => 'falta el resguardo de la herramienta (id y tipo)'], 400);
+        }
+        $res = ['id' => $res['id'], 'tipo' => $res['tipo'], 'titulo' => mb_substr((string)($res['titulo'] ?? ''), 0, 80),
+                'riesgo' => !empty($res['riesgo']), 'sellada' => true];
+        $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, cifrado, para_v)
+                      VALUES (?,?,?,?,?,'herramienta',?,?)")
+           ->execute([$cod, mb_substr($titulo ?: 'Herramienta', 0, 80, 'UTF-8'), json_encode($res, JSON_UNESCAPED_UNICODE),
+                      adr_ahora(), $in['caduca'] ?? null, $cif, (int)$in['para_v']]);
+        $id = (int)$db->lastInsertId();
+        if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
+        adr_json(['ok' => true, 'id' => $id, 'sellada' => true]);
+    }
     if (($in['tipo'] ?? '') === 'herramienta') {
         if (!is_array($plantilla) || empty($plantilla['bloques']) || !is_array($plantilla['bloques'])
             || !preg_match('/^[a-z0-9-]{2,60}$/', (string)($plantilla['id'] ?? ''))
@@ -1381,7 +1433,7 @@ case 'asignar': {
 case 'tarea': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare('SELECT id, titulo, plantilla, hecho, tipo, cifrado, para_v
+    $q = $db->prepare('SELECT id, titulo, plantilla, hecho, tipo, cifrado, para_v, borrador, borrador_v
                        FROM tareas WHERE id = ? AND cod = ?');
     $q->execute([(int)($_GET['id'] ?? 0), $cod]);
     $t = $q->fetch();
@@ -1398,7 +1450,29 @@ case 'tarea': {
     }
     adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'],
               'tipo' => in_array($t['tipo'], ['herramienta', 'objetivos'], true) ? $t['tipo'] : 'cuestionario',
-              'plantilla' => json_decode($t['plantilla'], true)]);
+              'plantilla' => json_decode($t['plantilla'], true),
+              /* La herramienta sellada y lo que lleve guardado a medias
+                 (sellado a SU clave): el servidor no lee ninguno de los dos. */
+              'cifrado' => $t['tipo'] === 'herramienta' && $t['cifrado'] ? adr_b64($t['cifrado']) : null,
+              'para_v' => (int)$t['para_v'],
+              'borrador' => $t['borrador'] ? adr_b64($t['borrador']) : null, 'borrador_v' => (int)($t['borrador_v'] ?? 0)]);
+}
+
+/* Guardar a medias una herramienta (tareas de la semana: un día cada
+   noche). Va sellado a la clave del propio paciente: el servidor no lo
+   lee, y así sigue desde cualquier dispositivo. */
+case 'guardar_borrador': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $cif = adr_deb64($in['cifrado'] ?? null);
+    if (!$cif || strlen($cif) > 512 * 1024) adr_json(['error' => 'borrador no válido'], 400);
+    if (!adr_freno($db, 'borr:' . $cod, 120, 3600)) adr_json(['error' => 'despacio'], 429);
+    $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+    $v->execute([$cod]);
+    $q = $db->prepare('UPDATE tareas SET borrador = ?, borrador_v = ? WHERE id = ? AND cod = ? AND hecho IS NULL');
+    $q->execute([$cif, (int)$v->fetch()['publica_v'], (int)($in['id'] ?? 0), $cod]);
+    if (!$q->rowCount()) adr_json(['error' => 'no existe'], 404);
+    adr_json(['ok' => true, 'guardado' => adr_ahora()]);
 }
 
 /* Y la entrega. El sobre y la marca de hecho van en la MISMA
@@ -1844,6 +1918,24 @@ case 'vincular_pago': {
         $re = $r['enviado'] || ($r['error'] ?? '') === 'en_cola';
     }
     adr_json(['ok' => true, 'ya' => false, 'reenviado' => $re]);
+}
+
+/* Volver a sellar una herramienta pendiente tras un cambio de contraseña.
+   Conserva la tarea (mismo id). Lo guardado a medias, sellado con la
+   clave vieja, ya no se puede abrir: se quita. */
+case 'resellar_tarea': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cif = adr_deb64($in['cifrado'] ?? null);
+    if (!$cif || strlen($cif) > 1024 * 1024) adr_json(['error' => 'sobre no válido'], 400);
+    $q = $db->prepare("SELECT p.publica_v FROM tareas t JOIN pacientes p ON p.cod = t.cod
+                       WHERE t.id = ? AND t.tipo = 'herramienta' AND t.hecho IS NULL");
+    $q->execute([(int)($in['id'] ?? 0)]);
+    $f = $q->fetch();
+    if (!$f) adr_json(['error' => 'no existe o ya está hecha'], 404);
+    if ((int)($in['para_v'] ?? -1) !== (int)$f['publica_v']) adr_json(['error' => 'clave caducada'], 409);
+    $db->prepare('UPDATE tareas SET cifrado = ?, para_v = ?, borrador = NULL, borrador_v = NULL WHERE id = ?')
+       ->execute([$cif, (int)$in['para_v'], (int)$in['id']]);
+    adr_json(['ok' => true]);
 }
 
 /* El Mac ha mandado SU aviso a esta cuenta: que el portal lo cuente para
