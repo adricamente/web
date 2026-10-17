@@ -1178,6 +1178,16 @@ case 'consentimientos': {
 
 /* Anular una prueba pendiente (Adrián decide que ya no hace falta).
    Desaparece de sus «Tareas». Solo lo que aún no ha hecho. */
+/* Quitar de su cuenta algo pendiente que se mandó por error (17-10).
+   Cualquier tipo, solo si sigue sin hacer, y no se borra: queda como
+   «retirada» (no sale ni en pendientes ni en «Lo que has completado»). */
+case 'quitar_tarea': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->prepare("UPDATE tareas SET hecho = 'retirada' WHERE id = ? AND cod = ? AND hecho IS NULL");
+    $q->execute([(int)($in['id'] ?? 0), (string)($in['cod'] ?? '')]);
+    adr_json(['ok' => true, 'quitadas' => $q->rowCount()]);
+}
+
 case 'anular_tarea': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $cod = (string)($in['cod'] ?? '');
