@@ -2663,7 +2663,7 @@ $('h-form').addEventListener('submit', async (ev) => {
     const momento = ahoraLocal();
     /* El sobre, exactamente con la forma acordada con el sistema
        clínico: sin `instrumento` ni `respuestas`. */
-    const sobre = { herramienta: HERR.def.id, campos, completado_en: momento,
+    const sobre = { herramienta: HERR.def.id, tarea: HERR.tarea, campos, completado_en: momento,
                     origen: 'cuenta', cod_web: miCod };
     const cifrado = sellarHaciaElMac(sobre, macPublica);
     const copia = sellarHaciaElMac({ def: HERR.def, campos, completado_en: momento }, miPublica);
@@ -2838,7 +2838,7 @@ function montaVivo(valores, cuando) {
 async function guardarVivo() {
   const campos = camposDelForm();
   const momento = ahoraLocal();
-  const sobre = { herramienta: HERR.def.id, modo: HERR.modo, parte: HERR.modo === 'registro' ? 'resto' : 'documento',
+  const sobre = { herramienta: HERR.def.id, tarea: HERR.tarea, modo: HERR.modo, parte: HERR.modo === 'registro' ? 'resto' : 'documento',
                   campos, completado_en: momento, origen: 'cuenta', cod_web: miCod };
   const copia = { campos, guardado: new Date().toISOString() };
   const r = await api('guardar_vivo', { id: HERR.tarea, cifrado: sellarHaciaElMac(sobre, macPublica),
@@ -3111,7 +3111,7 @@ function sobreEntrada(uid, fecha, fila, borrada) {
   const n = esDiario(b) ? diaSemana(fecha) + 1 : 1;
   const campos = {};
   Object.keys(fila || {}).forEach(k => { campos[b.id + '.' + n + '.' + k] = fila[k]; });
-  return { herramienta: HERR.def.id, modo: 'registro', entrada: { uid, fecha, borrada: !!borrada },
+  return { herramienta: HERR.def.id, tarea: HERR.tarea, modo: 'registro', entrada: { uid, fecha, borrada: !!borrada },
            tabla: b.id, fila: fila || {}, campos, semana: lunesDe(fecha),
            completado_en: ahoraLocal(), origen: 'cuenta', cod_web: miCod };
 }
