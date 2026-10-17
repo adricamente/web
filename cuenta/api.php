@@ -44,8 +44,11 @@ $db = adr_db($ADR);
 
 /** Avisa por correo de que hay algo pendiente, como mucho una vez cada
  *  N horas. Sin esto, asignar un cuestionario es hablarle a una pared:
- *  el paciente no entra «por si acaso». */
-function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 20): bool {
+ *  el paciente no entra «por si acaso».
+ *  17-10: eran 20 horas y se tragaba avisos de verdad (mandar algo por la
+ *  tarde cuando ya hubo un aviso por la mañana no avisaba). Ahora 2 horas:
+ *  tres cosas mandadas seguidas siguen siendo UN correo. */
+function adr_avisa(PDO $db, array $ADR, string $cod, int $horas = 2): bool {
     $q = $db->prepare('SELECT correo, ultimo_aviso FROM pacientes
                        WHERE cod = ? AND activado IS NOT NULL');
     $q->execute([$cod]);
