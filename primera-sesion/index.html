@@ -139,6 +139,15 @@
   ]
 }
   </script>
+  <style>
+    /* Solo en esta página: la cuenta, con su pantalla al lado. */
+    .con-pantalla{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:28px;align-items:start;margin:8px 0 34px}
+    .con-pantalla h3{margin-top:0}
+    .movil{margin:0;border:6px solid #1d1d1f;border-radius:26px;overflow:hidden;background:#FAF9F5;
+      box-shadow:0 10px 30px rgba(31,84,116,.16);aspect-ratio:1/2}
+    .movil img{display:block;width:100%;height:auto}
+    @media (max-width:640px){.con-pantalla{grid-template-columns:1fr;gap:14px}.movil{width:min(220px,64vw);justify-self:center}}
+  </style>
 </head>
 
 <body>
@@ -364,6 +373,59 @@
     </p>
     <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')" href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a></p>
   </div>
+  </div>
+
+  <h2 id="proceso">Y si seguimos: cómo es todo el proceso</h2>
+  <p>Sin sorpresas tampoco después. Esto es lo que pasa desde la primera
+  sesión de trabajo hasta el final:</p>
+  <ol class="pasos">
+    <li>
+      <strong>Evaluación · de la primera a la tercera sesión</strong>
+      Qué te pasa, desde cuándo, qué lo mantiene hoy y qué has probado ya.
+      A veces con algún cuestionario corto, para tener un punto de partida.
+    </li>
+    <li>
+      <strong>Devolución · hacia la tercera</strong>
+      Te cuento qué veo, en palabras normales. Elegimos juntos los
+      objetivos, cómo sabremos si se mueven y una estimación de cuántas
+      sesiones harán falta: suele ser entre ocho y veinte.
+    </li>
+    <li>
+      <strong>Tratamiento · semanal o quincenal</strong>
+      Sesiones de 60 minutos y, entre una y otra, algo pequeño que probar.
+      Esa parte es la mitad del trabajo.
+    </li>
+    <li>
+      <strong>Revisión · en la cuarta y luego cada cuatro</strong>
+      Miramos juntos si se mueve, con tus cuestionarios y tus objetivos
+      delante. Esa conversación la abro yo. Si no se mueve, cambiamos el
+      plan; si sigue sin moverse, te lo digo y te ayudo a buscar otro sitio.
+    </li>
+    <li>
+      <strong>Cierre y seguimiento</strong>
+      Cuando lo que vinimos a buscar está, espaciamos las sesiones,
+      repasamos qué te llevas y qué hacer si vuelve, y quedamos para una de
+      seguimiento al cabo de un tiempo. Terminar es el objetivo.
+    </li>
+  </ol>
+
+  <div class="con-pantalla">
+    <div>
+      <h3>Y todo eso, en tu cuenta</h3>
+      <p>Desde el principio tienes una cuenta privada en el móvil o el
+      ordenador: <strong>el resumen de cada sesión</strong>, tus ejercicios
+      entre sesiones, tus cuestionarios en una gráfica, tus objetivos, tu
+      plan de seguridad si hace falta, y la próxima sesión y los pagos.</p>
+      <p>Va cifrada: lo que escribes solo lo leemos tú y yo. Y lo que haces
+      entre sesiones me llega antes de la siguiente, así que empezamos por
+      lo importante.</p>
+      <p><a href="/tu-cuenta/">Así es tu cuenta por dentro, con capturas</a></p>
+    </div>
+    <figure class="movil">
+      <img src="/fotos/cuenta/inicio.webp" srcset="/fotos/cuenta/inicio.webp 390w, /fotos/cuenta/inicio-2x.webp 780w"
+           sizes="(max-width:640px) 64vw, 190px" width="390" height="780" loading="lazy" decoding="async"
+           alt="Captura del inicio de la cuenta en un móvil: la próxima sesión con el botón de la videollamada, lo pendiente y la última medida">
+    </figure>
   </div>
 
   <h2>Las preguntas que me hacen antes</h2>
