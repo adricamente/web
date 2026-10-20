@@ -419,8 +419,17 @@ $cuerpo .= <<<'HTML'
 <section id="v-tarea" class="vista" hidden>
   <p class="etiqueta">Cuestionario</p>
   <h1 id="t-titulo">…</h1>
-  <p class="apunte" id="t-instrucciones" hidden></p>
-  <p class="apunte" id="t-cabecera"></p>
+  <!-- El enunciado (20-10). Iba en gris, como un apunte, y una persona
+       nos contó que se lo saltó en sus tres primeros cuestionarios: leyó
+       el título y fue directa a la pregunta 1, que era lo primero en
+       negrita. Lo que dice cómo contestar (el periodo, la escala) tiene
+       que ser lo más visible después del título, no lo menos. -->
+  <div class="enunciado" id="t-enunciado" hidden>
+    <p class="enunciado-t">Antes de empezar, lee esto</p>
+    <p id="t-instrucciones" hidden></p>
+    <p id="t-cabecera" hidden></p>
+  </div>
+  <p class="apunte" id="t-pista" hidden></p>
 
   <div class="progreso-barra" role="progressbar" aria-label="Preguntas contestadas"
        aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" id="t-barra">
@@ -2072,8 +2081,12 @@ async function abrirTarea(id) {
   });
   const cab = (P.cabecera || '').trim();
   const repetida = P.bloques && P.bloques[0] && P.bloques[0].titulo === cab;
-  $('t-cabecera').textContent = (cab.split(/\s+/).length >= 3 && !repetida) ? cab
-    : (P.instrucciones ? '' : 'Si alguna no sabes contestarla, déjala en blanco y ya está.');
+  const cabVale = cab.split(/\s+/).length >= 3 && !repetida;
+  $('t-cabecera').textContent = cabVale ? cab : '';
+  $('t-cabecera').hidden = !cabVale;
+  $('t-enunciado').hidden = !(cabVale || P.instrucciones);
+  $('t-pista').textContent = 'Si alguna no sabes contestarla, déjala en blanco y ya está.';
+  $('t-pista').hidden = !$('t-enunciado').hidden;
   /* Antes de nada, devolver el bloque de crisis a su sitio.
      -------------------------------------------------------------------
      Esto no es limpieza opcional: es un fallo que se comió la pantalla.
@@ -2119,6 +2132,14 @@ async function abrirTarea(id) {
         d.textContent = resto.join('\n').trim();
         cont.appendChild(d);
       }
+    }
+    /* Cada siete preguntas, el enunciado otra vez, en pequeño: en un
+       cuestionario largo, a la pregunta quince ya no se ve el de arriba. */
+    if (cabVale && !(P.bloques || []).length && n > 1 && (n - 1) % 7 === 0 && cab.length <= 220) {
+      const rc = document.createElement('p');
+      rc.className = 'recuerda';
+      rc.textContent = cab;
+      cont.appendChild(rc);
     }
     /* Rótulos que van antes de un ítem (ITQ: 7, 10 y 16). */
     if (P.secciones && P.secciones[String(n)]) {
