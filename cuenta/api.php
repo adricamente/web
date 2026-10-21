@@ -2167,6 +2167,62 @@ case 'vincular_pago': {
 /* Volver a sellar una herramienta pendiente tras un cambio de contraseña.
    Conserva la tarea (mismo id). Lo guardado a medias, sellado con la
    clave vieja, ya no se puede abrir: se quita. */
+/* 21-10: pasar a la cuenta lo que una persona hizo en papel o en PDF, para
+   que siga en la cuenta con todo guardado. Solo el Mac, y sellado a la
+   clave del paciente (el portal no ve nada): `borrador` = {campos,
+   guardado} y cada entrada de un registro = {fecha, fila, guardado}. Busca
+   la herramienta por su id en la cuenta de esa persona; si no la tiene,
+   contesta `no_asignada` y el Mac la asigna primero. */
+case 'precargar': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $hid = (string)($in['herramienta'] ?? '');
+    $q = $db->prepare("SELECT t.*, p.publica_v AS pv FROM tareas t JOIN pacientes p ON p.cod = t.cod
+                       WHERE t.cod = ? AND t.tipo = 'herramienta' AND json_extract(t.plantilla, '$.id') = ?
+                         AND (t.hecho IS NULL OR t.hecho <> 'retirada')
+                       ORDER BY t.id DESC LIMIT 1");
+    $q->execute([$cod, $hid]);
+    $t = $q->fetch();
+    if (!$t) adr_json(['error' => 'no_asignada'], 404);
+    if ((int)($in['para_v'] ?? -1) !== (int)$t['pv']) adr_json(['error' => 'clave caducada'], 409);
+    $modo = adr_modo_fila($t);
+    if ($modo === 'una' && $t['hecho'] !== null) adr_json(['error' => 'esa ya la había entregado'], 409);
+    $bor = isset($in['borrador']) ? adr_deb64($in['borrador']) : null;
+    if (isset($in['borrador']) && (!$bor || strlen($bor) > 512 * 1024)) adr_json(['error' => 'borrador no válido'], 400);
+    $ents = (array)($in['entradas'] ?? []);
+    if ($ents && $modo !== 'registro') adr_json(['error' => 'esa herramienta no es un registro'], 400);
+    $hoy = adr_hoy();
+    $ahora = adr_ahora();
+    $db->beginTransaction();
+    $n = 0;
+    foreach ($ents as $e) {
+        $uid = (string)($e['uid'] ?? '');
+        $fecha = (string)($e['fecha'] ?? '');
+        $c = adr_deb64($e['cifrado'] ?? null);
+        if (!preg_match('/^[A-Za-z0-9_-]{8,40}$/', $uid) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)
+            || $fecha > $hoy || !$c || strlen($c) > 256 * 1024) {
+            $db->rollBack();
+            adr_json(['error' => 'entrada no válida: ' . $fecha], 400);
+        }
+        $db->prepare('INSERT INTO entradas (cod, tarea, uid, fecha, cifrado, para_v, creado, modificado)
+                      VALUES (?,?,?,?,?,?,?,?)
+                      ON CONFLICT(tarea, uid) DO UPDATE SET fecha = excluded.fecha, cifrado = excluded.cifrado,
+                        para_v = excluded.para_v, modificado = excluded.modificado, borrada = 0')
+           ->execute([$cod, (int)$t['id'], $uid, $fecha, $c, (int)$t['pv'], $ahora, $ahora]);
+        $n++;
+    }
+    if ($bor) {
+        $db->prepare('UPDATE tareas SET borrador = ?, borrador_v = ? WHERE id = ?')
+           ->execute([$bor, (int)$t['pv'], (int)$t['id']]);
+    }
+    if ($modo !== 'una' && ($bor || $n)) {
+        $db->prepare('UPDATE tareas SET actualizado = ?, hecho = COALESCE(hecho, ?) WHERE id = ?')
+           ->execute([$ahora, $ahora, (int)$t['id']]);
+    }
+    $db->commit();
+    adr_json(['ok' => true, 'tarea' => (int)$t['id'], 'modo' => $modo, 'entradas' => $n, 'borrador' => (bool)$bor]);
+}
+
 case 'resellar_tarea': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $cif = isset($in['cifrado']) ? adr_deb64($in['cifrado']) : null;

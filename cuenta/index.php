@@ -2081,7 +2081,10 @@ async function abrirTarea(id) {
   });
   const cab = (P.cabecera || '').trim();
   const repetida = P.bloques && P.bloques[0] && P.bloques[0].titulo === cab;
-  const cabVale = cab.split(/\s+/).length >= 3 && !repetida;
+  /* 21-10: una cabecera que es solo el nombre de la prueba («Cuestionario
+     de Preocupación PSWQ-11») no es una consigna: no ocupa su sitio. */
+  const esTitulo = (P.instrumento && cab.includes(P.instrumento)) || cab === TAREA.titulo;
+  const cabVale = cab.split(/\s+/).length >= 3 && !repetida && !esTitulo;
   $('t-cabecera').textContent = cabVale ? cab : '';
   $('t-cabecera').hidden = !cabVale;
   $('t-enunciado').hidden = !(cabVale || P.instrucciones);
