@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>La rueda de las emociones: ponle nombre a lo que sientes | adricamente</title>
+  <meta name="description" content="Una rueda de emociones para ponerle nombre exacto a lo que sientes: ocho familias, de suave a intensa, con qué es cada una, de qué te avisa y cómo se nota en el cuerpo. Gratis y sin registro.">
+
+  <meta property="og:title" content="La rueda de las emociones: ponle nombre a lo que sientes | adricamente">
+  <meta property="og:description" content="Una rueda de emociones para ponerle nombre exacto a lo que sientes: ocho familias, de suave a intensa, con qué es cada una, de qué te avisa y cómo se nota en el cuerpo. Gratis y sin registro.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adricamente.com/herramientas/rueda-de-las-emociones/">
+  <link rel="canonical" href="https://adricamente.com/herramientas/rueda-de-las-emociones/">
+
+  <!-- El ?v=2 es porque el navegador se guarda el icono durante días.
+       Sin él, quien ya haya entrado seguiría viendo el naranja. -->
+  <link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
+  <link rel="icon" href="/favicon-512.png?v=2" type="image/png" sizes="512x512">
+  <link rel="icon" href="/marca/adricamente-baldosa.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+  <meta name="theme-color" content="#FAF9F5">
+  <meta property="og:image" content="https://adricamente.com/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Adrián Cuñat Andrés, psicólogo colegiado CM03836. Terapia psicológica online.">
+  <meta property="og:site_name" content="adricamente">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Umami: medición sin cookies y sin datos personales. Por eso
+       esta web no necesita banner de consentimiento. -->
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+  <script>window.medir=function(e){try{
+    if(window.plausible)window.plausible(e);
+    if(window.umami&&window.umami.track)window.umami.track(e);
+  }catch(_){}};</script>
+
+  <!-- Las dos fuentes que se ven en la primera pantalla se piden antes
+       de leer el CSS. Sin esto el navegador no sabe que existen hasta
+       que ha descargado y parseado la hoja entera, y el titular se
+       pinta con la fuente del sistema y luego salta.
+
+       Aquí había solo dos, con el argumento de que precargar las cinco
+       le quitaba ancho de banda a lo que sí se ve. La premisa era
+       falsa: midiendo qué pesos se pintan dentro de la primera pantalla
+       salen los cinco, en todas las páginas. Los tres que faltaban no
+       se descubrían hasta tener el CSS descargado y parseado —tres
+       niveles de dependencia— y eran la causa nombrada del único
+       desplazamiento de diseño que quedaba. -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-800-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
+
+  <link rel="stylesheet" href="/estilos.min.css?v=50">
+
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "https://adricamente.com/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Herramientas",
+      "item": "https://adricamente.com/herramientas/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "La rueda de las emociones",
+      "item": "https://adricamente.com/herramientas/rueda-de-las-emociones/"
+    }
+  ]
+}
+  </script>
+</head>
+
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<!-- La barra de lectura. Está vacía a propósito: es una línea de
+     color que el CSS estira con el scroll, sin JavaScript y sin
+     contenido que un lector de pantalla tenga que anunciar. -->
+<div class="barra-lectura" aria-hidden="true"></div>
+<!-- La barra de cita, solo en móvil. En escritorio la cabecera se
+     queda pegada arriba y ya hay acción visible todo el rato; en
+     móvil la cabecera mide ciento ochenta píxeles y no se puede
+     pegar, así que se desliza esta, que mide cincuenta y seis.
+
+     Va ARRIBA y no abajo a propósito. La que había antes estaba
+     abajo y se comía la animación de los iconos justo donde Safari
+     pone su barra de direcciones en el iPhone. Arriba no estorba a
+     nada y aparece a los trescientos píxeles de scroll, que es
+     cuando la cabecera de verdad ya no se ve. -->
+<aside class="barra-cita" aria-label="Reservar">
+  <a class="marca-mini" href="/">adricamente</a>
+  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+</aside>
+<!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
+     Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
+     en las páginas de área, así que medía 120 px en unas y 151 en
+     otras —el botón se caía a la fila de abajo— y el visitante veía
+     recomponerse lo único que aparece en las veintiséis páginas. -->
+<!-- El acceso de los pacientes a cuenta.adricamente.com. Va en una
+     línea fina ENCIMA de la cabecera y no dentro: la cabecera de
+     escritorio ya va justa en una fila (ver estilos.css, 4.0 bis), y
+     un octavo enlace la partía en dos. Aquí no compite con «Reservar»,
+     que es para quien todavía no viene, y se queda donde todo el mundo
+     busca «entrar»: arriba a la derecha. No se queda pegada al bajar;
+     la cabecera sí. En el móvil no sale: está dentro del menú, y en el
+     pie de todas las páginas. -->
+<nav class="acceso-pacientes" aria-label="Acceso de pacientes">
+  <div class="contenedor ancho">
+    <a href="https://cuenta.adricamente.com/" onclick="window.medir&&window.medir('clic_area_pacientes_arriba')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
+  </div>
+</nav>
+<div class="franja-cabecera">
+  <div class="contenedor ancho">
+  <header class="cabecera">
+    <p class="marca"><a href="/">adricamente</a></p>
+    <nav class="nav-escritorio" aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/primera-sesion/">Primera sesión</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+    </nav>
+    <details class="nav-movil">
+      <summary>Menú</summary>
+      <nav aria-label="Principal">
+      <a href="/sobre-mi/">Sobre mí</a>
+      <a href="/primera-sesion/">Primera sesión</a>
+      <a href="/terapia-online/">Terapia online</a>
+      <a href="/areas/">Áreas</a>
+      <a href="/tarifas/">Tarifas</a>
+      <a href="/herramientas/">Herramientas</a>
+      <a href="/blog/">Blog</a>
+        <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
+           onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
+        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+      </nav>
+    </details>
+    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+  </header>
+  </div>
+</div>
+
+<div class="contenedor">
+
+  <main id="principal">
+
+  <p class="migas"><a href="/">Inicio</a> &rsaquo; <a href="/herramientas/">Herramientas</a> &rsaquo; La rueda de las emociones</p>
+
+  <p class="etiqueta">Herramienta</p>
+  <h1>La rueda de las emociones</h1>
+  <p class="grande">Ponerle nombre exacto a lo que sientes es el primer paso para
+  saber qué necesitas. <strong>Pulsa una familia y luego la palabra que mejor encaje.</strong></p>
+
+  <div class="rueda-caja">
+    <svg class="rueda" id="rueda" viewBox="-210 -210 420 420" role="group"
+         aria-label="Rueda de las emociones: ocho familias en el centro y, hacia fuera, sus palabras de suave a intensa"></svg>
+  </div>
+  <p class="rueda-ley">En el centro, la familia. Hacia fuera, cada vez más intensa: suave, media e intensa.</p>
+  <ul class="rueda-familias" id="familias" aria-label="Las ocho familias"></ul>
+
+  <section class="caja rueda-ficha" id="ficha" aria-live="polite">
+    <h2>Elige una emoción</h2>
+    <p class="nivel">Empieza por la familia que más se parece a lo que sientes.</p>
+  </section>
+  <p class="apunte">Lo que pulses se queda en tu pantalla: no se guarda ni se envía a ningún sitio.</p>
+
+  <h2>Cómo usarla</h2>
+  <ol>
+    <li>Empieza por el centro: ¿a qué familia se parece lo que sientes?</li>
+    <li>Sal hacia fuera: elige la palabra que mejor encaja y mira su intensidad (suave, media, intensa).</li>
+    <li>Puede haber varias a la vez. Apunta todas, cada una con su número de 0 a 100.</li>
+    <li>Si todo te sale al 100, prueba con las palabras suaves: ahí están las señales tempranas.</li>
+    <li>Ninguna emoción es mala: todas te avisan de algo. Lo que cuenta es qué haces después.</li>
+  </ol>
+
+  <h2>Mezclas frecuentes</h2>
+  <ul>
+    <li><strong>Celos</strong>: Miedo a perder a alguien + rabia + tristeza.</li>
+    <li><strong>Sentirme traicionada/o</strong>: Rabia + tristeza: se ha roto la confianza.</li>
+    <li><strong>Envidia</strong>: Tristeza o rabia porque otra persona tiene lo que tú quieres.</li>
+    <li><strong>Estrés</strong>: Agobio + nervios: muchas demandas y poco margen. A menudo con rabia o cansancio detrás.</li>
+    <li><strong>Nostalgia</strong>: Tristeza + alegría al recordar algo bueno que ya pasó.</li>
+  </ul>
+
+  <h2>Palabras que parecen emociones pero son otra cosa</h2>
+  <ul>
+    <li><strong>Cansada/o</strong>: Es el cuerpo. Pregúntate qué hay además: ¿tristeza, agobio, rabia?</li>
+    <li><strong>Procrastinación</strong>: Es lo que haces (dejarlo para luego). ¿Qué sentías antes de dejarlo: agobio, miedo, aburrimiento?</li>
+    <li><strong>Vengativa/o</strong>: Es un impulso: las ganas de devolverla. Suele venir de la rabia o de sentirte traicionada/o.</li>
+    <li><strong>Pacifista</strong>: Es una postura o una decisión. ¿Qué sentías: calma, cansancio, ganas de evitar el conflicto?</li>
+    <li><strong>Bloqueada/o</strong>: Es lo que te pasa (no puedes actuar). Suele venir del miedo o del agobio.</li>
+    <li><strong>Ignorada/o</strong>: Es lo que crees que hacen contigo. ¿Qué sientes con eso: tristeza, rabia, soledad?</li>
+  </ul>
+
+  <div class="franja">
+  <h2>Por qué está entre las herramientas</h2>
+  <p>Antes de registrar algo hay que poder nombrarlo. «Estoy mal» no dice
+  qué necesitas; «me siento sola» o «me da rabia que no me escuchen»,
+  sí. Cuando rellenes <a href="/registro/">la hoja de registro</a>, tenla
+  abierta para la casilla «¿Qué notaste?».</p>
+  <p>Ninguna emoción es mala: todas te avisan de algo. Lo que cuenta es qué
+  haces después, y eso es lo que miran <a href="/herramientas/">las otras
+  herramientas</a>.</p>
+  </div>
+
+  <div class="caja">
+    <p style="margin-bottom:0">Si lo estás pasando muy mal o piensas en hacerte daño,
+    llama al <a href="tel:024">024</a> (gratuito, 24 h) o al <a href="tel:112">112</a>.</p>
+  </div>
+  <p class="apunte">Rueda de diseño propio basada en las funciones de las
+  emociones (Protocolo Unificado, Barlow et al.; Lazarus, 1991; Frijda, 1986).
+  Redacción propia.</p>
+
+  <section class="cinta">
+    <h2>Si quieres ponerle nombre conmigo</h2>
+    <p>Treinta minutos para contarme qué te pasa. Sales sabiendo qué haría yo con ello, y si no es lo mío, <strong>te oriento a dónde ir</strong>.</p>
+    <p>
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+    </p>
+    <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
+  </section>
+<script>
+/* La rueda de las emociones: el dibujo, compartido por la web y la cuenta.
+   Diseño y texto propios (Offline, src/docs_paciente/rueda_emociones.py);
+   los datos son la clave `rueda` de catalogo_herramientas.json.
+   pintaRueda(svg, D, alElegir): dibuja y llama alElegir(familia, palabra|null,
+   nivel) al pulsar (ratón, toque, Enter o espacio). No guarda ni envía nada. */
+function pintaRueda(svg, D, alElegir) {
+  var NS = 'http://www.w3.org/2000/svg', R = [0, 58, 109, 158, 206];
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  svg.setAttribute('viewBox', '-210 -210 420 420');
+  function pol(r, a) { return [r * Math.cos(a), r * Math.sin(a)]; }
+  function sector(r0, r1, a0, a1) {
+    var g = a1 - a0 > Math.PI ? 1 : 0, p0 = pol(r1, a0), p1 = pol(r1, a1), p2 = pol(r0, a1), p3 = pol(r0, a0);
+    return r0 === 0 ? 'M0 0L' + p0[0] + ' ' + p0[1] + 'A' + r1 + ' ' + r1 + ' 0 ' + g + ' 1 ' + p1[0] + ' ' + p1[1] + 'Z'
+      : 'M' + p0[0] + ' ' + p0[1] + 'A' + r1 + ' ' + r1 + ' 0 ' + g + ' 1 ' + p1[0] + ' ' + p1[1] +
+        'L' + p2[0] + ' ' + p2[1] + 'A' + r0 + ' ' + r0 + ' 0 ' + g + ' 0 ' + p3[0] + ' ' + p3[1] + 'Z';
+  }
+  function rgb(hex) { var n = parseInt(hex.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+  function aclara(c, f) { return c.map(function (v) { return Math.round(v + (255 - v) * f); }); }
+  function lum(c) { var l = c.map(function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2]; }
+  /* El texto, oscuro o blanco: el que más contraste dé sobre ese color. */
+  var OSC = [31, 42, 55];
+  function tinta(c) { var L = lum(c), o = (L + 0.05) / (lum(OSC) + 0.05), b = 1.05 / (L + 0.05); return o >= b ? '#1f2a37' : '#ffffff'; }
+  function css(c) { return 'rgb(' + c.join(',') + ')'; }
+  function texto(x, y, t, cls, rot, color) {
+    var e = document.createElementNS(NS, 'text');
+    e.setAttribute('x', x); e.setAttribute('y', y); e.setAttribute('text-anchor', 'middle');
+    e.setAttribute('dominant-baseline', 'central'); e.setAttribute('class', cls); e.setAttribute('fill', color);
+    e.setAttribute('aria-hidden', 'true');
+    e.setAttribute('transform', 'rotate(' + rot + ' ' + x + ' ' + y + ')');
+    e.textContent = t; svg.appendChild(e);
+  }
+  function giro(a) { var r = a * 180 / Math.PI; if (r > 90 && r < 270) r -= 180; if (r < -90) r += 180; return r; }
+  var marcada = null;
+  function boton(p, etiqueta, fn) {
+    p.setAttribute('tabindex', '0'); p.setAttribute('role', 'button'); p.setAttribute('aria-label', etiqueta);
+    p.addEventListener('click', function () { if (marcada) marcada.classList.remove('sel'); marcada = p; p.classList.add('sel'); fn(); });
+    p.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.dispatchEvent(new MouseEvent('click')); } });
+  }
+  var n = D.familias.length, paso = 2 * Math.PI / n, ini = -Math.PI / 2 - paso / 2, etiquetas = [];
+  D.familias.forEach(function (f, i) {
+    var a0 = ini + i * paso, a1 = a0 + paso, am = (a0 + a1) / 2, base = rgb(f.color);
+    var pc = document.createElementNS(NS, 'path');
+    pc.setAttribute('d', sector(0, R[1], a0, a1)); pc.setAttribute('fill', f.color); pc.setAttribute('class', 'sector fam');
+    boton(pc, f.nombre + ': familia', function () { alElegir(f, null, null); });
+    svg.appendChild(pc);
+    var pf = pol(R[1] * 0.62, am);
+    var nf = f.nombre.split(' ')[0];
+    etiquetas.push([pf[0], pf[1], nf, 'et-fam' + (nf.length > 8 ? ' larga' : ''), giro(am), tinta(base)]);
+    f.niveles.forEach(function (nv, k) {
+      var sub = paso / nv.length, fondo = aclara(base, [0.62, 0.38, 0.12][k]), color = tinta(fondo);
+      nv.forEach(function (pal, j) {
+        var b0 = a0 + j * sub, b1 = b0 + sub, bm = (b0 + b1) / 2;
+        var p = document.createElementNS(NS, 'path');
+        p.setAttribute('d', sector(R[k + 1], R[k + 2], b0, b1)); p.setAttribute('fill', css(fondo)); p.setAttribute('class', 'sector');
+        boton(p, pal.palabra + ', ' + f.nombre + ', intensidad ' + D.niveles[k], function () { alElegir(f, pal, k); });
+        svg.appendChild(p);
+        var rm = (R[k + 1] + R[k + 2]) / 2, q = pol(rm, bm);
+        var et = pal.palabra.replace(/\s*\/.*$/, '').replace('Sentirme abandonada', 'Abandono');
+        etiquetas.push([q[0], q[1], et, 'et-anillo' + (et.length > 10 ? ' larga' : ''), giro(bm), color]);
+      });
+    });
+  });
+  /* Las etiquetas, encima de todos los sectores y sin recibir el toque. */
+  etiquetas.forEach(function (e) { texto.apply(null, e); });
+  /* Con la rueda pequeña, las palabras de los anillos no se leen: se
+     esconden y se eligen desde la ficha. */
+  function mide() { var w = svg.getBoundingClientRect().width; svg.classList.toggle('pequena', w > 0 && w < 520); }
+  mide();
+  if (window.ResizeObserver) new ResizeObserver(mide).observe(svg); else window.addEventListener('resize', mide);
+}
+
+(function () {
+  var D = {"version":"1","niveles":["suave","media","intensa"],"familias":[{"id":"alegria","nombre":"Alegría","color":"#F2B705","avisa":"Algo que te importa va bien o te acerca a lo que quieres.","cuerpo":"Ligereza, energía, sonrisa, ganas de moverte.","impulso":"Acercarte, compartirlo, repetirlo.","niveles":[[{"palabra":"Satisfacción","que_es":"Notas que algo ha salido como querías, aunque sea pequeño."},{"palabra":"Agrado","que_es":"Algo te resulta agradable y te apetece que siga."}],[{"palabra":"Alegría","que_es":"Te sientes bien por algo que ha pasado o que estás viviendo."},{"palabra":"Ilusión","que_es":"Esperas con ganas algo que va a pasar."},{"palabra":"Orgullo","que_es":"Valoras algo que has hecho tú o alguien cercano, con esfuerzo."}],[{"palabra":"Euforia","que_es":"Una alegría tan fuerte que cuesta frenar o pensar con calma."},{"palabra":"Entusiasmo","que_es":"Mucha energía y ganas de lanzarte a algo."}]]},{"id":"calma","nombre":"Calma","color":"#7FB77E","avisa":"Ahora mismo no hay amenaza: puedes descansar y recuperarte.","cuerpo":"Respiración lenta, músculos sueltos, cuerpo pesado y cómodo.","impulso":"Parar, descansar, disfrutar sin prisa.","niveles":[[{"palabra":"Tranquilidad","que_es":"No hay nada urgente; estás a gusto donde estás."},{"palabra":"Confianza","que_es":"Sientes que puedes contar con alguien o contigo."}],[{"palabra":"Alivio","que_es":"Se ha ido algo que te preocupaba o te pesaba."},{"palabra":"Gratitud","que_es":"Reconoces algo bueno que alguien ha hecho por ti."}],[{"palabra":"Paz","que_es":"Una calma profunda, sin nada pendiente que te tire."},{"palabra":"Plenitud","que_es":"Sientes que tu vida, en este momento, está completa."}]]},{"id":"sorpresa","nombre":"Sorpresa","color":"#4FB0C6","avisa":"Ha pasado algo que no esperabas: presta atención.","cuerpo":"Ojos abiertos, respiración cortada un instante, cuerpo quieto.","impulso":"Parar y mirar qué ha pasado.","niveles":[[{"palabra":"Extrañeza","que_es":"Algo no encaja con lo que esperabas, pero sin alarma."}],[{"palabra":"Sorpresa","que_es":"Te pilla algo de nuevas y necesitas un momento para entenderlo."}],[{"palabra":"Asombro","que_es":"Algo te impresiona mucho, para bien o para mal."},{"palabra":"Sobresalto","que_es":"Un susto repentino que te hace dar un respingo."}]]},{"id":"miedo","nombre":"Miedo","color":"#8E7CC3","avisa":"Puede haber un peligro o algo que se te escapa de las manos.","cuerpo":"Corazón rápido, tensión, nudo en el estómago, respiración corta.","impulso":"Huir, evitar, protegerte o prepararte de más.","niveles":[[{"palabra":"Inquietud","que_es":"Una intranquilidad de fondo, sin saber bien por qué."},{"palabra":"Preocupación","que_es":"Le das vueltas a algo que podría salir mal."},{"palabra":"Inseguridad","que_es":"Dudas de si sabrás hacerlo o de si estarás a la altura."}],[{"palabra":"Nervios","que_es":"Activación antes de algo que te importa."},{"palabra":"Agobio","que_es":"Sientes que hay más cosas de las que puedes llevar a la vez."},{"palabra":"Ansiedad","que_es":"Miedo a algo que todavía no ha pasado y que tu cuerpo vive como si fuera ya."}],[{"palabra":"Pánico","que_es":"Un miedo muy intenso y repentino, con mucho cuerpo: parece que algo grave va a pasar."},{"palabra":"Terror","que_es":"Miedo extremo ante algo que vives como una amenaza seria."}]]},{"id":"tristeza","nombre":"Tristeza","color":"#5B7DB1","avisa":"Has perdido algo que te importa, o no lo tienes.","cuerpo":"Cansancio, pesadez, nudo en la garganta, ganas de llorar.","impulso":"Recogerte, bajar el ritmo, buscar consuelo.","niveles":[[{"palabra":"Desánimo","que_es":"Te faltan ganas; las cosas cuestan más."},{"palabra":"Decepción","que_es":"Algo o alguien no ha sido como esperabas."}],[{"palabra":"Tristeza","que_es":"Pena por algo que has perdido o que echas de menos."},{"palabra":"Soledad","que_es":"Echas en falta cercanía o compañía, aunque haya gente cerca."},{"palabra":"Sentirme abandonada/o","que_es":"Notas que alguien importante no está cuando lo necesitas."}],[{"palabra":"Desolación","que_es":"Una tristeza muy honda, como si no quedara nada que te sostenga."},{"palabra":"Desesperanza","que_es":"Sientes que las cosas no van a mejorar."}]]},{"id":"rabia","nombre":"Rabia","color":"#D9534F","avisa":"Algo te parece injusto, te bloquea o cruza un límite tuyo.","cuerpo":"Calor, mandíbula y puños apretados, energía para actuar.","impulso":"Atacar, quejarte, defenderte o poner un límite.","niveles":[[{"palabra":"Molestia","que_es":"Algo te incomoda o te fastidia un poco."},{"palabra":"Impaciencia","que_es":"Las cosas van más lentas de lo que necesitas."}],[{"palabra":"Enfado","que_es":"Te sientes mal tratada/o o algo no es como debería."},{"palabra":"Frustración","que_es":"Quieres algo y algo o alguien te lo impide."},{"palabra":"Impotencia","que_es":"Hay algo injusto y sientes que no puedes hacer nada."}],[{"palabra":"Indignación","que_es":"Rabia por algo que te parece muy injusto."},{"palabra":"Furia","que_es":"Una rabia tan fuerte que cuesta controlar lo que dices o haces."}]]},{"id":"asco","nombre":"Asco y rechazo","color":"#6B8E23","avisa":"Algo te parece dañino, sucio o contrario a tus valores.","cuerpo":"Náusea, arrugar la nariz, apartar la cara o el cuerpo.","impulso":"Alejarte, rechazar, apartarlo de ti.","niveles":[[{"palabra":"Desagrado","que_es":"Algo no te gusta y prefieres que no esté cerca."}],[{"palabra":"Rechazo","que_es":"No quieres tener nada que ver con algo o con alguien."},{"palabra":"Asco","que_es":"Algo te provoca repulsión, físicamente o por lo que significa."}],[{"palabra":"Desprecio","que_es":"Ves a alguien por debajo, como si no mereciera respeto."},{"palabra":"Repugnancia","que_es":"Un asco tan fuerte que te cuesta incluso pensarlo."}]]},{"id":"verguenza","nombre":"Vergüenza y culpa","color":"#C27BA0","avisa":"Algo pone en juego cómo te ven, o has hecho algo contra lo que valoras.","cuerpo":"Calor en la cara, mirada baja, ganas de hacerte pequeña/o.","impulso":"Esconderte (vergüenza) o reparar el daño (culpa).","niveles":[[{"palabra":"Apuro","que_es":"Te incomoda que te vean en una situación concreta."},{"palabra":"Timidez","que_es":"Te cuesta mostrarte ante otros, sobre todo si no los conoces."}],[{"palabra":"Vergüenza","que_es":"Sientes que hay algo en ti que está mal y temes que los demás lo vean."},{"palabra":"Culpa","que_es":"Sientes que has hecho algo mal y te pesa el daño causado."},{"palabra":"Arrepentimiento","que_es":"Te gustaría no haber hecho (o haber hecho) algo."}],[{"palabra":"Humillación","que_es":"Te sientes rebajada/o delante de otros."},{"palabra":"Autodesprecio","que_es":"Te tratas como si no valieras nada."}]]}],"mezclas":[{"palabra":"Celos","que_es":"Miedo a perder a alguien + rabia + tristeza."},{"palabra":"Sentirme traicionada/o","que_es":"Rabia + tristeza: se ha roto la confianza."},{"palabra":"Envidia","que_es":"Tristeza o rabia porque otra persona tiene lo que tú quieres."},{"palabra":"Estrés","que_es":"Agobio + nervios: muchas demandas y poco margen. A menudo con rabia o cansancio detrás."},{"palabra":"Nostalgia","que_es":"Tristeza + alegría al recordar algo bueno que ya pasó."}],"no_son_emociones":[{"palabra":"Cansada/o","que_es":"Es el cuerpo. Pregúntate qué hay además: ¿tristeza, agobio, rabia?"},{"palabra":"Procrastinación","que_es":"Es lo que haces (dejarlo para luego). ¿Qué sentías antes de dejarlo: agobio, miedo, aburrimiento?"},{"palabra":"Vengativa/o","que_es":"Es un impulso: las ganas de devolverla. Suele venir de la rabia o de sentirte traicionada/o."},{"palabra":"Pacifista","que_es":"Es una postura o una decisión. ¿Qué sentías: calma, cansancio, ganas de evitar el conflicto?"},{"palabra":"Bloqueada/o","que_es":"Es lo que te pasa (no puedes actuar). Suele venir del miedo o del agobio."},{"palabra":"Ignorada/o","que_es":"Es lo que crees que hacen contigo. ¿Qué sientes con eso: tristeza, rabia, soledad?"}],"como_usarla":["Empieza por el centro: ¿a qué familia se parece lo que sientes?","Sal hacia fuera: elige la palabra que mejor encaja y mira su intensidad (suave, media, intensa).","Puede haber varias a la vez. Apunta todas, cada una con su número de 0 a 100.","Si todo te sale al 100, prueba con las palabras suaves: ahí están las señales tempranas.","Ninguna emoción es mala: todas te avisan de algo. Lo que cuenta es qué haces después."]};
+  var VARS = {"alegria": "--emo-alegria", "calma": "--emo-calma", "sorpresa": "--emo-sorpresa", "miedo": "--emo-miedo", "tristeza": "--emo-tristeza", "rabia": "--emo-rabia", "asco": "--emo-asco", "verguenza": "--emo-verguenza"};
+  var ficha = document.getElementById('ficha');
+  function el(t, txt, cls) { var e = document.createElement(t); if (txt != null) e.textContent = txt; if (cls) e.className = cls; return e; }
+  function muestra(f, pal, k) {
+    ficha.style.setProperty('--fam', 'var(' + VARS[f.id] + ')');
+    ficha.innerHTML = '';
+    ficha.appendChild(el('h2', pal ? pal.palabra : f.nombre));
+    ficha.appendChild(el('p', pal ? f.nombre + ' · intensidad ' + D.niveles[k] : 'Familia de emociones', 'nivel'));
+    var dl = el('dl');
+    function fila(a, b) { dl.appendChild(el('dt', a)); dl.appendChild(el('dd', b)); }
+    if (pal) fila('Qué es', pal.que_es);
+    fila('Te avisa de', f.avisa); fila('En el cuerpo', f.cuerpo); fila('Te empuja a', f.impulso);
+    ficha.appendChild(dl);
+    /* Las palabras de la familia, como botones: en el móvil es la forma
+       de elegir, porque las de los anillos no caben legibles. */
+    var w = el('div', null, 'rueda-palabras');
+    f.niveles.forEach(function (nv, j) {
+      w.appendChild(el('p', (j === 0 ? 'Palabras de esta familia · ' : '') + D.niveles[j]));
+      var ul = el('ul');
+      nv.forEach(function (p) {
+        var b = el('button', p.palabra); b.type = 'button';
+        if (pal && p.palabra === pal.palabra) b.setAttribute('aria-current', 'true');
+        b.addEventListener('click', function () { muestra(f, p, j); ficha.querySelector('h2').focus(); });
+        var l = el('li'); l.appendChild(b); ul.appendChild(l);
+      });
+      w.appendChild(ul);
+    });
+    ficha.appendChild(w);
+    ficha.querySelector('h2').tabIndex = -1;
+  }
+  pintaRueda(document.getElementById('rueda'), D, muestra);
+  /* Las familias también como botones: en el móvil la rueda va sin
+     letras, y con teclado son ocho paradas en vez de cincuenta y cinco. */
+  var fl = document.getElementById('familias');
+  D.familias.forEach(function (f) {
+    var b = el('button', f.nombre); b.type = 'button'; b.style.setProperty('--fam', 'var(' + VARS[f.id] + ')');
+    b.addEventListener('click', function () {
+      fl.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      muestra(f, null, null);
+    });
+    b.setAttribute('aria-pressed', 'false');
+    var l = el('li'); l.appendChild(b); fl.appendChild(l);
+  });
+})();
+</script>
+  </main>
+
+  <footer>
+    <div class="pie-columnas">
+      <div>
+        <p class="titulo-pie">Adrián Cuñat Andrés</p>
+        <p>
+          Graduado en Psicología por la UNED. <strong>Psicólogo colegiado
+          nº CM03836</strong> (Colegio Oficial de Psicología de Castilla-La
+          Mancha). Cursando el Máster en Psicología General Sanitaria en
+          UNIR. En prácticas supervisadas en el centro sanitario
+          Neurococos.
+        </p>
+        <p>
+          Estar colegiado no equivale a poder ejercer la psicología
+          sanitaria: eso lo da el título del máster. Hasta obtenerlo no
+          ejerzo por cuenta propia, y la atención se presta dentro del
+          centro sanitario y con supervisión.
+        </p>
+      </div>
+      <div>
+        <p class="titulo-pie">La web</p>
+        <ul>
+          <li><a href="/sobre-mi/">Sobre mí</a></li>
+          <li><a href="/primera-sesion/">La primera sesión</a></li>
+          <li><a href="/terapia-online/">Terapia online</a></li>
+          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/tarifas/">Tarifas</a></li>
+          <li><a href="/tu-cuenta/">Tu cuenta de paciente</a></li>
+          <li><a href="/lgtbi/">Espacio seguro LGTBI+</a></li>
+          <li><a href="/blog/">Blog</a></li>
+        </ul>
+        <!-- Las dos gratis, separadas de la navegación normal: no son
+             páginas de servicio, son cosas que alguien se lleva sin
+             pedir cita. Mezcladas con «Tarifas» y «Áreas» se leían
+             como una sección más y no como lo que son. -->
+        <p class="titulo-pie" style="margin-top:18px">Gratis, sin pedir cita</p>
+        <ul>
+          <li><a href="/herramientas/">Herramientas para entender qué te pasa</a></li>
+          <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="titulo-pie">Contacto y legal</p>
+        <ul>
+          <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="/aviso-legal.html">Aviso legal</a></li>
+          <li><a href="/privacidad.html">Privacidad</a></li>
+          <li><a href="/cookies.html">Cookies</a></li>
+        </ul>
+        <!-- El enlace directo al correo salía aquí y en la página de
+             contacto. Aquí sobra: quien busca el correo en el pie de
+             una página legal es quien ya lo tiene. Y «Reserva sesión»
+             salía dos veces en este mismo pie, una en cada columna.
+             Se queda una, y en el sitio donde tiene sentido: al lado
+             de la página de contacto. -->
+        <p class="titulo-pie" style="margin-top:18px">¿Ya eres paciente?</p>
+        <ul>
+          <li><a href="https://cuenta.adricamente.com/" onclick="window.medir&&window.medir('clic_area_pacientes_pie')">Área de pacientes</a></li>
+          <li><a href="/reservar/">Reservar la próxima sesión</a></li>
+        </ul>
+      </div>
+    </div>
+    <!-- Lo legal y los teléfonos de urgencia estaban aquí en dos
+         bloques grandes. Fuera: en la página que tiene que vender,
+         un muro de descargos se lee como desconfianza, no como
+         responsabilidad. El descargo completo vive ahora en el aviso
+         legal, que es su sitio.
+
+         Lo único que se queda es una línea de urgencias, en la letra
+         pequeña y sin dramatismo. No estorba a nadie y está ahí el
+         día que hace falta. El aviso con contexto sigue estando donde
+         de verdad se lee: dentro de cada página de área, justo al
+         hablar de cuándo esto no es lo tuyo. -->
+    <p class="legal-pie">
+      Urgencias: <a href="tel:024">024</a> (conducta suicida, 24&nbsp;h)
+      &middot; <a href="tel:112">112</a>.
+      <a href="/aviso-legal.html">Aviso legal</a> &middot;
+      <a href="/privacidad.html">Privacidad</a>.
+    </p>
+    <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
+  </footer>
+
+</div>
+
+<!-- Aquí había una barra fija con el botón de reserva. Fuera, y no
+     por estética: la única recopilación honesta que encontré de
+     experimentos con barras fijas —treinta y tres pruebas A/B, con
+     los fracasos incluidos— da un 27 % de aciertos y un 18 % de
+     resultados peores, y ningún efecto positivo fuera de las páginas
+     de carrito y pago. Esto no es un carrito. Le estaba costando
+     píxeles permanentes en el dispositivo donde menos sobran, a
+     cambio de una probabilidad baja de aportar algo.
+
+     En su lugar va una llamada a mitad de página, que es la que
+     mejor relación coste/beneficio tiene y la que no había. -->
+
+<script>
+  document.getElementById('anyo').textContent = new Date().getFullYear();
+
+  /* El disparo de los dibujos. Doce líneas que sustituyen a toda una
+     sección de animaciones atadas al scroll, y por un motivo que se
+     tardó en ver: una animación atada al scroll SOLO avanza mientras
+     se hace scroll. Quien llega a un dibujo y para a mirarlo —que es
+     lo que hace todo el mundo— lo dejaba a medias, y ahí se quedaba.
+     En escritorio pasaba siempre y se leía como un fallo.
+
+     Aquí el disparo es un evento: la primera vez que la figura entra
+     en pantalla se le pone la clase, y la animación es de las de toda
+     la vida. Dura lo que dura, se termina sola y no se repite.
+
+     La clase js-dibujo en el <html> es la que activa el estado de
+     partida en la hoja de estilos. Se pone desde aquí a propósito: si
+     este guion no corre, no se oculta nada y los dibujos salen
+     completos y quietos, que es el estado correcto. */
+  (function(){
+    if(!window.IntersectionObserver) return;
+    if(window.matchMedia &&
+       window.matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+
+    /* Solo se anima lo secundario: las graficas, los iconos, el hilo de
+       los pasos y el 30. El texto no se oculta nunca para luego
+       mostrarlo (ver la hoja de estilos, seccion 14). Todo se dispara
+       una vez y no se repite al volver arriba. */
+    var figuras = document.querySelectorAll('.figura');
+    var iconos = document.querySelectorAll('svg.icono');
+    var precios = document.querySelectorAll('.precio');
+    var pasos = document.querySelectorAll('.pasos');
+    document.documentElement.classList.add('js-dibujo');
+
+    function vigila(lista, opciones, alEntrar){
+      if(!lista.length) return;
+      var ojo = new IntersectionObserver(function(entradas){
+        var n = 0;
+        entradas.forEach(function(e){
+          if(!e.isIntersecting) return;
+          alEntrar(e.target, n++);
+          ojo.unobserve(e.target);
+        });
+      }, opciones);
+      lista.forEach(function(x){ ojo.observe(x); });
+    }
+
+    /* Las graficas, cuando ya se ve un tercio: en el movil una grafica
+       que empieza a dibujarse con el borde asomando termina antes de
+       que nadie la este mirando. */
+    vigila(figuras, { threshold: .35, rootMargin: '0px 0px -8% 0px' },
+      function(t){ t.classList.add('dibujado'); });
+    /* Cada icono, cuando se ve entero. Los que entran a la vez van en
+       fila, uno tras otro. */
+    vigila(iconos, { threshold: .9, rootMargin: '0px 0px -8% 0px' },
+      function(t, n){ t.style.setProperty('--tanda', (n * .18) + 's'); t.classList.add('dibujado'); });
+    /* El 30 y su euro, cuando la linea del precio esta entera y ya ha
+       subido un poco. Se vigila la linea y no la cifra: la cifra
+       empieza encogida y un rectangulo escalado con decimales no llega
+       nunca a contar como entero. */
+    vigila(precios, { threshold: .95, rootMargin: '0px 0px -28% 0px' },
+      function(t){
+        var c = t.querySelector('.importe'); if(c) c.classList.add('visto');
+        var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
+      });
+
+    /* La guía de lectura de la portada: cada línea se dibuja cuando
+       se ve casi entera. En el escritorio entran las tres a la vez y
+       van una detrás de otra; en el móvil, cada una al llegar. */
+    vigila(document.querySelectorAll('.guia li'),
+      { threshold: .6, rootMargin: '0px 0px -8% 0px' },
+      function(t, n){ t.style.setProperty('--tanda', (n * .4) + 's'); t.classList.add('dibujado'); });
+
+    /* El rotulador: pasa una vez por debajo de cada frase marcada
+       cuando la frase entra entera en pantalla. Sin este guion (o con
+       movimiento reducido) las frases salen ya subrayadas. */
+    vigila(document.querySelectorAll('main p strong, main figcaption strong'),
+      { threshold: 1, rootMargin: '0px 0px -12% 0px' },
+      function(t){ t.classList.add('subrayado'); });
+
+    /* Lo que va atado al scroll, con un solo oyente pasivo. */
+    var porCss = window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()');
+    var lectura = porCss ? null : document.querySelector('.barra-lectura');
+    var cita = document.querySelector('.barra-cita');
+    var baja = porCss ? null : document.querySelector('.baja');
+    var hilos = [];
+    pasos.forEach(function(l){
+      hilos.push({ lista: l, bolas: l.querySelectorAll(':scope > li'), lleno: 0 });
+    });
+    var pendiente = false;
+    function pinta(){
+      pendiente = false;
+      var y = window.scrollY || 0;
+      var vh = window.innerHeight;
+      /* El hilo de los pasos: cuanto de la lista ha pasado ya por la
+         linea del 65 % de la pantalla. Solo avanza. */
+      hilos.forEach(function(h){
+        if(h.lleno >= 1) return;
+        var r = h.lista.getBoundingClientRect();
+        if(r.top > vh) return;
+        var p = Math.max(0, Math.min(1, (vh * .65 - r.top) / r.height));
+        if(p <= h.lleno) return;
+        h.lleno = p;
+        h.lista.style.setProperty('--lleno', p.toFixed(3));
+        h.bolas.forEach(function(li){
+          if(li.offsetTop + 14 <= p * r.height) li.classList.add('alcanzado');
+        });
+      });
+      if(lectura){
+        var alto = document.documentElement.scrollHeight - vh;
+        lectura.style.transform = 'scaleX(' + (alto > 0 ? Math.min(1, y / alto) : 0) + ')';
+      }
+      if(cita) cita.classList.toggle('asoma', y > 300);
+      if(baja){
+        var o = Math.max(0, 1 - y / (vh * .5));
+        baja.style.opacity = o; baja.style.visibility = o ? '' : 'hidden';
+      }
+    }
+    if(!hilos.length && !lectura && !cita && !baja) return;
+    window.addEventListener('scroll', function(){
+      if(!pendiente){ pendiente = true; requestAnimationFrame(pinta); }
+    }, { passive: true });
+    pinta();
+  })();
+</script>
+</body>
+</html>

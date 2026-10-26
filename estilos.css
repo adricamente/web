@@ -3645,3 +3645,45 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
     gap:9px;margin-top:6px;border-top:1px solid var(--line);padding-top:14px;
   }
 }
+
+/* --- La rueda de las emociones (25-10) ----------------------------
+   /herramientas/rueda-de-las-emociones/. Los ocho colores de familia
+   vienen de la rueda de Offline (diseño propio); aquí van como
+   variables para la ficha y las palabras. El dibujo los toma de los
+   datos, que son los mismos que ve el paciente en su cuenta. */
+:root{
+  --emo-alegria:#F2B705; --emo-calma:#7FB77E; --emo-sorpresa:#4FB0C6; --emo-miedo:#8E7CC3;
+  --emo-tristeza:#5B7DB1; --emo-rabia:#D9534F; --emo-asco:#6B8E23; --emo-verguenza:#C27BA0;
+}
+.rueda-caja{max-width:640px;margin:12px auto 6px}
+.rueda{display:block;width:100%;height:auto;aspect-ratio:1/1;touch-action:manipulation;font-family:"Source Sans 3","Source reserva",system-ui,sans-serif}
+.rueda .sector{stroke:#fff;stroke-width:1.5;cursor:pointer;transition:opacity .15s}
+.rueda .sector:hover{opacity:.82}
+.rueda .sector:focus{outline:none}
+.rueda .sector:focus-visible,.rueda .sector.sel{stroke:var(--ink);stroke-width:3}
+.rueda text{pointer-events:none;font-weight:600}
+.rueda .et-anillo{font-size:7.6px}
+.rueda .et-anillo.larga{font-size:6.4px}
+.rueda .et-fam{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:700;font-size:9px}
+.rueda .et-fam.larga{font-size:7.4px}
+.rueda.pequena .et-anillo{display:none}
+.rueda.pequena text{display:none}
+.rueda-familias{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:4px 0 14px;padding:0}
+.rueda-familias button{font:inherit;font-size:.98rem;min-height:44px;padding:8px 14px 8px 10px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink)}
+.rueda-familias button::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--fam)}
+.rueda-familias button:hover,.rueda-familias button:focus-visible,.rueda-familias button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+.rueda-ley{text-align:center;font-size:.92rem;color:var(--ink-2);margin:6px 0 18px}
+.rueda-ficha{border-left:8px solid var(--fam,var(--line-strong));min-height:9.5rem;background:var(--surface)}
+.rueda-ficha .nivel{font-size:.95rem;color:var(--ink-2);margin:0 0 10px}
+.rueda-ficha dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+.rueda-ficha dt{font-weight:700}
+.rueda-ficha dd{margin:0}
+.rueda-palabras{margin:14px 0 0}
+.rueda-palabras p{font-size:.92rem;color:var(--ink-2);margin:10px 0 6px}
+.rueda-palabras ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0}
+.rueda-palabras button{font:inherit;font-size:.98rem;min-height:44px;padding:8px 14px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink)}
+.rueda-palabras button:hover,.rueda-palabras button:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
+@media (max-width:480px){.rueda-ficha dl{grid-template-columns:1fr}.rueda-ficha dd{margin-bottom:6px}}
+@media print{.rueda .et-anillo{display:inline}.rueda-caja{max-width:none}}

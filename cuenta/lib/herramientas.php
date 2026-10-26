@@ -40,7 +40,12 @@ function adr_modo_valido($m): ?string {
 
 /** El modo de una herramienta: el que diga el catálogo o, si no, el de
  *  siempre para ese id. Una lectura (guía) es siempre de una vez. */
+/* 26-10: lo que es para consultar siempre (la rueda de las emociones):
+   «vivo» aunque sea de lectura, y aunque se asignara antes como «una». */
+const ADR_SIEMPRE_A_MANO = ['rueda-emociones'];
+
 function adr_modo_para(?array $def, $pedido = null): string {
+    if (in_array((string)($def['id'] ?? ''), ADR_SIEMPRE_A_MANO, true)) return 'vivo';
     if (($def['tipo'] ?? '') === 'lectura') return 'una';
     return adr_modo_valido($pedido) ?? adr_modo_valido($def['modo'] ?? null)
         ?? (ADR_MODOS[(string)($def['id'] ?? '')] ?? 'una');
@@ -49,8 +54,9 @@ function adr_modo_para(?array $def, $pedido = null): string {
 /** El modo de una fila de `tareas`, también de las de antes del 17-10. */
 function adr_modo_fila(array $t): string {
     if (($t['tipo'] ?? '') !== 'herramienta') return 'una';
-    if ($m = adr_modo_valido($t['modo'] ?? null)) return $m;
     $def = json_decode((string)($t['plantilla'] ?? ''), true);
+    if (is_array($def) && in_array((string)($def['id'] ?? ''), ADR_SIEMPRE_A_MANO, true)) return 'vivo';
+    if ($m = adr_modo_valido($t['modo'] ?? null)) return $m;
     return adr_modo_para(is_array($def) ? $def : null);
 }
 

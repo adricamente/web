@@ -500,6 +500,16 @@ $cuerpo .= <<<'HTML'
   </div>
 </section>
 
+<!-- La rueda de las emociones, a mano desde cualquier casilla donde se
+     escribe una emoción (25-10). «Usar» pone la palabra en esa casilla. -->
+<dialog id="rueda-dialogo" class="rueda-dialogo" aria-labelledby="rd-t">
+  <div class="rd-cab">
+    <h2 id="rd-t">La rueda de las emociones</h2>
+    <button class="enlace-boton" type="button" id="rd-cerrar">Cerrar</button>
+  </div>
+  <div id="rd-cuerpo"></div>
+</dialog>
+
 <!-- Lo que se imprime: una copia estática, con lo escrito como texto.
      Las casillas de un formulario se imprimen mal (se cortan, salen
      vacías en algunos navegadores); esto no. -->
@@ -714,7 +724,8 @@ async function panel() {
   DOCS = docs;
   const porFirmar = docs.filter(d => Number(d.requiere_firma) && Number(d.para_v) === Number(r.j.v)
                                      && (!d.firmado || faltanDatos(d)));
-  const n = todas.length + porFirmar.length;
+  /* Lo que es para consultar (la rueda) está siempre a mano, no pendiente. */
+  const n = todas.filter(t => !(t.tipo === 'herramienta' && t.lectura && t.modo === 'vivo')).length + porFirmar.length;
   $('resumen').textContent = n
     ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.')
     : 'No tienes nada pendiente.';
@@ -2418,6 +2429,7 @@ function pintaHerramientas(pendientes, vivas, copias, v) {
   const pie = (t) => {
     if (t.modo === 'registro') return t.hoy ? 'Registro · hoy: apuntado ✓'
       : (t.entradas ? 'Registro · último apunte: ' + fecha(t.ultima) : 'Registro · aún sin apuntes');
+    if (t.modo === 'vivo' && t.lectura) return 'Siempre a mano · para consultar';
     if (t.modo === 'vivo') return t.actualizado ? 'Siempre a mano · cambiado el ' + fecha(t.actualizado) : 'Siempre a mano · por empezar';
     return t.caduca ? ('antes del ' + fecha(t.caduca)) : 'Pendiente';
   };
@@ -2601,13 +2613,23 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   $('h-subtitulo').textContent = def.subtitulo || '';
   document.querySelectorAll('.h-riesgo').forEach(x => { x.hidden = !def.riesgo; });
   const cuerpo = $('h-cuerpo'); cuerpo.innerHTML = '';
-  cuerpo.appendChild(pintaBloques(def, valores, soloLeer ? 'texto' : 'form', false));
+  const pintado = pintaBloques(def, valores, soloLeer ? 'texto' : 'form', false);
+  if (def.rueda) {
+    /* La rueda interactiva; los bloques, como versión en texto debajo. */
+    const zona = el('div', 'rueda-zona'); cuerpo.appendChild(zona);
+    cargaRueda().then(() => montaRueda(zona, def.rueda, null)).catch(() => {});
+    const d = el('details', 'rueda-mas'); d.appendChild(el('summary', null, 'La rueda en texto'));
+    d.appendChild(pintado); cuerpo.appendChild(d);
+  } else {
+    cuerpo.appendChild(pintado);
+    if (!soloLeer) ponAyudaRueda(def, cuerpo);
+  }
   const lectura = def.tipo === 'lectura';
   $('h-enviar').textContent = 'Enviar';
   $('h-pdf').textContent = 'Descargar en PDF'; $('h-pdf').hidden = false; $('h-todo').hidden = true;
   $('h-enviar').hidden = soloLeer || lectura;
   $('h-guardar').hidden = soloLeer || lectura || !HERR || !HERR.tarea;
-  $('h-leido').hidden = !(lectura && !soloLeer);
+  $('h-leido').hidden = !(lectura && !soloLeer) || !!def.rueda || (HERR && HERR.modo === 'vivo');
   $('h-estado').textContent = (soloLeer || lectura) ? '' :
     'Puedes rellenarla poco a poco: «Guardar y seguir otro día» la guarda cifrada y la retomas desde cualquier dispositivo. Cuando esté completa, «Enviar».';
   ver('v-herr');
@@ -2763,6 +2785,114 @@ function diaLargo(s) {
   return s === hoyISO() ? 'Hoy, ' + t : (s === sumaDias(hoyISO(), -1) ? 'Ayer, ' + t : t.charAt(0).toUpperCase() + t.slice(1));
 }
 function uidNuevo() { const a = new Uint8Array(12); crypto.getRandomValues(a); return Array.from(a, b => b.toString(16).padStart(2, '0')).join(''); }
+/* --- La rueda de las emociones (25-10) -------------------------------- */
+let RUEDA_CARGA = null;
+function cargaRueda() {
+  if (window.RUEDA_DATOS) return Promise.resolve();
+  if (!RUEDA_CARGA) RUEDA_CARGA = new Promise((ok, mal) => {
+    const sc = document.createElement('script'); sc.src = 'rueda.js?v=1'; sc.onload = ok; sc.onerror = mal;
+    document.head.appendChild(sc);
+  });
+  return RUEDA_CARGA;
+}
+/* La rueda con su ficha. `usar(palabra)`, si viene, pone el botón «Usar». */
+function montaRueda(cont, D, usar) {
+  cont.innerHTML = '';
+  const caja = el('div', 'rueda-caja');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'rueda'); svg.setAttribute('role', 'group');
+  svg.setAttribute('aria-label', 'Rueda de las emociones: ocho familias en el centro y, hacia fuera, sus palabras de suave a intensa');
+  caja.appendChild(svg); cont.appendChild(caja);
+  cont.appendChild(el('p', 'apunte rueda-ley', 'En el centro, la familia. Hacia fuera, cada vez más intensa.'));
+  const fams = el('ul', 'rueda-familias'); fams.setAttribute('aria-label', 'Las ocho familias'); cont.appendChild(fams);
+  const ficha = el('section', 'caja rueda-ficha'); ficha.setAttribute('aria-live', 'polite');
+  ficha.appendChild(el('h3', null, 'Elige una emoción'));
+  ficha.appendChild(el('p', 'nivel', 'Empieza por la familia que más se parece a lo que sientes.'));
+  cont.appendChild(ficha);
+  const muestra = (f, pal, k) => {
+    ficha.style.setProperty('--fam', f.color);
+    ficha.innerHTML = '';
+    const h = el('h3', null, pal ? pal.palabra : f.nombre); h.tabIndex = -1; ficha.appendChild(h);
+    ficha.appendChild(el('p', 'nivel', pal ? f.nombre + ' · intensidad ' + D.niveles[k] : 'Familia de emociones'));
+    const dl = el('dl');
+    const fila = (a, b) => { dl.appendChild(el('dt', null, a)); dl.appendChild(el('dd', null, b)); };
+    if (pal) fila('Qué es', pal.que_es);
+    fila('Te avisa de', f.avisa); fila('En el cuerpo', f.cuerpo); fila('Te empuja a', f.impulso);
+    ficha.appendChild(dl);
+    if (pal && usar) ficha.appendChild(boton('Usar «' + pal.palabra + '»', '', () => usar(pal.palabra)));
+    const w = el('div', 'rueda-palabras');
+    f.niveles.forEach((nv, j) => {
+      w.appendChild(el('p', null, (j === 0 ? 'Palabras de esta familia · ' : '') + D.niveles[j]));
+      const ul = el('ul');
+      nv.forEach(p => {
+        const b = el('button', null, p.palabra); b.type = 'button';
+        if (pal && p.palabra === pal.palabra) b.setAttribute('aria-current', 'true');
+        b.addEventListener('click', () => { muestra(f, p, j); ficha.querySelector('h3').focus(); });
+        const l = el('li'); l.appendChild(b); ul.appendChild(l);
+      });
+      w.appendChild(ul);
+    });
+    ficha.appendChild(w);
+  };
+  window.pintaRueda(svg, D, muestra);
+  D.familias.forEach(f => {
+    const b = el('button', null, f.nombre); b.type = 'button'; b.style.setProperty('--fam', f.color);
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => {
+      fams.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      muestra(f, null, null);
+    });
+    const l = el('li'); l.appendChild(b); fams.appendChild(l);
+  });
+  const mas = (titulo, lista) => {
+    const d = el('details', 'rueda-mas'); d.appendChild(el('summary', null, titulo));
+    const ul = el('ul');
+    lista.forEach(x => { const li = el('li'); if (x.palabra) { li.appendChild(el('strong', null, x.palabra)); li.append(': ' + x.que_es); } else li.textContent = x; ul.appendChild(li); });
+    d.appendChild(ul); cont.appendChild(d);
+  };
+  mas('Cómo usarla', D.como_usarla || []);
+  mas('Mezclas frecuentes', D.mezclas || []);
+  mas('Palabras que parecen emociones pero son otra cosa', D.no_son_emociones || []);
+}
+/* La rueda en un diálogo, desde una casilla. */
+async function abreRuedaPara(campo) {
+  try { await cargaRueda(); } catch (_) { return; }
+  const dlg = $('rueda-dialogo');
+  montaRueda($('rd-cuerpo'), window.RUEDA_DATOS, (palabra) => {
+    const v = campo.value.replace(/\s+$/, '');
+    campo.value = (v ? v.replace(/,$/, '') + ', ' : '') + palabra + ' ';
+    campo.dispatchEvent(new Event('input', { bubbles: true }));
+    dlg.close();
+    campo.focus();
+    try { campo.setSelectionRange(campo.value.length, campo.value.length); } catch (_) {}
+  });
+  dlg.showModal();
+}
+$('rd-cerrar').addEventListener('click', () => $('rueda-dialogo').close());
+$('rueda-dialogo').addEventListener('click', (ev) => { if (ev.target === $('rueda-dialogo')) $('rueda-dialogo').close(); });
+/* Junto a cada casilla con «ayuda: rueda-emociones» (o «ayuda_campo» en
+   un apartado), un botón que abre la rueda. Vale para cualquier
+   herramienta, tenga o no la rueda asignada. */
+function ponAyudaRueda(def, raiz) {
+  const ids = new Set(), cols = new Set();
+  (def.bloques || []).forEach(b => {
+    (b.campos || []).forEach(c => { if (c && c.ayuda === 'rueda-emociones') ids.add(c.id); });
+    (b.columnas || []).forEach(c => { if (c && c.ayuda === 'rueda-emociones') cols.add(c.id); });
+    if (b.t === 'apartado' && b.ayuda_campo === 'rueda-emociones' && b.id) ids.add(b.id);
+  });
+  if (!ids.size && !cols.size) return;
+  raiz.querySelectorAll('input[data-campo], textarea[data-campo], input[data-col], textarea[data-col]').forEach(c => {
+    if (c.type === 'hidden' || c.disabled) return;
+    const k = c.dataset.campo || '';
+    const col = c.dataset.col || (k.split('.').length === 3 ? k.split('.')[2] : null);
+    if (!(ids.has(k) || (col && cols.has(col)))) return;
+    const b = el('button', 'rueda-ayuda', 'Rueda de las emociones'); b.type = 'button';
+    b.setAttribute('aria-label', 'Abrir la rueda de las emociones para esta casilla');
+    b.addEventListener('click', (ev) => { ev.preventDefault(); abreRuedaPara(c); });
+    c.insertAdjacentElement('afterend', b);
+  });
+}
+
 function boton(texto, clase, accion) {
   const b = document.createElement('button');
   b.type = 'button'; b.className = clase === 'enlace-boton' ? 'enlace-boton' : ('boton' + (clase ? ' ' + clase : ''));
@@ -2835,6 +2965,12 @@ async function abrirViva(r, def) {
   if (!guardado && r.j.empezada === false) guardado = null;
   if (!guardado) guardado = await copiaAntigua(r.j.titulo);
   let valores = (guardado && (guardado.campos || {})) || {};
+  if (def.tipo === 'lectura') {
+    /* Para consultar (la rueda): sin guardar ni enviar nada. */
+    montaHerramienta(def, {}, false, 'Siempre a mano');
+    $('h-estado').textContent = '';
+    return;
+  }
   if (HERR.modo === 'vivo') {
     let local = null;
     try { local = JSON.parse(localStorage.getItem(claveHerr()) || 'null'); } catch (_) {}
@@ -2857,6 +2993,54 @@ function montaVivo(valores, cuando) {
     ? 'Guardado el ' + fecha(HERR.actualizado) + ' a las ' + hora(HERR.actualizado) + '. Puedes cambiarlo siempre que quieras: al guardar, Adrián tiene la versión nueva.'
     : 'Rellénalo con calma. Lo podrás cambiar siempre que quieras: añadir a alguien, quitar lo que ya no sirve…';
   ponFilasExtra($('h-cuerpo'), HERR.def, (v) => montaVivo(v, HERR.actualizado));
+  HERR.visto = HERR.actualizado;
+  HERR.base = JSON.stringify(camposDelForm());
+  vigila();
+}
+
+/* --- Lo que cambia Adrián en sesión, a la vista (26-10) ------------------
+   Mientras tiene abierto un documento vivo o un registro, la cuenta mira
+   cada 25 segundos si ha cambiado por otro lado (Adrián lo ha editado con
+   ella en la sesión). Si no ha tocado nada, se carga solo; si tiene algo
+   sin guardar, se le pregunta. Nunca se pisa nada en silencio. */
+let VIGIA = null;
+function firmaEntradas(lista) { return lista.map(e => e.uid + '@' + (e.modificado || e.creado || '')).sort().join('|'); }
+function vigila() {
+  if (VIGIA) clearInterval(VIGIA);
+  VIGIA = setInterval(() => { compruebaCambios().catch(() => {}); }, 25000);
+}
+async function compruebaCambios() {
+  if (!HERR || !HERR.tarea || $('v-herr').hidden || document.hidden) { if (!HERR || $('v-herr').hidden) { clearInterval(VIGIA); VIGIA = null; } return; }
+  if (HERR.modo === 'vivo' && HERR.def.tipo !== 'lectura') {
+    const r = await api('tarea&id=' + encodeURIComponent(HERR.tarea));
+    if (!r.ok || !r.j.actualizado || r.j.actualizado === HERR.visto || !r.j.borrador) return;
+    if (Number(r.j.borrador_v) !== Number(miV)) return;
+    let nuevo = null;
+    try { nuevo = abrirDelMac(r.j.borrador, miPublica, privada); } catch (_) { return; }
+    const cuando = r.j.actualizado;
+    const carga = () => { montaVivo((nuevo && nuevo.campos) || {}, cuando); $('h-estado').textContent = 'Adrián ha actualizado este documento: ya tienes su versión.'; };
+    if (JSON.stringify(camposDelForm()) === HERR.base) { carga(); return; }
+    HERR.visto = cuando;
+    const av = el('div', 'nota info'); av.setAttribute('role', 'alert');
+    av.appendChild(el('p', null, 'Adrián ha actualizado este documento. ¿Cargar su versión o mantener la tuya?'));
+    const bs = el('p');
+    bs.append(boton('Cargar su versión', '', () => { av.remove(); carga(); }), ' ',
+              boton('Mantener la mía', 'suave', () => { av.remove(); }));
+    av.appendChild(bs);
+    $('h-cuerpo').prepend(av);
+  } else if (HERR.modo === 'registro') {
+    const r = await api('entradas&id=' + encodeURIComponent(HERR.tarea));
+    if (!r.ok) return;
+    const f = firmaEntradas(r.j.entradas || []);
+    if (f === HERR.firmaEntradas) return;
+    if (document.getElementById('reg-fecha')) {
+      HERR.firmaEntradas = f;
+      const est = document.getElementById('reg-estado');
+      if (est) est.textContent = 'Adrián ha añadido o corregido apuntes. Los verás al guardar o cancelar.';
+      return;
+    }
+    await montaRegistro('Adrián ha actualizado tus apuntes.');
+  }
 }
 
 async function guardarVivo() {
@@ -2886,7 +3070,9 @@ async function montaRegistro(msg) {
     } catch (_) { viejas++; }
   });
   HERR.entradas = ents; HERR.viejas = viejas;
+  HERR.firmaEntradas = firmaEntradas((r.ok && r.j.entradas) || []);
   pintaRegistro(msg);
+  vigila();
 }
 
 function partesRegistro() {
@@ -3035,6 +3221,7 @@ function pintaRegistro(msg) {
     sec.appendChild(el('h2', 'titulo-h', 'Lo demás de la ficha'));
     const dr = ampliaDef(Object.assign({}, def, { bloques: P.resto }), HERR.resto || {});
     sec.appendChild(pintaBloques(dr, HERR.resto || {}, 'form', false));
+    ponAyudaRueda(dr, sec);
     const est = el('p', 'apunte'); est.setAttribute('role', 'status');
     const g = boton('Guardar', 'suave', async () => {
       g.disabled = true;
@@ -3112,6 +3299,7 @@ function editaEntrada(e) {
     inp.dataset.col = col.id; inp.value = (e.fila || {})[col.id] || ''; inp.maxLength = 4000;
     lab.appendChild(inp); f.appendChild(lab);
   });
+  ponAyudaRueda(HERR.def, f);
   const est = el('p', 'apunte'); est.id = 'reg-estado'; est.setAttribute('role', 'status');
   const bs = el('p', 'reg-botones');
   const g = boton('Guardar', '', async () => { g.disabled = true; try { await guardaEntrada(e); } finally { g.disabled = false; } });

@@ -214,7 +214,7 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-10-25a';
+const ADR_VERSION = '2026-10-26a';
 const ADR_ACCIONES_NUEVAS = ['precargar', 'version'];
 
 switch ($a) {
@@ -439,6 +439,8 @@ case 'mios': {
         $x['preguntas'] = ($x['tipo'] === 'cuestionario' && is_array($pl)) ? count($pl['items'] ?? []) : null;
         $x['modo'] = adr_modo_fila($x);
         $x['herr_id'] = $x['tipo'] === 'herramienta' ? adr_herr_id($x) : null;
+        /* 25-10: lo que es para consultar (la rueda) no cuenta como pendiente. */
+        $x['lectura'] = $x['tipo'] === 'herramienta' && is_array($pl) && ($pl['tipo'] ?? '') === 'lectura';
         unset($x['plantilla']);
         $tareas[] = $x;
     }
@@ -457,6 +459,8 @@ case 'mios': {
     foreach ($vv->fetchAll() as $x) {
         $x['modo'] = adr_modo_fila($x);
         $x['herr_id'] = adr_herr_id($x);
+        $plv = json_decode((string)$x['plantilla'], true);
+        $x['lectura'] = is_array($plv) && ($plv['tipo'] ?? '') === 'lectura';
         unset($x['plantilla']);
         if ($x['modo'] === 'una') continue;
         $vivas[] = $x;

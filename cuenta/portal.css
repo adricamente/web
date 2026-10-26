@@ -708,3 +708,56 @@ h3{font-weight:700}
 .reg-chip{font:inherit;font-weight:700;min-width:46px;min-height:44px;padding:0 12px;border:1px solid var(--borde-campo);
   border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
 .reg-chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* --- La rueda de las emociones (25-10), en la cuenta ----------------
+   Igual que /herramientas/rueda-de-las-emociones/ en la web. Los ocho colores de familia
+   vienen de la rueda de Offline (diseño propio); aquí van como
+   variables para la ficha y las palabras. El dibujo los toma de los
+   datos, que son los mismos que ve el paciente en su cuenta. */
+:root{
+  --emo-alegria:#F2B705; --emo-calma:#7FB77E; --emo-sorpresa:#4FB0C6; --emo-miedo:#8E7CC3;
+  --emo-tristeza:#5B7DB1; --emo-rabia:#D9534F; --emo-asco:#6B8E23; --emo-verguenza:#C27BA0;
+}
+.rueda-caja{max-width:640px;margin:12px auto 6px}
+.rueda{display:block;width:100%;height:auto;aspect-ratio:1/1;touch-action:manipulation;font-family:var(--texto)}
+.rueda .sector{stroke:#fff;stroke-width:1.5;cursor:pointer;transition:opacity .15s}
+.rueda .sector:hover{opacity:.82}
+.rueda .sector:focus{outline:none}
+.rueda .sector:focus-visible,.rueda .sector.sel{stroke:var(--ink);stroke-width:3}
+.rueda text{pointer-events:none;font-weight:600}
+.rueda .et-anillo{font-size:7.6px}
+.rueda .et-anillo.larga{font-size:6.4px}
+.rueda .et-fam{font-family:var(--titulo);font-weight:700;font-size:9px}
+.rueda .et-fam.larga{font-size:7.4px}
+.rueda.pequena .et-anillo{display:none}
+.rueda.pequena text{display:none}
+.rueda-familias{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:4px 0 14px;padding:0}
+.rueda-familias button{font:inherit;font-size:.98rem;min-height:44px;padding:8px 14px 8px 10px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  border:1.5px solid var(--borde-campo);background:var(--surface);color:var(--ink)}
+.rueda-familias button::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--fam)}
+.rueda-familias button:hover,.rueda-familias button:focus-visible,.rueda-familias button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+.rueda-ley{text-align:center;font-size:.92rem;color:var(--ink-2);margin:6px 0 18px}
+.rueda-ficha{border-left:8px solid var(--fam,var(--line-strong));min-height:9.5rem;background:var(--surface)}
+.rueda-ficha .nivel{font-size:.95rem;color:var(--ink-2);margin:0 0 10px}
+.rueda-ficha dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+.rueda-ficha dt{font-weight:700}
+.rueda-ficha dd{margin:0}
+.rueda-palabras{margin:14px 0 0}
+.rueda-palabras p{font-size:.92rem;color:var(--ink-2);margin:10px 0 6px}
+.rueda-palabras ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0}
+.rueda-palabras button{font:inherit;font-size:.98rem;min-height:44px;padding:8px 14px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--borde-campo);background:var(--surface);color:var(--ink)}
+.rueda-palabras button:hover,.rueda-palabras button:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
+@media (max-width:480px){.rueda-ficha dl{grid-template-columns:1fr}.rueda-ficha dd{margin-bottom:6px}}
+@media print{.rueda .et-anillo{display:inline}.rueda-caja{max-width:none}}
+.rueda-ficha h3{margin:0 0 4px;font-size:19px}
+.rueda-mas{margin:10px 0}
+.rueda-mas summary{cursor:pointer;font-weight:600}
+.rueda-ayuda{display:inline-flex;align-items:center;gap:6px;margin:6px 0 2px;font:inherit;font-size:14px;font-weight:600;color:var(--accent);
+  background:var(--accent-soft);border:1px solid #C7D7E6;border-radius:999px;padding:6px 12px;min-height:36px;cursor:pointer;align-self:flex-start}
+.rueda-ayuda::before{content:"";width:14px;height:14px;border-radius:50%;
+  background:conic-gradient(#F2B705 0 12.5%,#7FB77E 0 25%,#4FB0C6 0 37.5%,#8E7CC3 0 50%,#5B7DB1 0 62.5%,#D9534F 0 75%,#6B8E23 0 87.5%,#C27BA0 0)}
+.rueda-dialogo{width:min(680px,calc(100vw - 16px));max-height:calc(100vh - 16px);border:0;border-radius:var(--r-l);padding:16px 16px 20px;box-shadow:var(--shadow)}
+.rueda-dialogo::backdrop{background:rgba(37,35,31,.5)}
+.rueda-dialogo .rd-cab{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-16px;background:#fff;padding:4px 0 8px;z-index:1}
+.rueda-dialogo h2{margin:0;font-size:20px}
