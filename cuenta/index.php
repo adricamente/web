@@ -2790,7 +2790,7 @@ let RUEDA_CARGA = null;
 function cargaRueda() {
   if (window.RUEDA_DATOS) return Promise.resolve();
   if (!RUEDA_CARGA) RUEDA_CARGA = new Promise((ok, mal) => {
-    const sc = document.createElement('script'); sc.src = 'rueda.js?v=1'; sc.onload = ok; sc.onerror = mal;
+    const sc = document.createElement('script'); sc.src = 'rueda.js?v=2'; sc.onload = ok; sc.onerror = mal;
     document.head.appendChild(sc);
   });
   return RUEDA_CARGA;
@@ -2809,7 +2809,7 @@ function montaRueda(cont, D, usar) {
   ficha.appendChild(el('h3', null, 'Elige una emoción'));
   ficha.appendChild(el('p', 'nivel', 'Empieza por la familia que más se parece a lo que sientes.'));
   cont.appendChild(ficha);
-  const muestra = (f, pal, k) => {
+  const muestra = (f, pal, k, desdeRueda) => {
     ficha.style.setProperty('--fam', f.color);
     ficha.innerHTML = '';
     const h = el('h3', null, pal ? pal.palabra : f.nombre); h.tabIndex = -1; ficha.appendChild(h);
@@ -2833,6 +2833,11 @@ function montaRueda(cont, D, usar) {
       w.appendChild(ul);
     });
     ficha.appendChild(w);
+    /* Desde la rueda, bajar a la explicación si no se ve entera. */
+    if (desdeRueda) {
+      const r = ficha.getBoundingClientRect();
+      if (r.top < 60 || r.bottom > innerHeight) ficha.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    }
   };
   window.pintaRueda(svg, D, muestra);
   D.familias.forEach(f => {
@@ -2840,7 +2845,7 @@ function montaRueda(cont, D, usar) {
     b.setAttribute('aria-pressed', 'false');
     b.addEventListener('click', () => {
       fams.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-      muestra(f, null, null);
+      muestra(f, null, null, true);
     });
     const l = el('li'); l.appendChild(b); fams.appendChild(l);
   });

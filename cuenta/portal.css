@@ -708,7 +708,6 @@ h3{font-weight:700}
 .reg-chip{font:inherit;font-weight:700;min-width:46px;min-height:44px;padding:0 12px;border:1px solid var(--borde-campo);
   border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}
 .reg-chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
-
 /* --- La rueda de las emociones (25-10), en la cuenta ----------------
    Igual que /herramientas/rueda-de-las-emociones/ en la web. Los ocho colores de familia
    vienen de la rueda de Offline (diseño propio); aquí van como
@@ -719,6 +718,11 @@ h3{font-weight:700}
   --emo-tristeza:#5B7DB1; --emo-rabia:#D9534F; --emo-asco:#6B8E23; --emo-verguenza:#C27BA0;
 }
 .rueda-caja{max-width:640px;margin:12px auto 6px}
+.rueda-caja.ampliada{overflow:auto;-webkit-overflow-scrolling:touch;max-height:78vh;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.rueda-caja.ampliada .rueda{width:720px;max-width:none}
+.rueda-ampliar{display:flex;align-items:center;justify-content:center;margin:8px auto 0;font:inherit;font-size:.98rem;font-weight:600;min-height:44px;padding:8px 16px;
+  border-radius:999px;cursor:pointer;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent)}
+.rueda-ampliar[hidden]{display:none}
 .rueda{display:block;width:100%;height:auto;aspect-ratio:1/1;touch-action:manipulation;font-family:var(--texto)}
 .rueda .sector{stroke:#fff;stroke-width:1.5;cursor:pointer;transition:opacity .15s}
 .rueda .sector:hover{opacity:.82}
@@ -729,15 +733,13 @@ h3{font-weight:700}
 .rueda .et-anillo.larga{font-size:6.4px}
 .rueda .et-fam{font-family:var(--titulo);font-weight:700;font-size:9px}
 .rueda .et-fam.larga{font-size:7.4px}
-.rueda.pequena .et-anillo{display:none}
-.rueda.pequena text{display:none}
 .rueda-familias{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:4px 0 14px;padding:0}
 .rueda-familias button{font:inherit;font-size:.98rem;min-height:44px;padding:8px 14px 8px 10px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
   border:1.5px solid var(--borde-campo);background:var(--surface);color:var(--ink)}
 .rueda-familias button::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--fam)}
 .rueda-familias button:hover,.rueda-familias button:focus-visible,.rueda-familias button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
 .rueda-ley{text-align:center;font-size:.92rem;color:var(--ink-2);margin:6px 0 18px}
-.rueda-ficha{border-left:8px solid var(--fam,var(--line-strong));min-height:9.5rem;background:var(--surface)}
+.rueda-ficha{scroll-margin-top:76px;border-left:8px solid var(--fam,var(--line-strong));min-height:9.5rem;background:var(--surface)}
 .rueda-ficha .nivel{font-size:.95rem;color:var(--ink-2);margin:0 0 10px}
 .rueda-ficha dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
 .rueda-ficha dt{font-weight:700}

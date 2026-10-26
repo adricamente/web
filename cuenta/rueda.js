@@ -38,7 +38,7 @@ function pintaRueda(svg, D, alElegir) {
   var marcada = null;
   function boton(p, etiqueta, fn) {
     p.setAttribute('tabindex', '0'); p.setAttribute('role', 'button'); p.setAttribute('aria-label', etiqueta);
-    p.addEventListener('click', function () { if (marcada) marcada.classList.remove('sel'); marcada = p; p.classList.add('sel'); fn(); });
+    p.addEventListener('click', function () { if (marcada) marcada.classList.remove('sel'); marcada = p; p.classList.add('sel'); fn(true); });
     p.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.dispatchEvent(new MouseEvent('click')); } });
   }
   var n = D.familias.length, paso = 2 * Math.PI / n, ini = -Math.PI / 2 - paso / 2, etiquetas = [];
@@ -46,7 +46,7 @@ function pintaRueda(svg, D, alElegir) {
     var a0 = ini + i * paso, a1 = a0 + paso, am = (a0 + a1) / 2, base = rgb(f.color);
     var pc = document.createElementNS(NS, 'path');
     pc.setAttribute('d', sector(0, R[1], a0, a1)); pc.setAttribute('fill', f.color); pc.setAttribute('class', 'sector fam');
-    boton(pc, f.nombre + ': familia', function () { alElegir(f, null, null); });
+    boton(pc, f.nombre + ': familia', function (d) { alElegir(f, null, null, d); });
     svg.appendChild(pc);
     var pf = pol(R[1] * 0.62, am);
     var nf = f.nombre.split(' ')[0];
@@ -57,7 +57,7 @@ function pintaRueda(svg, D, alElegir) {
         var b0 = a0 + j * sub, b1 = b0 + sub, bm = (b0 + b1) / 2;
         var p = document.createElementNS(NS, 'path');
         p.setAttribute('d', sector(R[k + 1], R[k + 2], b0, b1)); p.setAttribute('fill', css(fondo)); p.setAttribute('class', 'sector');
-        boton(p, pal.palabra + ', ' + f.nombre + ', intensidad ' + D.niveles[k], function () { alElegir(f, pal, k); });
+        boton(p, pal.palabra + ', ' + f.nombre + ', intensidad ' + D.niveles[k], function (d) { alElegir(f, pal, k, d); });
         svg.appendChild(p);
         var rm = (R[k + 1] + R[k + 2]) / 2, q = pol(rm, bm);
         var et = pal.palabra.replace(/\s*\/.*$/, '').replace('Sentirme abandonada', 'Abandono');
@@ -67,11 +67,28 @@ function pintaRueda(svg, D, alElegir) {
   });
   /* Las etiquetas, encima de todos los sectores y sin recibir el toque. */
   etiquetas.forEach(function (e) { texto.apply(null, e); });
-  /* Con la rueda pequeña, las palabras de los anillos no se leen: se
-     esconden y se eligen desde la ficha. */
-  function mide() { var w = svg.getBoundingClientRect().width; svg.classList.toggle('pequena', w > 0 && w < 520); }
+  /* En el móvil la rueda entera cabe, pero las palabras salen pequeñas:
+     «Ampliar la rueda» la dibuja al doble y se recorre con el dedo. */
+  var caja = svg.parentNode, amp = null;
+  if (caja && caja.classList && caja.classList.contains('rueda-caja')) {
+    amp = document.createElement('button');
+    amp.type = 'button'; amp.className = 'rueda-ampliar'; amp.textContent = 'Ampliar la rueda';
+    amp.setAttribute('aria-pressed', 'false');
+    amp.addEventListener('click', function () {
+      var si = !caja.classList.contains('ampliada');
+      caja.classList.toggle('ampliada', si);
+      amp.textContent = si ? 'Ver la rueda entera' : 'Ampliar la rueda';
+      amp.setAttribute('aria-pressed', String(si));
+      if (si) { caja.scrollLeft = (caja.scrollWidth - caja.clientWidth) / 2; caja.scrollTop = (caja.scrollHeight - caja.clientHeight) / 2; }
+    });
+    caja.insertAdjacentElement('afterend', amp);
+  }
+  function mide() {
+    var w = (caja && caja.clientWidth) || svg.getBoundingClientRect().width;
+    if (amp) amp.hidden = !(w > 0 && w < 560) && !caja.classList.contains('ampliada');
+  }
   mide();
-  if (window.ResizeObserver) new ResizeObserver(mide).observe(svg); else window.addEventListener('resize', mide);
+  if (window.ResizeObserver) new ResizeObserver(mide).observe(caja || svg); else window.addEventListener('resize', mide);
 }
 
 window.pintaRueda = pintaRueda;
