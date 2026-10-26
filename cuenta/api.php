@@ -213,6 +213,10 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
     adr_apunta($db, 'mac', $a);
 }
 
+/* Súbela con cada parche que toque el portal. */
+const ADR_VERSION = '2026-10-25a';
+const ADR_ACCIONES_NUEVAS = ['precargar', 'version'];
+
 switch ($a) {
 
 /* --- La sal ---------------------------------------------------------
@@ -2458,6 +2462,13 @@ case 'estado': {
               'activados' => (int)$db->query("SELECT COUNT(*) FROM pacientes WHERE activado IS NOT NULL AND cod <> 'hoja'")->fetchColumn()]);
 }
 
+/* 25-10: qué versión del portal está publicada, sin ningún dato. Sirve
+   para comprobar desde fuera que un parche ha llegado (el 21-10 el Mac
+   llamó a `precargar` y no sabíamos si el servidor ya la tenía). */
+case 'version':
+    adr_json(['version' => ADR_VERSION, 'acciones' => ADR_ACCIONES_NUEVAS]);
+
 default:
-    adr_json(['error' => 'no'], 404);
+    /* Una acción que no existe se distingue de un «no» de permisos. */
+    adr_json(['error' => 'accion_desconocida', 'accion' => substr((string)$a, 0, 40)], 404);
 }
