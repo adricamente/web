@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=52">
+  <link rel="stylesheet" href="/estilos.min.css?v=53">
 
 
   <script type="application/ld+json">
@@ -180,7 +180,7 @@
 <aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar la media hora gratis</a>
 </aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -226,11 +226,11 @@
         <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
            onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar la media hora gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar la media hora gratis</a>
   </header>
   </div>
 </div>
@@ -387,9 +387,9 @@
 
   <h2>Sigue leyendo</h2>
   <ul class="relacionadas">
-    <li><a href="/guias/necesito-ir-al-psicologo/">¿Necesito ir al psicólogo?</a><span>Señales de que merece la pena pedir ayuda, por dónde empezar y qué puedes probar antes.</span></li>
+    <li><a href="/guias/sintomas-fisicos-de-la-ansiedad/">Síntomas físicos de la ansiedad</a><span>Corazón, aire, hormigueo, estómago, mareo: por qué el cuerpo hace cada cosa y cuándo no es ansiedad. Con un mapa para tocar.</span></li>
+    <li><a href="/guias/ansiedad-por-la-salud/">Miedo a estar enfermo</a><span>Buscar síntomas en Google, comprobar el cuerpo, pedir que te tranquilicen: por qué alivia un rato y luego hace el miedo más grande.</span></li>
     <li><a href="/guias/no-puedo-dejar-de-pensar/">No puedo dejar de pensar</a><span>Rumiar y preocuparse: por qué la cabeza no se apaga (sobre todo de noche) y una técnica con estudios detrás.</span></li>
-    <li><a href="/guias/autoexigencia/">Autoexigencia y perfeccionismo</a><span>Cuando nada es suficiente y descansar da culpa: qué la mantiene y cómo bajarla sin dejar de hacer bien las cosas.</span></li>
   </ul>
 
   <section class="cinta">
@@ -397,7 +397,7 @@
     <p>Treinta minutos para contarme cómo son y qué has empezado a evitar. Sales sabiendo qué haría yo con ello.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar sesión gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita" target="_blank" rel="noopener">Reservar la media hora gratis</a>
     </p>
     <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
   </section>
@@ -511,6 +511,101 @@
         if (r === 'urgente') ori.querySelectorAll('fieldset:not(:first-of-type)').forEach(function (f) { f.hidden = true; });
         else ori.querySelectorAll('fieldset').forEach(function (f) { f.hidden = false; });
       });
+    });
+  }
+
+  /* --- Elige y lee (27-10): cuerpo, una cosa, decir que no, la primera frase.
+     Mismo patrón para las cuatro: botones con aria-pressed y un panel que
+     se rellena con texto fijo. Nada sale del navegador. */
+  function selector(raiz, alPulsar) {
+    raiz.querySelectorAll('[data-k]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var g = b.dataset.g || 'x';
+        raiz.querySelectorAll('[data-k][data-g="' + g + '"],[data-k]:not([data-g])').forEach(function (x) {
+          if ((x.dataset.g || 'x') === g) x.setAttribute('aria-pressed', String(x === b));
+        });
+        alPulsar(b.dataset.k, g);
+      });
+    });
+  }
+  function pon(panel, titulo, parrafos) {
+    panel.innerHTML = ''; panel.hidden = false;
+    panel.appendChild(el('h3', titulo));
+    parrafos.forEach(function (t) { var q = el('p'); q.innerHTML = t; panel.appendChild(q); });
+  }
+
+  var cuerpo = document.getElementById('cuerpo');
+  if (cuerpo) {
+    var Z = {
+      corazon: ['El corazón acelerado', 'La adrenalina sube el pulso para mandar más sangre a los músculos: es la preparación para huir o defenderte. Se nota como golpes fuertes, saltos o «palpitaciones».', 'Al médico si nunca te lo han mirado, si va con dolor en el pecho, desmayo o falta de aire en reposo, o si tienes una enfermedad del corazón. Si es intenso y nuevo, <a href="tel:112">112</a>.'],
+      aire: ['Falta de aire', 'Con la ansiedad se respira más rápido y por arriba. La sensación es que el aire no llega, aunque en realidad entra de sobra: lo que sobra es el ritmo.', 'Al médico si te ahogas haciendo poco esfuerzo, si tienes asma o fiebre, o si llevas tiempo con ahogo. Si los labios se ponen azulados, o el ahogo es repentino y no mejora en reposo, llama al <a href="tel:112">112</a>.'],
+      hormigueo: ['Hormigueo y manos frías', 'Respirar deprisa baja el dióxido de carbono en la sangre, y eso da hormigueo en manos, pies o alrededor de la boca. Las manos frías son la sangre yéndose hacia los músculos grandes.', 'Si el hormigueo es en un solo lado del cuerpo, o va con debilidad, la cara torcida o dificultad para hablar, llama al <a href="tel:112">112</a>: eso no es ansiedad.'],
+      pecho: ['Presión en el pecho', 'Los músculos del pecho y la espalda se tensan, y respirar por arriba los cansa. Suele ser un dolor que cambia al moverte o al apretar.', 'Si es opresivo, se va al brazo, la mandíbula o la espalda, o llega con sudor frío y náuseas, llama al <a href="tel:112">112</a>. Siempre es mejor descartar.'],
+      estomago: ['Nudo en el estómago', 'Con la alarma encendida, la digestión pasa a segundo plano: nudo, náuseas, ganas de ir al baño o diarrea. El intestino está muy conectado con el sistema nervioso.', 'Al médico si hay sangre, pérdida de peso sin buscarla, dolor que te despierta o fiebre.'],
+      musculos: ['Tensión, cuello y mandíbula', 'El cuerpo en guardia aprieta: hombros, cuello, mandíbula (a veces de noche, sin darte cuenta). De ahí el dolor de cabeza «en casco» y la espalda cargada.', 'Al médico si el dolor es nuevo y muy fuerte, va con fiebre o rigidez de cuello, o no cambia con nada.'],
+      mareo: ['Mareo e irrealidad', 'Respirar deprisa también marea. Y la mente, en alarma, puede sentir las cosas lejanas o como en una película: se llama desrealización. Asusta mucho y pasa sola.', 'Al médico si te desmayas, si el mareo es de que todo da vueltas, o si va con pérdida de fuerza o de visión.'],
+      piel: ['Sudor, calor y frío', 'La activación sube la temperatura y el sudor para enfriarte: oleadas de calor, sudor en las manos, escalofríos después.', 'Al médico si hay fiebre, sudores nocturnos que empapan o pérdida de peso.'],
+      sueno: ['Sueño y cansancio', 'Estar en guardia muchas horas agota, y la alarma no apaga bien de noche: cuesta dormirse, te despiertas a las tantas o te levantas sin descansar.', 'Al médico si roncas mucho con pausas, si el cansancio va con otros síntomas nuevos o si dura semanas aunque duermas.']
+    };
+    var pz = cuerpo.querySelector('.resultado');
+    selector(cuerpo, function (k) {
+      var z = Z[k];
+      pon(pz, z[0], ['<strong>Por qué pasa.</strong> ' + z[1], '<strong>Cuándo no es ansiedad.</strong> ' + z[2]]);
+    });
+  }
+
+  var una = document.getElementById('unacosa');
+  if (una) {
+    var C = {
+      cuerpo: ['Ducharte con calma, sin prisa.', 'Salir diez minutos a la calle, aunque sea a la esquina.', 'Abrir la ventana y estirarte un minuto.', 'Comer algo caliente sentada o sentado a la mesa.', 'Cambiar las sábanas.', 'Bajar la basura y volver por el camino largo.'],
+      gusto: ['Poner una canción que te gustaba antes.', 'Prepararte la bebida que más te apetezca y tomarla sin pantalla.', 'Leer dos páginas de algo que no sea el móvil.', 'Sentarte al sol cinco minutos.', 'Ver una foto de un sitio en el que estuviste bien.', 'Cocinar algo sencillo que te guste el olor.'],
+      logro: ['Fregar solo los vasos.', 'Contestar un mensaje pendiente, uno.', 'Tirar tres cosas que sobran.', 'Hacer la cama.', 'Pagar o pedir una cosa que llevas días posponiendo.', 'Ordenar una sola balda o un cajón.'],
+      gente: ['Mandar un audio corto a alguien: «me he acordado de ti».', 'Contestar en un grupo, aunque sea con una tontería.', 'Llamar a alguien mientras paseas.', 'Proponer un café para esta semana, sin fecha cerrada.', 'Saludar a alguien del barrio o del trabajo por su nombre.', 'Responder a quien te escribió y no contestaste.']
+    };
+    var pu = una.querySelector('.resultado'), cat = null;
+    function baraja(a) { return a.slice().sort(function () { return Math.random() - .5; }).slice(0, 3); }
+    function pinta3() {
+      pon(pu, 'Elige una, no las tres', ['<ul>' + baraja(C[cat]).map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>',
+        'Ponle hora (hoy o mañana) y hazla <strong>sin esperar a tener ganas</strong>. Después, apunta del 0 al 10 cómo estabas antes y después.']);
+      var b = el('button', 'Dame otras tres'); b.type = 'button';
+      b.addEventListener('click', pinta3); pu.appendChild(b);
+    }
+    selector(una, function (k) { cat = k; pinta3(); });
+  }
+
+  var dno = document.getElementById('decirno');
+  if (dno) {
+    var F = {
+      trabajo: { corto: '«Esta semana no puedo cogerlo. Si es prioritario, dime qué dejo para hacerlo.»', alternativa: '«Ahora no llego, pero el jueves puedo mirarlo una hora. ¿Te sirve?»', pensar: '«Déjame mirar lo que tengo y te digo algo antes de las cinco.»' },
+      familia: { corto: '«Este domingo no voy a ir. Os quiero igual.»', alternativa: '«A comer no puedo, pero el sábado me paso a tomar café.»', pensar: '«No lo sé todavía. Lo miro y mañana te digo.»' },
+      amistades: { corto: '«Hoy no me apetece salir, pero gracias por contar conmigo.»', alternativa: '«Al concierto no, pero ¿te parece si quedamos el martes para cenar?»', pensar: '«Dame un rato para ver cómo voy y te contesto.»' },
+      pareja: { corto: '«Eso no me apetece. No es por ti, es que no quiero.»', alternativa: '«Eso no, pero sí me apetece que hagamos otra cosa juntos.»', pensar: '«No quiero contestarte deprisa. Lo pienso y lo hablamos esta noche.»' }
+    };
+    var sel = { quien: null, como: null }, pd = dno.querySelector('.resultado');
+    selector(dno, function (k, g) {
+      sel[g] = k;
+      if (!sel.quien || !sel.como) return;
+      var txt = [F[sel.quien][sel.como],
+        'Dilo una vez, sin justificarte tres veces. Si insisten, repite la misma frase con calma: no hace falta encontrar un argumento mejor.',
+        'Lo habitual es sentir culpa justo después. <strong>Eso no significa que hayas hecho algo mal</strong>: significa que es nuevo.'];
+      if (sel.quien === 'pareja') txt.push('Si decirle que no a tu pareja te da miedo por cómo pueda reaccionar, eso no es falta de asertividad. Lee <a href="/guias/dependencia-emocional/#seguridad">este apartado</a> o llama al <a href="tel:016">016</a>; si hay peligro ahora, al <a href="tel:112">112</a>.');
+      pon(pd, 'Una forma de decirlo', txt);
+    });
+  }
+
+  var fr = document.getElementById('frase');
+  if (fr) {
+    var P = {
+      empezar: '«No sé muy bien por dónde empezar. ¿Me ayudas a ordenarlo?»',
+      verguenza: '«Hay algo que me da mucha vergüenza contar. Voy a intentarlo, pero me cuesta.»',
+      juicio: '«Tengo miedo de que pienses mal de mí cuando te lo cuente.»',
+      tanto: '«No sé si lo mío es para tanto, pero me está costando.»',
+      todavia: '«Hay una cosa que todavía no quiero contar. Quería que lo supieras.»',
+      llorar: '«Puede que me eche a llorar. Si pasa, dame un momento.»'
+    };
+    var pf = fr.querySelector('.resultado');
+    selector(fr, function (k) {
+      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
     });
   }
 })();

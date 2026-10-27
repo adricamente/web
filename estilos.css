@@ -3752,3 +3752,11 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .confianza-bloque h3{margin:0 0 6px;font-size:1.1rem}
 .confianza-bloque p{margin:0;font-size:.98rem}
 @media print{.respira,.orienta,.anclaje .acciones{display:none}}
+
+/* Herramientas de elegir y leer (27-10): cuerpo, una cosa, decir que no,
+   la primera frase. Los botones en fila, que son cortos. */
+.orienta .opciones.en-fila{flex-direction:row;flex-wrap:wrap}
+.orienta .opciones.en-fila button{border-radius:999px}
+.orienta .resultado ul{margin:6px 0 10px;padding-left:20px}
+.orienta .resultado button{margin-top:4px}
+.orienta .resultado p:last-child{margin-bottom:0}
