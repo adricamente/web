@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://adricamente.com/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-10-27</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/sobre-mi/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-10-27</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/terapia-online/</loc>
@@ -34,7 +34,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/primera-sesion/</loc>
-    <lastmod>2026-10-17</lastmod>
+    <lastmod>2026-10-27</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/tarifas/</loc>
@@ -42,7 +42,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/blog/</loc>
-    <lastmod>2026-10-07</lastmod>
+    <lastmod>2026-10-27</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-lo-repites/</loc>
@@ -99,5 +99,37 @@
   <url>
     <loc>https://adricamente.com/herramientas/rueda-de-las-emociones/</loc>
     <lastmod>2026-10-26</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/ataque-de-ansiedad/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/necesito-ir-al-psicologo/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/no-puedo-dejar-de-pensar/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/autoexigencia/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/sindrome-del-impostor/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/dependencia-emocional/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/secreto-profesional/</loc>
+    <lastmod>2026-10-27</lastmod>
   </url>
 </urlset>

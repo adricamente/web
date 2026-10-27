@@ -3690,3 +3690,65 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .rueda-palabras button:hover,.rueda-palabras button:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
 @media (max-width:480px){.rueda-ficha dl{grid-template-columns:1fr}.rueda-ficha dd{margin-bottom:6px}}
 @media print{.rueda .et-anillo{display:inline}.rueda-caja{max-width:none}}
+
+/* --- Las guías (27-10) ---------------------------------------------
+   /guias/: contenido para leer con calma, con su autor, su fecha, sus
+   fuentes y, en algunas, una herramienta que se usa en la propia página
+   (respirar, anclarse, orientarse). Nada de lo que se pulsa sale del
+   navegador. */
+.guia-meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.95rem;color:var(--ink-2);margin:-4px 0 18px;max-width:var(--medida)}
+.guia-meta a{color:inherit}
+.indice{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-m);padding:16px 20px;margin:8px 0 26px;max-width:var(--medida)}
+.indice p{font-weight:700;margin:0 0 6px}
+.indice ol{margin:0;padding-left:20px}
+.indice li{margin:3px 0}
+.en-corto{border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-m) var(--r-m) 0;padding:14px 18px;margin:0 0 24px;max-width:var(--medida)}
+.en-corto p{margin:0 0 8px}.en-corto p:last-child{margin:0}
+.en-corto .t{font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-3)}
+.fuentes{font-size:.95rem;color:var(--ink-2)}
+.fuentes li{margin:0 0 8px}
+.guia-autor{display:flex;gap:16px;align-items:flex-start;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;margin:30px 0;max-width:var(--medida)}
+.guia-autor img{width:72px;height:72px;border-radius:50%;object-fit:cover;flex:0 0 auto}
+.guia-autor p{margin:0 0 6px;font-size:.97rem}
+.relacionadas{list-style:none;padding:0;margin:0 0 20px;max-width:var(--medida)}
+.relacionadas li{border-top:1px solid var(--line);padding:12px 0}
+.relacionadas a{font-weight:700}
+.relacionadas span{display:block;color:var(--ink-2);font-size:.97rem}
+
+/* Respira conmigo: un círculo que crece al inhalar y encoge al soltar. */
+.respira{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:20px;margin:10px 0 26px;text-align:center;max-width:var(--medida)}
+.respira-modos{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 14px}
+.respira-modos button,.respira-acciones button,.anclaje button,.orienta button{font:inherit;font-size:.98rem;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink)}
+.respira-modos button[aria-pressed=true],.orienta button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.respira-acciones button.principal,.anclaje button.principal{background:var(--accent);border-color:var(--accent);color:var(--sobre-accent);font-weight:700}
+.respira-circulo{--escala:.45;width:min(240px,62vw);aspect-ratio:1/1;margin:8px auto 14px;border-radius:50%;
+  background:radial-gradient(circle at 50% 45%,#DCE8F2 0,#9DBBD3 55%,#5B86A8 100%);
+  transform:scale(var(--escala));transition:transform 1s linear;display:flex;align-items:center;justify-content:center}
+.respira-fase{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:700;font-size:1.5rem;min-height:2.2rem;margin:0}
+.respira-cuenta{color:var(--ink-2);margin:2px 0 12px}
+.respira-acciones{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+@media (prefers-reduced-motion:reduce){.respira-circulo{transition:none}}
+
+/* Anclarse: 5-4-3-2-1, un paso cada vez. */
+.anclaje{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:20px;margin:10px 0 26px;max-width:var(--medida)}
+.anclaje .paso-n{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:800;font-size:2.4rem;line-height:1;color:var(--accent);margin:0 0 6px}
+.anclaje .paso-t{font-size:1.15rem;font-weight:700;margin:0 0 6px}
+.anclaje .acciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+
+/* Orientarse: dónde empezar según lo que pasa (no puntúa, no diagnostica). */
+.orienta{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:20px;margin:10px 0 26px;max-width:var(--medida)}
+.orienta fieldset{border:0;padding:0;margin:0 0 16px}
+.orienta legend{font-weight:700;margin:0 0 10px;font-size:1.05rem}
+.orienta .opciones{display:flex;flex-direction:column;gap:8px}
+.orienta .opciones button{text-align:left;border-radius:var(--r-m)}
+.orienta .resultado{border-left:6px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-m) var(--r-m) 0;padding:14px 18px;margin-top:6px}
+.orienta .resultado.urgente{border-left-color:var(--error);background:var(--error-soft)}
+.orienta .resultado h3{margin:0 0 6px}
+
+/* «No se lo cuentas a cualquiera»: el bloque de confianza. */
+.confianza-bloque{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:14px;margin:14px 0 22px}
+.confianza-bloque > div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:16px 18px}
+.confianza-bloque h3{margin:0 0 6px;font-size:1.1rem}
+.confianza-bloque p{margin:0;font-size:.98rem}
+@media print{.respira,.orienta,.anclaje .acciones{display:none}}
