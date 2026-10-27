@@ -108,6 +108,30 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Tiempo de preocupación](https://adricamente.com/herramientas/tiempo-de-preocupacion/)
 - [Glosario de psicología](https://adricamente.com/glosario/)
 
-## Opcional
 
-- [Blog](https://adricamente.com/blog/): artículos cortos sobre por qué repetimos lo que nos perjudica.
+## Blog: artículos cortos (cada uno con un resumen de 30 segundos)
+
+- [Por qué el miedo crece cuando lo evitas](https://adricamente.com/blog/por-que-el-miedo-crece-si-lo-evitas/): Cada vez que lo esquivas, te ahorras el mal rato y también la prueba de que no pasaba nada.
+- [Por qué buscar síntomas en Google calma un rato y luego angustia más](https://adricamente.com/blog/buscar-sintomas-en-google/): La primera búsqueda tranquiliza. La quinta, a las dos de la mañana, ya no.
+- [Por qué no sueltas el móvil aunque no te esté gustando lo que ves](https://adricamente.com/blog/por-que-no-sueltas-el-movil/): Casi nada de lo que ves te interesa. Justo por eso no paras.
+- [El perfeccionismo no es exigencia: muchas veces es miedo](https://adricamente.com/blog/el-perfeccionismo-es-miedo/): Si nunca lo entregas, nadie puede decir que está mal. Ese es el trato que te ofrece el perfeccionismo.
+- [Por qué una crítica pesa más que muchos elogios](https://adricamente.com/blog/por-que-recuerdas-lo-malo/): Te dijeron seis cosas buenas y una regular. Ya sabes cuál vas a repasar en la ducha.
+- [No pienses en un oso blanco: por qué intentar no pensar en algo lo trae más](https://adricamente.com/blog/no-pienses-en-un-oso-blanco/): Durante los próximos diez segundos, no pienses en un oso blanco. Ya está ahí, ¿verdad?
+- [Por qué de noche todo pesa más](https://adricamente.com/blog/por-que-la-ansiedad-sube-de-noche/): De día lo llevas. A las tres de la mañana, el mismo asunto parece no tener salida.
+- [Por qué no hacer nada también cansa](https://adricamente.com/blog/cansancio-sin-hacer-nada/): Un día entero en el sofá y acabas con menos energía que si hubieras hecho mil cosas. Tiene explicación.
+- [Empiezo cosas y no las acabo](https://adricamente.com/blog/empiezo-cosas-y-no-las-acabo/): El primer día del curso, del cuaderno o del proyecto todo encaja. En la tercera semana, se apaga.
+- [Cuando pensar en positivo te hace sentir peor](https://adricamente.com/blog/pensar-en-positivo-no-me-sirve/): Repites «todo va a salir bien» y por dentro algo contesta «ya». Por qué forzar lo positivo a veces empeora.
+- [Por qué complaces a todo el mundo aunque luego te pese](https://adricamente.com/blog/complacer-a-todo-el-mundo/): Decir que sí te ahorra el mal rato al momento. La factura llega el sábado, cuando ya no hay vuelta atrás.
+- [Por qué a veces es más fácil contárselo a alguien que no conoces](https://adricamente.com/blog/por-que-es-mas-facil-contarselo-a-un-desconocido/): Lo que no le dices a quien te quiere a veces sale entero delante de alguien que no forma parte de tu vida.
+- [No hace falta saber qué te pasa para ir al psicólogo](https://adricamente.com/blog/no-hace-falta-saber-que-te-pasa/): «No sé ni qué me pasa» no es un motivo para esperar. Es una forma perfectamente válida de empezar.
+- [Qué hace un psicólogo que no puede hacer una amiga o un amigo](https://adricamente.com/blog/que-hace-un-psicologo-que-no-hace-un-amigo/): Tus amistades te quieren. Justo por eso hay cosas que no pueden hacer por ti, y no es culpa de nadie.
+- [Contarle a tu familia que vas al psicólogo (o no contarlo)](https://adricamente.com/blog/contar-a-tu-familia-que-vas-al-psicologo/): Puedes contarlo, a quien quieras y como quieras. Y puedes no contarlo: también es una decisión válida.
+- [Mientras esperas la primera cita](https://adricamente.com/blog/mientras-esperas-la-primera-cita/): Has pedido cita y quedan días. Qué puedes hacer mientras tanto, y qué hacer si las cosas empeoran.
+- [No hace falta tocar fondo para pedir ayuda](https://adricamente.com/blog/no-hace-falta-tocar-fondo/): Esperar a estar peor para «merecer» ir al psicólogo no es prudencia. Es una regla que nadie ha escrito.
+- [El bajón del domingo por la tarde](https://adricamente.com/blog/el-bajon-del-domingo/): El lunes todavía no ha llegado, pero ya te ha estropeado la tarde del domingo.
+- [Siempre discutimos por lo mismo](https://adricamente.com/blog/siempre-discutimos-por-lo-mismo/): Parece que discutís por la lavadora. Casi nunca es por la lavadora.
+- [Validar no es dar la razón](https://adricamente.com/blog/validar-no-es-dar-la-razon/): Puedes entender por qué alguien se siente así sin estar de acuerdo con lo que piensa. Eso es validar.
+- [Por qué te cuesta tanto pedir ayuda](https://adricamente.com/blog/por-que-me-cuesta-pedir-ayuda/): Escribes «¿tienes un rato?» y lo borras. No es orgullo: es algo que aprendiste y que tuvo sentido.
+- [Culpa por descansar: cuando el descanso hay que ganárselo](https://adricamente.com/blog/culpa-por-descansar/): Te tumbas en el sofá y a los diez minutos estás repasando pendientes. Ni haces ni descansas.
+- [Ponerle nombre a lo que sientes, más allá de «estoy mal»](https://adricamente.com/blog/ponerle-nombre-a-lo-que-sientes/): «Estoy mal» es verdad, pero no te dice qué necesitas. Una palabra más precisa, a veces, sí.
+- [Hablarte como le hablarías a alguien que quieres](https://adricamente.com/blog/hablarte-como-le-hablarias-a-alguien-que-quieres/): A alguien que quieres le dirías «le pasa a todo el mundo». A ti te dices «eres un desastre».
