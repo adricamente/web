@@ -521,7 +521,7 @@
   <ul class="relacionadas">
     <li><a href="/guias/dependencia-emocional/">Dependencia emocional</a><span>Guía completa: qué es la dependencia emocional (y qué no), en qué se diferencia de una relación que te controla, por qué cuesta tanto salir y qué ayuda.</span></li>
     <li><a href="/guias/celos/">Celos en la pareja</a><span>Guía completa: qué celos son normales y cuáles hacen daño, por qué mirar su móvil los alimenta, cuándo dejan de ser celos para ser control y qué ayuda.</span></li>
-    <li><a href="/guias/miedo-al-rechazo/">Miedo al rechazo</a><span>Por qué un mensaje sin contestar puede doler tanto, qué es la sensibilidad al rechazo y qué probar para no pasarte la vida evitando que te digan que no.</span></li>
+    <li><a href="/guias/miedo-al-rechazo/">Miedo al rechazo</a><span>Guía completa: por qué un mensaje sin contestar duele tanto, qué es la sensibilidad al rechazo, qué la mantiene y qué puedes probar para no vivir evitando un «no».</span></li>
   </ul>
 
   <section class="cinta">
@@ -720,6 +720,7 @@
       var txt = [F[sel.quien][sel.como],
         'Dilo una vez, sin justificarte tres veces. Si insisten, repite la misma frase con calma: no hace falta encontrar un argumento mejor.',
         'Lo habitual es sentir culpa justo después. <strong>Eso no significa que hayas hecho algo mal</strong>: significa que es nuevo.'];
+      if (sel.quien === 'familia') txt.push('Esto es para una familia que opina o presiona. Si hay insultos, amenazas, control o golpes, no te toca a ti encontrar la frase: mira <a href="/guias/limites-con-la-familia/#maltrato">cuando no son críticas, es maltrato</a>. Si tienes menos de 18 años, la Fundación ANAR te atiende en el <a href="tel:900202010">900 20 20 10</a>.');
       if (sel.quien === 'pareja') txt.push('Si decirle que no a tu pareja te da miedo por cómo pueda reaccionar, eso no es falta de asertividad. Lee <a href="/guias/dependencia-emocional/#seguridad">este apartado</a> o llama al <a href="tel:016">016</a> si eres mujer o al <a href="tel:028">028</a> si eres una persona LGTBI; si hay peligro ahora, al <a href="tel:112">112</a>.');
       pon(pd, 'Una forma de decirlo', txt);
     });
@@ -737,7 +738,7 @@
     };
     var pf = fr.querySelector('.resultado');
     selector(fr, function (k) {
-      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
+      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Quien te atiende en terapia está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
     });
   }
 

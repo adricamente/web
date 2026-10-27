@@ -1657,27 +1657,85 @@ function pintaTexto(caja, texto) {
 /* Un PDF sellado (una herramienta, un resumen ya maquetado). Se abre
    aquí mismo, en el navegador: los bytes se descifran en memoria y se
    ofrecen como un enlace local (blob:), que no sale a ningún sitio.
-   Cuando se vuelve atrás, se suelta. */
-let URL_PDF = null;
+   27-10: una paciente lo guardó y luego no pudo volver a abrirlo. Desde
+   hoy el PDF se entrega como un fichero normal y completo: siempre con
+   «.pdf» al final, sin contraseña (el Mac no publica PDFs con clave) y
+   sin soltar el enlace al volver atrás, que era lo que dejaba muerta la
+   pestaña o la copia guardada. Cada botón crea su propio enlace; solo se
+   sueltan todos al cerrar la página o al salir de la cuenta. */
+let PDF_ACTUAL = null;
+const URLS_PDF = [];
+function urlPdf() {
+  const u = URL.createObjectURL(new Blob([PDF_ACTUAL.bytes], { type: 'application/pdf' }));
+  URLS_PDF.push(u);
+  return u;
+}
+function sueltaPdfs() {
+  while (URLS_PDF.length) { try { URL.revokeObjectURL(URLS_PDF.pop()); } catch (e) {} }
+  PDF_ACTUAL = null;
+}
+addEventListener('pagehide', ev => { if (!ev.persisted) sueltaPdfs(); });
+function nombrePdf(n) {
+  let s = String(n || '').replace(/[\\/:*?"<>|\u0000-\u001f]/g, '').replace(/\s+/g, ' ').trim();
+  s = s.replace(/\.pdf$/i, '').slice(0, 90).trim() || 'documento';
+  return s + '.pdf';
+}
 function pintaPdf(d) {
   const bin = atob(d.pdf), bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  if (URL_PDF) URL.revokeObjectURL(URL_PDF);
-  URL_PDF = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+  PDF_ACTUAL = { bytes, nombre: nombrePdf(d.nombre) };
   const caja = $('doc-cuerpo');
   caja.replaceChildren();
   const p = document.createElement('p');
-  p.textContent = 'Es un PDF. Se abre en tu dispositivo, sin pasar por ningún otro sitio.';
+  p.textContent = 'Es un PDF. Se abre en tu dispositivo, sin pasar por ningún otro sitio. '
+    + 'Si lo guardas, es tuyo: se abre siempre, sin contraseña y sin conexión.';
   const abrirA = document.createElement('a');
-  abrirA.className = 'boton'; abrirA.href = URL_PDF; abrirA.target = '_blank'; abrirA.rel = 'noopener';
+  abrirA.className = 'boton'; abrirA.href = '#'; abrirA.rel = 'noopener';
   abrirA.textContent = 'Abrir el PDF';
+  abrirA.addEventListener('click', ev => {
+    ev.preventDefault();
+    if (!PDF_ACTUAL) return;
+    const u = urlPdf();
+    const w = window.open(u, '_blank', 'noopener');
+    if (!w) location.href = u;   // si el navegador bloquea la pestaña nueva
+  });
   const bajar = document.createElement('a');
-  bajar.className = 'enlace-boton'; bajar.href = URL_PDF;
-  bajar.download = (String(d.nombre || 'documento.pdf').replace(/[\\/:*?"<>|]/g, '') || 'documento.pdf');
+  bajar.className = 'enlace-boton'; bajar.href = '#';
   bajar.textContent = 'Guardarlo';
+  bajar.addEventListener('click', async ev => {
+    ev.preventDefault();
+    if (!PDF_ACTUAL) return;
+    /* En el móvil, el menú de compartir guarda el fichero de verdad
+       («Guardar en Archivos», Drive, correo…). En el ordenador, una
+       descarga normal. */
+    const tactil = matchMedia('(pointer: coarse)').matches;
+    try {
+      const f = new File([PDF_ACTUAL.bytes], PDF_ACTUAL.nombre, { type: 'application/pdf' });
+      if (tactil && navigator.canShare && navigator.canShare({ files: [f] })) {
+        await navigator.share({ files: [f], title: PDF_ACTUAL.nombre });
+        return;
+      }
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;   // cerró el menú: nada que hacer
+    }
+    const a = document.createElement('a');
+    a.href = urlPdf(); a.download = PDF_ACTUAL.nombre; a.rel = 'noopener';
+    document.body.append(a); a.click(); a.remove();
+  });
   const fila = document.createElement('p');
   fila.append(abrirA, ' ', bajar);
   caja.append(p, fila);
+  /* Si algún día llega un PDF con clave (no debería: el Mac los rechaza),
+     que la paciente no se quede atascada sin saber por qué. */
+  const cola = new TextDecoder('latin1').decode(bytes.subarray(Math.max(0, bytes.length - 4096)))
+    + new TextDecoder('latin1').decode(bytes.subarray(0, Math.min(bytes.length, 4096)));
+  if (/\/Encrypt\b/.test(cola)) {
+    const ojo = document.createElement('p');
+    ojo.className = 'apunte';
+    ojo.textContent = 'Este PDF ha llegado protegido y puede pedirte una contraseña. No es culpa tuya: '
+      + 'avísame por la cuenta y te lo vuelvo a mandar sin ella.';
+    caja.append(ojo);
+  }
 }
 /* El logo de arriba lleva a Inicio (17-10), desde cualquier pantalla y
    sin recargar: recargar obligaría a volver a poner la contraseña,
@@ -1685,12 +1743,10 @@ function pintaPdf(d) {
 document.querySelectorAll('.barra .marca').forEach(m => m.addEventListener('click', ev => {
   ev.preventDefault();
   if (!privada || $('v-entrar').hidden === false) return;
-  if (URL_PDF) { URL.revokeObjectURL(URL_PDF); URL_PDF = null; }
   if (location.hash !== '#inicio') history.replaceState(null, '', '#inicio');
   panel();
 }));
 $('doc-volver').addEventListener('click', () => {
-  if (URL_PDF) { URL.revokeObjectURL(URL_PDF); URL_PDF = null; }
   panel();
 });
 

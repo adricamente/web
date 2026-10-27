@@ -214,7 +214,7 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-10-27a';
+const ADR_VERSION = '2026-10-27b';
 const ADR_ACCIONES_NUEVAS = ['precargar', 'version'];
 
 switch ($a) {

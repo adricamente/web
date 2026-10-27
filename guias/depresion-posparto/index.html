@@ -474,7 +474,7 @@
     <li>Si te cuenta pensamientos que le asustan, escucha sin alarmarte. Tenerlos no convierte a nadie en un peligro;
     ofrécete a acompañar para contárselo a la matrona o al médico.</li>
     <li>Si dice cosas sin sentido, ve u oye cosas que otros no o está muy desorientada, llama al
-    <a href="tel:112">112</a>. Si habla de hacerse daño, llamad juntos al <a href="tel:024">024</a>, que atiende
+    <a href="tel:112">112</a>. Si habla de hacerse daño, llama al <a href="tel:024">024</a> en ese momento, con esa persona a tu lado, que atiende
     también a familiares.</li>
   </ul>
   <p>Y si eres la pareja, cuídate tú también: la depresión puede aparecer en las dos personas que crían. Tienes más
@@ -568,7 +568,7 @@
   <ul class="relacionadas">
     <li><a href="/guias/senales-de-depresion/">Depresión: señales y tratamiento</a><span>Guía completa de la depresión: en qué se diferencia de la tristeza, cómo se nota, qué la mantiene y qué tratamientos tienen evidencia.</span></li>
     <li><a href="/guias/pensamientos-intrusivos/">Pensamientos intrusivos</a><span>Guía completa: ideas o imágenes que no eliges y que te asustan, por qué le pasan a casi todo el mundo, por qué pelear con ellas las aviva y qué ayuda.</span></li>
-    <li><a href="/guias/culpa-materna/">Culpa de madre</a><span>Por qué la culpa de madre mide sobre todo lo alto que está el listón, qué dice la investigación sobre la «madre perfecta» y la carga mental, y qué probar.</span></li>
+    <li><a href="/guias/culpa-materna/">Culpa de madre</a><span>Guía completa: por qué la culpa de madre mide sobre todo el listón, qué dicen los estudios sobre la madre perfecta, la carga mental y el burnout parental, y qué probar.</span></li>
   </ul>
 
   <section class="cinta">
@@ -767,6 +767,7 @@
       var txt = [F[sel.quien][sel.como],
         'Dilo una vez, sin justificarte tres veces. Si insisten, repite la misma frase con calma: no hace falta encontrar un argumento mejor.',
         'Lo habitual es sentir culpa justo después. <strong>Eso no significa que hayas hecho algo mal</strong>: significa que es nuevo.'];
+      if (sel.quien === 'familia') txt.push('Esto es para una familia que opina o presiona. Si hay insultos, amenazas, control o golpes, no te toca a ti encontrar la frase: mira <a href="/guias/limites-con-la-familia/#maltrato">cuando no son críticas, es maltrato</a>. Si tienes menos de 18 años, la Fundación ANAR te atiende en el <a href="tel:900202010">900 20 20 10</a>.');
       if (sel.quien === 'pareja') txt.push('Si decirle que no a tu pareja te da miedo por cómo pueda reaccionar, eso no es falta de asertividad. Lee <a href="/guias/dependencia-emocional/#seguridad">este apartado</a> o llama al <a href="tel:016">016</a> si eres mujer o al <a href="tel:028">028</a> si eres una persona LGTBI; si hay peligro ahora, al <a href="tel:112">112</a>.');
       pon(pd, 'Una forma de decirlo', txt);
     });
@@ -784,7 +785,7 @@
     };
     var pf = fr.querySelector('.resultado');
     selector(fr, function (k) {
-      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
+      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Quien te atiende en terapia está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
     });
   }
 

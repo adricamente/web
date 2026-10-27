@@ -346,9 +346,7 @@
   pareja? Si piensas dos veces qué ponerte, a quién escribir o si llegar tarde por cómo se lo va a tomar, eso no es
   dependencia emocional.</p>
   <p>Si tu pareja te controla, te aísla, te humilla, vigila tu móvil o tu dinero, o te da miedo, <strong>no es
-  dependencia emocional: es violencia, y no es culpa tuya</strong>. No es raro: en España, el 27&nbsp;% de las mujeres
-  de 16 años o más que han tenido pareja ha sufrido violencia de control por parte de alguna pareja o expareja (Macroencuesta de Violencia
-  contra la Mujer, 2019).</p>
+  dependencia emocional: es violencia, y no es culpa tuya</strong>. No es raro: en España, el 27,3&nbsp;% de las mujeres de 16 años o más que han tenido pareja ha sufrido violencia de control por parte de alguna pareja o expareja (Macroencuesta de Violencia contra la Mujer 2024).</p>
   <p>Dónde pedir ayuda:</p>
   <ul>
     <li><strong>Si eres mujer</strong>, el <a href="tel:016">016</a> atiende todas las formas de violencia contra las mujeres. Es gratuito, funciona las 24 horas y no aparece en la factura del teléfono (sí en el registro de llamadas del móvil, que puedes borrar). También por WhatsApp en el 600 000 016, por chat y en 016-online@igualdad.gob.es.</li>
@@ -446,7 +444,7 @@
   <div class="mitos">
     <details class="mito"><summary><span class="mito-et">Mito</span> Es querer demasiado.</summary><p><span class="mito-real">Lo que se sabe</span> Querer mucho no exige renunciar a ti. Lo que describe el término es una necesidad que hace daño: la de estar bien solo si la otra persona está.</p></details>
     <details class="mito"><summary><span class="mito-et">Mito</span> Es un trastorno que se diagnostica.</summary><p><span class="mito-real">Lo que se sabe</span> No figura en los manuales diagnósticos, y una revisión de 20 estudios concluyó que no hay acuerdo sobre cómo definirla (Bution y Wechsler, 2016).</p></details>
-    <details class="mito"><summary><span class="mito-et">Mito</span> Si tu pareja te controla, es porque tú eres dependiente.</summary><p><span class="mito-real">Lo que se sabe</span> El control es violencia y la responsabilidad es de quien lo ejerce. En España, el 27 % de las mujeres de 16 años o más que han tenido pareja ha sufrido violencia de control por parte de alguna pareja o expareja (Macroencuesta, 2019).</p></details>
+    <details class="mito"><summary><span class="mito-et">Mito</span> Si tu pareja te controla, es porque tú eres dependiente.</summary><p><span class="mito-real">Lo que se sabe</span> El control es violencia y la responsabilidad es de quien lo ejerce. En España, el 27,3 % de las mujeres de 16 años o más que han tenido pareja ha sufrido violencia de control por parte de alguna pareja o expareja (Macroencuesta, 2024).</p></details>
     <details class="mito"><summary><span class="mito-et">Mito</span> Pedir que te confirme que te quiere te tranquiliza y os acerca.</summary><p><span class="mito-real">Lo que se sabe</span> Buscar reafirmación en exceso se asocia a más síntomas depresivos y a algo más de rechazo de los demás (Starr y Davila, 2008). La calma que llega de fuera dura poco.</p></details>
     <details class="mito"><summary><span class="mito-et">Mito</span> Para salir hay que dejar la relación sí o sí.</summary><p><span class="mito-real">Lo que se sabe</span> No siempre. Lo que cambia es el lugar que ocupa la relación en tu vida. Si hay control o violencia, es otra cosa: busca ayuda en el 016, el 028 o el 112.</p></details>
   </div>
@@ -539,7 +537,7 @@
     <li>Zimmerman, M. Trastorno de personalidad dependiente. <em>Manual MSD, versión para profesionales</em> (revisado en 2023).</li>
     <li>Mulder, R. T. (2021). ICD-11 personality disorders: utility and implications of the new model. <em>Frontiers in Psychiatry</em>, 12, 655548.</li>
     <li>Starr, L. R. y Davila, J. (2008). Excessive reassurance seeking, depression, and interpersonal rejection: a meta-analytic review. <em>Journal of Abnormal Psychology</em>, 117(4), 762-775.</li>
-    <li>Delegación del Gobierno contra la Violencia de Género (2020). <em>Macroencuesta de Violencia contra la Mujer 2019. Resumen ejecutivo</em>. Ministerio de Igualdad.</li>
+    <li>Delegación del Gobierno contra la Violencia de Género (2025). <em>Macroencuesta de Violencia contra la Mujer 2024</em>, capítulo 5: violencia de control en la pareja. Ministerio de Igualdad. https://violenciagenero.igualdad.gob.es/wp-content/uploads/Capitulo-5.-Violencia-control-pareja.pdf</li>
     <li>La Moncloa. Teléfono 016: ¿qué es y cómo funciona? (1 de abril de 2026). Y: Dos de cada diez consultas al teléfono Arcoíris 028 se producen tras algún episodio de violencia (20 de agosto de 2024).</li>
   </ol>
 
@@ -746,6 +744,7 @@
       var txt = [F[sel.quien][sel.como],
         'Dilo una vez, sin justificarte tres veces. Si insisten, repite la misma frase con calma: no hace falta encontrar un argumento mejor.',
         'Lo habitual es sentir culpa justo después. <strong>Eso no significa que hayas hecho algo mal</strong>: significa que es nuevo.'];
+      if (sel.quien === 'familia') txt.push('Esto es para una familia que opina o presiona. Si hay insultos, amenazas, control o golpes, no te toca a ti encontrar la frase: mira <a href="/guias/limites-con-la-familia/#maltrato">cuando no son críticas, es maltrato</a>. Si tienes menos de 18 años, la Fundación ANAR te atiende en el <a href="tel:900202010">900 20 20 10</a>.');
       if (sel.quien === 'pareja') txt.push('Si decirle que no a tu pareja te da miedo por cómo pueda reaccionar, eso no es falta de asertividad. Lee <a href="/guias/dependencia-emocional/#seguridad">este apartado</a> o llama al <a href="tel:016">016</a> si eres mujer o al <a href="tel:028">028</a> si eres una persona LGTBI; si hay peligro ahora, al <a href="tel:112">112</a>.');
       pon(pd, 'Una forma de decirlo', txt);
     });
@@ -763,7 +762,7 @@
     };
     var pf = fr.querySelector('.resultado');
     selector(fr, function (k) {
-      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
+      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Quien te atiende en terapia está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
     });
   }
 

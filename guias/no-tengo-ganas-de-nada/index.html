@@ -448,7 +448,7 @@
     <li><strong>Si dice que no, no te lo tomes como algo personal.</strong> Vuelve a proponer otro día, sin reproche.</li>
     <li><strong>No le empujes a hacer de golpe lo que hacía antes.</strong> Los pasos pequeños cuentan, aunque desde fuera parezcan poco.</li>
     <li><strong>Anima a consultar si dura.</strong> Más de dos semanas casi todos los días es motivo para ir al médico o a un profesional; puedes ofrecerte a acompañar.</li>
-    <li><strong>Si habla de no querer seguir, pregúntale directamente cómo está.</strong> Llamad juntos al <a href="tel:024">024</a>, que atiende también a familiares y allegados; si hay peligro inmediato, al <a href="tel:112">112</a>.</li>
+    <li><strong>Si habla de no querer seguir, pregúntale directamente cómo está.</strong> Llama al <a href="tel:024">024</a> en ese momento, con esa persona a tu lado, que atiende también a familiares y allegados; si hay peligro inmediato, al <a href="tel:112">112</a>.</li>
   </ul>
   <p>Y cuídate: acompañar a alguien sin ganas cansa. Más ideas en
   <a href="/guias/como-ayudar-a-alguien/">cómo ayudar a alguien que lo está pasando mal</a>.</p>
@@ -733,6 +733,7 @@
       var txt = [F[sel.quien][sel.como],
         'Dilo una vez, sin justificarte tres veces. Si insisten, repite la misma frase con calma: no hace falta encontrar un argumento mejor.',
         'Lo habitual es sentir culpa justo después. <strong>Eso no significa que hayas hecho algo mal</strong>: significa que es nuevo.'];
+      if (sel.quien === 'familia') txt.push('Esto es para una familia que opina o presiona. Si hay insultos, amenazas, control o golpes, no te toca a ti encontrar la frase: mira <a href="/guias/limites-con-la-familia/#maltrato">cuando no son críticas, es maltrato</a>. Si tienes menos de 18 años, la Fundación ANAR te atiende en el <a href="tel:900202010">900 20 20 10</a>.');
       if (sel.quien === 'pareja') txt.push('Si decirle que no a tu pareja te da miedo por cómo pueda reaccionar, eso no es falta de asertividad. Lee <a href="/guias/dependencia-emocional/#seguridad">este apartado</a> o llama al <a href="tel:016">016</a> si eres mujer o al <a href="tel:028">028</a> si eres una persona LGTBI; si hay peligro ahora, al <a href="tel:112">112</a>.');
       pon(pd, 'Una forma de decirlo', txt);
     });
@@ -750,7 +751,7 @@
     };
     var pf = fr.querySelector('.resultado');
     selector(fr, function (k) {
-      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
+      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Quien te atiende en terapia está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
     });
   }
 

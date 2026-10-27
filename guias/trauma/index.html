@@ -475,7 +475,7 @@
     <li>No le empujes a enfrentarse a lo que evita, pero tampoco organices la vida entera para que no tenga que
     hacerlo: si la evitación crece, es momento de consultar.</li>
     <li>Si fue una agresión sexual, no decidas por ella o por él si denunciar. Si es una mujer, el
-    <a href="tel:016">016</a> orienta también a su entorno; si es una persona LGTBI, el <a href="tel:028">028</a>. Si habla de hacerse daño, llamad juntos al <a href="tel:024">024</a>.</li>
+    <a href="tel:016">016</a> orienta también a su entorno; si es una persona LGTBI, el <a href="tel:028">028</a>. Si habla de hacerse daño, llama al <a href="tel:024">024</a> en ese momento, con esa persona a tu lado.</li>
   </ul>
   <p>Y cuídate tú: acompañar a alguien después de un trauma también remueve. Tienes más ideas en
   <a href="/guias/como-ayudar-a-alguien/">cómo ayudar a alguien que lo está pasando mal</a>.</p>
@@ -767,6 +767,7 @@
       var txt = [F[sel.quien][sel.como],
         'Dilo una vez, sin justificarte tres veces. Si insisten, repite la misma frase con calma: no hace falta encontrar un argumento mejor.',
         'Lo habitual es sentir culpa justo después. <strong>Eso no significa que hayas hecho algo mal</strong>: significa que es nuevo.'];
+      if (sel.quien === 'familia') txt.push('Esto es para una familia que opina o presiona. Si hay insultos, amenazas, control o golpes, no te toca a ti encontrar la frase: mira <a href="/guias/limites-con-la-familia/#maltrato">cuando no son críticas, es maltrato</a>. Si tienes menos de 18 años, la Fundación ANAR te atiende en el <a href="tel:900202010">900 20 20 10</a>.');
       if (sel.quien === 'pareja') txt.push('Si decirle que no a tu pareja te da miedo por cómo pueda reaccionar, eso no es falta de asertividad. Lee <a href="/guias/dependencia-emocional/#seguridad">este apartado</a> o llama al <a href="tel:016">016</a> si eres mujer o al <a href="tel:028">028</a> si eres una persona LGTBI; si hay peligro ahora, al <a href="tel:112">112</a>.');
       pon(pd, 'Una forma de decirlo', txt);
     });
@@ -784,7 +785,7 @@
     };
     var pf = fr.querySelector('.resultado');
     selector(fr, function (k) {
-      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
+      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Quien te atiende en terapia está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
     });
   }
 
