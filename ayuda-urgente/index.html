@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=57">
+  <link rel="stylesheet" href="/estilos.min.css?v=60">
 
 
   <script type="application/ld+json">
@@ -219,8 +219,10 @@
   <div class="caja salida">
     <p><strong>Si alguien revisa tu móvil:</strong> esta página queda en el historial del navegador. Puedes abrirla en
     una ventana privada o borrar el historial al salir. Si escribes al 016 por WhatsApp, borra también la conversación.</p>
-    <p style="margin-bottom:0"><button type="button" class="salir-rapido" onclick="location.replace('https://www.google.com/')">Salir rápido de esta página</button></p>
+    <p style="margin-bottom:0"><button type="button" class="salir-rapido" onclick="location.replace('https://www.google.com/')">Salir rápido de esta página</button> o pulsa la tecla Esc.</p>
   </div>
+  <button type="button" class="salir-flotante" onclick="location.replace('https://www.google.com/')">Salir rápido</button>
+  <script>document.addEventListener('keydown',function(e){if(e.key==='Escape')location.replace('https://www.google.com/');});</script>
 
 
   <h1>Si necesitas ayuda ahora</h1>

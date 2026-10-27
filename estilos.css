@@ -3930,3 +3930,19 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 @keyframes respira-mini{0%,100%{transform:scale(.55)}40%{transform:scale(1)}}
 @keyframes sube{0%,100%{transform:scaleY(.85)}50%{transform:scaleY(1)}}
 @keyframes aguja{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(25deg)}}
+
+/* URLs largas en las fuentes (27-10) */
+.fuentes li,.dato-fuente,.en-corto,.caja p{overflow-wrap:anywhere}
+
+/* Cabecera en una sola fila (27-10). Con «Reservar primera sesión
+   gratis» el botón mide 240 px y la fila no cabía en 880: se partía en
+   dos. En pantallas anchas la franja de la cabecera se ensancha un poco
+   (1000 px); entre 921 y 1099 sale del menú «Primera sesión», que es la
+   misma puerta que el botón. */
+@media (min-width:1100px){.franja-cabecera .contenedor.ancho{max-width:1040px}}
+@media (min-width:921px){.cabecera{flex-wrap:nowrap}.cabecera nav{gap:6px 13px}}
+@media (min-width:921px) and (max-width:1099px){.nav-escritorio a[href="/primera-sesion/"]{display:none}.cabecera{gap:10px 16px}}
+
+/* Salida rápida siempre a mano (27-10) */
+.salir-flotante{position:fixed;left:12px;bottom:12px;z-index:70;font:inherit;font-weight:700;font-size:.92rem;min-height:44px;padding:8px 14px;border-radius:999px;cursor:pointer;border:1.5px solid var(--error);background:var(--surface);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+@media print{.salir-flotante{display:none}}
