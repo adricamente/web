@@ -3760,3 +3760,39 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .orienta .resultado ul{margin:6px 0 10px;padding-left:20px}
 .orienta .resultado button{margin-top:4px}
 .orienta .resultado p:last-child{margin-bottom:0}
+
+/* Herramientas de página entera (27-10): valores y escalera. */
+.herr{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:20px;margin:14px 0 28px;max-width:var(--medida)}
+.herr h2{margin-top:0}
+.herr button{font:inherit;font-size:.98rem;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink)}
+.herr button.principal{background:var(--accent);border-color:var(--accent);color:var(--sobre-accent);font-weight:700}
+.herr button:disabled{opacity:.5;cursor:not-allowed}
+.herr label{display:block;font-weight:600;margin:12px 0 6px}
+.herr input[type=text]{width:100%;font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:var(--r-m);background:var(--surface);color:var(--ink)}
+.herr input[type=range]{width:100%;accent-color:var(--accent)}
+.herr fieldset{border:0;padding:0;margin:14px 0}
+.herr legend{font-weight:700;font-size:1.05rem;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chips .chip[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.herr-cuenta{color:var(--ink-2);margin:6px 0 10px}
+.val-fila{border-top:1px solid var(--line)!important;padding-top:10px!important}
+.esc-lista{list-style:none;padding:0;margin:10px 0;display:flex;flex-direction:column-reverse;gap:8px}
+.esc-lista li{display:flex;flex-wrap:wrap;align-items:center;gap:10px;border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px;
+  margin-left:calc(var(--n,0) * 2.2%);background:var(--surface-2)}
+.esc-lista li.hecho{background:var(--accent-soft);border-color:var(--accent-borde)}
+.esc-n{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:800;font-size:1.3rem;color:var(--accent);min-width:1.6em}
+.esc-t{flex:1 1 12rem}
+.esc-acc{display:flex;gap:6px}
+.esc-acc button{min-height:40px;padding:6px 12px;font-size:.9rem}
+@media print{.herr button,.esc-nuevo,.cinta,.cabecera,.franja-cabecera,.barra-cita,footer{display:none!important}.herr{border:0;padding:0}}
+
+/* Glosario (27-10) */
+.glosario{max-width:var(--medida);margin:0 0 18px}
+.glosario dt{font-weight:700;font-size:1.08rem;margin:16px 0 4px;scroll-margin-top:90px}
+.glosario dd{margin:0 0 10px;padding:0 0 12px;border-bottom:1px solid var(--line)}
+.indice.letras p{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0;font-weight:700}
+.indice.letras a{display:inline-block;min-width:28px;min-height:28px;text-align:center}
+
+/* Salida rápida en guías de violencia y control (27-10) */
+.caja.salida{border-left:6px solid var(--error);background:var(--error-soft)}
+.salir-rapido{font:inherit;font-weight:700;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;border:1.5px solid var(--error);background:var(--surface);color:var(--ink)}
