@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=61">
+  <link rel="stylesheet" href="/estilos.min.css?v=62">
 
 
   <script type="application/ld+json">
@@ -365,6 +365,9 @@
   </nav>
 
   <h2 id="atascados">Por qué nos quedamos atascados <span class="cuenta-serie">14</span></h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/camino-otono-a480.webp" srcset="/fotos/a/camino-otono-a800.webp 800w, /fotos/a/camino-otono-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 70%" width="1200" height="675" alt="Un camino entre árboles en otoño" loading="lazy" decoding="async">
+  </figure>
   <p class="apunte">Los mecanismos que hacen que repitamos lo que nos perjudica, explicados sin tecnicismos.</p>
   <div class="filas">
     <a class="tarjeta con-sello" href="/blog/por-que-lo-repites/">
@@ -579,6 +582,9 @@
     </a>
   </div>
   <h2 id="terapia">Ir al psicólogo, por dentro <span class="cuenta-serie">7</span></h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/sesion-casa-a480.webp" srcset="/fotos/a/sesion-casa-a800.webp 800w, /fotos/a/sesion-casa-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 60%" width="1200" height="675" alt="Un portátil abierto en una mesa junto a una ventana, con flores en un jarrón" loading="lazy" decoding="async">
+  </figure>
   <p class="apunte">Lo que casi nadie cuenta antes de empezar: qué se dice, quién se entera y qué no hace falta llevar preparado.</p>
   <div class="filas">
     <a class="tarjeta con-sello" href="/blog/cuando-dejar-de-hacerlo-solo/">
@@ -698,6 +704,9 @@
     </a>
   </div>
   <h2 id="dia">El día a día <span class="cuenta-serie">7</span></h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/manta-amarilla-a480.webp" srcset="/fotos/a/manta-amarilla-a1200.webp 1200w, /fotos/a/manta-amarilla-a800.webp 800w, /fotos/a/manta-amarilla-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 55%" width="1200" height="675" alt="Una manta amarilla sobre un sofá junto a la ventana" loading="lazy" decoding="async">
+  </figure>
   <p class="apunte">Cosas pequeñas que pesan mucho: descansar con culpa, pedir ayuda, ponerle nombre a lo que sientes.</p>
   <div class="filas">
     <a class="tarjeta con-sello" href="/blog/el-bajon-del-domingo/">
@@ -857,7 +866,7 @@
     tarjetas.forEach(function (a) { var ok = !v || v.split(/\s+/).every(function (w) { return a.dataset.txt.indexOf(w) >= 0; }); a.hidden = !ok; if (ok) n++; });
     document.querySelectorAll('main .filas').forEach(function (f) {
       var vis = f.querySelectorAll('.tarjeta:not([hidden])').length > 0;
-      f.hidden = !vis; var p = f.previousElementSibling; if (p) { p.hidden = !vis; var h = p.previousElementSibling; if (h && h.tagName === 'H2') h.hidden = !vis; }
+      f.hidden = !vis; var h = f.previousElementSibling; while (h && h.tagName !== 'H2' && h.tagName !== 'DIV') { h.hidden = !vis; h = h.previousElementSibling; } if (h && h.tagName === 'H2') h.hidden = !vis;
     });
     cuenta.innerHTML = !v ? '' : n ? n + (n === 1 ? ' artículo' : ' artículos') : 'Ningún artículo con esa palabra. Prueba en <a href="/guias/">las guías</a> o en el <a href="/glosario/">glosario</a>.';
   });
@@ -948,6 +957,7 @@
       &middot; <a href="tel:112">112</a>.
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
+      Fotos de ambiente: <a href="/como-escribo-las-guias/#fotos">Unsplash, no son pacientes ni mi consulta</a>.
     </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>

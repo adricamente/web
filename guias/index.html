@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=61">
+  <link rel="stylesheet" href="/estilos.min.css?v=62">
 
 
   <script type="application/ld+json">
@@ -496,6 +496,9 @@
     </ol>
   </nav>
   <h2 id="ansiedad">Ansiedad</h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/calle-borrosa-a480.webp" srcset="/fotos/a/calle-borrosa-a1200.webp 1200w, /fotos/a/calle-borrosa-a800.webp 800w, /fotos/a/calle-borrosa-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 50%" width="1200" height="675" alt="Gente caminando por una calle, desenfocada por el movimiento" loading="lazy" decoding="async">
+  </figure>
   <div class="filas">
     <a class="tarjeta pilar" href="/guias/ansiedad/">
       <span class="cabeza-tarjeta"><h3>Ansiedad: la guía completa</h3></span><span class="chip-pilar">Guía completa</span>
@@ -574,6 +577,9 @@
     </a>
   </div>
   <h2 id="animo">Ánimo, estrés y emociones</h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/cama-manana-a480.webp" srcset="/fotos/a/cama-manana-a1200.webp 1200w, /fotos/a/cama-manana-a800.webp 800w, /fotos/a/cama-manana-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 60%" width="1200" height="675" alt="Una cama sin hacer en una habitación en penumbra" loading="lazy" decoding="async">
+  </figure>
   <div class="filas">
     <a class="tarjeta pilar" href="/guias/no-tengo-ganas-de-nada/">
       <span class="cabeza-tarjeta"><h3>No tengo ganas de nada</h3></span><span class="chip-pilar">Guía completa</span>
@@ -637,6 +643,9 @@
     </a>
   </div>
   <h2 id="autoestima">Autoestima y autoexigencia</h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/planta-ventana-a480.webp" srcset="/fotos/a/planta-ventana-a1200.webp 1200w, /fotos/a/planta-ventana-a800.webp 800w, /fotos/a/planta-ventana-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 50%" width="1200" height="675" alt="Una planta pequeña en el alféizar de una ventana" loading="lazy" decoding="async">
+  </figure>
   <div class="filas">
     <a class="tarjeta pilar" href="/guias/autoexigencia/">
       <span class="cabeza-tarjeta"><h3>Autoexigencia y perfeccionismo</h3></span><span class="chip-pilar">Guía completa</span>
@@ -695,6 +704,9 @@
     </a>
   </div>
   <h2 id="relaciones">Pareja y relaciones</h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/dos-tazas-blancas-a480.webp" srcset="/fotos/a/dos-tazas-blancas-a1200.webp 1200w, /fotos/a/dos-tazas-blancas-a800.webp 800w, /fotos/a/dos-tazas-blancas-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 72%" width="1200" height="675" alt="Dos tazas blancas, una junto a la otra, sobre una mesa" loading="lazy" decoding="async">
+  </figure>
   <div class="filas">
     <a class="tarjeta pilar" href="/guias/dependencia-emocional/">
       <span class="cabeza-tarjeta"><h3>Dependencia emocional</h3></span><span class="chip-pilar">Guía completa</span>
@@ -748,6 +760,9 @@
     </a>
   </div>
   <h2 id="pedir">Pedir ayuda y entender la terapia</h2>
+  <figure class="foto foto-tema">
+    <img class="foto-amb" src="/fotos/a/puerta-patio-a480.webp" srcset="/fotos/a/puerta-patio-a800.webp 800w, /fotos/a/puerta-patio-a480.webp 480w" sizes="(min-width: 860px) 760px, 100vw" style="object-position:50% 55%" width="1200" height="675" alt="Una puerta abierta que da a un patio con luz" loading="lazy" decoding="async">
+  </figure>
   <div class="filas">
     <a class="tarjeta pilar" href="/guias/terapia-de-aceptacion-y-compromiso/">
       <span class="cabeza-tarjeta"><h3>Terapia de aceptación y compromiso (ACT)</h3></span><span class="chip-pilar">Guía completa</span>
@@ -847,7 +862,7 @@
     tarjetas.forEach(function (a) { var ok = !v || v.split(/\s+/).every(function (w) { return a.dataset.txt.indexOf(w) >= 0; }); a.hidden = !ok; if (ok) n++; });
     document.querySelectorAll('main .filas').forEach(function (f) {
       var vis = f.querySelectorAll('.tarjeta:not([hidden])').length > 0;
-      f.hidden = !vis; var h = f.previousElementSibling; if (h && h.tagName === 'H2') h.hidden = !vis;
+      f.hidden = !vis; var h = f.previousElementSibling; while (h && h.tagName !== 'H2' && h.tagName !== 'DIV') { h.hidden = !vis; h = h.previousElementSibling; } if (h && h.tagName === 'H2') h.hidden = !vis;
     });
     cuenta.innerHTML = !v ? '' : n ? n + (n === 1 ? ' guía' : ' guías') : 'Ninguna guía con esa palabra. Prueba con otra o en el <a href="/glosario/">glosario</a>. Si lo estás pasando muy mal ahora, llama al <a href="tel:024">024</a> (gratuito, 24 horas) o al <a href="tel:112">112</a>, o mira <a href="/ayuda-urgente/">ayuda urgente</a>.';
   });
@@ -938,6 +953,7 @@
       &middot; <a href="tel:112">112</a>.
       <a href="/aviso-legal.html">Aviso legal</a> &middot;
       <a href="/privacidad.html">Privacidad</a>.
+      Fotos de ambiente: <a href="/como-escribo-las-guias/#fotos">Unsplash, no son pacientes ni mi consulta</a>.
     </p>
     <p>© <span id="anyo">2026</span> Adrián Cuñat Andrés</p>
   </footer>

@@ -3819,6 +3819,7 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .escuchar-fila{margin:-6px 0 18px}
 .escuchar{font:inherit;font-size:.95rem;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink)}
 .escuchar::before{content:"▶ ";color:var(--accent)}
+.escuchar[aria-pressed=true]::before{content:"■ "}
 
 @media print{.escuchar-fila,.buscador,.salida{display:none}}
 
@@ -3953,3 +3954,43 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .en-corto ul{margin:0;padding-left:1.1em}
 .en-corto li{margin:0 0 6px}
 .en-corto li:last-child{margin:0}
+
+/* ---- 27-10 · Fotos de ambiente ---------------------------------------
+   Vuelven las fotos, pero no de banco: escenas cotidianas sin caras
+   (una cama sin hacer, un móvil a las tres, dos tazas, una ventana) en
+   las que quien lee se reconoce. Todas llevan el mismo tratamiento
+   (cálido y mate) para que se lean como una serie. No son pacientes ni
+   la consulta: lo dice «Cómo escribo las guías». Reglas: una foto por
+   cada dos o tres pantallas como mucho, nunca en «Ayuda urgente», y
+   siempre con alt descriptivo. */
+.foto-amb{display:block;width:100%;height:auto;border-radius:var(--r-m);background:var(--surface-2,#eee);object-fit:cover}
+figure.foto{margin:30px 0 34px}
+figure.foto figcaption{font-size:14.5px;line-height:1.45;color:var(--muted);margin:9px 2px 0;max-width:var(--medida)}
+figure.foto.cabecera-foto{margin:22px 0 26px}
+figure.foto.cabecera-foto .foto-amb{max-height:420px}
+/* Foto al lado del texto en escritorio; encima, apaisada, en el móvil. */
+.foto-lado{display:block}
+.foto-lado > figure.foto{margin:6px 0 24px}
+@media (min-width:860px){
+  .foto-lado{display:grid;grid-template-columns:minmax(0,1fr) 280px;column-gap:40px;align-items:start}
+  .foto-lado > figure.foto{grid-column:2;grid-row:1 / span 20;margin:8px 0 0;position:sticky;top:112px}
+  .foto-lado > :not(figure){grid-column:1}
+}
+/* Renglones con foto: la miniatura ocupa el sitio del icono. */
+.filas > .tarjeta.con-foto{grid-template-columns:132px minmax(0,1fr) 22px;column-gap:20px;padding:16px 6px 16px 2px}
+.filas > .tarjeta.con-foto > .ficha-foto{grid-column:1;grid-row:1;display:block}
+.filas > .tarjeta.con-foto > .cuerpo{grid-column:2;grid-row:1;min-width:0}
+.filas > a.tarjeta.con-foto::after{grid-column:3;grid-row:1}
+.filas > .tarjeta.con-foto .ficha-foto img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r-s)}
+.filas > .tarjeta.con-foto .cabeza-tarjeta .icono{display:none}
+@media (max-width:520px){.filas > .tarjeta.con-foto{grid-template-columns:92px minmax(0,1fr) 18px;column-gap:14px}}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .filas > a.tarjeta.con-foto .ficha-foto img{transition:filter var(--t-corto) var(--suave)}
+  .filas > a.tarjeta.con-foto:is(:hover,:focus-visible) .ficha-foto img{filter:saturate(1.15) brightness(1.04)}
+}
+/* La foto de un tema en el índice de guías: una franja baja. */
+.foto-tema{margin:34px 0 4px}
+.foto-tema .foto-amb{aspect-ratio:16/5;max-height:190px}
+@media (max-width:520px){.foto-tema .foto-amb{aspect-ratio:16/7}}
+/* Apaisadas a todo el ancho: que no se coman la pantalla entera. */
+figure.foto > .foto-amb{max-height:400px}
