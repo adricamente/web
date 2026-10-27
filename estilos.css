@@ -3821,3 +3821,112 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .escuchar::before{content:"▶ ";color:var(--accent)}
 
 @media print{.escuchar-fila,.buscador,.salida{display:none}}
+
+/* Guías completas (27-10): círculo, mitos, tarjeta de herramienta,
+   línea de confianza y barra de lectura. */
+.confianza-linea{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;margin:-8px 0 18px;color:var(--ink-2)}
+.confianza-linea a,.confianza-linea span{display:inline-flex;align-items:center;gap:5px}
+.confianza-linea a::before,.confianza-linea span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.progreso{position:fixed;left:0;right:0;top:0;height:3px;z-index:60;pointer-events:none}
+.progreso span{display:block;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:0 50%}
+.chip-pilar{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-3);background:var(--accent-soft);border-radius:999px;padding:2px 10px;margin:0 0 6px}
+.tarjeta.pilar{border-color:var(--accent-borde);box-shadow:0 0 0 1px var(--accent-borde) inset}
+
+.ciclo-vivo{margin:18px 0 26px;padding:18px;border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);max-width:var(--medida)}
+.ciclo-tit{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:800;font-size:1.2rem;margin:0 0 12px}
+.ciclo-pasos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ciclo-pasos li{display:flex;flex-direction:column;align-items:stretch}
+.ciclo-pasos li:not(:last-child)::after{content:"↓";text-align:center;color:var(--accent);font-weight:700;line-height:1.2}
+.ciclo-pasos button{font:inherit;font-size:.95rem;text-align:left;min-height:44px;padding:8px 12px;border-radius:var(--r-m);cursor:pointer;
+  border:1.5px solid var(--accent-borde);background:var(--surface-2);color:var(--ink);display:flex;gap:8px;align-items:center;
+  transition:background-color .25s,border-color .25s,transform .25s}
+.ciclo-pasos button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+.ciclo-n{flex:0 0 auto;display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--sobre-accent);font-weight:800;font-size:.85rem}
+.ciclo-svg,.ciclo-centro{display:none}
+.ciclo-centro span{display:block;font-size:2rem;line-height:1;color:var(--accent)}
+.ciclo-detalle{min-height:4.5em;margin:12px 0 8px;padding:12px 14px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-m) var(--r-m) 0}
+.ciclo-detalle p{margin:0}
+.ciclo-salida{margin:6px 0 0}
+@media (min-width:640px){
+  .ciclo-rueda{position:relative;width:min(470px,100%);aspect-ratio:1/1;margin:0 auto}
+  .ciclo-svg{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .ciclo-flecha{fill:none;stroke:var(--accent-borde);stroke-width:.9;stroke-dasharray:1;stroke-dashoffset:0}
+  .ciclo-svg marker path{fill:var(--accent-borde)}
+  .ciclo-pasos{display:block;position:absolute;inset:0}
+  .ciclo-pasos li{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:9.5rem}
+  .ciclo-pasos li::after{display:none}
+  .ciclo-pasos button{justify-content:flex-start;font-size:.9rem;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+  .ciclo-centro{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;color:var(--ink-2);font-size:.9rem;margin:0;width:7rem}
+}
+@media (min-width:640px) and (prefers-reduced-motion:no-preference){
+  .js-dibujo .ciclo-vivo .ciclo-flecha{stroke-dashoffset:1;transition:stroke-dashoffset .7s ease calc(var(--i) * .35s)}
+  .ciclo-vivo.visto .ciclo-flecha{stroke-dashoffset:0}
+  .js-dibujo .ciclo-vivo .ciclo-pasos li{opacity:0;transition:opacity .5s ease calc(var(--i) * .35s)}
+  .ciclo-vivo.visto .ciclo-pasos li{opacity:1}
+  .ciclo-centro span{animation:gira 6s linear infinite}
+}
+@keyframes gira{to{transform:rotate(360deg)}}
+
+
+.mitos{display:flex;flex-direction:column;gap:8px;margin:8px 0 22px;max-width:var(--medida)}
+.mito{border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);padding:0}
+.mito summary{cursor:pointer;padding:12px 14px;list-style:none;font-weight:600;display:flex;gap:10px;align-items:baseline}
+.mito summary::-webkit-details-marker{display:none}
+.mito summary::after{content:"+";margin-left:auto;font-weight:800;color:var(--accent)}
+.mito[open] summary::after{content:"−"}
+.mito-et,.mito-real{flex:0 0 auto;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 8px}
+.mito-et{background:var(--error-soft);color:var(--ink)}
+.mito-real{background:var(--accent-soft);color:var(--accent-3);margin-right:6px}
+.mito p{margin:0;padding:0 14px 14px}
+
+.tarjeta-herr{display:block;text-decoration:none;color:var(--ink);border:1.5px solid var(--accent-borde);border-radius:var(--r-l);padding:16px 18px;margin:12px 0 22px;background:var(--accent-soft);max-width:var(--medida);transition:transform .2s}
+.tarjeta-herr:hover{transform:translateY(-2px)}
+.tarjeta-herr strong{display:block;font-size:1.15rem;margin:2px 0 4px}
+.tarjeta-herr span{display:block}
+.tarjeta-herr-et{font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-3)}
+.tarjeta-herr .mas{margin-top:6px;font-weight:700;color:var(--accent-3)}
+@media print{.progreso,.ciclo-svg{display:none}}
+
+/* Herramientas con registro (27-10): sueño y preocupación */
+.herr select,.herr input[type=time],.herr input[type=number],.herr input[type=date]{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:var(--r-m);background:var(--surface);color:var(--ink);max-width:100%}
+.herr select{width:100%}
+.herr-rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:4px 16px}
+.herr-rejilla label{font-weight:600;display:flex;flex-direction:column;gap:4px}
+.tabla-envuelta{overflow-x:auto;margin:10px 0}
+.tabla-sueno{border-collapse:collapse;width:100%;font-size:.92rem}
+.tabla-sueno caption{text-align:left;font-weight:700;margin-bottom:6px}
+.tabla-sueno th,.tabla-sueno td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;white-space:nowrap}
+.tabla-sueno button{min-height:36px;padding:4px 10px;font-size:.85rem}
+.herr-resumen{font-weight:700;background:var(--accent-soft);border-radius:var(--r-m);padding:10px 12px}
+.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.preo-lista{list-style:none;padding:0;margin:8px 0 14px;display:flex;flex-direction:column;gap:6px}
+.preo-lista li{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:var(--r-m);padding:8px 12px;background:var(--surface-2)}
+.preo-lista li.hecho span{text-decoration:line-through;color:var(--ink-2)}
+.preo-lista button{min-height:36px;padding:4px 12px;font-size:.88rem;flex:0 0 auto}
+.preo-rato{border-top:1px solid var(--line);margin-top:14px;padding-top:6px}
+.preo-reloj{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:800;font-size:2.6rem;margin:4px 0;color:var(--accent-3)}
+
+/* Herramientas en la portada (27-10): tarjetas con un dibujo que se mueve
+   despacio. Con movimiento reducido, quietos. */
+.herr-portada{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:12px;margin:12px 0}
+.herr-mini{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:16px;transition:transform .2s,border-color .2s}
+.herr-mini:hover{transform:translateY(-3px);border-color:var(--accent-borde)}
+.herr-mini strong{font-size:1.08rem}
+.herr-mini span:last-child{color:var(--ink-2);font-size:.95rem}
+.herr-mini-dib{position:relative;width:56px;height:56px;margin-bottom:6px;display:block}
+.respirar span{position:absolute;inset:6px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#DCE8F2 0,#9DBBD3 55%,#5B86A8 100%);transform:scale(.6)}
+.escalon{display:flex!important;align-items:flex-end;gap:3px}
+.escalon span{width:11px;background:var(--accent-borde);border-radius:3px 3px 0 0}
+.escalon span:nth-child(1){height:25%}.escalon span:nth-child(2){height:50%}.escalon span:nth-child(3){height:75%}.escalon span:nth-child(4){height:100%;background:var(--accent)}
+.luna span{position:absolute;inset:8px;border-radius:50%;box-shadow:inset -12px -4px 0 0 var(--accent)}
+.brujula span{position:absolute;inset:8px;border-radius:50%;border:3px solid var(--accent-borde)}
+.brujula span::after{content:"";position:absolute;left:50%;top:6px;bottom:6px;width:4px;margin-left:-2px;background:linear-gradient(var(--accent) 50%,var(--line) 50%);border-radius:2px}
+@media (prefers-reduced-motion:no-preference){
+  .respirar span{animation:respira-mini 10s ease-in-out infinite}
+  .escalon span{animation:sube 4s ease-in-out infinite;transform-origin:bottom}
+  .escalon span:nth-child(2){animation-delay:.2s}.escalon span:nth-child(3){animation-delay:.4s}.escalon span:nth-child(4){animation-delay:.6s}
+  .brujula span::after{animation:aguja 6s ease-in-out infinite}
+}
+@keyframes respira-mini{0%,100%{transform:scale(.55)}40%{transform:scale(1)}}
+@keyframes sube{0%,100%{transform:scaleY(.85)}50%{transform:scaleY(1)}}
+@keyframes aguja{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(25deg)}}

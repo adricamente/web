@@ -22,17 +22,18 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 
 ## Guías: Ansiedad
 
-- [Ataque de ansiedad](https://adricamente.com/guias/ataque-de-ansiedad/): Qué hacer en el momento, qué no hacer y por qué vuelve. Con un ejercicio de respiración guiado.
+- [Ansiedad: la guía completa](https://adricamente.com/guias/ansiedad/): Qué es, cuándo deja de ser normal, los tipos (cada uno con su guía), las cifras en España y qué tratamiento tiene más evidencia.
+- [Ataque de ansiedad](https://adricamente.com/guias/ataque-de-ansiedad/): Qué hacer en el momento, qué no hacer y por qué vuelve. Con una respiración guiada y un ejercicio para anclarte.
 - [No puedo dejar de pensar](https://adricamente.com/guias/no-puedo-dejar-de-pensar/): Rumiar y preocuparse: por qué la cabeza no se apaga (sobre todo de noche) y una técnica con estudios detrás.
 - [Síntomas físicos de la ansiedad](https://adricamente.com/guias/sintomas-fisicos-de-la-ansiedad/): Corazón, aire, hormigueo, estómago, mareo: por qué el cuerpo hace cada cosa y cuándo no es ansiedad. Con un mapa para tocar.
 - [Miedo a estar enfermo](https://adricamente.com/guias/ansiedad-por-la-salud/): Buscar síntomas en Google, comprobar el cuerpo, pedir que te tranquilicen: por qué alivia un rato y luego hace el miedo más grande.
-- [Ansiedad social](https://adricamente.com/guias/ansiedad-social/): Miedo a hablar, a quedar mal, a que se note que estás nerviosa o nervioso. Qué la mantiene y por qué lo que haces para protegerte la empeora.
-- [Ansiedad generalizada](https://adricamente.com/guias/ansiedad-generalizada/): Cuando resuelves una preocupación y aparece otra: en qué se diferencia de preocuparse lo normal, qué la mantiene y qué ayuda.
+- [Ansiedad social](https://adricamente.com/guias/ansiedad-social/): Miedo a hablar, a quedar mal, a que se note que estás nerviosa o nervioso. Qué la mantiene, por qué lo que haces para protegerte la empeora y qué tratamiento tiene más base.
+- [Ansiedad generalizada](https://adricamente.com/guias/ansiedad-generalizada/): Cuando resuelves una preocupación y aparece otra: en qué se diferencia de preocuparse lo normal, qué la mantiene y qué tratamiento tiene más evidencia.
 - [Pensamientos intrusivos](https://adricamente.com/guias/pensamientos-intrusivos/): Ideas o imágenes que no eliges y que te asustan: por qué le pasan a casi todo el mundo, por qué pelear con ellas las aviva y cuándo consultar.
-- [No puedo dormir por la ansiedad](https://adricamente.com/guias/no-puedo-dormir/): Por qué intentar dormir a la fuerza lo empeora, qué recomiendan las guías antes que las pastillas y qué puedes probar esta noche.
+- [No puedo dormir: insomnio](https://adricamente.com/guias/no-puedo-dormir/): Qué es el insomnio, por qué esforzarte en dormir lo empeora, qué recomiendan las guías antes que las pastillas y qué puedes probar esta noche.
 - [Ansiedad anticipatoria](https://adricamente.com/guias/ansiedad-anticipatoria/): Cuando lo pasas mal días antes de algo que aún no ha pasado: qué la alimenta, por qué evitar la mantiene y cómo acercarte poco a poco.
 - [Fobias: qué son y cómo se trabajan](https://adricamente.com/guias/fobias/): Arañas, sangre, alturas, volar: por qué saber que es exagerado no basta, por qué evitar lo mantiene y cómo se trabaja con exposición gradual.
-- [Agorafobia](https://adricamente.com/guias/agorafobia/): No es miedo a los espacios abiertos: es miedo a no poder salir o a que nadie te ayude. Qué la mantiene y cómo se trabaja, también si salir cuesta.
+- [Agorafobia](https://adricamente.com/guias/agorafobia/): No es miedo a los espacios abiertos: es miedo a no poder salir o a que nadie te ayude. Qué la mantiene, cómo se trata y cómo empezar si salir es justo lo que cuesta.
 - [Ansiedad ante los exámenes](https://adricamente.com/guias/ansiedad-ante-examenes/): Te lo sabías y te quedaste en blanco. Qué dice la investigación (sin la curva de los nervios mal contada) y qué probar antes y durante.
 - [Miedo a conducir (amaxofobia)](https://adricamente.com/guias/miedo-a-conducir/): Tienes el carné y evitas la autovía, o has dejado el coche. Qué es la amaxofobia, por qué crece si lo dejas y cómo volver al volante con la seguridad primero.
 - [TOC: qué es y qué no](https://adricamente.com/guias/toc/): No es ser ordenado. Qué son las obsesiones y las compulsiones, por qué comprobar y pedir que te tranquilicen lo mantiene, y qué tratamiento tiene más base.
@@ -42,8 +43,8 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [No tengo ganas de nada](https://adricamente.com/guias/no-tengo-ganas-de-nada/): Cuando todo cuesta y nada apetece: por qué esperar a tener ganas lo alarga, y una forma pequeña de empezar hoy.
 - [Burnout: estar quemada o quemado](https://adricamente.com/guias/burnout/): Qué es (y qué no) según la OMS, cómo se diferencia del cansancio normal y qué puedes hacer tú y qué le toca a tu empresa.
 - [Cómo gestionar el estrés](https://adricamente.com/guias/estres/): En qué se diferencia de la ansiedad, por qué el estrés que no se apaga desgasta más y qué ayuda según la investigación, sin recetas vacías.
-- [Señales de depresión](https://adricamente.com/guias/senales-de-depresion/): En qué se diferencia la tristeza de una depresión, qué señales conviene mirar y qué ayuda según la OMS y las guías clínicas.
-- [Duelo por la muerte de alguien](https://adricamente.com/guias/duelo/): No hay fases obligatorias ni un plazo correcto. Cómo suele ser el duelo, qué ayuda según la investigación y cuándo se complica.
+- [Depresión: señales y tratamiento](https://adricamente.com/guias/senales-de-depresion/): Guía completa de la depresión: en qué se diferencia de la tristeza, cómo se nota, qué la mantiene y qué tratamientos tienen evidencia.
+- [Duelo por la muerte de alguien](https://adricamente.com/guias/duelo/): Sin fases obligatorias ni plazos correctos: cómo suele ser el duelo, qué ayuda según la investigación, el duelo por suicidio y cuándo se atasca.
 - [Cómo gestionar las emociones](https://adricamente.com/guias/regular-emociones/): Regular no es controlar ni tragarte lo que sientes. Qué estrategias tienen estudios detrás, por qué ponerle nombre ayuda y cómo practicarlo.
 - [Cómo controlar la ira](https://adricamente.com/guias/ira/): Para qué sirve la ira, cuándo se desborda, por qué desahogarse golpeando cosas la sube en vez de bajarla y qué ayuda según la investigación.
 - [Tristeza o depresión posparto](https://adricamente.com/guias/depresion-posparto/): La tristeza de los primeros días es frecuente y se va sola; la depresión posparto dura más y se trata. Cómo diferenciarlas y a quién pedir ayuda.
@@ -54,13 +55,13 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 
 ## Guías: Autoestima y autoexigencia
 
-- [Autoexigencia y perfeccionismo](https://adricamente.com/guias/autoexigencia/): Cuando nada es suficiente y descansar da culpa: qué la mantiene y cómo bajarla sin dejar de hacer bien las cosas.
+- [Autoexigencia y perfeccionismo](https://adricamente.com/guias/autoexigencia/): Guía completa: cuándo exigirte deja de ayudar, por qué descansar da culpa, qué mantiene el perfeccionismo y qué tratamientos tienen estudios detrás.
 - [Síndrome del impostor](https://adricamente.com/guias/sindrome-del-impostor/): Sentir que no te lo mereces y que en cualquier momento se van a dar cuenta. Qué es, qué no es y qué ayuda.
 - [Decir que no sin sentirte culpable](https://adricamente.com/guias/decir-que-no/): Por qué cuesta tanto, por qué la culpa de después no significa que hayas hecho algo mal, y frases para decirlo según a quién.
 - [Sentimiento de culpa](https://adricamente.com/guias/culpa/): La diferencia entre culpa y vergüenza, cuándo la culpa te lleva a reparar y cuándo solo te castiga, y qué hacer con la que no se va.
 - [Autocrítica: hablarte tan mal](https://adricamente.com/guias/autocritica/): Por qué la voz que te machaca cree que te está ayudando, qué dice la investigación sobre la autocompasión y cuatro pasos para empezar.
 - [Cómo dejar de procrastinar](https://adricamente.com/guias/dejar-de-procrastinar/): Por qué no es pereza sino una forma de quitarte malestar, y cuatro pasos con estudios detrás para empezar lo que llevas días aplazando.
-- [Cómo mejorar la autoestima](https://adricamente.com/guias/baja-autoestima/): Qué es la autoestima baja, qué la mantiene y por qué repetirte frases positivas puede dejarte peor. Con pasos concretos para empezar.
+- [Cómo mejorar la autoestima](https://adricamente.com/guias/baja-autoestima/): Guía completa: qué es la autoestima baja, qué la mantiene, qué tratamientos tienen estudios y por qué repetirte frases positivas puede dejarte peor.
 - [Compararme con los demás](https://adricamente.com/guias/compararme-con-los-demas/): Por qué te comparas (todo el mundo lo hace), por qué las redes lo ponen en tu contra y qué probar para que deje de mandar en tu día.
 - [Miedo al rechazo](https://adricamente.com/guias/miedo-al-rechazo/): Por qué un mensaje sin contestar puede doler tanto, qué es la sensibilidad al rechazo y qué probar para no pasarte la vida evitando que te digan que no.
 - [Culpa de madre](https://adricamente.com/guias/culpa-materna/): Por qué la culpa de madre mide sobre todo lo alto que está el listón, qué dice la investigación sobre la «madre perfecta» y la carga mental, y qué probar.
@@ -68,7 +69,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 
 ## Guías: Pareja y relaciones
 
-- [Dependencia emocional](https://adricamente.com/guias/dependencia-emocional/): Cuando la relación lo ocupa todo y quedarte sin ella da pánico. Qué es, qué la mantiene y por dónde empezar.
+- [Dependencia emocional](https://adricamente.com/guias/dependencia-emocional/): Guía completa: qué es la dependencia emocional (y qué no), en qué se diferencia de una relación que te controla, por qué cuesta tanto salir y qué ayuda.
 - [Me siento sola (o solo)](https://adricamente.com/guias/me-siento-sola/): La soledad no deseada le pasa a una de cada cinco personas. Por qué hace que te retires más y qué ayuda según la investigación.
 - [Superar una ruptura](https://adricamente.com/guias/superar-una-ruptura/): Por qué duele tanto, por qué sientes que no sabes quién eres sin esa persona, y qué ayuda (y qué no) según la investigación.
 - [Salir del armario](https://adricamente.com/guias/salir-del-armario/): No hay obligación ni plazo. Cómo pensarlo con calma: a quién primero, qué preparar y qué hacer si la reacción no es la que esperabas.
@@ -102,6 +103,9 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [La rueda de las emociones](https://adricamente.com/herramientas/rueda-de-las-emociones/)
 - [Tus valores](https://adricamente.com/herramientas/valores/)
 - [Escalera de exposición](https://adricamente.com/herramientas/escalera/)
+- [Respiración guiada](https://adricamente.com/herramientas/respiracion/)
+- [Diario de sueño](https://adricamente.com/herramientas/diario-de-sueno/)
+- [Tiempo de preocupación](https://adricamente.com/herramientas/tiempo-de-preocupacion/)
 - [Glosario de psicología](https://adricamente.com/glosario/)
 
 ## Opcional

@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=56">
+  <link rel="stylesheet" href="/estilos.min.css?v=57">
 
 
   <script type="application/ld+json">
@@ -77,6 +77,7 @@
     "name": "Adrián Cuñat Andrés",
     "url": "https://adricamente.com/sobre-mi/",
     "jobTitle": "Psicólogo colegiado",
+    "description": "Psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.",
     "identifier": "Colegio Oficial de Psicología de Castilla-La Mancha, nº CM03836",
     "image": "https://adricamente.com/fotos/adrian-retrato.webp"
   },
@@ -236,6 +237,7 @@
   <p class="etiqueta">Guía</p>
   <h1>Mindfulness: qué es, qué no es y qué dice la evidencia</h1>
   <p class="guia-meta"><span>Por <a href="/sobre-mi/">Adrián Cuñat</a>, psicólogo colegiado</span><span>Actualizada el 27 de octubre de 2026</span><span>4 min de lectura</span></p>
+  <p class="confianza-linea"><a href="/quien-es-quien-en-salud-mental/#comprobar">Colegiado nº CM03836 (cómo comprobarlo)</a><a href="/como-escribo-las-guias/">Fuentes revisadas</a><span>Sin publicidad de terceros</span></p>
   <p class="grande">Te han dicho que pruebes el mindfulness. Te sientas, cierras los ojos, intentas no pensar en nada y a los diez segundos estás pensando en la lista de la compra. Concluyes que no es para ti. <strong>El mindfulness no consiste en dejar la mente en blanco</strong>: darte cuenta de que te has ido ya es practicarlo.</p>
   <div class="en-corto">
     <p class="t">En corto</p>
@@ -503,7 +505,7 @@
       corazon: ['El corazón acelerado', 'La adrenalina sube el pulso para mandar más sangre a los músculos: es la preparación para huir o defenderte. Se nota como golpes fuertes, saltos o «palpitaciones».', 'Al médico si nunca te lo han mirado, si va con dolor en el pecho, desmayo o falta de aire en reposo, o si tienes una enfermedad del corazón. Si es intenso y nuevo, <a href="tel:112">112</a>.'],
       aire: ['Falta de aire', 'Con la ansiedad se respira más rápido y por arriba. La sensación es que el aire no llega, aunque en realidad entra de sobra: lo que sobra es el ritmo.', 'Al médico si te ahogas haciendo poco esfuerzo, si tienes asma o fiebre, o si llevas tiempo con ahogo. Si los labios se ponen azulados, o el ahogo es repentino y no mejora en reposo, llama al <a href="tel:112">112</a>.'],
       hormigueo: ['Hormigueo y manos frías', 'Respirar deprisa baja el dióxido de carbono en la sangre, y eso da hormigueo en manos, pies o alrededor de la boca. Las manos frías son la sangre yéndose hacia los músculos grandes.', 'Si el hormigueo es en un solo lado del cuerpo, o va con debilidad, la cara torcida o dificultad para hablar, llama al <a href="tel:112">112</a>: eso no es ansiedad.'],
-      pecho: ['Presión en el pecho', 'Los músculos del pecho y la espalda se tensan, y respirar por arriba los cansa. Suele ser un dolor que cambia al moverte o al apretar.', 'Si es opresivo, se va al brazo, la mandíbula o la espalda, o llega con sudor frío y náuseas, llama al <a href="tel:112">112</a>. Siempre es mejor descartar.'],
+      pecho: ['Presión en el pecho', 'Los músculos del pecho y la espalda se tensan, y respirar por arriba los cansa. Desde fuera de una consulta no se puede distinguir con seguridad de un problema del corazón.', 'Si es la primera vez, si nadie te lo ha mirado, si es opresivo, se va al brazo, la mandíbula o la espalda, o llega con sudor frío, náuseas o falta de aire, llama al <a href="tel:112">112</a>.'],
       estomago: ['Nudo en el estómago', 'Con la alarma encendida, la digestión pasa a segundo plano: nudo, náuseas, ganas de ir al baño o diarrea. El intestino está muy conectado con el sistema nervioso.', 'Al médico si hay sangre, pérdida de peso sin buscarla, dolor que te despierta o fiebre.'],
       musculos: ['Tensión, cuello y mandíbula', 'El cuerpo en guardia aprieta: hombros, cuello, mandíbula (a veces de noche, sin darte cuenta). De ahí el dolor de cabeza «en casco» y la espalda cargada.', 'Al médico si el dolor es nuevo y muy fuerte, va con fiebre o rigidez de cuello, o no cambia con nada.'],
       mareo: ['Mareo e irrealidad', 'Respirar deprisa también marea. Y la mente, en alarma, puede sentir las cosas lejanas o como en una película: se llama desrealización. Asusta mucho y pasa sola.', 'Al médico si te desmayas, si el mareo es de que todo da vueltas, o si va con pérdida de fuerza o de visión.'],
@@ -617,6 +619,48 @@
     montar();
     if (sintesis.addEventListener) sintesis.addEventListener('voiceschanged', montar);
     window.addEventListener('pagehide', parar);
+  }
+
+  /* --- El círculo (27-10): se dibuja al verlo, recorre los pasos una vez
+     solo y luego se queda quieto; pulsando un paso se lee. Con movimiento
+     reducido, nada se anima. */
+  document.querySelectorAll('.ciclo-vivo').forEach(function (fig) {
+    var botones = [].slice.call(fig.querySelectorAll('.ciclo-pasos button')),
+        det = fig.querySelector('.ciclo-detalle'), tocado = false, timer = null;
+    function muestra(i, auto) {
+      botones.forEach(function (b, k) { b.setAttribute('aria-pressed', String(k === i)); });
+      var b = botones[i]; if (!b) return;
+      det.innerHTML = '';
+      var p = el('p'); p.appendChild(el('strong', b.textContent.replace(/^\d+/, '').trim() + '. '));
+      p.appendChild(document.createTextNode(b.dataset.t)); det.appendChild(p);
+      if (!auto) { tocado = true; clearTimeout(timer); }
+    }
+    botones.forEach(function (b, i) { b.addEventListener('click', function () { muestra(i, false); }); });
+    var quieto = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function recorre(i) {
+      if (tocado || i >= botones.length) return;
+      muestra(i, true); timer = setTimeout(function () { recorre(i + 1); }, 2600);
+    }
+    if (!quieto && 'IntersectionObserver' in window) {
+      var ojo = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { fig.classList.add('visto'); ojo.disconnect(); setTimeout(function () { recorre(0); }, 900); } });
+      }, { threshold: .45 });
+      ojo.observe(fig);
+    } else { fig.classList.add('visto'); }
+  });
+
+  /* --- Barra de lectura (27-10) */
+  if (document.querySelector('.guia-meta')) {
+    var barra = el('div', null, 'progreso'); barra.setAttribute('aria-hidden', 'true');
+    var tira = el('span'); barra.appendChild(tira); document.body.appendChild(barra);
+    var pend = false;
+    function act() {
+      pend = false;
+      var h = document.documentElement, max = h.scrollHeight - h.clientHeight;
+      tira.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, h.scrollTop / max) : 0) + ')';
+    }
+    window.addEventListener('scroll', function () { if (!pend) { pend = true; requestAnimationFrame(act); } }, { passive: true });
+    act();
   }
 })();
 

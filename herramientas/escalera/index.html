@@ -31,7 +31,7 @@
 
   <!-- Umami: medición sin cookies y sin datos personales. Por eso
        esta web no necesita banner de consentimiento. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+  <script defer src="https://cloud.umami.is/script.js" data-exclude-search="true" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=56">
+  <link rel="stylesheet" href="/estilos.min.css?v=57">
 
 
   <script type="application/ld+json">
@@ -83,6 +83,7 @@
     "name": "Adrián Cuñat Andrés",
     "url": "https://adricamente.com/sobre-mi/",
     "jobTitle": "Psicólogo colegiado",
+    "description": "Psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.",
     "identifier": "Colegio Oficial de Psicología de Castilla-La Mancha, nº CM03836",
     "image": "https://adricamente.com/fotos/adrian-retrato.webp"
   }
@@ -244,6 +245,14 @@
   </div>
 
   <div class="herr" id="escalera">
+    <label for="esc-ejemplo"><strong>¿Quieres empezar con un ejemplo?</strong> Luego lo cambias a tu medida.</label>
+    <select id="esc-ejemplo">
+      <option value="">Empezar en blanco</option>
+      <option value="agorafobia">Salir y alejarme de casa</option>
+      <option value="social">Situaciones sociales</option>
+      <option value="conducir">Volver a conducir</option>
+      <option value="fobia">Una fobia concreta (animales, alturas…)</option>
+    </select>
     <label for="esc-miedo"><strong>¿A qué te quieres acercar?</strong></label>
     <input type="text" id="esc-miedo" maxlength="120" placeholder="Por ejemplo: hablar en las reuniones del trabajo">
 
@@ -348,6 +357,28 @@
   });
   texto.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('esc-add').click(); } });
   document.getElementById('esc-imprimir').addEventListener('click', function () { window.print(); });
+  var EJ = {
+    agorafobia: ['Salir sola o solo y alejarme de casa', [['Salir al portal cinco minutos', 2], ['Ir a la tienda de la esquina', 3], ['Ir al súper a una hora tranquila', 4], ['Coger el autobús una parada, con compañía', 5], ['Coger el autobús una parada, sin compañía', 6], ['Ir al centro un sábado por la mañana', 7], ['Quedarme media hora en un centro comercial', 8]]],
+    social: ['Hablar y hacer cosas delante de otras personas', [['Saludar por su nombre a alguien del trabajo', 2], ['Hacer una pregunta en una tienda', 3], ['Llamar por teléfono para pedir una cita', 4], ['Comentar algo en una reunión pequeña', 5], ['Comer con compañeros sin mirar el móvil', 6], ['Dar mi opinión cuando no coincide', 7], ['Hablar dos minutos delante de un grupo', 8]]],
+    conducir: ['Volver a conducir', [['Sentarme diez minutos en el coche parado', 2], ['Arrancar y mover el coche dentro del garaje', 3], ['Conducir por mi calle con alguien al lado', 4], ['Diez minutos por un barrio tranquilo, con compañía', 5], ['Diez minutos por un barrio conocido, sin compañía', 6], ['Conducir por la ciudad en hora punta', 7], ['Un tramo corto de autovía', 8]]],
+    fobia: ['Una fobia concreta', [['Leer sobre lo que me da miedo', 2], ['Ver fotos', 3], ['Ver vídeos', 4], ['Estar en la misma habitación, a distancia', 6], ['Acercarme poco a poco', 7], ['Estar cerca el tiempo suficiente, en un sitio seguro', 8]]]
+  };
+    var AVISO = {
+    fobia: 'Si lo que temes es la sangre, las agujas o las heridas y alguna vez te has mareado o desmayado, hazlo con un profesional: hay una técnica para evitar el desmayo. Con animales, solo con animales tranquilos y con su dueño; con alturas, siempre con barandilla y nunca al borde.',
+    conducir: 'Solo con el carné en vigor y sin haber tomado nada que dé sueño (alcohol, ansiolíticos, algunos antialérgicos). Las primeras veces, con alguien con carné al lado. Si dejaste de conducir tras un accidente, hazlo con un profesional. Si en un paso notas que no controlas bien el coche, para en un sitio seguro y vuelve al paso anterior.'
+  };
+  var avisoEl = document.createElement('p'); avisoEl.className = 'apunte esc-aviso'; avisoEl.hidden = true;
+  document.getElementById('esc-miedo').parentNode.insertBefore(avisoEl, document.getElementById('esc-miedo'));
+  function carga(k) {
+    avisoEl.hidden = !AVISO[k]; avisoEl.textContent = AVISO[k] || '';
+    if (!EJ[k]) return;
+    document.getElementById('esc-miedo').value = EJ[k][0];
+    pasos = EJ[k][1].map(function (x) { return { t: x[0], n: x[1], hecho: false }; });
+    pinta();
+  }
+  var sel = document.getElementById('esc-ejemplo');
+  sel.addEventListener('change', function () { if (sel.value) carga(sel.value); else { avisoEl.hidden = true; pasos = []; document.getElementById('esc-miedo').value = ''; pinta(); } });
+  try { var pl = new URLSearchParams(location.search).get('plantilla'); if (EJ[pl]) { sel.value = pl; carga(pl); } } catch (e) {}
 })();
 </script>
   </main>
