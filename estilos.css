@@ -3994,3 +3994,24 @@ figure.foto.cabecera-foto .foto-amb{max-height:420px}
 @media (max-width:520px){.foto-tema .foto-amb{aspect-ratio:16/7}}
 /* Apaisadas a todo el ancho: que no se coman la pantalla entera. */
 figure.foto > .foto-amb{max-height:400px}
+
+/* 27-10 · Ritmo de lectura: pausas a mitad de guía y de artículo.
+   La auditoría en móvil daba tramos de más de tres pantallas seguidas de
+   solo texto. Ahora, cada ~260 palabras, una foto de su tema o una frase
+   destacada (repite una negrita del texto; va con aria-hidden). */
+.cita-tramo{font-family:var(--estrecha);font-weight:800;font-size:clamp(1.35rem,4.8vw,1.75rem);line-height:1.16;
+  color:var(--accent-3);border-left:4px solid var(--accent);padding:2px 0 2px 18px;margin:30px 0 32px;max-width:28ch;text-wrap:balance}
+figure.foto.tramo{margin:26px 0 30px}
+figure.foto.tramo img{border-radius:var(--r-m)}
+@media (min-width:700px){
+  figure.foto.tramo{float:right;width:270px;margin:6px 0 18px 30px}
+  figure.foto.tramo img{aspect-ratio:4/3;object-fit:cover}
+  figure.foto.tramo ~ h2,figure.foto.tramo ~ .caja,figure.foto.tramo ~ div,figure.foto.tramo ~ figure:not(.tramo){clear:both}
+}
+@media print{figure.foto.tramo,.cita-tramo{display:none}}
+/* Las fuentes, plegadas al final: siguen ahí (y Google las lee), pero
+   no suman dos pantallas de letra pequeña al final de cada guía. */
+.fuentes-plegadas{margin-top:34px}
+.fuentes-plegadas summary{font-weight:700}
+.fuentes-plegadas ol.fuentes{margin:12px 0 4px}
+@media print{.fuentes-plegadas details{display:block}.fuentes-plegadas details > *{display:block}}
