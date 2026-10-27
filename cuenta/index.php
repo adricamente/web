@@ -921,6 +921,10 @@ async function pintaObjetivos(meta, v) {
     c.appendChild(a);
   });
   const otros = obs.filter(o => (o.estado || 'activo') !== 'activo');
+  /* 27-10: sin ninguno en marcha (todos conseguidos, en pausa…), el bloque
+     se ve igual, con lo hecho plegado debajo. */
+  if (!obs.some(o => (o.estado || 'activo') === 'activo'))
+    c.appendChild(el('p', 'apunte', 'Ahora mismo no hay objetivos en marcha. Los anteriores, aquí debajo.'));
   if (otros.length) {
     const det = document.createElement('details'); det.className = 'ob-otros';
     const sm = document.createElement('summary'); sm.textContent = 'Otros objetivos (' + otros.length + ')'; det.appendChild(sm);
