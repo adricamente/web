@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=55">
+  <link rel="stylesheet" href="/estilos.min.css?v=56">
 
 
   <script type="application/ld+json">
@@ -326,7 +326,8 @@
 
   <div class="caja">
     <p style="margin-bottom:0">Si estás en peligro ahora mismo o piensas en hacerte daño, no esperes:
-    llama al <a href="tel:024">024</a> (gratuito, 24 horas) o al <a href="tel:112">112</a>.</p>
+    llama al <a href="tel:024">024</a> (gratuito, 24 horas) o al <a href="tel:112">112</a>. Más teléfonos en
+    <a href="/ayuda-urgente/">ayuda urgente</a>.</p>
   </div>
 
   <div class="guia-autor">
@@ -334,7 +335,7 @@
     <div>
       <p><strong>Escrita por Adrián Cuñat Andrés</strong>, psicólogo colegiado nº CM03836, cursando el Máster
       en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.
-      <a href="/sobre-mi/">Quién soy</a>.</p>
+      <a href="/sobre-mi/">Quién soy</a> · <a href="/como-escribo-las-guias/">Cómo escribo las guías</a>.</p>
       <p class="apunte" style="margin:0">Esta guía es información general: no sustituye una evaluación ni es un diagnóstico.</p>
     </div>
   </div>
@@ -567,6 +568,53 @@
       pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
     });
   }
+
+  /* --- Escuchar la guía (27-10). Solo con voces locales del propio
+     dispositivo (localService): las voces «en línea» mandan el texto a un
+     servidor, y eso no se hace. Si no hay ninguna voz local en español,
+     el botón no aparece. */
+  var meta = document.querySelector('.guia-meta');
+  if (meta && 'speechSynthesis' in window && window.SpeechSynthesisUtterance) {
+    var sintesis = window.speechSynthesis, leyendo = false, cola = [], bEsc = null;
+    function vozLocal() {
+      var vs = sintesis.getVoices().filter(function (v) { return /^es/i.test(v.lang) && v.localService === true; });
+      return vs.filter(function (v) { return /es-ES/i.test(v.lang); })[0] || vs[0] || null;
+    }
+    function textos() {
+      var main = document.querySelector('main'), out = [];
+      main.querySelectorAll('h1, .grande, .en-corto p:not(.t), main > h2, main > p, main > ul > li, main > ol > li, .franja > p, .franja > h2, .caja:not(.salida) p').forEach(function (n) {
+        if (n.closest('.orienta, .respira, .anclaje, .herr, .cinta, .guia-autor, .fuentes, .relacionadas, .indice, .migas, .guia-meta, .escuchar-fila, .salida')) return;
+        var t = n.textContent.replace(/\s+/g, ' ').trim(); if (t) out.push(t);
+      });
+      return out;
+    }
+    function parar() {
+      leyendo = false; cola = []; sintesis.cancel();
+      if (bEsc) bEsc.textContent = 'Escuchar la guía';
+    }
+    function siguiente() {
+      var v = vozLocal();
+      if (!leyendo || !cola.length || !v) { parar(); return; }
+      var u = new SpeechSynthesisUtterance(cola.shift());
+      u.lang = v.lang; u.voice = v; u.rate = 1;
+      u.onend = siguiente; u.onerror = parar;
+      sintesis.speak(u);
+    }
+    function montar() {
+      if (bEsc || !vozLocal()) return;
+      bEsc = el('button', 'Escuchar la guía', 'escuchar'); bEsc.type = 'button';
+      var envoltura = el('p', null, 'escuchar-fila'); envoltura.appendChild(bEsc);
+      meta.parentNode.insertBefore(envoltura, meta.nextSibling);
+      bEsc.addEventListener('click', function () {
+        if (leyendo) { parar(); return; }
+        leyendo = true; cola = textos(); bEsc.textContent = 'Parar la lectura';
+        sintesis.cancel(); siguiente();
+      });
+    }
+    montar();
+    if (sintesis.addEventListener) sintesis.addEventListener('voiceschanged', montar);
+    window.addEventListener('pagehide', parar);
+  }
 })();
 
 </script>
@@ -611,6 +659,8 @@
         <ul>
           <li><a href="/guias/">Guías para leer con calma</a></li>
           <li><a href="/glosario/">Glosario de psicología</a></li>
+          <li><a href="/salud-mental-en-cifras/">La salud mental en cifras</a></li>
+          <li><a href="/ayuda-urgente/">Ayuda urgente: teléfonos</a></li>
           <li><a href="/herramientas/">Herramientas para entender qué te pasa</a></li>
           <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
         </ul>
@@ -619,6 +669,7 @@
         <p class="titulo-pie">Contacto y legal</p>
         <ul>
           <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="/como-escribo-las-guias/">Cómo escribo las guías</a></li>
           <li><a href="/aviso-legal.html">Aviso legal</a></li>
           <li><a href="/privacidad.html">Privacidad</a></li>
           <li><a href="/cookies.html">Cookies</a></li>

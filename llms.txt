@@ -16,6 +16,9 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Espacio seguro LGTBI+](https://adricamente.com/lgtbi/).
 - [Quién es quién en salud mental](https://adricamente.com/quien-es-quien-en-salud-mental/): psicólogo, PGS, clínico, psiquiatra y cómo comprobarlos.
 - [Cuánto cuesta un psicólogo online](https://adricamente.com/cuanto-cuesta-un-psicologo-online/): comparativa de precios en España.
+- [La salud mental en España, en cifras](https://adricamente.com/salud-mental-en-cifras/): datos oficiales recientes, cada uno con su fuente.
+- [Ayuda urgente](https://adricamente.com/ayuda-urgente/): teléfonos de ayuda en España (112, 024, 016, 028, ANAR) y qué atiende cada uno.
+- [Cómo escribo las guías](https://adricamente.com/como-escribo-las-guias/): fuentes, revisión, lo que no se publica y cómo avisar de un error.
 
 ## Guías: Ansiedad
 
@@ -28,6 +31,11 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Pensamientos intrusivos](https://adricamente.com/guias/pensamientos-intrusivos/): Ideas o imágenes que no eliges y que te asustan: por qué le pasan a casi todo el mundo, por qué pelear con ellas las aviva y cuándo consultar.
 - [No puedo dormir por la ansiedad](https://adricamente.com/guias/no-puedo-dormir/): Por qué intentar dormir a la fuerza lo empeora, qué recomiendan las guías antes que las pastillas y qué puedes probar esta noche.
 - [Ansiedad anticipatoria](https://adricamente.com/guias/ansiedad-anticipatoria/): Cuando lo pasas mal días antes de algo que aún no ha pasado: qué la alimenta, por qué evitar la mantiene y cómo acercarte poco a poco.
+- [Fobias: qué son y cómo se trabajan](https://adricamente.com/guias/fobias/): Arañas, sangre, alturas, volar: por qué saber que es exagerado no basta, por qué evitar lo mantiene y cómo se trabaja con exposición gradual.
+- [Agorafobia](https://adricamente.com/guias/agorafobia/): No es miedo a los espacios abiertos: es miedo a no poder salir o a que nadie te ayude. Qué la mantiene y cómo se trabaja, también si salir cuesta.
+- [Ansiedad ante los exámenes](https://adricamente.com/guias/ansiedad-ante-examenes/): Te lo sabías y te quedaste en blanco. Qué dice la investigación (sin la curva de los nervios mal contada) y qué probar antes y durante.
+- [Miedo a conducir (amaxofobia)](https://adricamente.com/guias/miedo-a-conducir/): Tienes el carné y evitas la autovía, o has dejado el coche. Qué es la amaxofobia, por qué crece si lo dejas y cómo volver al volante con la seguridad primero.
+- [TOC: qué es y qué no](https://adricamente.com/guias/toc/): No es ser ordenado. Qué son las obsesiones y las compulsiones, por qué comprobar y pedir que te tranquilicen lo mantiene, y qué tratamiento tiene más base.
 
 ## Guías: Ánimo, estrés y emociones
 
@@ -37,6 +45,12 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Señales de depresión](https://adricamente.com/guias/senales-de-depresion/): En qué se diferencia la tristeza de una depresión, qué señales conviene mirar y qué ayuda según la OMS y las guías clínicas.
 - [Duelo por la muerte de alguien](https://adricamente.com/guias/duelo/): No hay fases obligatorias ni un plazo correcto. Cómo suele ser el duelo, qué ayuda según la investigación y cuándo se complica.
 - [Cómo gestionar las emociones](https://adricamente.com/guias/regular-emociones/): Regular no es controlar ni tragarte lo que sientes. Qué estrategias tienen estudios detrás, por qué ponerle nombre ayuda y cómo practicarlo.
+- [Cómo controlar la ira](https://adricamente.com/guias/ira/): Para qué sirve la ira, cuándo se desborda, por qué desahogarse golpeando cosas la sube en vez de bajarla y qué ayuda según la investigación.
+- [Tristeza o depresión posparto](https://adricamente.com/guias/depresion-posparto/): La tristeza de los primeros días es frecuente y se va sola; la depresión posparto dura más y se trata. Cómo diferenciarlas y a quién pedir ayuda.
+- [Trauma psicológico](https://adricamente.com/guias/trauma/): Lo que es normal sentir después de algo terrible, por qué la mayoría se recupera, cuándo puede ser algo más y qué tratamientos tienen evidencia.
+- [Volver al trabajo tras una baja](https://adricamente.com/guias/volver-al-trabajo-tras-una-baja/): Lo que es normal sentir, qué contar y qué no (tu empresa no recibe el diagnóstico), cómo adaptar el puesto y cómo preparar la primera semana.
+- [Comer por ansiedad (hambre emocional)](https://adricamente.com/guias/hambre-emocional/): Por qué comer calma, por qué restringir no ayuda, qué probar en el momento y cuándo conviene consultarlo.
+- [Adicción al móvil](https://adricamente.com/guias/uso-problematico-del-movil/): Qué dice de verdad la investigación (no es un diagnóstico), por qué cuesta tanto soltarlo y qué cambios pequeños tienen estudios detrás.
 
 ## Guías: Autoestima y autoexigencia
 
@@ -48,6 +62,9 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Cómo dejar de procrastinar](https://adricamente.com/guias/dejar-de-procrastinar/): Por qué no es pereza sino una forma de quitarte malestar, y cuatro pasos con estudios detrás para empezar lo que llevas días aplazando.
 - [Cómo mejorar la autoestima](https://adricamente.com/guias/baja-autoestima/): Qué es la autoestima baja, qué la mantiene y por qué repetirte frases positivas puede dejarte peor. Con pasos concretos para empezar.
 - [Compararme con los demás](https://adricamente.com/guias/compararme-con-los-demas/): Por qué te comparas (todo el mundo lo hace), por qué las redes lo ponen en tu contra y qué probar para que deje de mandar en tu día.
+- [Miedo al rechazo](https://adricamente.com/guias/miedo-al-rechazo/): Por qué un mensaje sin contestar puede doler tanto, qué es la sensibilidad al rechazo y qué probar para no pasarte la vida evitando que te digan que no.
+- [Culpa de madre](https://adricamente.com/guias/culpa-materna/): Por qué la culpa de madre mide sobre todo lo alto que está el listón, qué dice la investigación sobre la «madre perfecta» y la carga mental, y qué probar.
+- [No me gusta mi cuerpo](https://adricamente.com/guias/imagen-corporal/): Por qué mirarte a todas horas y no mirarte nunca alimentan lo mismo, qué pintan las redes y qué ayuda según la investigación.
 
 ## Guías: Pareja y relaciones
 
@@ -58,6 +75,9 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Apego ansioso](https://adricamente.com/guias/apego-ansioso/): Qué dice de verdad la teoría del apego en adultos, por qué no es una etiqueta fija y qué ayuda cuando el miedo a que te dejen lo ocupa todo.
 - [Celos en la pareja](https://adricamente.com/guias/celos/): Qué celos son normales y cuáles hacen daño, por qué mirar su móvil los alimenta y cuándo dejan de ser celos para ser control.
 - [Una relación que te hace daño](https://adricamente.com/guias/relacion-toxica/): Más allá de «tóxica»: señales de control, aislamiento y desprecio, la diferencia entre discutir y violencia, y a quién llamar (y qué rastro queda en el móvil).
+- [Superar una infidelidad](https://adricamente.com/guias/infidelidad/): Por qué descubrir una infidelidad se vive casi como un trauma, cómo decidir sin prisa si seguir o no, y qué ayuda en cada caso.
+- [Discutir mucho en pareja](https://adricamente.com/guias/discutir-en-pareja/): Qué distingue las discusiones que desgastan de las que no, según la investigación de Gottman, cómo pedir sin atacar y dónde acaba el conflicto y empieza la violencia.
+- [Límites con la familia](https://adricamente.com/guias/limites-con-la-familia/): Un límite no es controlar lo que hace tu familia, sino decidir lo que harás tú. Por qué da tanta culpa, frases para decirlo y qué hacer si no son críticas, sino maltrato.
 
 ## Guías: Pedir ayuda y entender la terapia
 
@@ -70,6 +90,9 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Cuánto dura una terapia](https://adricamente.com/guias/cuanto-dura-una-terapia/): No hay un número fijo, pero sí datos: cuántas sesiones suelen hacer falta según la investigación, cómo se revisa y cuándo tiene sentido terminar.
 - [Cómo ayudar a alguien que está mal](https://adricamente.com/guias/como-ayudar-a-alguien/): Qué decir y qué no, cómo escuchar sin intentar arreglarlo, cómo animar a pedir ayuda sin presionar y qué hacer si habla de suicidio.
 - [Saber si tu terapia funciona](https://adricamente.com/guias/saber-si-la-terapia-funciona/): Qué señales indican que una terapia avanza, cuáles no, cómo medir el progreso y cuándo tiene sentido hablarlo o cambiar de psicólogo.
+- [Mindfulness: qué es y qué no](https://adricamente.com/guias/mindfulness/): No es dejar la mente en blanco. Qué es, qué dice la evidencia, cuándo puede no ser buena idea y un ejercicio de tres minutos para probarlo.
+- [Psicólogo gratis en España](https://adricamente.com/guias/psicologo-gratis/): La sanidad pública, los servicios para estudiantes, las asociaciones y las líneas de teléfono: qué ofrece cada una y qué no.
+- [Terapia online o presencial](https://adricamente.com/guias/terapia-online-o-presencial/): Qué dicen los metaanálisis que las comparan, para quién encaja mejor cada una, cuándo lo online no es buena idea y qué preguntar.
 
 ## Herramientas gratis (sin registro; nada sale del navegador)
 

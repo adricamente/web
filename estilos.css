@@ -3796,3 +3796,28 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 /* Salida rápida en guías de violencia y control (27-10) */
 .caja.salida{border-left:6px solid var(--error);background:var(--error-soft)}
 .salir-rapido{font:inherit;font-weight:700;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;border:1.5px solid var(--error);background:var(--surface);color:var(--ink)}
+
+/* Cifras y ayuda urgente (27-10) */
+.datos{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:12px;margin:10px 0 16px}
+.dato{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px}
+.dato-cifra{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:800;font-size:1.9rem;line-height:1.1;color:var(--accent-3);margin:0 0 6px}
+.dato-texto{margin:0 0 8px;font-size:.98rem}
+.dato-fuente{margin:0;font-size:.85rem;color:var(--ink-2)}
+.citar code{white-space:normal;word-break:break-word;font-size:.9rem}
+.lineas{display:flex;flex-direction:column;gap:10px;margin:14px 0 18px;max-width:var(--medida)}
+.linea{display:grid;grid-template-columns:minmax(7.5rem,auto) 1fr;gap:4px 16px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px}
+.linea h2{font-size:1.1rem;margin:0 0 4px}
+.linea p{margin:0}
+.linea-num a{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:800;font-size:1.5rem;white-space:nowrap}
+@media (max-width:520px){.linea{grid-template-columns:1fr}}
+
+/* Buscador de guías y botón de escuchar (27-10) */
+.buscador{max-width:var(--medida);margin:6px 0 18px}
+.buscador label{display:block;font-weight:700;margin:0 0 6px}
+.buscador input{width:100%;font:inherit;font-size:1.05rem;padding:12px 14px;border:1.5px solid var(--accent-borde);border-radius:var(--r-m);background:var(--surface);color:var(--ink)}
+.buscar-cuenta{color:var(--ink-2);margin:6px 0 0;min-height:1.2em}
+.escuchar-fila{margin:-6px 0 18px}
+.escuchar{font:inherit;font-size:.95rem;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink)}
+.escuchar::before{content:"▶ ";color:var(--accent)}
+
+@media print{.escuchar-fila,.buscador,.salida{display:none}}

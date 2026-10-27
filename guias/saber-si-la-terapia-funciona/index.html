@@ -60,7 +60,7 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=55">
+  <link rel="stylesheet" href="/estilos.min.css?v=56">
 
 
   <script type="application/ld+json">
@@ -332,7 +332,8 @@
 
   <div class="caja">
     <p style="margin-bottom:0">Si estás en peligro ahora mismo o piensas en hacerte daño, no esperes:
-    llama al <a href="tel:024">024</a> (gratuito, 24 horas) o al <a href="tel:112">112</a>.</p>
+    llama al <a href="tel:024">024</a> (gratuito, 24 horas) o al <a href="tel:112">112</a>. Más teléfonos en
+    <a href="/ayuda-urgente/">ayuda urgente</a>.</p>
   </div>
 
   <div class="guia-autor">
@@ -340,7 +341,7 @@
     <div>
       <p><strong>Escrita por Adrián Cuñat Andrés</strong>, psicólogo colegiado nº CM03836, cursando el Máster
       en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.
-      <a href="/sobre-mi/">Quién soy</a>.</p>
+      <a href="/sobre-mi/">Quién soy</a> · <a href="/como-escribo-las-guias/">Cómo escribo las guías</a>.</p>
       <p class="apunte" style="margin:0">Esta guía es información general: no sustituye una evaluación ni es un diagnóstico.</p>
     </div>
   </div>
@@ -368,6 +369,263 @@
     </p>
     <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
   </section>
+<script>
+/* Herramientas de las guías (27-10). Todo pasa en el navegador: no se
+   guarda ni se envía nada, y la estadística no sabe qué se pulsa. */
+(function () {
+  function el(t, txt, cls) { var e = document.createElement(t); if (txt != null) e.textContent = txt; if (cls) e.className = cls; return e; }
+
+  /* --- Respira conmigo --------------------------------------------- */
+  var caja = document.getElementById('respira');
+  if (caja) {
+    var MODOS = {
+      lenta: { nombre: 'Respiración lenta', pasos: [['Toma aire', 4, 1], ['Suéltalo despacio', 6, 0.45]] },
+      suspiro: { nombre: 'Suspiro cíclico', pasos: [['Toma aire por la nariz', 2, 0.85], ['Un poco más', 1, 1], ['Suéltalo largo, por la boca', 6, 0.45]] }
+    };
+    var modo = 'lenta', timer = null, fin = 0;
+    var circ = caja.querySelector('.respira-circulo'), fase = caja.querySelector('.respira-fase'),
+        cuenta = caja.querySelector('.respira-cuenta'), boton = caja.querySelector('.principal');
+    caja.querySelectorAll('[data-modo]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        modo = b.dataset.modo;
+        caja.querySelectorAll('[data-modo]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        if (timer) { para(); empieza(); }
+      });
+    });
+    function para() {
+      clearTimeout(timer); timer = null;
+      circ.style.setProperty('--escala', '.45');
+      fase.textContent = 'Cuando quieras';
+      cuenta.textContent = 'Dos minutos bastan para empezar.';
+      boton.textContent = 'Empezar';
+    }
+    function empieza() {
+      fin = Date.now() + 120000; boton.textContent = 'Parar';
+      var i = 0;
+      (function paso() {
+        var p = MODOS[modo].pasos[i % MODOS[modo].pasos.length];
+        circ.style.transitionDuration = p[1] + 's';
+        circ.style.setProperty('--escala', String(p[2]));
+        fase.textContent = p[0];
+        var quedan = Math.max(0, Math.round((fin - Date.now()) / 1000));
+        cuenta.textContent = quedan > 0 ? 'Quedan ' + Math.floor(quedan / 60) + ':' + String(quedan % 60).padStart(2, '0') : 'Ya está. Puedes seguir si quieres.';
+        i++;
+        if (Date.now() >= fin && i % MODOS[modo].pasos.length === 0) { para(); fase.textContent = 'Bien hecho'; cuenta.textContent = 'Fíjate en cómo está el cuerpo ahora, sin juzgarlo.'; return; }
+        timer = setTimeout(paso, p[1] * 1000);
+      })();
+    }
+    boton.addEventListener('click', function () { if (timer) para(); else empieza(); });
+    para();
+  }
+
+  /* --- Anclarse: 5-4-3-2-1 ------------------------------------------ */
+  var anc = document.getElementById('anclaje');
+  if (anc) {
+    var PASOS = [
+      ['5', 'Cinco cosas que ves', 'Nómbralas en voz baja, con detalle: «una taza azul con el asa rota».'],
+      ['4', 'Cuatro cosas que puedes tocar', 'Tócalas de verdad: la tela del pantalón, el borde de la mesa, el suelo bajo los pies.'],
+      ['3', 'Tres cosas que oyes', 'Las de cerca y las de lejos: un coche, la nevera, tu propia respiración.'],
+      ['2', 'Dos cosas que hueles', 'Si no hueles nada, acércate algo: la manga, el café, el jabón de las manos.'],
+      ['1', 'Una cosa que saboreas', 'O un sorbo de agua, despacio. Y ahora mira cómo estás.']
+    ];
+    var k = 0;
+    var n = anc.querySelector('.paso-n'), t = anc.querySelector('.paso-t'), d = anc.querySelector('.paso-d');
+    var ant = anc.querySelector('[data-a=ant]'), sig = anc.querySelector('[data-a=sig]');
+    function pinta() {
+      n.textContent = PASOS[k][0]; t.textContent = PASOS[k][1]; d.textContent = PASOS[k][2];
+      ant.disabled = k === 0; sig.textContent = k === PASOS.length - 1 ? 'Volver a empezar' : 'Siguiente';
+    }
+    ant.addEventListener('click', function () { if (k > 0) { k--; pinta(); } });
+    sig.addEventListener('click', function () { k = k === PASOS.length - 1 ? 0 : k + 1; pinta(); t.focus(); });
+    t.tabIndex = -1; pinta();
+  }
+
+  /* --- Orientarse: por dónde empezar --------------------------------- */
+  var ori = document.getElementById('orienta');
+  if (ori) {
+    var resp = {};
+    var res = ori.querySelector('.resultado');
+    var RES = {
+      urgente: ['urgente', 'Ahora, no esperes a una cita',
+        'Llama al <a href="tel:024">024</a> (atención a la conducta suicida: gratuito, 24 horas) o al <a href="tel:112">112</a>, o ve a urgencias. Si puedes, dile a alguien de confianza que esté contigo.'],
+      medico: ['', 'Empieza por tu médico de familia',
+        'Por lo que marcas, conviene descartar antes una causa física o revisar el consumo con un médico. Puede derivarte a salud mental y, si quieres, se combina con terapia psicológica: el orden importa, no hay que elegir.'],
+      terapia: ['', 'Tiene sentido pedir ayuda',
+        'Te está quitando terreno, o lleva tiempo. Eso no es un diagnóstico: es una buena razón para hablarlo con un psicólogo. La primera conversación sirve para saber qué está pasando y si te pueden ayudar; no te compromete a nada.'],
+      esperar: ['', 'Puedes darte unas semanas, con un plan',
+        'Es reciente o todavía no te quita mucho. Prueba lo de esta web con calma (el mapa, la hoja de registro) y ponte una fecha: si en tres o cuatro semanas sigue igual o va a más, pide ayuda. Esperar sin fecha suele ser evitar.']
+    };
+    function decide() {
+      if (resp.peligro === 'si') return 'urgente';
+      if (!resp.peligro || !resp.tiempo || !resp.cuanto || !resp.fisico) return null;
+      if (resp.fisico === 'si') return 'medico';
+      if (resp.tiempo === 'meses' || resp.cuanto !== 'poco') return 'terapia';
+      return 'esperar';
+    }
+    ori.querySelectorAll('[data-p]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        resp[b.dataset.p] = b.dataset.v;
+        ori.querySelectorAll('[data-p="' + b.dataset.p + '"]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        if (resp.peligro !== 'si') ori.querySelectorAll('fieldset').forEach(function (f) { f.hidden = false; });
+        var r = decide();
+        res.hidden = !r;
+        if (!r) return;
+        res.className = 'resultado' + (RES[r][0] ? ' ' + RES[r][0] : '');
+        res.innerHTML = '';
+        res.appendChild(el('h3', RES[r][1]));
+        var p = el('p'); p.innerHTML = RES[r][2]; res.appendChild(p);
+        if (r === 'terapia' && resp.cuanto === 'mucho' && resp.tiempo === 'poco')
+          res.appendChild(el('p', 'Si es muy reciente y muy intenso, tu médico de familia también es una buena primera puerta.'));
+        if (r === 'urgente') ori.querySelectorAll('fieldset:not(:first-of-type)').forEach(function (f) { f.hidden = true; });
+        else ori.querySelectorAll('fieldset').forEach(function (f) { f.hidden = false; });
+      });
+    });
+  }
+
+  /* --- Elige y lee (27-10): cuerpo, una cosa, decir que no, la primera frase.
+     Mismo patrón para las cuatro: botones con aria-pressed y un panel que
+     se rellena con texto fijo. Nada sale del navegador. */
+  function selector(raiz, alPulsar) {
+    raiz.querySelectorAll('[data-k]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var g = b.dataset.g || 'x';
+        raiz.querySelectorAll('[data-k][data-g="' + g + '"],[data-k]:not([data-g])').forEach(function (x) {
+          if ((x.dataset.g || 'x') === g) x.setAttribute('aria-pressed', String(x === b));
+        });
+        alPulsar(b.dataset.k, g);
+      });
+    });
+  }
+  function pon(panel, titulo, parrafos) {
+    panel.innerHTML = ''; panel.hidden = false;
+    panel.appendChild(el('h3', titulo));
+    parrafos.forEach(function (t) { var q = el('p'); q.innerHTML = t; panel.appendChild(q); });
+  }
+
+  var cuerpo = document.getElementById('cuerpo');
+  if (cuerpo) {
+    var Z = {
+      corazon: ['El corazón acelerado', 'La adrenalina sube el pulso para mandar más sangre a los músculos: es la preparación para huir o defenderte. Se nota como golpes fuertes, saltos o «palpitaciones».', 'Al médico si nunca te lo han mirado, si va con dolor en el pecho, desmayo o falta de aire en reposo, o si tienes una enfermedad del corazón. Si es intenso y nuevo, <a href="tel:112">112</a>.'],
+      aire: ['Falta de aire', 'Con la ansiedad se respira más rápido y por arriba. La sensación es que el aire no llega, aunque en realidad entra de sobra: lo que sobra es el ritmo.', 'Al médico si te ahogas haciendo poco esfuerzo, si tienes asma o fiebre, o si llevas tiempo con ahogo. Si los labios se ponen azulados, o el ahogo es repentino y no mejora en reposo, llama al <a href="tel:112">112</a>.'],
+      hormigueo: ['Hormigueo y manos frías', 'Respirar deprisa baja el dióxido de carbono en la sangre, y eso da hormigueo en manos, pies o alrededor de la boca. Las manos frías son la sangre yéndose hacia los músculos grandes.', 'Si el hormigueo es en un solo lado del cuerpo, o va con debilidad, la cara torcida o dificultad para hablar, llama al <a href="tel:112">112</a>: eso no es ansiedad.'],
+      pecho: ['Presión en el pecho', 'Los músculos del pecho y la espalda se tensan, y respirar por arriba los cansa. Suele ser un dolor que cambia al moverte o al apretar.', 'Si es opresivo, se va al brazo, la mandíbula o la espalda, o llega con sudor frío y náuseas, llama al <a href="tel:112">112</a>. Siempre es mejor descartar.'],
+      estomago: ['Nudo en el estómago', 'Con la alarma encendida, la digestión pasa a segundo plano: nudo, náuseas, ganas de ir al baño o diarrea. El intestino está muy conectado con el sistema nervioso.', 'Al médico si hay sangre, pérdida de peso sin buscarla, dolor que te despierta o fiebre.'],
+      musculos: ['Tensión, cuello y mandíbula', 'El cuerpo en guardia aprieta: hombros, cuello, mandíbula (a veces de noche, sin darte cuenta). De ahí el dolor de cabeza «en casco» y la espalda cargada.', 'Al médico si el dolor es nuevo y muy fuerte, va con fiebre o rigidez de cuello, o no cambia con nada.'],
+      mareo: ['Mareo e irrealidad', 'Respirar deprisa también marea. Y la mente, en alarma, puede sentir las cosas lejanas o como en una película: se llama desrealización. Asusta mucho y pasa sola.', 'Al médico si te desmayas, si el mareo es de que todo da vueltas, o si va con pérdida de fuerza o de visión.'],
+      piel: ['Sudor, calor y frío', 'La activación sube la temperatura y el sudor para enfriarte: oleadas de calor, sudor en las manos, escalofríos después.', 'Al médico si hay fiebre, sudores nocturnos que empapan o pérdida de peso.'],
+      sueno: ['Sueño y cansancio', 'Estar en guardia muchas horas agota, y la alarma no apaga bien de noche: cuesta dormirse, te despiertas a las tantas o te levantas sin descansar.', 'Al médico si roncas mucho con pausas, si el cansancio va con otros síntomas nuevos o si dura semanas aunque duermas.']
+    };
+    var pz = cuerpo.querySelector('.resultado');
+    selector(cuerpo, function (k) {
+      var z = Z[k];
+      pon(pz, z[0], ['<strong>Por qué pasa.</strong> ' + z[1], '<strong>Cuándo no es ansiedad.</strong> ' + z[2]]);
+    });
+  }
+
+  var una = document.getElementById('unacosa');
+  if (una) {
+    var C = {
+      cuerpo: ['Ducharte con calma, sin prisa.', 'Salir diez minutos a la calle, aunque sea a la esquina.', 'Abrir la ventana y estirarte un minuto.', 'Comer algo caliente sentada o sentado a la mesa.', 'Cambiar las sábanas.', 'Bajar la basura y volver por el camino largo.'],
+      gusto: ['Poner una canción que te gustaba antes.', 'Prepararte la bebida que más te apetezca y tomarla sin pantalla.', 'Leer dos páginas de algo que no sea el móvil.', 'Sentarte al sol cinco minutos.', 'Ver una foto de un sitio en el que estuviste bien.', 'Cocinar algo sencillo que te guste el olor.'],
+      logro: ['Fregar solo los vasos.', 'Contestar un mensaje pendiente, uno.', 'Tirar tres cosas que sobran.', 'Hacer la cama.', 'Pagar o pedir una cosa que llevas días posponiendo.', 'Ordenar una sola balda o un cajón.'],
+      gente: ['Mandar un audio corto a alguien: «me he acordado de ti».', 'Contestar en un grupo, aunque sea con una tontería.', 'Llamar a alguien mientras paseas.', 'Proponer un café para esta semana, sin fecha cerrada.', 'Saludar a alguien del barrio o del trabajo por su nombre.', 'Responder a quien te escribió y no contestaste.']
+    };
+    var pu = una.querySelector('.resultado'), cat = null;
+    function baraja(a) { return a.slice().sort(function () { return Math.random() - .5; }).slice(0, 3); }
+    function pinta3() {
+      pon(pu, 'Elige una, no las tres', ['<ul>' + baraja(C[cat]).map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>',
+        'Ponle hora (hoy o mañana) y hazla <strong>sin esperar a tener ganas</strong>. Después, apunta del 0 al 10 cómo estabas antes y después.']);
+      var b = el('button', 'Dame otras tres'); b.type = 'button';
+      b.addEventListener('click', pinta3); pu.appendChild(b);
+    }
+    selector(una, function (k) { cat = k; pinta3(); });
+  }
+
+  var dno = document.getElementById('decirno');
+  if (dno) {
+    var F = {
+      trabajo: { corto: '«Esta semana no puedo cogerlo. Si es prioritario, dime qué dejo para hacerlo.»', alternativa: '«Ahora no llego, pero el jueves puedo mirarlo una hora. ¿Te sirve?»', pensar: '«Déjame mirar lo que tengo y te digo algo antes de las cinco.»' },
+      familia: { corto: '«Este domingo no voy a ir. Os quiero igual.»', alternativa: '«A comer no puedo, pero el sábado me paso a tomar café.»', pensar: '«No lo sé todavía. Lo miro y mañana te digo.»' },
+      amistades: { corto: '«Hoy no me apetece salir, pero gracias por contar conmigo.»', alternativa: '«Al concierto no, pero ¿te parece si quedamos el martes para cenar?»', pensar: '«Dame un rato para ver cómo voy y te contesto.»' },
+      pareja: { corto: '«Eso no me apetece. No es por ti, es que no quiero.»', alternativa: '«Eso no, pero sí me apetece que hagamos otra cosa juntos.»', pensar: '«No quiero contestarte deprisa. Lo pienso y lo hablamos esta noche.»' }
+    };
+    var sel = { quien: null, como: null }, pd = dno.querySelector('.resultado');
+    selector(dno, function (k, g) {
+      sel[g] = k;
+      if (!sel.quien || !sel.como) return;
+      var txt = [F[sel.quien][sel.como],
+        'Dilo una vez, sin justificarte tres veces. Si insisten, repite la misma frase con calma: no hace falta encontrar un argumento mejor.',
+        'Lo habitual es sentir culpa justo después. <strong>Eso no significa que hayas hecho algo mal</strong>: significa que es nuevo.'];
+      if (sel.quien === 'pareja') txt.push('Si decirle que no a tu pareja te da miedo por cómo pueda reaccionar, eso no es falta de asertividad. Lee <a href="/guias/dependencia-emocional/#seguridad">este apartado</a> o llama al <a href="tel:016">016</a>; si hay peligro ahora, al <a href="tel:112">112</a>.');
+      pon(pd, 'Una forma de decirlo', txt);
+    });
+  }
+
+  var fr = document.getElementById('frase');
+  if (fr) {
+    var P = {
+      empezar: '«No sé muy bien por dónde empezar. ¿Me ayudas a ordenarlo?»',
+      verguenza: '«Hay algo que me da mucha vergüenza contar. Voy a intentarlo, pero me cuesta.»',
+      juicio: '«Tengo miedo de que pienses mal de mí cuando te lo cuente.»',
+      tanto: '«No sé si lo mío es para tanto, pero me está costando.»',
+      todavia: '«Hay una cosa que todavía no quiero contar. Quería que lo supieras.»',
+      llorar: '«Puede que me eche a llorar. Si pasa, dame un momento.»'
+    };
+    var pf = fr.querySelector('.resultado');
+    selector(fr, function (k) {
+      pon(pf, 'Puedes empezar así, tal cual', [P[k], 'Decir en voz alta lo que te frena ya es empezar. Un psicólogo está para recibir eso sin juzgarlo, y para ir a tu ritmo.']);
+    });
+  }
+
+  /* --- Escuchar la guía (27-10). Solo con voces locales del propio
+     dispositivo (localService): las voces «en línea» mandan el texto a un
+     servidor, y eso no se hace. Si no hay ninguna voz local en español,
+     el botón no aparece. */
+  var meta = document.querySelector('.guia-meta');
+  if (meta && 'speechSynthesis' in window && window.SpeechSynthesisUtterance) {
+    var sintesis = window.speechSynthesis, leyendo = false, cola = [], bEsc = null;
+    function vozLocal() {
+      var vs = sintesis.getVoices().filter(function (v) { return /^es/i.test(v.lang) && v.localService === true; });
+      return vs.filter(function (v) { return /es-ES/i.test(v.lang); })[0] || vs[0] || null;
+    }
+    function textos() {
+      var main = document.querySelector('main'), out = [];
+      main.querySelectorAll('h1, .grande, .en-corto p:not(.t), main > h2, main > p, main > ul > li, main > ol > li, .franja > p, .franja > h2, .caja:not(.salida) p').forEach(function (n) {
+        if (n.closest('.orienta, .respira, .anclaje, .herr, .cinta, .guia-autor, .fuentes, .relacionadas, .indice, .migas, .guia-meta, .escuchar-fila, .salida')) return;
+        var t = n.textContent.replace(/\s+/g, ' ').trim(); if (t) out.push(t);
+      });
+      return out;
+    }
+    function parar() {
+      leyendo = false; cola = []; sintesis.cancel();
+      if (bEsc) bEsc.textContent = 'Escuchar la guía';
+    }
+    function siguiente() {
+      var v = vozLocal();
+      if (!leyendo || !cola.length || !v) { parar(); return; }
+      var u = new SpeechSynthesisUtterance(cola.shift());
+      u.lang = v.lang; u.voice = v; u.rate = 1;
+      u.onend = siguiente; u.onerror = parar;
+      sintesis.speak(u);
+    }
+    function montar() {
+      if (bEsc || !vozLocal()) return;
+      bEsc = el('button', 'Escuchar la guía', 'escuchar'); bEsc.type = 'button';
+      var envoltura = el('p', null, 'escuchar-fila'); envoltura.appendChild(bEsc);
+      meta.parentNode.insertBefore(envoltura, meta.nextSibling);
+      bEsc.addEventListener('click', function () {
+        if (leyendo) { parar(); return; }
+        leyendo = true; cola = textos(); bEsc.textContent = 'Parar la lectura';
+        sintesis.cancel(); siguiente();
+      });
+    }
+    montar();
+    if (sintesis.addEventListener) sintesis.addEventListener('voiceschanged', montar);
+    window.addEventListener('pagehide', parar);
+  }
+})();
+
+</script>
   </main>
 
   <footer>
@@ -409,6 +667,8 @@
         <ul>
           <li><a href="/guias/">Guías para leer con calma</a></li>
           <li><a href="/glosario/">Glosario de psicología</a></li>
+          <li><a href="/salud-mental-en-cifras/">La salud mental en cifras</a></li>
+          <li><a href="/ayuda-urgente/">Ayuda urgente: teléfonos</a></li>
           <li><a href="/herramientas/">Herramientas para entender qué te pasa</a></li>
           <li><a href="/quien-es-quien-en-salud-mental/">Quién es quién en salud mental</a></li>
         </ul>
@@ -417,6 +677,7 @@
         <p class="titulo-pie">Contacto y legal</p>
         <ul>
           <li><a href="/contacto/">Contacto</a></li>
+          <li><a href="/como-escribo-las-guias/">Cómo escribo las guías</a></li>
           <li><a href="/aviso-legal.html">Aviso legal</a></li>
           <li><a href="/privacidad.html">Privacidad</a></li>
           <li><a href="/cookies.html">Cookies</a></li>
