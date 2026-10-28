@@ -4015,3 +4015,27 @@ figure.foto.tramo img{border-radius:var(--r-m)}
 .fuentes-plegadas summary{font-weight:700}
 .fuentes-plegadas ol.fuentes{margin:12px 0 4px}
 @media print{.fuentes-plegadas details{display:block}.fuentes-plegadas details > *{display:block}}
+
+/* 28-10 · Conversión. La llamada final lleva cara y lo que incluye en
+   tres renglones; a mitad de guía y de artículo, una tarjeta pequeña
+   justo donde ya se ha explicado cómo se trabaja. Sin cuentas atrás, sin
+   «plazas limitadas»: lo único que se hace es quitar dudas. */
+.cinta-quien{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+.cinta-quien img{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:2px solid var(--surface)}
+.cinta-quien p{margin:0;line-height:1.25;font-size:15px}
+.cinta-quien strong{display:block;font-size:16px}
+.cinta-quien span{opacity:.85}
+.cinta-incluye{list-style:none;margin:4px 0 18px;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:15.5px}
+.cinta-incluye li{position:relative;padding-left:22px;margin:0}
+.cinta-incluye li::before{content:"";position:absolute;left:2px;top:.42em;width:12px;height:7px;border-left:2.2px solid var(--accent);border-bottom:2.2px solid var(--accent);transform:rotate(-45deg)}
+.cinta .cinta-otra{margin-top:10px}
+.llamada-media{display:grid;grid-template-columns:64px minmax(0,1fr);gap:16px;align-items:start;margin:34px 0 36px;padding:20px 20px 18px;
+  border:1.5px solid var(--accent-borde);border-radius:var(--r-l);background:var(--accent-soft);clear:both}
+.llamada-media img{width:64px;height:64px;border-radius:50%;object-fit:cover}
+.llamada-media .t{font-family:var(--estrecha);font-weight:800;font-size:1.25rem;line-height:1.15;margin:0 0 6px;color:var(--accent-3)}
+.llamada-media p{margin:0 0 10px}
+.llamada-media .acciones-media{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:12px 0 0}
+.llamada-media .acciones-media span{font-size:14.5px;color:var(--muted)}
+@media (max-width:520px){.llamada-media{display:block;padding:16px}.llamada-media img{float:left;width:46px;height:46px;margin:0 12px 6px 0}.llamada-media .t{padding-top:10px}.llamada-media .acciones-media .boton{display:block;width:100%;text-align:center}}
+@media print{.llamada-media{display:none}}
+.portada .otra-puerta{font-size:15px;margin:6px 0 0;color:var(--muted)}

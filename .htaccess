@@ -155,6 +155,9 @@
 #  sesión, que es lo que promete la biografía. 302: son enlaces de
 #  campaña, no páginas, y no deben quedarse en la caché de nadie.
 <IfModule mod_rewrite.c>
+  RewriteRule ^quien-soy/?$ /sobre-mi/ [R=301,L]
+  RewriteRule ^sesiones/?$ /primera-sesion/ [R=301,L]
+  RewriteRule ^contact/?$ /contacto/ [R=301,L]
   RewriteRule ^ig/?$ /primera-sesion/?utm_source=instagram&utm_medium=bio [R=302,L]
   RewriteRule ^tt/?$ /primera-sesion/?utm_source=tiktok&utm_medium=bio [R=302,L]
   RewriteRule ^dr/?$ /primera-sesion/?utm_source=doctoralia&utm_medium=perfil [R=302,L]
