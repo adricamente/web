@@ -61,7 +61,9 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=65">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-estrecha-800.woff2">
+  <link rel="stylesheet" href="/estilos.min.css?v=66">
 
 
   <script type="application/ld+json">
@@ -125,6 +127,22 @@
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Al principio es bastante común notar más incomodidad, porque dejar de evitar significa acercarse a lo que se estaba esquivando. Eso se avisa antes, se hace a tu ritmo y se revisa cada semana. Si no se mueve en un tiempo razonable, te lo digo yo antes que tú."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿La terapia online sirve para la ansiedad?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Hay a quien le viene mejor justo por la ansiedad: no coger el coche, no esperar en una sala con más gente, hablar desde su sofá. Si lo que evitas es justo salir, eso también se trabaja. Los metaanálisis que comparan videollamada y consulta presencial no encuentran diferencias en la mejora de los síntomas, aunque los ensayos todavía son pocos (Batastini y otros, 2021; Meyer-Keirath y otros, 2026). Que funcione de media no garantiza que te funcione a ti, y por eso se revisa por el camino. Los estudios, en terapia online o presencial."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué pasa en la primera media hora?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Me cuentas qué te pasa, por donde quieras empezar, y yo pregunto lo justo para entenderlo. Al final te digo qué haría yo con ello y, si no es lo mío, a dónde ir. No tienes que preparar nada ni decidir nada ese día. Está contado minuto a minuto en qué pasa en la primera sesión."
       }
     }
   ]
@@ -221,7 +239,7 @@
     fuera todo va bien</strong>.
   </p>
   <figure data-f="ventana-noche" class="foto cabecera-foto"><!-- foto:ventana-noche -->
-    <img class="foto-amb" src="/fotos/a/ventana-noche-a480.webp" srcset="/fotos/a/ventana-noche-a1200.webp 1200w, /fotos/a/ventana-noche-a800.webp 800w, /fotos/a/ventana-noche-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="Una persona tumbada en la cama, de espaldas, mirando el móvil de noche" loading="lazy" decoding="async">
+    <img class="foto-amb" src="/fotos/a/ventana-noche-a480.webp" srcset="/fotos/a/ventana-noche-a1200.webp 1200w, /fotos/a/ventana-noche-a800.webp 800w, /fotos/a/ventana-noche-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="Una persona tumbada en la cama, de espaldas, mirando el móvil de noche" loading="eager" fetchpriority="high" decoding="async">
   </figure>
   <p class="grande">La ansiedad es una alarma que funciona bien y <strong>se ha quedado encendida</strong>.</p>
 
@@ -293,10 +311,18 @@
   <p>Por orden y nunca de golpe. Es la parte que más respeto da.</p>
   <h3>Recuperar terreno</h3>
   <p>Que vuelvan a caber los planes, el trabajo y la gente.</p>
-  <p class="apunte">Todo va dentro del <a href="/terapia-online/">mismo
-  proceso</a>: media hora gratis, dos o tres sesiones de evaluación, un
-  plan y revisiones. Sesiones de 60 minutos por
-  <a href="/cuanto-cuesta-un-psicologo-online/">30&nbsp;€</a>.</p>
+  <p class="apunte">Todo va dentro del <a href="/terapia-online/">mismo proceso de terapia online</a>: una primera media hora gratis (<a href="/primera-sesion/">aquí está qué pasa en ella, minuto a minuto</a>), dos o tres sesiones de evaluación, un plan y revisiones. Sesiones de 60 minutos por <a href="/cuanto-cuesta-un-psicologo-online/">30&nbsp;€</a>.</p>
+
+  <aside class="llamada-media" aria-label="Media hora gratis para empezar">
+    <img src="/fotos/adrian-avatar.webp" width="64" height="64" loading="lazy" decoding="async" alt="">
+    <div>
+      <p class="t">Si prefieres no hacerlo a solas</p>
+      <p>Treinta minutos por videollamada. Me cuentas la última vez que pasó, la noche dándole vueltas o el plan que cancelaste, y te digo con franqueza si creo que puedo ayudarte. <strong>Si no es lo mío, te oriento a dónde ir.</strong></p>
+      <p class="acciones-media"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_area_trabajo')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=area_trabajo" target="_blank" rel="noopener">Reservar media hora gratis</a>
+      <span>Sin tarjeta. Eliges un hueco libre.</span></p>
+      <p class="otra-puerta-media">Lo que me cuentes queda bajo <a href="/secreto-profesional/">secreto profesional</a>. ¿Una duda antes? <a onclick="window.medir&&window.medir('clic_whatsapp_area')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
+    </div>
+  </aside>
 
   <div class="franja marino solo-frase">
     <p class="frase">Cada vez que evitas lo que te da miedo, <strong>le confirmas a tu cuerpo que tenía razón</strong>.</p>
@@ -304,6 +330,7 @@
 
   <h2>Para leer con calma</h2>
   <ul class="relacionadas">
+    <li><a href="/guias/ansiedad/">Ansiedad: qué es, cómo se nota y cómo se trata</a><span>La guía completa: cuándo deja de ser normal, los tipos (cada uno con su guía) y qué tratamiento tiene más evidencia.</span></li>
     <li><a href="/guias/ataque-de-ansiedad/">Ataque de ansiedad</a><span>Qué hacer en el momento, qué no hacer y por qué vuelve. Con un ejercicio de respiración guiado.</span></li>
     <li><a href="/guias/sintomas-fisicos-de-la-ansiedad/">Síntomas físicos de la ansiedad</a><span>Corazón, aire, hormigueo, estómago, mareo: por qué el cuerpo hace cada cosa y cuándo no es ansiedad. Con un mapa para tocar.</span></li>
     <li><a href="/guias/ansiedad-social/">Ansiedad social</a><span>Miedo a hablar, a quedar mal, a que se note que estás nerviosa o nervioso. Qué la mantiene y por qué lo que haces para protegerte la empeora.</span></li>
@@ -331,15 +358,18 @@
       <summary>¿Y si empiezo y noto que va a peor?</summary>
       <p>Al principio es bastante común notar más incomodidad, porque dejar de evitar significa acercarse a lo que se estaba esquivando. Eso se avisa antes, se hace a tu ritmo y se revisa cada semana. Si no se mueve en un tiempo razonable, te lo digo yo antes que tú.</p>
     </details>
+
+    <details>
+      <summary>¿La terapia online sirve para la ansiedad?</summary>
+      <p>Hay a quien le viene mejor justo por la ansiedad: no coger el coche, no esperar en una sala con más gente, hablar desde su sofá. Si lo que evitas es justo salir, eso también se trabaja. Los metaanálisis que comparan videollamada y consulta presencial no encuentran diferencias en la mejora de los síntomas, aunque los ensayos todavía son pocos (Batastini y otros, 2021; Meyer-Keirath y otros, 2026). <strong>Que funcione de media no garantiza que te funcione a ti</strong>, y por eso se revisa por el camino. Los estudios, en <a href="/guias/terapia-online-o-presencial/">terapia online o presencial</a>.</p>
+    </details>
+
+    <details>
+      <summary>¿Qué pasa en la primera media hora?</summary>
+      <p>Me cuentas qué te pasa, por donde quieras empezar, y yo pregunto lo justo para entenderlo. Al final te digo qué haría yo con ello y, si no es lo mío, a dónde ir. <strong>No tienes que preparar nada ni decidir nada ese día.</strong> Está contado minuto a minuto en <a href="/primera-sesion/">qué pasa en la primera sesión</a>.</p>
+    </details>
   </div>
 
-  <div class="llamada">
-    <p>Si te has visto aquí, lo siguiente es contarlo en voz alta.</p>
-    <p class="accion">
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=medio" target="_blank" rel="noopener">Pedir la primera sesión gratis</a>
-    </p>
-  </div>
 
   <h2>Cuándo esto no es lo tuyo</h2>
   <p>
@@ -372,7 +402,7 @@
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
-    <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
+    <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta. <a href="/primera-sesion/" onclick="window.medir&amp;&amp;window.medir('clic_primera_sesion_area')">Qué pasa exactamente en esos treinta minutos</a>.</p>
     <p class="apunte" style="margin-bottom:0">Si prefieres empezar por tu cuenta, <a href="/mapa/">el mapa</a> son seis preguntas y diez minutos.</p>
   </section>
 
@@ -402,7 +432,10 @@
           <li><a href="/sobre-mi/">Sobre mí</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/terapia-online/">Terapia online</a></li>
-          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/areas/ansiedad/">Terapia para la ansiedad</a></li>
+          <li><a href="/areas/estado-de-animo/">Terapia para el ánimo bajo</a></li>
+          <li><a href="/areas/autoestima/">Terapia para la autoestima</a></li>
+          <li><a href="/areas/procrastinacion/">Terapia para la procrastinación</a></li>
           <li><a href="/tarifas/">Tarifas</a></li>
           <li><a href="/tu-cuenta/">Tu cuenta de paciente</a></li>
           <li><a href="/lgtbi/">Espacio seguro LGTBI+</a></li>

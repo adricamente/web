@@ -61,7 +61,9 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=65">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-estrecha-800.woff2">
+  <link rel="stylesheet" href="/estilos.min.css?v=66">
 
 
   <script type="application/ld+json">
@@ -87,7 +89,7 @@
   "description": "Qué es la agorafobia y qué no, su relación con el pánico, por qué las conductas de seguridad la mantienen, cómo se trata y cómo empezar si salir de casa cuesta.",
   "inLanguage": "es-ES",
   "datePublished": "2026-10-27",
-  "dateModified": "2026-10-27",
+  "dateModified": "2026-10-28",
   "author": {
     "@type": "Person",
     "name": "Adrián Cuñat Andrés",
@@ -130,6 +132,12 @@
     {
       "@type": "ListItem",
       "position": 3,
+      "name": "Ansiedad",
+      "item": "https://adricamente.com/guias/ansiedad/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
       "name": "Agorafobia",
       "item": "https://adricamente.com/guias/agorafobia/"
     }
@@ -280,16 +288,16 @@
 
   <main id="principal">
 
-  <p class="migas"><a href="/">Inicio</a> &rsaquo; <a href="/guias/">Guías</a> &rsaquo; Agorafobia</p>
+  <p class="migas"><a href="/">Inicio</a> &rsaquo; <a href="/guias/">Guías</a> &rsaquo; <a href="/guias/ansiedad/">Ansiedad</a> &rsaquo; Agorafobia</p>
 
   <p class="etiqueta">Guía completa</p>
   <h1>Agorafobia: miedo a salir o a no poder escapar</h1>
-  <p class="guia-meta"><span>Por <a href="/sobre-mi/">Adrián Cuñat</a>, psicólogo colegiado</span><span>Actualizada el 27 de octubre de 2026</span><span>11 min de lectura</span></p>
+  <p class="guia-meta"><span>Por <a href="/sobre-mi/">Adrián Cuñat</a>, psicólogo colegiado</span><span>Actualizada el 28 de octubre de 2026</span><span>11 min de lectura</span></p>
   <p class="confianza-linea"><a href="/quien-es-quien-en-salud-mental/#comprobar">Colegiado nº CM03836 (cómo comprobarlo)</a><a href="/como-escribo-las-guias/">Fuentes revisadas</a><span>Sin publicidad de terceros</span></p>
   <p class="grande">Hace meses que vas al súper a primera hora, cuando no hay nadie. El metro lo dejaste, luego el autobús, y ahora cuesta hasta bajar a la farmacia si no va alguien contigo.</p>
   <p class="grande"><strong>La agorafobia no es miedo a los espacios abiertos</strong>: es miedo a estar en un sitio del que sería difícil salir, o donde nadie podría ayudarte si te pasara algo.</p>
   <figure class="foto cabecera-foto">
-    <img class="foto-amb" src="/fotos/a/tren-campo-a480.webp" srcset="/fotos/a/tren-campo-a1200.webp 1200w, /fotos/a/tren-campo-a800.webp 800w, /fotos/a/tren-campo-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="El campo visto por la ventanilla de un tren" loading="lazy" decoding="async">
+    <img class="foto-amb" src="/fotos/a/tren-campo-a480.webp" srcset="/fotos/a/tren-campo-a1200.webp 1200w, /fotos/a/tren-campo-a800.webp 800w, /fotos/a/tren-campo-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="El campo visto por la ventanilla de un tren" loading="eager" fetchpriority="high" decoding="async">
   </figure>
   <div class="en-corto">
     <p class="t">En corto</p>
@@ -448,7 +456,7 @@
       <p class="t">Si prefieres no hacerlo a solas</p>
       <p>Esto es lo que se trabaja en terapia. <strong>La primera media hora es gratis</strong>, por videollamada: me cuentas qué te pasa y sales sabiendo si puedo ayudarte o a dónde ir.</p>
       <p class="acciones-media"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_guia_medio')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=guia_medio" target="_blank" rel="noopener">Reservar media hora gratis</a>
-      <span>Sin tarjeta. Eliges tú el día.</span></p>
+      <span>Sin tarjeta. Eliges un hueco libre.</span></p>
       <p class="otra-puerta-media">¿Prefieres empezar por tu cuenta? <a href="/mapa/" onclick="window.medir&&window.medir('clic_mapa_guia_medio')">Prueba el mapa de lo que evitas</a>: diez minutos, sin registro.</p>
     </div>
   </aside>
@@ -503,7 +511,7 @@
   <p>Si nunca te han mirado los síntomas físicos, que te vea antes tu médico de familia. Y si notas dolor en el pecho o
   es la primera vez que te pasa algo así, llama al <a href="tel:112">112</a>: siempre es mejor descartar. Si en algún
   momento piensas en hacerte daño, llama al <a href="tel:024">024</a> (gratuito, 24 horas).</p>
-  <p>Lo trabajo dentro de <a href="/areas/ansiedad/">ansiedad</a>, por videollamada, empezando desde donde estés. Si
+  <p>Lo trabajo dentro de <a href="/areas/ansiedad/">la terapia online para la ansiedad</a>, por videollamada, empezando desde donde estés. Si
   te frena no saber qué pasa en la primera conversación, está contado paso a paso en
   <a href="/primera-sesion/">la primera sesión</a>.</p>
 
@@ -569,12 +577,13 @@
     <ul class="cinta-incluye">
       <li>30 minutos por videollamada</li>
       <li>Gratis y sin tarjeta</li>
-      <li>Eliges tú el día y la hora</li>
+      <li>Eliges un hueco libre del calendario</li>
     </ul>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta_guia')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=cinta_guia" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
+    <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
 
@@ -925,7 +934,10 @@
           <li><a href="/sobre-mi/">Sobre mí</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/terapia-online/">Terapia online</a></li>
-          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/areas/ansiedad/">Terapia para la ansiedad</a></li>
+          <li><a href="/areas/estado-de-animo/">Terapia para el ánimo bajo</a></li>
+          <li><a href="/areas/autoestima/">Terapia para la autoestima</a></li>
+          <li><a href="/areas/procrastinacion/">Terapia para la procrastinación</a></li>
           <li><a href="/tarifas/">Tarifas</a></li>
           <li><a href="/tu-cuenta/">Tu cuenta de paciente</a></li>
           <li><a href="/lgtbi/">Espacio seguro LGTBI+</a></li>

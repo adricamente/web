@@ -1,0 +1,7 @@
+# Estas fotos NO llevan huella en la URL: con «immutable» un recorte
+# regenerado con el mismo nombre se quedaría viejo un año. Treinta días.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(webp|jpe?g|png)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>

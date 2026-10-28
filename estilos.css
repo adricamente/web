@@ -250,6 +250,10 @@
    a quien marca "reducir movimiento" en su sistema, un scroll con
    inercia le puede provocar mareo de verdad. */
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+/* Lo que se salta con un ancla o con Tab no queda debajo de lo fijo:
+   la barra de reservar en móvil (61 px) y la cabecera pegada (79 px). */
+@media (max-width:720px){html{scroll-padding-top:72px}}
+@media (min-width:721px){html{scroll-padding-top:90px}}
 
 body{
   margin:0;
@@ -3086,8 +3090,14 @@ h2,h3{text-wrap:balance}
    ================================================================= */
 @font-face{font-family:"Archivo estrecha";src:url(fuentes/archivo-estrecha-800.woff2) format('woff2');font-weight:800;font-display:swap}
 @font-face{font-family:"Archivo estrecha";src:url(fuentes/archivo-estrecha-700.woff2) format('woff2');font-weight:700;font-display:swap}
+/* Reserva métrica de la estrecha (28-10): su única reserva era la de la
+   ancha, un 28 % más ancha; el h1 se pintaba con una línea de más y al
+   llegar la fuente subía todo 40 px (CLS 0,031-0,035 en móvil). 78 % es el
+   cociente de anchos medido en los .woff2. En Android no hay Arial: allí
+   lo evita la precarga. */
+@font-face{font-family:"Estrecha reserva";src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("LiberationSans-Bold");font-weight:700 800;size-adjust:78%;ascent-override:112%;descent-override:27%;line-gap-override:0%}
 :root{
-  --estrecha:"Archivo estrecha","Archivo reserva","Arial Narrow",sans-serif;
+  --estrecha:"Archivo estrecha","Estrecha reserva","Archivo reserva","Arial Narrow",sans-serif;
   --rotulador:#F7DF72;
   --cuadricula:rgba(31,84,116,.085);
   --papel-hoja:#FCFCFA;
@@ -3206,7 +3216,7 @@ main .franja.marino strong,main .idea strong{background-image:none;font-weight:i
   --cuadricula:rgba(31,84,116,.085);
   --rotulador:#F7DF72;
   --papel-hoja:#FCFCFA;
-  --estrecha:"Archivo estrecha","Archivo reserva","Arial Narrow",sans-serif;
+  --estrecha:"Archivo estrecha","Estrecha reserva","Archivo reserva","Arial Narrow",sans-serif;
 }
 
 
@@ -3677,7 +3687,7 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .rueda-familias button::before{content:"";width:14px;height:14px;border-radius:50%;background:var(--fam)}
 .rueda-familias button:hover,.rueda-familias button:focus-visible,.rueda-familias button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
 .rueda-ley{text-align:center;font-size:.92rem;color:var(--ink-2);margin:6px 0 18px}
-.rueda-ficha{scroll-margin-top:76px;border-left:8px solid var(--fam,var(--line-strong));min-height:9.5rem;background:var(--surface)}
+.rueda-ficha{border-left:8px solid var(--fam,var(--line-strong));min-height:9.5rem;background:var(--surface)}
 .rueda-ficha .nivel{font-size:.95rem;color:var(--ink-2);margin:0 0 10px}
 .rueda-ficha dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
 .rueda-ficha dt{font-weight:700}
@@ -3788,7 +3798,7 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 
 /* Glosario (27-10) */
 .glosario{max-width:var(--medida);margin:0 0 18px}
-.glosario dt{font-weight:700;font-size:1.08rem;margin:16px 0 4px;scroll-margin-top:90px}
+.glosario dt{font-weight:700;font-size:1.08rem;margin:16px 0 4px}
 .glosario dd{margin:0 0 10px;padding:0 0 12px;border-bottom:1px solid var(--line)}
 .indice.letras p{display:flex;flex-wrap:wrap;gap:6px 12px;margin:0;font-weight:700}
 .indice.letras a{display:inline-block;min-width:28px;min-height:28px;text-align:center}
@@ -4041,3 +4051,17 @@ figure.foto.tramo img{border-radius:var(--r-m)}
 .portada .otra-puerta{font-size:15px;margin:6px 0 0;color:var(--muted)}
 .llamada-media .otra-puerta-media{font-size:15.5px;margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line);color:var(--muted)}
 .filas .chip-pilar{justify-self:start;grid-column:1;margin:0 0 8px}
+
+/* Objetivos de dedo (28-10): 44 px donde más se pulsa en móvil. Medido:
+   pie 26 px separados 3, índice 24, migas 20, logotipo 22, Menú y
+   Reservar de la barra 42. En migas y logotipo el margen negativo agranda
+   la zona de toque sin mover la maqueta. */
+@media (pointer:coarse){
+  .pie-columnas li{margin-bottom:0}
+  .pie-columnas li a{min-height:44px}
+  .indice li{margin:0}
+  .indice ol a{display:inline-block;padding-block:10px}
+  .migas a,.cabecera .marca a{display:inline-block;padding-block:11px;margin-block:-11px}
+  .nav-movil > summary{padding-block:10px}
+  .barra-cita .cita{padding-block:10px}
+}

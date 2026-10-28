@@ -61,7 +61,9 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=65">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-estrecha-800.woff2">
+  <link rel="stylesheet" href="/estilos.min.css?v=66">
 
 
   <script type="application/ld+json">
@@ -87,7 +89,7 @@
   "description": "Qué es la ansiedad generalizada, en qué se diferencia de preocuparse lo normal, cómo se nota, por qué preocuparse parece útil y no lo es, y qué tratamientos tienen evidencia.",
   "inLanguage": "es-ES",
   "datePublished": "2026-10-27",
-  "dateModified": "2026-10-27",
+  "dateModified": "2026-10-28",
   "author": {
     "@type": "Person",
     "name": "Adrián Cuñat Andrés",
@@ -130,6 +132,12 @@
     {
       "@type": "ListItem",
       "position": 3,
+      "name": "Ansiedad",
+      "item": "https://adricamente.com/guias/ansiedad/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
       "name": "Ansiedad generalizada",
       "item": "https://adricamente.com/guias/ansiedad-generalizada/"
     }
@@ -280,15 +288,15 @@
 
   <main id="principal">
 
-  <p class="migas"><a href="/">Inicio</a> &rsaquo; <a href="/guias/">Guías</a> &rsaquo; Ansiedad generalizada</p>
+  <p class="migas"><a href="/">Inicio</a> &rsaquo; <a href="/guias/">Guías</a> &rsaquo; <a href="/guias/ansiedad/">Ansiedad</a> &rsaquo; Ansiedad generalizada</p>
 
   <p class="etiqueta">Guía completa</p>
   <h1>Ansiedad generalizada: cuando te preocupas por todo</h1>
-  <p class="guia-meta"><span>Por <a href="/sobre-mi/">Adrián Cuñat</a>, psicólogo colegiado</span><span>Actualizada el 27 de octubre de 2026</span><span>10 min de lectura</span></p>
+  <p class="guia-meta"><span>Por <a href="/sobre-mi/">Adrián Cuñat</a>, psicólogo colegiado</span><span>Actualizada el 28 de octubre de 2026</span><span>10 min de lectura</span></p>
   <p class="confianza-linea"><a href="/quien-es-quien-en-salud-mental/#comprobar">Colegiado nº CM03836 (cómo comprobarlo)</a><a href="/como-escribo-las-guias/">Fuentes revisadas</a><span>Sin publicidad de terceros</span></p>
   <p class="grande">Resuelves una preocupación y aparece otra: el trabajo, la salud de tu madre, el dinero, ese mensaje que no te han contestado. Te dicen que no le des tantas vueltas, como si no lo hubieras intentado. <strong>Preocuparte tanto no es un rasgo de carácter que tengas que aguantar</strong>: tiene un mecanismo, y se puede trabajar.</p>
   <figure class="foto cabecera-foto">
-    <img class="foto-amb" src="/fotos/a/lluvia-cortina-a480.webp" srcset="/fotos/a/lluvia-cortina-a800.webp 800w, /fotos/a/lluvia-cortina-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="Gotas de lluvia en una ventana, junto a una cortina" loading="lazy" decoding="async">
+    <img class="foto-amb" src="/fotos/a/lluvia-cortina-a480.webp" srcset="/fotos/a/lluvia-cortina-a800.webp 800w, /fotos/a/lluvia-cortina-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="Gotas de lluvia en una ventana, junto a una cortina" loading="eager" fetchpriority="high" decoding="async">
   </figure>
   <div class="en-corto">
     <p class="t">En corto</p>
@@ -303,7 +311,7 @@
     <p>En esta guía</p>
     <ol>
       <li><a href="#que-es">Qué es la ansiedad generalizada</a></li>
-      <li><a href="#como-se-nota">Cómo se nota</a></li>
+      <li><a href="#como-se-nota">Síntomas de la ansiedad generalizada</a></li>
       <li><a href="#dia-a-dia">Lo que le hace a tu día a día</a></li>
       <li><a href="#por-que">Por qué pasa y qué la mantiene</a></li>
       <li><a href="#tratamiento">Cómo se trata</a></li>
@@ -330,7 +338,7 @@
 <p>Según el Manual MSD, afecta a alrededor del 2&nbsp;% de la población mundial, es el doble de frecuente en
   mujeres que en hombres y <strong>su evolución suele ser fluctuante y duradera</strong>. La mayoría de las
   personas con ansiedad generalizada tiene además otro problema, como depresión, pánico o ansiedad social.</p>
-  <h2 id="como-se-nota">Cómo se nota</h2>
+  <h2 id="como-se-nota">Síntomas de la ansiedad generalizada</h2>
   <p>En el cuerpo: músculos tensos, sobre todo en el cuello, los hombros o la mandíbula; cansancio aunque no hayas
   hecho nada; dificultad para dormirte, o despertarte ya pensando.</p>
   <p>En la cabeza: una cadena de «¿y si…?» que salta de tema; la sensación de estar inquieta o inquieto, como sin
@@ -426,7 +434,7 @@
       <p class="t">Si prefieres no hacerlo a solas</p>
       <p>Esto es lo que se trabaja en terapia. <strong>La primera media hora es gratis</strong>, por videollamada: me cuentas qué te pasa y sales sabiendo si puedo ayudarte o a dónde ir.</p>
       <p class="acciones-media"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_guia_medio')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=guia_medio" target="_blank" rel="noopener">Reservar media hora gratis</a>
-      <span>Sin tarjeta. Eliges tú el día.</span></p>
+      <span>Sin tarjeta. Eliges un hueco libre.</span></p>
       <p class="otra-puerta-media">¿Prefieres empezar por tu cuenta? <a href="/mapa/" onclick="window.medir&&window.medir('clic_mapa_guia_medio')">Prueba el mapa de lo que evitas</a>: diez minutos, sin registro.</p>
     </div>
   </aside>
@@ -544,12 +552,13 @@
     <ul class="cinta-incluye">
       <li>30 minutos por videollamada</li>
       <li>Gratis y sin tarjeta</li>
-      <li>Eliges tú el día y la hora</li>
+      <li>Eliges un hueco libre del calendario</li>
     </ul>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta_guia')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=cinta_guia" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
+    <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
 
@@ -901,7 +910,10 @@
           <li><a href="/sobre-mi/">Sobre mí</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/terapia-online/">Terapia online</a></li>
-          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/areas/ansiedad/">Terapia para la ansiedad</a></li>
+          <li><a href="/areas/estado-de-animo/">Terapia para el ánimo bajo</a></li>
+          <li><a href="/areas/autoestima/">Terapia para la autoestima</a></li>
+          <li><a href="/areas/procrastinacion/">Terapia para la procrastinación</a></li>
           <li><a href="/tarifas/">Tarifas</a></li>
           <li><a href="/tu-cuenta/">Tu cuenta de paciente</a></li>
           <li><a href="/lgtbi/">Espacio seguro LGTBI+</a></li>

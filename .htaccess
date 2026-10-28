@@ -11,9 +11,10 @@
 #     conexión móvil mala, que es donde se pierden las visitas.
 #
 #  2. Le dice al navegador cuánto tiempo puede guardarse cada
-#     cosa. Las fotos y las fuentes, un año: llevan la huella
-#     del archivo pegada a la URL, así que si cambian, cambia
-#     la URL y se vuelven a pedir. El HTML, nada: tiene que
+#     cosa. Las fuentes y las fotos con ?v=, un año: llevan la
+#     huella del archivo pegada a la URL, así que si cambian,
+#     cambia la URL y se vuelven a pedir. Las de /fotos/a/ y /og/
+#     no llevan huella y tienen su propio .htaccess (30 días). El HTML, nada: tiene que
 #     poder cambiar hoy y verse hoy.
 #
 #  3. Seis cabeceras de seguridad. Cuatro son las baratas que
@@ -28,11 +29,11 @@
 # --- 1. Compresión ------------------------------------------
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
-  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/javascript text/javascript application/json image/x-icon
   AddOutputFilterByType DEFLATE image/svg+xml application/xml
 </IfModule>
 <IfModule mod_brotli.c>
-  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript image/svg+xml
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript text/javascript image/svg+xml
 </IfModule>
 
 # --- 2. Caducidad -------------------------------------------
@@ -79,7 +80,8 @@
   #
   # Dos años y no seis meses porque el plazo corto no aporta nada:
   # el riesgo de HSTS no es la duración, es activarlo sin tener
-  # https en todos los subdominios. Aquí no hay subdominios, y el
+  # https en todos los subdominios. El único, cuenta., va por https
+  # con su propio certificado, y el
   # certificado de Hostinger se renueva solo.
   #
   # No lleva «preload». Entrar en la lista de precarga de Chrome es
@@ -129,6 +131,10 @@
   #   upgrade-insecure-requests — por si se cuela un http:// suelto.
   Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloud.umami.is https://gateway.umami.is https://api-gateway.umami.dev; form-action 'self' https://d6a8aed2.sibforms.com https://sibforms.com; frame-src 'self' https://d6a8aed2.sibforms.com https://sibforms.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
 </IfModule>
+
+# El HTML se sirve como UTF-8 aunque la meta llegue tarde.
+AddDefaultCharset UTF-8
+AddCharset utf-8 .css .js .xml .txt .json
 
 # --- 4. Tipos correctos -------------------------------------
 <IfModule mod_mime.c>

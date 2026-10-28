@@ -61,7 +61,9 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=65">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-estrecha-800.woff2">
+  <link rel="stylesheet" href="/estilos.min.css?v=66">
 
 
   <script type="application/ld+json">
@@ -175,7 +177,7 @@
   <p class="etiqueta">Herramienta</p>
   <h1>La rueda de las emociones</h1>
   <p class="grande">Ponerle nombre exacto a lo que sientes es el primer paso para
-  saber qué necesitas. <strong>Pulsa una familia y luego la palabra que mejor encaje.</strong></p>
+  saber qué necesitas. <strong>Pulsa una familia y luego la palabra que mejor encaje.</strong> Con teclado: Tab para entrar en la rueda y flechas para moverte por ella.</p>
 
   <div class="rueda-caja">
     <svg class="rueda" id="rueda" viewBox="-210 -210 420 420" role="group"
@@ -280,11 +282,32 @@ function pintaRueda(svg, D, alElegir) {
     e.textContent = t; svg.appendChild(e);
   }
   function giro(a) { var r = a * 180 / Math.PI; if (r > 90 && r < 270) r -= 180; if (r < -90) r += 180; return r; }
-  var marcada = null;
+  var marcada = null, botones = [];
+  /* Una sola parada de Tab para toda la rueda (28-10): con un tabindex="0"
+     por sector, salir de la rueda costaba 59 pulsaciones. Dentro, las
+     flechas recorren los sectores en el orden en que se dibujan.
+     aria-pressed dice cuál está elegida; la clase .sel solo se veía. */
   function boton(p, etiqueta, fn) {
-    p.setAttribute('tabindex', '0'); p.setAttribute('role', 'button'); p.setAttribute('aria-label', etiqueta);
-    p.addEventListener('click', function () { if (marcada) marcada.classList.remove('sel'); marcada = p; p.classList.add('sel'); fn(true); });
-    p.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.dispatchEvent(new MouseEvent('click')); } });
+    p.setAttribute('tabindex', botones.length ? '-1' : '0'); p.setAttribute('role', 'button');
+    p.setAttribute('aria-label', etiqueta); p.setAttribute('aria-pressed', 'false');
+    botones.push(p);
+    p.addEventListener('click', function () {
+      if (marcada) { marcada.classList.remove('sel'); marcada.setAttribute('aria-pressed', 'false'); }
+      marcada = p; p.classList.add('sel'); p.setAttribute('aria-pressed', 'true');
+      botones.forEach(function (b) { b.setAttribute('tabindex', b === p ? '0' : '-1'); });
+      fn(true);
+    });
+    p.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.dispatchEvent(new MouseEvent('click')); return; }
+      var i = botones.indexOf(p), n = botones.length, j = -1;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % n;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + n) % n;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = n - 1;
+      if (j < 0) return;
+      e.preventDefault();
+      p.setAttribute('tabindex', '-1'); botones[j].setAttribute('tabindex', '0'); botones[j].focus();
+    });
   }
   var n = D.familias.length, paso = 2 * Math.PI / n, ini = -Math.PI / 2 - paso / 2, etiquetas = [];
   D.familias.forEach(function (f, i) {
@@ -414,7 +437,10 @@ function pintaRueda(svg, D, alElegir) {
           <li><a href="/sobre-mi/">Sobre mí</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/terapia-online/">Terapia online</a></li>
-          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/areas/ansiedad/">Terapia para la ansiedad</a></li>
+          <li><a href="/areas/estado-de-animo/">Terapia para el ánimo bajo</a></li>
+          <li><a href="/areas/autoestima/">Terapia para la autoestima</a></li>
+          <li><a href="/areas/procrastinacion/">Terapia para la procrastinación</a></li>
           <li><a href="/tarifas/">Tarifas</a></li>
           <li><a href="/tu-cuenta/">Tu cuenta de paciente</a></li>
           <li><a href="/lgtbi/">Espacio seguro LGTBI+</a></li>

@@ -61,7 +61,9 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
 
-  <link rel="stylesheet" href="/estilos.min.css?v=65">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-estrecha-800.woff2">
+  <link rel="stylesheet" href="/estilos.min.css?v=66">
 
 
   <script type="application/ld+json">
@@ -238,6 +240,10 @@
     Es <strong>gratis y la llevo yo</strong>. Sales sabiendo qué veo en lo
     que me has contado y qué se haría con ello.
   </p>
+  <!-- Botón en la primera pantalla (28-10): aquí llega el enlace de la
+       biografía de Instagram, y quien ya conoce a Adrián llega decidido. -->
+  <p style="margin:16px 0 4px"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_primera_arriba')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=primera_arriba" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
+  <p class="apunte">O sigue bajando: aquí abajo está todo lo que pasa, paso a paso.</p>
 
   <div class="presentacion">
     <div class="foto-nota">
@@ -258,8 +264,8 @@
   <h2>Antes: lo que te llega por correo</h2>
   <div class="cuaderno">
   <ol class="tres">
-    <li><span class="n">1</span><h3>Eliges el día</h3>
-      <p>En un calendario, el día y la hora que te vengan bien.</p></li>
+    <li><span class="n">1</span><h3>Eliges un hueco</h3>
+      <p>En el calendario ves los huecos libres y eliges el que te venga bien.</p></li>
     <li><span class="n">2</span><h3>Te llega el enlace</h3>
       <p>Un correo con el enlace de Google Meet. En el ordenador se abre en
       el navegador; en el móvil puede pedirte la aplicación.</p></li>
@@ -267,6 +273,18 @@
       <p>Antes de la cita, con el enlace a mano. Si no puedes ir, desde el
       mismo correo la cambias o la anulas.</p></li>
   </ol>
+  </div>
+
+  <div class="caja" id="ya-tengo-cita">
+    <h2 style="margin-top:0">Si ya tienes cita</h2>
+    <p>Es normal que la víspera te parezca que lo tuyo no es para tanto, o que te entren ganas de anularla. <strong>No hace falta estar peor para conectarte</strong>: la media hora sirve también para eso.</p>
+    <ul>
+      <li>El enlace está en el correo de confirmación y te llega otra vez en el recordatorio. Si no lo ves, mira en promociones o en spam.</li>
+      <li>Si entras desde el móvil, instala Google Meet antes y abre el enlace una vez, para que no te pille a la hora en punto.</li>
+      <li>Cinco minutos antes, busca un sitio donde nadie te oiga. El coche aparcado vale; unos auriculares ayudan.</li>
+      <li>Si al final no puedes, cámbiala o anúlala desde el mismo correo. No tienes que darme explicaciones.</li>
+    </ul>
+    <p class="apunte" style="margin-bottom:0">Y si te da vergüenza cómo empezar, aquí tienes <a href="/guias/verguenza-de-contarle-al-psicologo/">frases para los primeros minutos</a>. Si antes de la cita estás peor o piensas en hacerte daño, no esperes: llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </div>
 
   <h2>No tienes que preparar nada</h2>
@@ -383,7 +401,7 @@
       prácticas supervisadas</strong>, y subirá cuando termine el máster.
       <a href="/tarifas/">Pago y condiciones</a>.
     </p>
-    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=medio" target="_blank" rel="noopener">Pedir la primera sesión gratis</a></p>
+    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=medio" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
   </div>
   </div>
 
@@ -400,7 +418,7 @@
       <strong>Devolución · hacia la tercera</strong>
       Te cuento qué veo, en palabras normales. Elegimos juntos los
       objetivos, cómo sabremos si se mueven y una estimación de cuántas
-      sesiones harán falta: suele ser entre ocho y veinte.
+      sesiones harán falta, que revisamos cada cuatro.
     </li>
     <li>
       <strong>Tratamiento · semanal o quincenal</strong>
@@ -489,7 +507,7 @@
     <p>
       Las primeras consultas
       las hago en franjas fijas, porque el resto del horario es de
-      pacientes. Si esta semana ya no queda ninguno, el calendario te
+      pacientes. Si esta semana ya no queda ninguna, el calendario te
       ofrece el siguiente: <strong>no hay lista de espera</strong> ni hay que escribir
       para preguntar.
     </p>
@@ -532,7 +550,10 @@
           <li><a href="/sobre-mi/">Sobre mí</a></li>
           <li><a href="/primera-sesion/">La primera sesión</a></li>
           <li><a href="/terapia-online/">Terapia online</a></li>
-          <li><a href="/areas/">Áreas</a></li>
+          <li><a href="/areas/ansiedad/">Terapia para la ansiedad</a></li>
+          <li><a href="/areas/estado-de-animo/">Terapia para el ánimo bajo</a></li>
+          <li><a href="/areas/autoestima/">Terapia para la autoestima</a></li>
+          <li><a href="/areas/procrastinacion/">Terapia para la procrastinación</a></li>
           <li><a href="/tarifas/">Tarifas</a></li>
           <li><a href="/tu-cuenta/">Tu cuenta de paciente</a></li>
           <li><a href="/lgtbi/">Espacio seguro LGTBI+</a></li>
