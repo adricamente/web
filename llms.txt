@@ -26,6 +26,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 ## Guías: Ansiedad
 
 - [Ansiedad: la guía completa](https://adricamente.com/guias/ansiedad/): Qué es, cuándo deja de ser normal, los tipos (cada uno con su guía), las cifras en España y qué tratamiento tiene más evidencia.
+- [Miedo a hablar en público](https://adricamente.com/guias/miedo-a-hablar-en-publico/): Guía completa: cuándo son nervios y cuándo ansiedad social, qué mantiene el miedo, qué tiene estudios y cómo preparar tu próxima presentación paso a paso.
 - [Ataque de ansiedad](https://adricamente.com/guias/ataque-de-ansiedad/): Qué hacer en el momento, qué no hacer y por qué vuelve. Con una respiración guiada y un ejercicio para anclarte.
 - [No puedo dejar de pensar](https://adricamente.com/guias/no-puedo-dejar-de-pensar/): Guía completa: rumiar y preocuparse, por qué la cabeza no se apaga (sobre todo de noche), qué lo mantiene y qué tiene estudios detrás.
 - [Síntomas físicos de la ansiedad](https://adricamente.com/guias/sintomas-fisicos-de-la-ansiedad/): Corazón, aire, hormigueo, estómago, mareo: por qué el cuerpo hace cada cosa, qué mantiene el miedo al síntoma y cuándo hay que ir al médico o llamar al 112. Con un mapa para tocar.
@@ -43,6 +44,9 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 
 ## Guías: Ánimo, estrés y emociones
 
+- [Distimia (depresión persistente)](https://adricamente.com/guias/distimia/): Guía completa: qué es la distimia, en qué se diferencia de una depresión y del carácter, por qué dura tanto y qué tratamientos tienen estudios.
+- [Me siento vacío (o vacía)](https://adricamente.com/guias/me-siento-vacio/): Guía completa: qué puede haber detrás del vacío emocional, qué lo mantiene, qué ayuda según los estudios y cuándo es urgente.
+- [No sé qué hacer con mi vida](https://adricamente.com/guias/no-se-que-hacer-con-mi-vida/): Guía completa: qué suele haber detrás de sentirte sin rumbo, por qué esperar a tenerlo claro lo alarga, valores frente a metas y qué puedes probar esta semana.
 - [No tengo ganas de nada](https://adricamente.com/guias/no-tengo-ganas-de-nada/): Guía completa: por qué esperar a tener ganas lo alarga, cuándo puede ser algo más, qué es la activación conductual y una forma pequeña de empezar hoy.
 - [Burnout: estar quemada o quemado](https://adricamente.com/guias/burnout/): Guía completa: qué es el burnout según la OMS, en qué se diferencia del cansancio y de la depresión, qué lo mantiene y qué le toca a tu empresa por ley.
 - [Cómo gestionar el estrés](https://adricamente.com/guias/estres/): En qué se diferencia de la ansiedad, por qué el estrés que no se apaga desgasta más, qué tiene estudios detrás y qué hacer cuando el problema es la carga, no cómo la llevas.
@@ -58,6 +62,8 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 
 ## Guías: Autoestima y autoexigencia
 
+- [¿TDAH o procrastinación?](https://adricamente.com/guias/tdah-o-procrastinacion/): Guía completa: por qué tanta gente se lo pregunta, qué tiene que darse para hablar de TDAH en un adulto, por qué un test no basta y quién lo evalúa en España.
+- [Soy muy insegura (o inseguro)](https://adricamente.com/guias/inseguridad/): Guía completa: qué es la inseguridad, por qué pedir que te confirmen las cosas calma un rato y luego necesitas más, qué pasa en la pareja y qué puedes probar.
 - [Autoexigencia y perfeccionismo](https://adricamente.com/guias/autoexigencia/): Guía completa: cuándo exigirte deja de ayudar, por qué descansar da culpa, qué mantiene el perfeccionismo y qué tratamientos tienen estudios detrás.
 - [Síndrome del impostor](https://adricamente.com/guias/sindrome-del-impostor/): Guía completa: qué es el síndrome del impostor, por qué los logros no lo apagan, qué dice la investigación (y lo que todavía no sabe) y qué puedes probar.
 - [Decir que no sin sentirte culpable](https://adricamente.com/guias/decir-que-no/): Guía completa: por qué cuesta tanto, por qué la culpa de después no significa que hayas hecho algo mal, qué ayuda y frases para decirlo según a quién.

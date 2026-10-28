@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=66">
+  <link rel="stylesheet" href="/estilos.min.css?v=67">
 
 
   <script type="application/ld+json">
@@ -271,7 +271,7 @@
 
     <p class="herr-cuenta" aria-live="polite">Todavía no hay pasos. Lo ideal son entre cinco y diez, del 2 al 9.</p>
     <ol class="esc-lista" id="esc-lista" aria-label="Tu escalera, de más fácil a más difícil"></ol>
-    <p><button type="button" id="esc-imprimir">Imprimir o guardar en PDF</button></p>
+    <p><button type="button" id="esc-imprimir">Descargar en PDF</button></p>
   </div>
 
   <h2 id="como">Cómo usarla</h2>
@@ -334,6 +334,7 @@
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
+<script defer src="/pdf.js?v=2"></script>
 <script>
 (function () {
   var raiz = document.getElementById('escalera'); if (!raiz) return;
@@ -368,7 +369,20 @@
     texto.value = ''; texto.focus(); pinta();
   });
   texto.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); document.getElementById('esc-add').click(); } });
-  document.getElementById('esc-imprimir').addEventListener('click', function () { window.print(); });
+  document.getElementById('esc-imprimir').addEventListener('click', function () {
+    if (!window.adriPDF) { window.print(); return; }
+    var miedo = document.getElementById('esc-miedo').value.trim();
+    window.adriPDF.descarga({
+      archivo: 'mi-escalera-' + window.adriPDF.fecha() + '.pdf',
+      titulo: 'Mi escalera de exposición',
+      subtitulo: (miedo ? 'Para acercarme a: ' + miedo + '. ' : '') + 'Hecha el ' + window.adriPDF.hoy() + ', de menos a más malestar.',
+      bloques: [pasos.length ? { tipo: 'tabla', tam: 10, columnas: [{ t: 'Malestar que espero', w: 1 }, { t: 'Paso', w: 4 }, { t: 'Hecho', w: 0.8 }],
+                  filas: pasos.map(function (p) { return [p.n + ' de 10', p.t, p.hecho ? 'Sí' : '']; }) } : { tipo: 'p', texto: 'Todavía no hay pasos.' },
+                { tipo: 'h', texto: 'Cómo usarla' },
+                { tipo: 'lista', numerada: true, items: ['Empieza por un paso que puedas hacer: un 3 o un 4.', 'Quédate el tiempo suficiente para comprobar si lo que temías pasa de verdad. Antes, apunta qué crees que va a pasar. Después, qué pasó.', 'Suelta las muletas poco a poco.', 'Repite un mismo paso varias veces, en días y sitios distintos, antes de subir.', 'Si te desbordas, te desconectas o aparecen ideas de hacerte daño, para. Vuelve al paso anterior o hazlo con un profesional.'] },
+                { tipo: 'linea', etiqueta: 'Qué creo que va a pasar' }, { tipo: 'linea', etiqueta: 'Qué pasó' }]
+    });
+  });
   var EJ = {
     agorafobia: ['Salir sola o solo y alejarme de casa', [['Salir al portal cinco minutos', 2], ['Ir a la tienda de la esquina', 3], ['Ir al súper a una hora tranquila', 4], ['Coger el autobús una parada, con compañía', 5], ['Coger el autobús una parada, sin compañía', 6], ['Ir al centro un sábado por la mañana', 7], ['Quedarme media hora en un centro comercial', 8]]],
     social: ['Hablar y hacer cosas delante de otras personas', [['Saludar por su nombre a alguien del trabajo', 2], ['Hacer una pregunta en una tienda', 3], ['Llamar por teléfono para pedir una cita', 4], ['Comentar algo en una reunión pequeña', 5], ['Comer con compañeros sin mirar el móvil', 6], ['Dar mi opinión cuando no coincide', 7], ['Hablar dos minutos delante de un grupo', 8]]],

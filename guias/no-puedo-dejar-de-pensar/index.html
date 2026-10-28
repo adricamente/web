@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=66">
+  <link rel="stylesheet" href="/estilos.min.css?v=67">
 
 
   <script type="application/ld+json">
@@ -624,6 +624,48 @@
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
 
+<!-- nl -->
+  <section class="nl" aria-labelledby="nl-t">
+    <div class="nl-cuerpo" id="nl-cuerpo">
+      <h2 class="nl-t" id="nl-t">Lo nuevo, en tu correo</h2>
+      <p>Cuando publico una guía, un artículo o una herramienta, te lo mando. <strong>Uno o dos correos al mes</strong>,
+      y no te voy a preguntar nada de lo que te pasa.</p>
+      <form id="nl-form" method="POST" target="nl-destino" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw==">
+        <div class="nl-campos">
+          <div><label class="campo" for="nl-nombre">Tu nombre</label>
+          <input type="text" id="nl-nombre" name="NOMBRE" autocomplete="given-name" required></div>
+          <div><label class="campo" for="nl-correo">Tu correo</label>
+          <input type="email" id="nl-correo" name="EMAIL" autocomplete="email" required></div>
+        </div>
+        <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+        <input type="hidden" name="locale" value="es">
+        <input type="hidden" name="html_type" value="simple">
+        <label class="acepto">
+          <input type="checkbox" name="OPT_IN" value="1" required>
+          <span>Acepto recibir los correos de adricamente con lo nuevo de la web. Me doy de baja de un clic. He leído la
+          <a href="/privacidad.html">información sobre protección de datos</a>.</span>
+        </label>
+        <p class="apunte nl-nota" style="margin-top:0">Responsable: Adrián Cuñat Andrés. Para qué: mandarte lo nuevo de la web. Lo gestiona Brevo. Puedes acceder a tus datos, corregirlos o borrarlos: <a href="/privacidad.html">privacidad</a>.</p>
+        <button class="boton" type="submit">Apuntarme</button>
+        <p class="apunte nl-nota">Te llegará un correo para confirmar: sin ese clic no te escribo. Esto no es un canal de ayuda;
+        si estás mal ahora mismo, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
+      </form>
+    </div>
+    <iframe name="nl-destino" id="nl-destino" title="Envío del formulario" aria-hidden="true" tabindex="-1"
+            style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
+    <script>
+    (function(){
+      var f=document.getElementById('nl-form'), d=document.getElementById('nl-destino'), c=document.getElementById('nl-cuerpo'), env=false, hecho=false;
+      if(!f) return;
+      function ok(){ if(hecho) return; hecho=true; try{window.medir&&window.medir('alta_newsletter')}catch(e){}
+        c.innerHTML='<h2 class="nl-t" tabindex="-1">Mira tu correo</h2><p>Te he mandado un enlace para confirmar que eres tú. '+
+        'Si en unos minutos no lo ves, mira en promociones o en spam.</p>'; c.querySelector('h2').focus(); }
+      d.addEventListener('load', function(){ if(env) ok(); });
+      f.addEventListener('submit', function(ev){ if(f.elements['email_address_check'].value!==''){ev.preventDefault();return;} env=true; setTimeout(ok,6000); });
+    })();
+    </script>
+  </section>
+<!-- /nl -->
   <div class="faq fuentes-plegadas">
     <details id="fuentes">
       <summary>Fuentes de esta guía (7, todas enlazadas o citadas con autor y año)</summary>

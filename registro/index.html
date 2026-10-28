@@ -67,7 +67,8 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=66">
+  <script defer src="/pdf.js?v=2"></script>
+  <link rel="stylesheet" href="/estilos.min.css?v=67">
 
 
   <script type="application/ld+json">
@@ -204,7 +205,7 @@
   <div class="guardado al-imprimir-oculto" id="guardado" hidden>
     <p class="apunte" id="guardado-texto"></p>
     <p>
-      <button type="button" class="boton secundario" id="exportar">Descargar mi semana</button>
+      <button type="button" class="boton secundario" id="exportar">Descargar mi semana en PDF</button>
       <button type="button" class="enlace-boton" id="olvidar">Borrar lo escrito</button>
     </p>
     <p class="apunte">
@@ -503,10 +504,27 @@
   });
 
   document.getElementById('exportar').addEventListener('click', function(){
-    var ok = window.memoria.exporta('hoja-de-registro', 1, { dias: lee() });
+    var d = lee(), NOM = {lunes:'Lunes', martes:'Martes', miercoles:'Miércoles', jueves:'Jueves', viernes:'Viernes', sabado:'Sábado', domingo:'Domingo'};
+    var filas = DIAS.filter(function(x){ return d[x]; }).map(function(x){
+      var f = d[x], n = function(v){ return v === null || v === undefined ? '' : String(v); };
+      return [NOM[x], f.paso, f.notaste, n(f.malestar), f.hiciste, n(f.alivio), f.coste];
+    });
+    var ok = false;
+    if (window.adriPDF) ok = window.adriPDF.descarga({
+      archivo: 'mi-semana-de-registro-' + window.adriPDF.fecha() + '.pdf',
+      titulo: 'Mi semana de registro',
+      subtitulo: 'Lo que apuntaste, descargado el ' + window.adriPDF.hoy() + '. Malestar y alivio, del 0 al 10. Los días en blanco no salen.',
+      bloques: [
+        filas.length ? {tipo:'tabla', tam:8.5, columnas:[{t:'Día', w:1.65}, {t:'¿Qué pasó?', w:2.3}, {t:'¿Qué notaste?', w:2}, {t:'Malestar', w:1.45}, {t:'¿Qué hiciste?', w:2.1}, {t:'Alivio', w:1.2}, {t:'¿Qué te costó?', w:1.9}], filas: filas}
+                     : {tipo:'p', texto:'Todavía no has apuntado ningún día.'},
+        {tipo:'h', texto:'Qué mirar el séptimo día'},
+        {tipo:'lista', items:['¿Se repite el disparador? Casi siempre son dos o tres situaciones, no veinte.', '¿Se repite lo que haces? Ese es el eslabón que se puede cambiar. Los otros no.', '¿Qué nota de alivio tiene? Si es alta, ya sabes por qué no lo dejas por las buenas.', 'Suma la columna de la derecha. Esa suma de siete días es la factura semanal. Multiplícala por cincuenta y dos.']},
+        {tipo:'nota', texto:'Si lo vas a hablar con un psicólogo, trae esta hoja: es con lo que se empieza a trabajar.'}
+      ]
+    });
     this.textContent = ok ? 'Descargada' : 'No se pudo descargar';
     var b = this;
-    setTimeout(function(){ b.textContent = 'Descargar mi semana'; }, 2500);
+    setTimeout(function(){ b.textContent = 'Descargar mi semana en PDF'; }, 2500);
     if(window.medir) window.medir('registro_exportado');
   });
 

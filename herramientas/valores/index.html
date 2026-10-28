@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=66">
+  <link rel="stylesheet" href="/estilos.min.css?v=67">
 
 
   <script type="application/ld+json">
@@ -144,7 +144,7 @@
       "name": "¿Se guarda lo que marco?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Todo pasa en tu navegador y desaparece al cerrar la página. Si quieres conservarlo, usa el botón de imprimir o guardar en PDF."
+        "text": "No. Todo pasa en tu navegador y desaparece al cerrar la página. Si quieres conservarlo, usa el botón de descargar en PDF: se hace en tu navegador y no se envía a ningún sitio."
       }
     }
   ]
@@ -296,7 +296,7 @@
       <h2>Tu brújula</h2>
       <div id="val-resumen"></div>
       <p class="apunte">Si las cifras te salen bajas, no dicen nada malo de ti: dicen por dónde empezar. Elige uno y ponle día y hora al paso.</p>
-      <p><button type="button" data-ir="3">Cambiar algo</button> <button type="button" class="principal" id="val-imprimir">Imprimir o guardar en PDF</button>
+      <p><button type="button" data-ir="3">Cambiar algo</button> <button type="button" class="principal" id="val-imprimir">Descargar en PDF</button>
       <button type="button" data-ir="1" id="val-reset">Empezar de nuevo</button></p>
     </section>
   </div>
@@ -330,7 +330,7 @@
 
     <details>
       <summary>¿Se guarda lo que marco?</summary>
-      <p>No. Todo pasa en tu navegador y desaparece al cerrar la página. Si quieres conservarlo, usa el botón de imprimir o guardar en PDF.</p>
+      <p>No. Todo pasa en tu navegador y desaparece al cerrar la página. Si quieres conservarlo, usa el botón de descargar en PDF: se hace en tu navegador y no se envía a ningún sitio.</p>
     </details>
   </div>
 
@@ -360,6 +360,7 @@
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
+<script defer src="/pdf.js?v=2"></script>
 <script>
 (function () {
   var raiz = document.getElementById('valores'); if (!raiz) return;
@@ -427,7 +428,20 @@
     });
     c.appendChild(ol);
   }
-  document.getElementById('val-imprimir').addEventListener('click', function () { window.print(); });
+  document.getElementById('val-imprimir').addEventListener('click', function () {
+    if (!window.adriPDF) { window.print(); return; }
+    var orden = tres.slice().sort(function (a, b) { return datos[a].n - datos[b].n; });
+    window.adriPDF.descarga({
+      archivo: 'mis-valores-' + window.adriPDF.fecha() + '.pdf',
+      titulo: 'Tu brújula: tus valores',
+      subtitulo: 'Lo que elegiste el ' + window.adriPDF.hoy() + '. Ordenado de lo que menos vives ahora a lo que más.',
+      bloques: [{ tipo: 'tabla', tam: 10, columnas: [{ t: 'Valor', w: 1.4 }, { t: 'Cuánto lo vives ahora', w: 1 }, { t: 'Un paso pequeño esta semana', w: 3 }],
+                  filas: orden.map(function (v) { return [v, datos[v].n + ' de 10', datos[v].paso || '']; }) },
+                { tipo: 'linea', etiqueta: 'El que elijo para empezar, y su día y hora' },
+                { tipo: 'p', texto: 'Si las cifras te salen bajas, no dicen nada malo de ti: dicen por dónde empezar. Elige uno y ponle día y hora al paso.' },
+                { tipo: 'nota', texto: 'Los valores son cualidades de cómo quieres vivir, no metas que se terminan. Puedes actuar según lo que te importa con miedo o sin ganas.' }]
+    });
+  });
   document.getElementById('val-reset').addEventListener('click', function () {
     marcados = []; tres = []; datos = {};
     paso1.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });

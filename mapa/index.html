@@ -83,7 +83,8 @@
   <noscript><style>#p0 .navegacion{display:none}</style></noscript>
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=66">
+  <script defer src="/pdf.js?v=2"></script>
+  <link rel="stylesheet" href="/estilos.min.css?v=67">
 
 
   <script type="application/ld+json">
@@ -426,7 +427,7 @@
     </aside>
 
     <div class="navegacion" style="margin-bottom:18px">
-      <button class="boton-texto" type="button" id="guardar">Guardar mi mapa</button>
+      <button class="boton-texto" type="button" id="guardar">Descargar mi mapa en PDF</button>
       <button class="boton-texto" type="button" id="copiar">Copiar mi mapa</button>
       <button class="boton-texto" type="button" data-ir="1">Volver a hacerlo con otra cosa</button>
     </div>
@@ -434,9 +435,10 @@
     <div class="guardado" id="memoria-mapa" hidden style="margin-bottom:30px">
       <p class="apunte" id="memoria-texto"></p>
       <p>
-        <button type="button" class="boton secundario" id="exportar-mapa">Descargar para traerlo</button>
+        <button type="button" class="boton secundario" id="exportar-mapa">Descargar en PDF para traerlo</button>
         <button type="button" class="enlace-boton" id="olvidar-mapa">Borrar mis respuestas</button>
       </p>
+      <p class="apunte"><button type="button" class="enlace-boton" id="exportar-mapa-json">O en formato de datos (.json)</button>, por si te lo pide tu psicólogo.</p>
       <p class="apunte">
         Lo de arriba te lo llevas para leerlo. Esto otro es el mismo mapa
         en un archivo, por si acabas reservando y quieres traerlo: si te apetece
@@ -864,24 +866,41 @@
   // Por eso se puede seguir prometiendo que el mapa no sale de
   // su dispositivo, que es lo que hace que la gente lo rellene
   // diciendo la verdad.
+  // --- Descargar en PDF (28-10) -------------------------------
+  // Se hace en el propio navegador con /pdf.js: el mismo texto que ya
+  // está en pantalla, con el estilo de los documentos de adricamente.
+  // No pasa por ningún servidor.
+  function pdfDelMapa(){
+    if(!window.adriPDF) return false;
+    var a = ALIVIO[datos.alivio] || {frase:'cambia', refuerzo:''};
+    var patron = 'Cuando me toca ' + (min(datos.situacion) || '—') + ', noto ' + (min(datos.emocion) || '—') +
+                 '. Y lo que hago es ' + (min(datos.conducta) || '—') + '. El malestar ' + a.frase + '. ' + (a.refuerzo || '');
+    return window.adriPDF.descarga({
+      archivo: 'mi-mapa-' + window.adriPDF.fecha() + '.pdf',
+      titulo: 'Mi mapa de lo que evitas',
+      subtitulo: 'Lo que escribiste el ' + window.adriPDF.hoy() + '. Es tuyo: no se ha guardado en ningún servidor.',
+      bloques: [
+        {tipo:'caja', titulo:'Tu patrón, en tus palabras', texto: patron},
+        {tipo:'campo', etiqueta:'Lo que llevas tiempo esquivando', texto: datos.situacion},
+        {tipo:'campo', etiqueta:'Lo que notas justo antes de ponerte', texto: datos.emocion},
+        {tipo:'campo', etiqueta:'Lo que haces para dejar de notarlo', texto: datos.conducta},
+        {tipo:'campo', etiqueta:'Lo que pasa con el malestar en ese momento', texto: datos.alivio ? 'El malestar ' + a.frase + '.' : ''},
+        {tipo:'campo', etiqueta:'Lo que te ha costado en los últimos seis meses', texto: datos.coste},
+        {tipo:'caja', color:'azul', titulo:'Tu siguiente paso', texto: datos.paso || '—', negrita:true},
+        {tipo:'linea', etiqueta:'Ponle día y hora'},
+        {tipo:'h', texto:'Por dónde se empieza'},
+        {tipo:'p', texto:'Una vez. Pequeño. Con el malestar puesto, no sin él. No hace falta más fuerza de voluntad: lo que se entrena es sostener la incomodidad diez minutos más de lo que aguantaste ayer. Un plan sin momento concreto es un deseo.'},
+        {tipo:'nota', texto:'Si prefieres no hacerlo a solas, la primera media hora es gratis y por videollamada: adricamente.com/primera-sesion. Trae esta hoja a la videollamada (no hace falta que me la envíes antes); es por donde empezaría.'}
+      ]
+    });
+  }
+  window.pdfDelMapa = pdfDelMapa;
+
   document.getElementById('guardar').addEventListener('click', function(){
-    var boton = this;
-    try {
-      var blob = new Blob([textoDelMapa()], {type:'text/plain;charset=utf-8'});
-      var url  = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'mi-mapa.txt';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-      if (window.medir) window.medir('mapa_guardado');
-      boton.textContent = 'Guardado';
-    } catch (_) {
-      boton.textContent = 'No se pudo guardar';
-    }
-    setTimeout(function(){ boton.textContent = 'Guardar mi mapa'; }, 2500);
+    var boton = this, ok = pdfDelMapa();
+    if (ok && window.medir) window.medir('mapa_guardado');
+    boton.textContent = ok ? 'Descargado' : 'No se pudo descargar';
+    setTimeout(function(){ boton.textContent = 'Descargar mi mapa en PDF'; }, 2500);
   });
 
   // --- Copiar al portapapeles --------------------------------
@@ -1095,11 +1114,14 @@
     function(r){ r.addEventListener('change', recuerda); });
 
   document.getElementById('exportar-mapa').addEventListener('click', function(){
-    var ok = window.memoria.exporta('mapa-de-lo-que-evitas', 1, lee());
+    var ok = window.pdfDelMapa ? window.pdfDelMapa() : false;
     this.textContent = ok ? 'Descargado' : 'No se pudo descargar';
     var b = this;
-    setTimeout(function(){ b.textContent = 'Descargar para traerlo'; }, 2500);
+    setTimeout(function(){ b.textContent = 'Descargar en PDF para traerlo'; }, 2500);
     if(window.medir) window.medir('mapa_exportado');
+  });
+  document.getElementById('exportar-mapa-json').addEventListener('click', function(){
+    window.memoria.exporta('mapa-de-lo-que-evitas', 1, lee());
   });
 
   document.getElementById('olvidar-mapa').addEventListener('click', function(){

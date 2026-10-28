@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=66">
+  <link rel="stylesheet" href="/estilos.min.css?v=67">
 
 
   <script type="application/ld+json">
@@ -144,7 +144,7 @@
       "name": "¿Dónde se guardan mis datos?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Solo en este navegador. No se envían a ningún servidor. Puedes imprimirlos, descargarlos o borrarlos cuando quieras."
+        "text": "Solo en este navegador. No se envían a ningún servidor. Puedes descargarlos en PDF o borrarlos cuando quieras."
       }
     }
   ]
@@ -258,7 +258,7 @@
       <tbody></tbody>
     </table></div>
     <div id="s-resumen"></div>
-    <p><button type="button" id="s-imprimir">Imprimir o guardar en PDF</button> <button type="button" id="s-csv">Descargar en CSV</button> <button type="button" id="s-borrar">Borrar todo</button></p>
+    <p><button type="button" id="s-imprimir">Descargar en PDF</button> <button type="button" id="s-borrar">Borrar todo</button></p>
   </div>
 
   <h2 id="leer">Cómo leerlo</h2>
@@ -285,7 +285,7 @@
 
     <details>
       <summary>¿Dónde se guardan mis datos?</summary>
-      <p>Solo en este navegador. No se envían a ningún servidor. Puedes imprimirlos, descargarlos o borrarlos cuando quieras.</p>
+      <p>Solo en este navegador. No se envían a ningún servidor. Puedes descargarlos en PDF o borrarlos cuando quieras.</p>
     </details>
   </div>
 
@@ -314,6 +314,7 @@
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
+<script defer src="/pdf.js?v=2"></script>
 <script>
 (function () {
   var C = 'adr-sueno-v1', raiz = document.getElementById('sueno'); if (!raiz) return;
@@ -357,13 +358,18 @@
     if (!guarda(noches)) raiz.querySelector('.herr-cuenta').textContent = 'Este navegador no deja guardar: apúntalo e imprímelo antes de cerrar.';
     pinta();
   });
-  $('s-imprimir').addEventListener('click', function () { window.print(); });
-  $('s-csv').addEventListener('click', function () {
-    var filas = [['fecha', 'acostarse', 'levantarse', 'min_dormirse', 'min_despierto', 'despertares', 'descanso_1a5', 'eficiencia_%']];
-    noches.forEach(function (n) { filas.push([n.f, n.acu, n.lev, n.lat, n.desp, n.nd, n.cal, calc(n).ef]); });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([filas.map(function (f) { return f.join(';'); }).join('\n')], { type: 'text/csv' }));
-    a.download = 'diario-de-sueno.csv'; document.body.appendChild(a); a.click(); a.remove();
+  $('s-imprimir').addEventListener('click', function () {
+    if (!window.adriPDF) { window.print(); return; }
+    var t = noches.map(calc), media = function (k) { return t.reduce(function (s, x) { return s + x[k]; }, 0) / (t.length || 1); };
+    window.adriPDF.descarga({
+      archivo: 'mi-diario-de-sueno-' + window.adriPDF.fecha() + '.pdf',
+      titulo: 'Mi diario de sueño',
+      subtitulo: noches.length + (noches.length === 1 ? ' noche apuntada' : ' noches apuntadas') + '. Descargado el ' + window.adriPDF.hoy() + '.',
+      bloques: [noches.length ? { tipo: 'tabla', tam: 9, columnas: [{ t: 'Fecha', w: 1.3 }, { t: 'Me acosté', w: 1 }, { t: 'Me levanté', w: 1 }, { t: 'Tardé en dormirme', w: 1.1 }, { t: 'Despierto por la noche', w: 1.2 }, { t: 'Me desperté', w: 1 }, { t: 'Dormido', w: 1.3 }, { t: 'Eficiencia', w: 1 }, { t: 'Descanso', w: 0.9 }],
+                  filas: noches.map(function (n) { var c = calc(n); return [n.f, n.acu, n.lev, n.lat + ' min', n.desp + ' min', n.nd + (n.nd === 1 ? ' vez' : ' veces'), hm(c.dormido), c.ef + ' %', n.cal + '/5']; }) } : { tipo: 'p', texto: 'Todavía no hay noches apuntadas.' }]
+        .concat(noches.length >= 3 ? [{ tipo: 'caja', titulo: 'De media', texto: hm(media('cama')) + ' en la cama, ' + hm(media('dormido')) + ' durmiendo, eficiencia del ' + Math.round(media('ef')) + ' %.' }] : [])
+        .concat([{ tipo: 'nota', texto: 'La eficiencia de sueño es qué parte del tiempo en la cama pasaste dormida o dormido. No es una nota ni un diagnóstico. Lo que se hace con estos datos, por ejemplo ajustar el tiempo en la cama, se decide con un profesional.' }])
+    });
   });
   $('s-borrar').addEventListener('click', function () { if (!window.confirm('¿Borrar todas las noches apuntadas?')) return; noches = []; guarda(noches); pinta(); });
   pinta();

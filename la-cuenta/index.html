@@ -69,7 +69,8 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=66">
+  <script defer src="/pdf.js?v=2"></script>
+  <link rel="stylesheet" href="/estilos.min.css?v=67">
 
 
   <script type="application/ld+json">
@@ -298,7 +299,7 @@
     <h3>Guardar tu cuenta</h3>
     <p class="apunte" id="guardado-texto"></p>
     <p>
-      <button type="button" class="boton secundario" id="exportar">Descargar mi cuenta</button>
+      <button type="button" class="boton secundario" id="exportar">Descargar mi cuenta en PDF</button>
       <button type="button" class="enlace-boton" id="olvidar">Borrar lo guardado</button>
     </p>
     <p class="apunte">
@@ -600,10 +601,24 @@
     }
 
     document.getElementById('exportar').addEventListener('click', function(){
-      var ok = window.memoria.exporta('la-cuenta', 1, respuestas());
+      var r = respuestas(), ok = false;
+      if (window.adriPDF) ok = window.adriPDF.descarga({
+        archivo: 'mi-cuenta-' + window.adriPDF.fecha() + '.pdf',
+        titulo: 'La cuenta que no haces',
+        subtitulo: 'Tu cuenta del ' + window.adriPDF.hoy() + '. Es una multiplicación con tus números, no un test.',
+        bloques: [
+          {tipo:'campo', etiqueta:'Cuántas veces por semana lo evitas', texto: r.veces_por_semana + (r.veces_por_semana === 1 ? ' vez' : ' veces')},
+          {tipo:'campo', etiqueta:'Cuánto tiempo llevas así', texto: r.anios + (r.anios === 1 ? ' año' : ' años')},
+          {tipo:'caja', color:'azul', titulo:'La cuenta', texto: r.veces_por_semana + ' × 52 semanas × ' + r.anios + (r.anios === 1 ? ' año' : ' años') + ' = ' + r.total.toLocaleString('es-ES') + ' veces', negrita:true},
+          {tipo:'p', texto: (document.getElementById('explica') ? document.getElementById('explica').textContent.replace(/\s+/g, ' ').trim() : '')},
+          {tipo:'h', texto:'Esto no mide nada de ti'},
+          {tipo:'p', texto:'No es un test, ni un diagnóstico, ni una escala validada, y no sirve para saber si te pasa algo. Sirve para ver de golpe una suma que normalmente llega en trozos de dos minutos.'},
+          {tipo:'nota', texto:'Si quieres mirar qué hay detrás de esa cifra, el mapa de lo que evitas está en adricamente.com/mapa. Y si prefieres hablarlo, la primera media hora es gratis: adricamente.com/primera-sesion.'}
+        ]
+      });
       this.textContent = ok ? 'Descargada' : 'No se pudo descargar';
       var b = this;
-      setTimeout(function(){ b.textContent = 'Descargar mi cuenta'; }, 2500);
+      setTimeout(function(){ b.textContent = 'Descargar mi cuenta en PDF'; }, 2500);
       if(window.medir) window.medir('cuenta_exportada');
     });
 

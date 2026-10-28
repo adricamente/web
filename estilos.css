@@ -4065,3 +4065,10 @@ figure.foto.tramo img{border-radius:var(--r-m)}
   .nav-movil > summary{padding-block:10px}
   .barra-cita .cita{padding-block:10px}
 }
+/* Apuntarse a lo nuevo (28-10): caja tranquila, sin color de alarma. */
+.nl{position:relative;margin:44px 0 36px;padding:22px 20px 18px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-m)}
+.nl .nl-t{font-family:var(--estrecha);font-weight:800;font-size:1.4rem;line-height:1.15;margin:0 0 8px;color:var(--ink)}
+.nl p{margin:0 0 12px}
+.nl-campos{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.nl-campos{grid-template-columns:1fr}}
+.nl .nl-nota{font-size:14px;margin:12px 0 0}
