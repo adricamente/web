@@ -808,4 +808,15 @@
     <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
   </url>
+  <url>
+    <loc>https://adricamente.com/herramientas/sesgos/</loc>
+    <lastmod>2026-10-28</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/sesgos-cognitivos/</loc>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bloques-cielo-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/planta-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
+  </url>
 </urlset>

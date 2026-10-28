@@ -67,6 +67,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [¿TDAH o procrastinación?](https://adricamente.com/guias/tdah-o-procrastinacion/): Guía completa: por qué tanta gente se lo pregunta, qué tiene que darse para hablar de TDAH en un adulto, por qué un test no basta y quién lo evalúa en España.
 - [Soy muy insegura (o inseguro)](https://adricamente.com/guias/inseguridad/): Guía completa: qué es la inseguridad, por qué pedir que te confirmen las cosas calma un rato y luego necesitas más, qué pasa en la pareja y qué puedes probar.
 - [Persona altamente sensible (PAS)](https://adricamente.com/guias/persona-altamente-sensible/): Guía completa: qué es la alta sensibilidad según la investigación, qué está en debate, por qué un test no diagnostica y cuándo conviene consultarlo.
+- [Sesgos cognitivos](https://adricamente.com/guias/sesgos-cognitivos/): Guía completa: 25 sesgos y distorsiones cognitivas, cada uno con un ejemplo cotidiano y una pregunta para pillarlo, y cómo revisar un pensamiento sin «pensar en positivo».
 - [Autoexigencia y perfeccionismo](https://adricamente.com/guias/autoexigencia/): Guía completa: cuándo exigirte deja de ayudar, por qué descansar da culpa, qué mantiene el perfeccionismo y qué tratamientos tienen estudios detrás.
 - [Síndrome del impostor](https://adricamente.com/guias/sindrome-del-impostor/): Guía completa: qué es el síndrome del impostor, por qué los logros no lo apagan, qué dice la investigación (y lo que todavía no sabe) y qué puedes probar.
 - [Decir que no sin sentirte culpable](https://adricamente.com/guias/decir-que-no/): Guía completa: por qué cuesta tanto, por qué la culpa de después no significa que hayas hecho algo mal, qué ayuda y frases para decirlo según a quién.
@@ -118,6 +119,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Respiración guiada](https://adricamente.com/herramientas/respiracion/)
 - [Diario de sueño](https://adricamente.com/herramientas/diario-de-sueno/)
 - [Tiempo de preocupación](https://adricamente.com/herramientas/tiempo-de-preocupacion/)
+- [Pilla el sesgo](https://adricamente.com/herramientas/sesgos/)
 - [Glosario de psicología](https://adricamente.com/glosario/)
 
 

@@ -496,6 +496,14 @@
           <input type="checkbox" id="consentimiento" name="OPT_IN" value="1" required>
           <span>Acepto recibir las cuatro cartas y los correos que Adrián escriba después. Me doy de baja de un clic. He leído la <a href="../privacidad.html">información sobre protección de datos</a>.</span>
         </label>
+        <!-- Casilla aparte y opcional: contar aperturas y clics es otra
+             finalidad (LSSI 22.2; CEPD 05/2020, granularidad). Va al
+             atributo _PIXEL_TRACKING_CONSENT de Brevo; el name tiene que
+             ser el de la exportación HTML del formulario «Mapa». -->
+        <label class="acepto">
+          <input type="checkbox" id="seguimiento" name="_PIXEL_TRACKING_CONSENT" value="1">
+          <span>Opcional: acepto que Brevo cuente si abro cada correo y en qué enlaces pincho, para saber qué correos sirven. Sin marcarla te llegan igual, y lo puedo retirar desde cualquier correo sin darme de baja.</span>
+        </label>
 
         <button class="boton" type="submit">Mandarme las cartas</button>
         <p class="aviso" id="aviso-correo"></p>
@@ -515,7 +523,8 @@
 
       <p class="apunte" style="margin-top:14px;font-size:13px">
         Responsable: Adrián Cuñat Andrés (NIF 23916598W). Finalidad:
-        enviarte las cartas y las comunicaciones de adricamente.
+        enviarte las cartas y las comunicaciones de adricamente y, solo si
+        marcas la segunda casilla, contar aperturas y clics.
         Legitimación: tu consentimiento. Destinatarios: Brevo
         (Sendinblue SAS, Francia), que gestiona el envío como encargado
         del tratamiento. Derechos: acceso, rectificación, supresión,
