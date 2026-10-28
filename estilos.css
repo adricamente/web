@@ -4039,3 +4039,5 @@ figure.foto.tramo img{border-radius:var(--r-m)}
 @media (max-width:520px){.llamada-media{display:block;padding:16px}.llamada-media img{float:left;width:46px;height:46px;margin:0 12px 6px 0}.llamada-media .t{padding-top:10px}.llamada-media .acciones-media .boton{display:block;width:100%;text-align:center}}
 @media print{.llamada-media{display:none}}
 .portada .otra-puerta{font-size:15px;margin:6px 0 0;color:var(--muted)}
+.llamada-media .otra-puerta-media{font-size:15.5px;margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line);color:var(--muted)}
+.filas .chip-pilar{justify-self:start;grid-column:1;margin:0 0 8px}

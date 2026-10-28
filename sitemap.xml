@@ -1,56 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://adricamente.com/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-retrato.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-noche-c480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-c480.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/sobre-mi/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-sobremi-300.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/terapia-online/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/portatil-manos-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-calma-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/areas/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-noche-c480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-c480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cuaderno-mano-c480.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/areas/ansiedad/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-noche-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/areas/procrastinacion/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/areas/autoestima/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cuaderno-mano-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/areas/estado-de-animo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cama-manana-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/primera-sesion/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-sobremi.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-manos-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/cuenta/inicio-2x.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/tarifas/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-tarifas.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/camino-otono-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/sesion-casa-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manta-amarilla-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-lo-repites/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/blog/cuando-este-listo/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/la-factura-que-no-ves/</loc>
@@ -58,111 +80,169 @@
   </url>
   <url>
     <loc>https://adricamente.com/blog/cuando-dejar-de-hacerlo-solo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-el-miedo-crece-si-lo-evitas/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/buscar-sintomas-en-google/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/paraguas-niebla-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatillas-escalera-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-no-sueltas-el-movil/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/paraguas-niebla-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/el-perfeccionismo-es-miedo/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-recuerdas-lo-malo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-niebla-a480.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/no-pienses-en-un-oso-blanco/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatillas-escalera-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-la-ansiedad-sube-de-noche/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-niebla-a480.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/el-bajon-del-domingo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mesilla-libro-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/cansancio-sin-hacer-nada/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-niebla-a480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/empiezo-cosas-y-no-las-acabo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/pensar-en-positivo-no-me-sirve/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/siempre-discutimos-por-lo-mismo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mesilla-libro-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-es-mas-facil-contarselo-a-un-desconocido/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/no-hace-falta-saber-que-te-pasa/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cafe-ventana-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/que-hace-un-psicologo-que-no-hace-un-amigo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escribir-tarjeta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lectura-lampara-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/contar-a-tu-familia-que-vas-al-psicologo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/mientras-esperas-la-primera-cita/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escribir-tarjeta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lectura-lampara-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/no-hace-falta-tocar-fondo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cafe-ventana-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/validar-no-es-dar-la-razon/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mesilla-libro-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/por-que-me-cuesta-pedir-ayuda/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatos-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/culpa-por-descansar/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatos-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-sol-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/complacer-a-todo-el-mundo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-niebla-a480.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/ponerle-nombre-a-lo-que-sientes/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mesilla-libro-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatos-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/blog/hablarte-como-le-hablarias-a-alguien-que-quieres/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mesilla-libro-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/contacto/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-ventana-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/mapa/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/la-cuenta/</loc>
@@ -171,6 +251,8 @@
   <url>
     <loc>https://adricamente.com/herramientas/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cuaderno-mano-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-sesion.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/registro/</loc>
@@ -178,195 +260,320 @@
   </url>
   <url>
     <loc>https://adricamente.com/cuanto-cuesta-un-psicologo-online/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/paraguas-arriba-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/quien-es-quien-en-salud-mental/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-perfil.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/tu-cuenta/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/cuenta/sesion-2x.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/cuenta/registro-2x.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/cuenta/evolucion-2x.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/lgtbi/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-sol-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/herramientas/rueda-de-las-emociones/</loc>
-    <lastmod>2026-10-26</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/guias/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-borrosa-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cama-manana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/planta-ventana-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ataque-de-ansiedad/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-manos-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/tren-campo-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/necesito-ir-al-psicologo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/puerta-patio-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/barca-amanecer-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/no-puedo-dejar-de-pensar/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-noche-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/autobus-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/autoexigencia/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-calma-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/sindrome-del-impostor/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-calma-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/dependencia-emocional/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/caminar-juntos-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/secreto-profesional/</loc>
     <lastmod>2026-10-27</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cortinas-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ir-al-psicologo-sin-que-se-entere/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/verguenza-de-contarle-al-psicologo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/psicologo-online-fiable/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/sesion-casa-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/sintomas-fisicos-de-la-ansiedad/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cortinas-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad-por-la-salud/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/portatil-manos-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad-social/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-borrosa-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lago-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/no-tengo-ganas-de-nada/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cama-manana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manta-amarilla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/luz-sabanas-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/me-siento-sola/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manta-amarilla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cafe-ventana-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/burnout/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-calma-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/decir-que-no/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cuaderno-mano-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/superar-una-ruptura/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-arboles-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/tejados-ciudad-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/paraguas-arriba-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/salir-del-armario/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manos-tazas-arriba-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escribir-tarjeta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/terapia-de-aceptacion-y-compromiso/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/camino-otono-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lectura-lampara-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad-generalizada/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/pensamientos-intrusivos/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/vela-cuaderno-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lago-niebla-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/no-puedo-dormir/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/movil-cama-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-niebla-a480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad-anticipatoria/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/camino-otono-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lago-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/estres/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mesilla-libro-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/senales-de-depresion/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cortinas-flores-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mesilla-libro-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/duelo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-arboles-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-sol-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/culpa/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-manta-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escribir-tarjeta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/autocritica/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cuaderno-mano-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/dejar-de-procrastinar/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/vela-cuaderno-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatos-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/baja-autoestima/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/planta-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatos-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cafe-ventana-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/apego-ansioso/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/paraguas-arriba-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manos-tazas-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/celos/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-sol-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/tejados-ciudad-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/relacion-toxica/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cortinas-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/compararme-con-los-demas/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-borrosa-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/terapia-cognitivo-conductual/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cuaderno-mano-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/cuanto-dura-una-terapia/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/camino-otono-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/como-ayudar-a-alguien/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manos-tazas-arriba-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-campo-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/saber-si-la-terapia-funciona/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-calma-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/regular-emociones/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mar-rosa-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/luz-sabanas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-campo-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/herramientas/valores/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/herramientas/escalera/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/glosario/</loc>
@@ -374,99 +581,157 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/fobias/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/agorafobia/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/tren-campo-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/autobus-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad-ante-examenes/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lago-niebla-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/miedo-a-conducir/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/tren-campo-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/autobus-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatillas-escalera-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/toc/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/autobus-asiento-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/paraguas-niebla-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ira/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/depresion-posparto/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-manta-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/trauma/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cortinas-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-sol-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/volver-al-trabajo-tras-una-baja/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-calma-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manta-amarilla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/luz-sabanas-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/mindfulness/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/mar-rosa-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-campo-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/infidelidad/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-blancas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escribir-tarjeta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/discutir-en-pareja/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-blancas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/tejados-ciudad-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/limites-con-la-familia/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manos-tazas-arriba-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/miedo-al-rechazo/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manos-tazas-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/culpa-materna/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-manta-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/imagen-corporal/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cortinas-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escribir-tarjeta-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/hambre-emocional/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cala-cortina-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/psicologo-gratis/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/planta-ventana-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/uso-problematico-del-movil/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/movil-cama-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manta-amarilla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/luz-sabanas-a1200.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/terapia-online-o-presencial/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/portatil-manos-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/salud-mental-en-cifras/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/ayuda-urgente/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/como-escribo-las-guias/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-noche-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/autobus-luz-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/zapatillas-escalera-a800.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/herramientas/respiracion/</loc>
