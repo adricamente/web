@@ -4109,3 +4109,183 @@ figure.foto.tramo img{border-radius:var(--r-m)}
 ul.datos{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 22px}
 ul.datos li{margin:0;padding:5px 12px;border-radius:999px;background:var(--surface-2);border-color:transparent;color:var(--ink-2)}
 @media (max-width:520px){#p0 .navegacion .boton{max-width:none;flex:1 1 100%}}
+
+/* === 29-10 · Texto e imagen (informe /tmp/claude-0/diseno/TEXTO_IMAGEN.md):
+   T1–T6, C10–C13. La web no tenía demasiado texto en general, sino tres
+   muros (sesgos, /newsletter/, el índice de guías) y fotos que no explicaban
+   nada. Estas reglas son de piezas que sustituyen fotos por algo que se lee
+   (cifras, escalones, fichas) y de dos recortes en el móvil. Todo con los
+   tokens de color; ningún dibujo nuevo se anima. === */
+
+/* T1 · Guía de sesgos: el índice como mapa numerado y cada sesgo como
+   ficha. Los dos contadores siguen de una lista a la otra (01–25) porque
+   son los 25 sesgos del título. El número va con texto alternativo vacío
+   (`/ ""`) para que el lector de pantalla no lo lea; la primera
+   declaración `content` es la de reserva para navegadores sin esa sintaxis. */
+main{counter-reset:is fs}
+.indice-sesgos{list-style:none;padding:0;margin:14px 0 28px;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr));gap:6px}
+.indice-sesgos li{margin:0}
+/* Casillas de 44 px: antes eran enlaces en línea de 20–30 px de alto. */
+.indice-sesgos a{display:flex;align-items:center;gap:9px;box-sizing:border-box;height:100%;min-height:44px;
+  padding:7px 10px;border:1px solid var(--line-strong);border-radius:var(--r-s);background:var(--surface);
+  color:var(--ink);text-decoration:none;font-size:.92rem;line-height:1.25}
+.indice-sesgos a::before{counter-increment:is;content:counter(is,decimal-leading-zero);content:counter(is,decimal-leading-zero) / "";
+  flex:0 0 auto;font-family:var(--estrecha);font-weight:800;font-size:.85rem;color:var(--accent)}
+.indice-sesgos a:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-3)}
+.ficha-sesgo{counter-increment:fs;position:relative;margin:24px 0 0;padding:18px 0 0;border-top:1px solid var(--line-strong);max-width:var(--medida)}
+.ficha-sesgo > h3{margin:0 0 8px;padding-right:2.8rem}
+.ficha-sesgo::before{content:counter(fs,decimal-leading-zero);content:counter(fs,decimal-leading-zero) / "";
+  position:absolute;right:0;top:16px;font-family:var(--estrecha);font-weight:800;font-size:1.55rem;line-height:1;color:var(--accent-borde)}
+.ficha-ej,.ficha-pilla{position:relative;margin:10px 0}
+.ficha-ej{padding-left:34px}
+.ficha-pilla{padding:9px 12px 9px 42px;border-radius:var(--r-s);background:var(--accent-soft)}
+.ficha-ej > .icono{position:absolute;left:0;top:3px;color:var(--accent)}
+.ficha-pilla > .icono{position:absolute;left:11px;top:11px;color:var(--accent)}
+.ficha-sesgo .apunte{margin-top:4px}
+
+/* T2 · El círculo de las guías también es un círculo en el móvil. Antes,
+   por debajo de 640 px eran cinco cajas apiladas con flechas hacia abajo
+   (unos 650 px) y no se leía como un círculo, que es lo que quiere decir.
+   El aro se dibuja en una caja algo más ancha que alta (una elipse suave)
+   para que los dos pasos de abajo no se toquen, y por eso el SVG lleva
+   preserveAspectRatio="none" (componentes.ciclo_html). Su ancho sale del
+   disponible: 128,5 % − 8,8rem es el máximo que deja medio paso de margen a
+   cada lado, así que los pasos de los lados nunca se salen de la caja.
+   Los pasos usan las mismas --x/--y que en escritorio. Medido en los 62
+   círculos (56 de 5 pasos y 6 de 4) a 320–639 px: sin solapes entre pasos
+   ni con el centro, nada fuera de la caja y botones de 44 px o más. Con
+   uno de 6 pasos hay que volver a medir. */
+@media (max-width:639px){
+  .ciclo-vivo{padding:16px 12px}
+  .ciclo-rueda{position:relative;width:100%;height:17.8rem;margin:2px auto 0}
+  .ciclo-svg,.ciclo-pasos{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:min(17.5rem,calc(128.5% - 8.8rem));height:15rem}
+  .ciclo-svg{display:block;overflow:visible}
+  .ciclo-flecha{fill:none;stroke:var(--accent-borde);stroke-width:1.2}
+  .ciclo-svg marker path{fill:var(--accent-borde)}
+  .ciclo-pasos{display:block}
+  .ciclo-pasos li{position:absolute;width:6.9rem;left:var(--x);top:var(--y);transform:translate(-50%,-50%)}
+  .ciclo-pasos li:not(:last-child)::after{display:none}
+  /* min-height:44px viene de la regla general del botón: se queda. */
+  .ciclo-pasos button{width:100%;font-size:.82rem;line-height:1.16;padding:6px 7px;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+  .ciclo-n{width:21px;height:21px;font-size:.72rem}
+  .ciclo-centro{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:5.4rem;margin:0;text-align:center;font-size:.78rem;line-height:1.2;color:var(--ink-2)}
+  .ciclo-centro span{font-size:1.5rem}
+  .ciclo-detalle{margin-top:8px}
+  /* «recordatorios», «Pensamientos»: palabras que no caben solas en un paso
+     estrecho. Solo se parten si no caben en un renglón para ellas solas. */
+  /* 30-10: break-word y no anywhere (con anywhere se partía «pensamient-o»
+     aunque cupiera sola), guiones si el navegador los tiene, y el número a la
+     esquina en todo el móvil para dejar el ancho a la palabra. */
+  .ciclo-pasos button{position:relative;overflow-wrap:break-word;hyphens:auto;padding:7px 6px 6px 10px}
+  .ciclo-n{position:absolute;left:-7px;top:-8px;width:19px;height:19px;font-size:.68rem;box-shadow:0 0 0 2px var(--surface)}
+  /* Con 4 pasos, los de los lados van al 11/89 % (con 5, al 12,9/87,1 %):
+     el aro tiene que ser algo más estrecho para que no se salgan. */
+  .ciclo-rueda[data-n="4"] .ciclo-svg,.ciclo-rueda[data-n="4"] .ciclo-pasos{width:min(17.5rem,calc(127% - 8.9rem))}
+}
+/* Por debajo de 390 px no caben pasos de 6,9rem: los dos de abajo se
+   tocaban y el 2 y el 5 pisaban el «y vuelta a empezar» (lo que propuso el
+   informe se midió solo a 390). Pasos más estrechos y un aro que crece con
+   el hueco: el ancho máximo del aro es (ancho − paso) / 0,742 con 5 pasos y
+   / 0,78 con 4, que es lo que deja el paso de un lado dentro de la caja. */
+@media (max-width:389px){
+  .ciclo-pasos li{width:6rem}
+  /* El número sale a la esquina del paso: deja sitio para que «Pensamientos»
+     o «consecuencia» quepan enteras en vez de partirse a mitad. */
+  .ciclo-pasos button{position:relative;font-size:.78rem;padding:7px 6px 6px 9px}
+  .ciclo-n{position:absolute;left:-7px;top:-8px;width:19px;height:19px;font-size:.68rem;box-shadow:0 0 0 2px var(--surface)}
+  .ciclo-svg,.ciclo-pasos{width:min(17.5rem,calc(133% - 8.1rem))}
+  .ciclo-rueda[data-n="4"] .ciclo-svg,.ciclo-rueda[data-n="4"] .ciclo-pasos{width:min(17.5rem,calc(127% - 7.8rem))}
+  .ciclo-centro{width:3.6rem;font-size:.7rem}
+}
+@media (max-width:359px){
+  .ciclo-pasos li{width:5.8rem}
+  .ciclo-svg,.ciclo-pasos{width:min(17.5rem,calc(134% - 7.8rem))}
+  .ciclo-rueda[data-n="4"] .ciclo-svg,.ciclo-rueda[data-n="4"] .ciclo-pasos{width:min(17.5rem,calc(127% - 7.5rem))}
+}
+
+/* T3 · Las cifras de la guía de ansiedad, de un vistazo. Repiten el
+   párrafo (que sigue entero), por eso el bloque va con aria-hidden. */
+.cifras-vistazo{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0 24px;padding:0}
+.cv{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:13px 14px 14px}
+.cv:first-child{grid-column:1/-1}
+@media (min-width:760px){.cifras-vistazo{grid-template-columns:1.5fr 1fr 1fr}.cv:first-child{grid-column:auto}}
+.cv-num{font-family:var(--estrecha);font-weight:800;font-size:2rem;line-height:1;color:var(--accent-3);margin:0 0 9px;letter-spacing:-.01em}
+.cv-num small{font-size:.5em;font-weight:800;color:var(--ink-2);margin-left:2px}
+.cv-txt{margin:0;font-size:.9rem;line-height:1.38;color:var(--ink-2)}
+.cv-barras{display:grid;gap:7px;margin:2px 0 10px}
+.cv-barra{display:grid;grid-template-columns:6.6rem 1fr;align-items:center;gap:8px;font-size:.88rem;line-height:1.2;color:var(--ink);white-space:nowrap}
+.cv-barra b{font-family:var(--estrecha);font-weight:800;color:var(--accent-3)}
+.cv-pista{display:block;height:10px;border-radius:2px;background:var(--line)}
+.cv-pista i{display:block;height:100%;border-radius:2px;background:var(--accent)}
+.cv-barra.b .cv-pista i{background:var(--accent-borde)}
+
+/* T4 · Los escalones de la guía NICE: el resto sale de .figura/.dibujo. */
+.figura.escalones .dibujo{max-width:34rem}
+.dibujo .peldano{fill:var(--accent-soft);stroke:none}
+
+/* T5 · Índice de guías: la puerta por temas con su sello. En el móvil,
+   renglones con el dibujo a la izquierda; en escritorio, cinco casillas. */
+.temas-vistazo{list-style:none;margin:12px 0 4px;padding:0;display:grid;gap:6px}
+.temas-vistazo li{margin:0}
+.temas-vistazo a{display:grid;grid-template-columns:5.2rem 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;
+  box-sizing:border-box;height:100%;min-height:44px;padding:6px 12px 6px 6px;
+  border:1px solid var(--line-strong);border-radius:var(--r-m);background:var(--surface);color:var(--ink);text-decoration:none}
+.temas-vistazo a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.temas-vistazo .dibujo{grid-row:1/3;display:block;width:100%;height:auto}
+.temas-vistazo b{align-self:end;font-family:var(--estrecha);font-weight:800;font-size:1.08rem;line-height:1.12;color:var(--accent)}
+.temas-vistazo small{align-self:start;font-size:.85rem;color:var(--ink-2)}
+@media (min-width:760px){
+  .temas-vistazo{grid-template-columns:repeat(5,1fr)}
+  .temas-vistazo a{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;padding:8px 12px 12px;row-gap:4px}
+  .temas-vistazo .dibujo{grid-row:auto}
+}
+/* En el móvil, la descripción de las guías completas a dos renglones: el
+   texto sigue en el DOM (lectores de pantalla y buscadores lo leen) y
+   entero en la propia guía. Las fotos de tema, apaisadas como en M7. */
+@media (max-width:640px){
+  .filas > a.tarjeta.pilar p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+  figure.foto-tema img{aspect-ratio:21/9;object-fit:cover}
+}
+
+/* T6 · /newsletter/: los cuatro primeros correos como recorrido y las
+   cuatro hojas como fichas. «1º correo» lo pone el CSS y no se lee: la
+   lista ya es un <ol>. */
+.correos{list-style:none;margin:16px 0 18px;padding:0;display:grid;gap:10px;counter-reset:co}
+.correos li{counter-increment:co;position:relative;margin:0;padding:10px 14px 11px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-m)}
+.correos li::before{content:counter(co) "º correo";content:counter(co) "º correo" / "";display:block;margin-bottom:2px;
+  font-family:var(--estrecha);font-weight:800;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+.correos li strong{display:block;color:var(--ink);font-size:1.02rem;line-height:1.3}
+@media (min-width:760px){.correos{grid-template-columns:1fr 1fr}}
+.hojas-pdf{list-style:none;margin:16px 0 18px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:10px}
+.hojas-pdf li{position:relative;margin:0;padding:14px 14px 14px 52px;background:var(--surface-2);border-radius:var(--r-m)}
+.hojas-pdf li > .icono{position:absolute;left:14px;top:15px;color:var(--accent)}
+.hojas-pdf li strong{display:block;color:var(--ink);font-size:1.02rem;line-height:1.3;margin-bottom:2px}
+.figura.correos-dib{margin:10px 0 4px}
+.figura.correos-dib .dibujo{max-width:30rem}
+.dibujo .sobre{fill:var(--bg);stroke:var(--ink);stroke-width:2.2}
+.dibujo .sobre-solapa{stroke:var(--ink);stroke-width:2.2}
+.dibujo .sobre.ahora,.dibujo .sobre-solapa.ahora{stroke:var(--accent-2);stroke-width:3.2}
+
+/* C10 y C13 · Las láminas de «de noche» y de la semana con plan. */
+.figura .muestra.hueco{width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--muted)}
+.figura.noche .dibujo,.figura.semana .dibujo{max-width:34rem}
+
+/* C11 · /primera-sesion/: iconos en vez de números de 3,4rem. Así queda un
+   solo sistema de pasos numerados en la página (el de «los treinta minutos
+   por dentro»). La lista sigue siendo un <ol>. */
+.cuaderno .tres.con-icono li{display:grid;grid-template-columns:44px 1fr;column-gap:14px;align-items:start}
+.cuaderno .tres.con-icono .n{grid-row:1/3;display:grid;place-items:center;width:44px;height:44px;margin:0;border-radius:50%;background:var(--accent-soft);color:var(--accent)}
+.cuaderno .tres.con-icono h3{margin-top:9px}
+@media (min-width:760px){.cuaderno .tres.con-icono li{grid-template-columns:1fr}.cuaderno .tres.con-icono .n{grid-row:auto;margin-bottom:10px}}
+
+/* C12 · Áreas, «Para leer con calma»: en el móvil, la descripción a un
+   renglón. Era el tramo más largo de las áreas (1,4–1,6 pantallas). La
+   clase la pone enlaces_entrantes.areas; las demás .relacionadas (como
+   las hojas de /hojas/, que acaban en «PDF.») no se recortan. */
+@media (max-width:640px){
+  .relacionadas.leer-calma li > span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;line-clamp:1;overflow:hidden}
+}
