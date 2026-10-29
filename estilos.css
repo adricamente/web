@@ -535,7 +535,7 @@ p strong, li strong, dd strong, .tarjeta strong{
   .barra-cita{
     display:flex;align-items:center;justify-content:space-between;
     gap:12px;position:fixed;inset:0 0 auto 0;z-index:60;
-    padding:9px 16px;
+    padding:6px 16px;
     background:var(--bg);border-bottom:1px solid var(--line);
     box-shadow:0 1px 10px rgba(37,35,31,.06);
     transform:translateY(-100%);visibility:hidden;
@@ -547,9 +547,12 @@ p strong, li strong, dd strong, .tarjeta strong{
   }
   .barra-cita .cita{
     font-family:Archivo,"Archivo reserva",sans-serif;
-    font-size:14px;font-weight:700;letter-spacing:0;
+    font-size:14px;font-weight:700;letter-spacing:0;line-height:1.2;
     background:var(--accent-2);color:var(--sobre-accent);
-    padding:9px 15px;border-radius:var(--r-s);text-decoration:none;
+    /* 29-10: en una línea siempre. A 360 px el texto largo se partía en dos
+       y la barra medía 84 px, como una segunda cabecera. Ahora mide 56. */
+    display:inline-flex;align-items:center;min-height:44px;white-space:nowrap;
+    padding:0 14px;border-radius:var(--r-s);text-decoration:none;
     border:1px solid transparent;
   }
   /* La lleva el guion, con una clase y una transición, en todos los
@@ -4067,7 +4070,6 @@ figure.foto.tramo img{border-radius:var(--r-m)}
   .indice ol a{display:inline-block;padding-block:10px}
   .migas a,.cabecera .marca a{display:inline-block;padding-block:11px;margin-block:-11px}
   .nav-movil > summary{padding-block:10px}
-  .barra-cita .cita{padding-block:10px}
 }
 /* Apuntarse a lo nuevo (28-10): caja tranquila, sin color de alarma. */
 .nl{position:relative;margin:44px 0 36px;padding:22px 20px 18px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-m)}
