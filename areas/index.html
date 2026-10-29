@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=73">
+  <link rel="stylesheet" href="/estilos.min.css?v=74">
 
 
   <script type="application/ld+json">
@@ -107,7 +107,7 @@
 <aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=barra" target="_blank" rel="noopener">Primera sesión gratis</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=barra" target="_blank" rel="noopener">Media hora gratis</a>
 </aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -153,11 +153,11 @@
         <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
            onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=menu" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=menu" target="_blank" rel="noopener">Reservar media hora gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -224,6 +224,61 @@
   <div class="franja marino solo-frase">
     <p class="frase">Lo que <strong>te alivia hoy</strong> es lo que <strong>te encoge la vida mañana</strong>.</p>
   </div>
+
+  <!-- ===== El mecanismo (viene de la portada, 29-10) ========
+       Va aquí y no en la portada: esta es la página que dice que las
+       cuatro «tienen el mismo esqueleto», y el dibujo es ese esqueleto.
+       Escena antes que mecanismo, como en el resto de la web. -->
+  <h2 id="mecanismo">Por qué las cuatro se parecen</h2>
+  <p>Cancelas el plan del sábado y el viernes por la noche duermes mejor.
+  Dejas el correo para mañana y la tarde se aligera. Dices que sí a otra
+  tarea que no te toca y te ahorras la discusión. <strong>En el momento,
+  cada una de esas cosas funciona.</strong></p>
+  <p>Lo que no se ve es que cada vez queda una pequeña factura, y esa no
+  baja sola.</p>
+  <figure class="figura">
+    <div class="lamina">
+    <svg viewBox="0 0 400 176" role="img" aria-labelledby="mec-t mec-d" class="dibujo"
+         fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="mec-t">Las dos curvas del mecanismo</title>
+      <desc id="mec-d">
+        Una línea da un pico cada vez que se evita algo y enseguida
+        vuelve a cero: es el alivio. Otra línea sube un escalón en cada
+        una de esas veces y nunca baja: es el coste, dibujado como un
+        área que crece y que al final es más alta que el alivio.
+      </desc>
+      <defs><pattern id="mec-rayas" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="raya" x1="0" y1="0" x2="0" y2="7"/></pattern></defs>
+      <path class="reticula" d="M30 12 V164 M70 12 V164 M110 12 V164 M150 12 V164 M190 12 V164 M230 12 V164 M270 12 V164 M310 12 V164 M350 12 V164 M30 12 H386 M30 38 H386 M30 64 H386 M30 90 H386 M30 116 H386 M30 142 H386"/>
+      <path class="area-coste" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60 L386 164 L30 164 Z"/>
+      <path class="area-coste trama" style="fill:url(#mec-rayas)" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60 L386 164 L30 164 Z"/>
+      <path class="regla" vector-effect="non-scaling-stroke" d="M42 164 V160 M54 164 V160 M66 164 V160 M78 164 V160 M90 164 V160 M102 164 V160 M114 164 V160 M126 164 V160 M138 164 V160 M150 164 V160 M162 164 V160 M174 164 V160 M186 164 V160 M198 164 V160 M210 164 V160 M222 164 V160 M234 164 V160 M246 164 V160 M258 164 V160 M270 164 V160 M282 164 V160 M294 164 V160 M306 164 V160 M318 164 V160 M330 164 V160 M342 164 V160 M354 164 V160 M366 164 V160 M378 164 V160"/>
+      <path class="eje" vector-effect="non-scaling-stroke" pathLength="1" d="M30 12 V164 M30 164 H392"/>
+      <line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:1.05s" x1="90" y1="168" x2="90" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:1.4s" x1="162" y1="168" x2="162" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:1.72s" x1="234" y1="168" x2="234" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:2.1s" x1="306" y1="168" x2="306" y2="152"/>
+      <path class="llamada" vector-effect="non-scaling-stroke" style="--cuando:1.3s" d="M104 34 L134 22"/>
+      <path class="llamada" vector-effect="non-scaling-stroke" style="--cuando:1.8s" d="M244 122 L244 146"/>
+      <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60"/>
+      <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
+    </svg>
+    <span class="anota" style="left:34%;top:13%;--cuando:1.3s">sube en segundos</span>
+    <span class="anota" style="left:60%;top:80%;--cuando:1.8s">y este no baja</span>
+    <span class="anota der opcional" style="left:99%;top:9%;--cuando:3.3s">aquí ya cuesta más que alivia</span>
+    </div>
+
+    <ul class="leyenda">
+      <li><span class="muestra alivio"></span>Lo que notas: el alivio</li>
+      <li><span class="muestra coste"></span>Lo que se acumula: el coste</li>
+    </ul>
+
+    <figcaption>
+      Cada marca de abajo es una vez que lo evitas. Esto no son datos: es
+      el mecanismo. El alivio dura segundos; el coste sube un escalón, no
+      baja solo y acaba por encima.
+    </figcaption>
+  </figure>
+  <p>En terapia dibujamos ese mismo esquema con lo tuyo, y buscamos dónde
+  cortarlo.</p>
+  <p class="apunte">Si ahora mismo estás muy mal o piensas en hacerte daño, no
+  esperes a una cita: llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
 
   <h2 id="tambien">Y si lo tuyo no está aquí</h2>
   <p>
@@ -432,7 +487,7 @@
         var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
       });
 
-    /* La guía de lectura de la portada: cada línea se dibuja cuando
+    /* La guía «Cómo se lee» de /tu-cuenta/: cada línea se dibuja cuando
        se ve casi entera. En el escritorio entran las tres a la vez y
        van una detrás de otra; en el móvil, cada una al llegar. */
     vigila(document.querySelectorAll('.guia li'),

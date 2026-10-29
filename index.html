@@ -2,13 +2,13 @@
 <!-- ============================================================
      adricamente.com — portada
      ------------------------------------------------------------
-     El orden de las secciones no es de cosecha propia: es el que
-     repiten las webs de psicólogos con consulta online en España
-     (promesa y botón, credenciales, quién soy, en qué te ayudo,
-     cómo funciona, precio, prueba social, preguntas, artículos,
-     cierre). Se ha copiado a propósito. Quien entra en una web de
-     psicólogo ya sabe dónde mira, y pelearse con esa costumbre
-     solo consigue que no encuentre el botón.
+     El orden sigue cómo decide quien llega: si esto es lo suyo (las
+     áreas, con una escena), qué va a pasar (el paso a paso), quién es
+     y se puede comprobar, cuánto cuesta y por qué, qué pasa con lo que
+     cuente, y lo que distingue el proceso (la medida y la cuenta).
+     Luego, dudas y cierre. Lo que es para quien todavía no va a
+     reservar (mapa, newsletter, lecturas) va después del cierre, no
+     antes. El mecanismo vive en /areas/ (29-10).
 
      Lo que sí es propio: el texto, el color y que en el sitio de
      la prueba social esté lo que se puede comprobar (colegiado, máster,
@@ -77,7 +77,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=73">
+  <link rel="stylesheet" href="/estilos.min.css?v=74">
 
 
   <script type="application/ld+json">
@@ -387,7 +387,6 @@
   /* ---- El pie ---- */
   .tc-pie{padding-top:4px}
   .tc-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin:22px 0 8px}
-  .tc-acciones .boton{width:auto}
   .tc-mas{font-weight:600}
   .tc-nota{font-size:14.5px !important;color:var(--muted);margin:10px 0 0}
 
@@ -420,21 +419,6 @@
     .tc-completa .tc-tab{padding:12px 2px 14px}
   }
 
-  /* ---- Compacta (/primera-sesion/): solo iconos encima ---- */
-  .tc-compacta{--w:212px;--b:8px;display:flex;flex-direction:column;align-items:center}
-  .tc-compacta .tc-mandos{display:flex;flex-direction:column;align-items:center}
-  .tc-compacta .tc-tabs{flex-direction:row;gap:6px;margin:0 0 8px}
-  .tc-compacta .tc-tab{width:40px;height:40px;min-height:0;padding:0;grid-template-columns:1fr;justify-items:center;border-radius:50%}
-  .tc-compacta .tc-tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--sobre-accent)}
-  .tc-compacta .tc-barra{display:none}
-  .tc-compacta .tc-pausa{margin:14px 0 0}
-  .tc-compacta .tc-frase{font-size:15px}
-  .tc-compacta .tc-nota{text-align:center}
-  .con-pantalla:has(.tc){grid-template-columns:minmax(0,1fr) 252px}
-  @media (max-width:640px){
-    .tc-compacta{--w:min(220px,60vw)}
-    .con-pantalla:has(.tc){grid-template-columns:1fr}
-  }
   </style>
 <!-- /cuenta:telefono:css -->
 
@@ -469,7 +453,7 @@
 <aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=barra" target="_blank" rel="noopener">Primera sesión gratis</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=barra" target="_blank" rel="noopener">Media hora gratis</a>
 </aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -515,11 +499,11 @@
         <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
            onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=menu" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=menu" target="_blank" rel="noopener">Reservar media hora gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -539,6 +523,7 @@
     <strong>La primera media hora es gratis.</strong></p>
     <p class="acciones"><a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_portada')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=portada" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
     <p class="tranquila">Sin tarjeta y sin compromiso. Se abre el calendario y eliges un hueco libre.</p>
+    <p class="credencial">Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.</p>
     <p class="otra-puerta">¿Prefieres empezar por tu cuenta? Prueba <a onclick="window.medir&&window.medir('clic_mapa_portada')" href="/mapa/">el mapa de lo que evitas</a>: diez minutos, sin registro.</p>
     <div class="foto-portada">
       <img src="/fotos/adrian-retrato.webp?v=8192c5" width="400" height="500" fetchpriority="high" decoding="async" alt="Adrián Cuñat Andrés, de frente, con camisa azul claro y gafas de pasta, sonriendo">
@@ -546,68 +531,19 @@
     </div>
   </section>
 
-
-
-  <!-- ===== El mecanismo ========================================
-       La frase va en franja marino, sola: es el separador fuerte de la
-       primera mitad de la página (entre la portada y el precio había
-       cinco bloques seguidos sin cambio de fondo). -->
-  <div class="franja marino solo-frase">
-    <p class="frase">Lo que <strong>te alivia hoy</strong> es lo que <strong>te encoge la vida mañana</strong>.</p>
-  </div>
+  <!-- ===== En qué puedo ayudarte ==============================
+       Lo primero que se pregunta quien llega es si esto es lo suyo:
+       cada tarjeta enseña un momento en el que reconocerse, sacado de
+       la página del área, y no el mecanismo. El mecanismo, dibujado,
+       vive en /areas/ (29-10). -->
   <section class="lisa">
-    <p>La ansiedad, la procrastinación, la inseguridad y el ánimo bajo
-    funcionan igual. Algo incomoda, haces lo que lo quita y el malestar
-    baja enseguida. Lo que no se ve es que cada vez <strong>queda una
-    pequeña factura, y esa no baja sola</strong>.</p>
-  <figure class="figura">
-    <div class="lamina">
-    <svg viewBox="0 0 400 176" role="img" aria-labelledby="mec-t mec-d" class="dibujo"
-         fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <title id="mec-t">Las dos curvas del mecanismo</title>
-      <desc id="mec-d">
-        Una línea da un pico cada vez que se evita algo y enseguida
-        vuelve a cero: es el alivio. Otra línea sube un escalón en cada
-        una de esas veces y nunca baja: es el coste, dibujado como un
-        área que crece y que al final es más alta que el alivio.
-      </desc>
-      <defs><pattern id="mec-rayas" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="raya" x1="0" y1="0" x2="0" y2="7"/></pattern></defs>
-      <path class="reticula" d="M30 12 V164 M70 12 V164 M110 12 V164 M150 12 V164 M190 12 V164 M230 12 V164 M270 12 V164 M310 12 V164 M350 12 V164 M30 12 H386 M30 38 H386 M30 64 H386 M30 90 H386 M30 116 H386 M30 142 H386"/>
-      <path class="area-coste" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60 L386 164 L30 164 Z"/>
-      <path class="area-coste trama" style="fill:url(#mec-rayas)" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60 L386 164 L30 164 Z"/>
-      <path class="regla" vector-effect="non-scaling-stroke" d="M42 164 V160 M54 164 V160 M66 164 V160 M78 164 V160 M90 164 V160 M102 164 V160 M114 164 V160 M126 164 V160 M138 164 V160 M150 164 V160 M162 164 V160 M174 164 V160 M186 164 V160 M198 164 V160 M210 164 V160 M222 164 V160 M234 164 V160 M246 164 V160 M258 164 V160 M270 164 V160 M282 164 V160 M294 164 V160 M306 164 V160 M318 164 V160 M330 164 V160 M342 164 V160 M354 164 V160 M366 164 V160 M378 164 V160"/>
-      <path class="eje" vector-effect="non-scaling-stroke" pathLength="1" d="M30 12 V164 M30 164 H392"/>
-      <line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:1.05s" x1="90" y1="168" x2="90" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:1.4s" x1="162" y1="168" x2="162" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:1.72s" x1="234" y1="168" x2="234" y2="152"/><line class="marca-evento" vector-effect="non-scaling-stroke" style="--cuando:2.1s" x1="306" y1="168" x2="306" y2="152"/>
-      <path class="llamada" vector-effect="non-scaling-stroke" style="--cuando:1.3s" d="M104 34 L134 22"/>
-      <path class="llamada" vector-effect="non-scaling-stroke" style="--cuando:1.8s" d="M244 122 L244 146"/>
-      <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M30 152 L88 152 L95 129 L160 129 L167 106 L232 106 L239 83 L304 83 L311 60 L386 60"/>
-      <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M30 84 L70 84 C81 84 81 40 90 40 C101 40 101 84 114 84 L142 84 C153 84 153 40 162 40 C173 40 173 84 186 84 L214 84 C225 84 225 40 234 40 C245 40 245 84 258 84 L286 84 C297 84 297 40 306 40 C317 40 317 84 330 84 L386 84"/>
-    </svg>
-    <span class="anota" style="left:34%;top:13%;--cuando:1.3s">sube en segundos</span>
-    <span class="anota" style="left:60%;top:80%;--cuando:1.8s">y este no baja</span>
-    <span class="anota der opcional" style="left:99%;top:9%;--cuando:3.3s">aquí ya cuesta más que alivia</span>
-    </div>
-
-    <ul class="leyenda">
-      <li><span class="muestra alivio"></span>Lo que notas: el alivio</li>
-      <li><span class="muestra coste"></span>Lo que se acumula: el coste</li>
-    </ul>
-
-    <figcaption>
-      Cada marca de abajo es una vez que lo evitas. Esto no son datos: es
-      el mecanismo. El alivio dura segundos; el coste sube un escalón, no
-      baja solo y acaba por encima.
-    </figcaption>
-  </figure>
-    <p>En terapia dibujamos ese mismo esquema con lo tuyo, y buscamos dónde
-    cortarlo.</p>
-<h2>¿En qué puedo ayudarte?</h2>
+    <h2>¿En qué puedo ayudarte?</h2>
   <div class="filas">
     <a class="tarjeta con-foto" href="/areas/ansiedad/">
       <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/ventana-noche-c240.webp" srcset="/fotos/a/ventana-noche-c480.webp 480w, /fotos/a/ventana-noche-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
       <div class="cuerpo">
       <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg><h3>Ansiedad</h3></span>
-      <p>Tensión que no para y evitar lo que la dispara. La evitación <strong>calma hoy y agranda el problema mañana</strong>.</p>
+      <p>Las tres de la madrugada, repasando una conversación de ayer. <strong>La cabeza no se apaga aunque se lo pidas</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
       </div>
     </a>
@@ -615,7 +551,7 @@
       <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/escritorio-noche-c240.webp" srcset="/fotos/a/escritorio-noche-c480.webp 480w, /fotos/a/escritorio-noche-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
       <div class="cuerpo">
       <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M6.5 3h11M6.5 21h11"/><path pathLength="1" d="M7 3c0 4.2 5 5.6 5 9s-5 4.8-5 9"/><path pathLength="1" d="M17 3c0 4.2-5 5.6-5 9s5 4.8 5 9"/><path pathLength="1" d="M8.9 5.6h6.2c-.5 1.7-3.1 2.9-3.1 2.9S9.4 7.3 8.9 5.6z" fill="currentColor" stroke="none"/></svg><h3>Procrastinación y bloqueo</h3></span>
-      <p>Saber qué tienes que hacer y no hacerlo. <strong>No es pereza</strong>: es alivio que funciona demasiado bien.</p>
+      <p>Ese correo lleva nueve días abierto en una pestaña. <strong>No es pereza ni falta de organización</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
       </div>
     </a>
@@ -623,7 +559,7 @@
       <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/cuaderno-mano-c240.webp" srcset="/fotos/a/cuaderno-mano-c480.webp 480w, /fotos/a/cuaderno-mano-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
       <div class="cuerpo">
       <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.5" y="2.8" width="15" height="18.4" rx="7.5"/><circle pathLength="1" cx="12" cy="10.2" r="2.5"/><path pathLength="1" d="M7.8 17.6a4.4 4.4 0 0 1 8.4 0"/></svg><h3>Autoestima e inseguridad</h3></span>
-      <p>Hablarte como no le hablarías a nadie, y <strong>organizar la vida para no quedar mal</strong>.</p>
+      <p>Otra vez has dicho que sí a un favor que no te tocaba. <strong>Te hablas como no le hablarías a nadie</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
       </div>
     </a>
@@ -631,7 +567,7 @@
       <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/cama-manana-c240.webp" srcset="/fotos/a/cama-manana-c480.webp 480w, /fotos/a/cama-manana-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
       <div class="cuerpo">
       <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.5 20.5h17"/><path pathLength="1" d="M3.5 7l4.2 3.4 3.8-1.6 3.6 4.6 5.4 3.4"/></svg><h3>Estado de ánimo bajo</h3></span>
-      <p>Desgana, cansancio, cosas que antes te gustaban y ya no. <strong>La vida se va encogiendo</strong>.</p>
+      <p>Tres fines de semana sin ver a nadie, y dices que no has tenido tiempo. <strong>Lo que antes te gustaba ahora te da igual</strong>.</p>
       <span class="mas">Ver cómo se trabaja &rarr;</span>
       </div>
     </a>
@@ -646,18 +582,15 @@
       </div>
     </a>
   </div>
+    <p class="apunte">Por qué las cuatro se parecen tanto: <a href="/areas/#mecanismo">el mismo mecanismo, dibujado</a>. Si ahora mismo estás muy mal o piensas en hacerte daño, no esperes a una cita: <a href="tel:024">024</a> o <a href="tel:112">112</a>.</p>
   </section>
 
   <!-- ===== Cómo es empezar =====================================
-       En banda gris: el segundo cambio de fondo, a medio camino entre
-       la frase y el precio. Nunca pegada a otra banda. -->
+       En banda gris, entre dos secciones lisas: el primer cambio de
+       fondo después del hero. Nunca pegada a otra banda. Sin foto desde
+       el 29-10: su pie, «lo que hace falta», es ahora un párrafo. -->
   <section class="franja">
     <h2>Cómo funciona la terapia online, paso a paso</h2>
-    <div class="foto-lado">
-  <figure class="foto"><!-- foto:sesion-casa -->
-    <picture><source media="(min-width: 860px)" srcset="/fotos/a/sesion-casa-v800.webp 800w, /fotos/a/sesion-casa-v480.webp 480w" sizes="280px" width="800" height="1000"><img class="foto-amb" src="/fotos/a/sesion-casa-a480.webp" srcset="/fotos/a/sesion-casa-a800.webp 800w, /fotos/a/sesion-casa-a480.webp 480w" sizes="100vw" width="1200" height="675" alt="Un portátil abierto en una mesa junto a una ventana, con flores en un jarrón" loading="lazy" decoding="async"></picture>
-    <figcaption>Lo que hace falta: un rato a solas, un sitio donde nadie te oiga y una conexión.</figcaption>
-  </figure>
     <ol class="pasos">
       <li><strong>Media hora, gratis</strong>
         Me cuentas qué te pasa y te digo con franqueza si creo que puedo
@@ -668,7 +601,7 @@
         Acordamos objetivos. En la cuarta sesión miramos juntos si se
         mueve, y luego cada cuatro.</li>
     </ol>
-    </div>
+    <p>Lo que hace falta: un rato a solas, un sitio donde nadie te oiga y una conexión.</p>
     <!-- Aquí irá el vídeo de 40-60 s de la primera sesión cuando esté
          grabado (la maqueta con su hueco está en el historial: commit
          «Propuesta de portada cuaderno»). En la web publicada no se
@@ -677,44 +610,80 @@
     · <a href="/tu-cuenta/">Tu cuenta, con capturas</a></p>
   </section>
 
-  <!-- ===== Lo que se mide =======================================
-       A todo el ancho y con la zona de ruido, como en la cuenta: a
-       media columna y plana parecía un hueco de relleno. -->
+  <!-- ===== Quién soy ===========================================
+       Sin segunda foto: la de arriba ya dice quién eres. -->
   <section class="lisa">
-    <h2>Lo que se mide se puede revisar</h2>
-    <p>Antes de algunas sesiones te pediré un cuestionario corto. En tu
-    cuenta privada ves los resultados en una gráfica con su escala, y <strong>los
-    usamos para decidir si seguimos igual o cambiamos algo</strong>. Van cifrados de
-    punta a punta: ni el servidor puede leerlos.</p>
-    <p>En la misma cuenta están el resumen de cada sesión, tus ejercicios
-    entre sesiones y tu plan de seguridad. <a href="/tu-cuenta/">Así es
-    tu cuenta, por dentro</a>.</p>
-    <figure class="figura ejemplo grande">
-      <p class="cab"><b>Cómo se lee</b><span>en un cuestionario en el que más bajo es mejor</span></p>
-      <ul class="guia"><li><svg viewBox="0 0 200 110" aria-hidden="true"><rect class="franja-g" x="12" y="34.3" width="176" height="31.9" fill="rgba(247,223,114,.55)"/><line x1="12" y1="98" x2="188" y2="98" stroke="#CECCC6"/><path class="trazo-g" d="M12.0 50.2 L56.0 43.9 L100.0 53.4 L144.0 47.0 L188.0 50.2" fill="none" stroke="#1F5474" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="punto-g" style="--p:0.00" cx="12.0" cy="50.2" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.25" cx="56.0" cy="43.9" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.50" cx="100.0" cy="53.4" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.75" cx="144.0" cy="47.0" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:1.00" cx="188.0" cy="50.2" r="5.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/></svg><p><b>Parecido</b>Sube y baja sin salir de la franja.</p></li><li><svg viewBox="0 0 200 110" aria-hidden="true"><rect class="franja-g" x="12" y="34.3" width="176" height="31.9" fill="rgba(247,223,114,.55)"/><line x1="12" y1="98" x2="188" y2="98" stroke="#CECCC6"/><path class="trazo-g" d="M12.0 50.2 L56.0 47.0 L100.0 59.8 L144.0 56.6 L188.0 72.5" fill="none" stroke="#1F5474" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="aro-g" cx="188.0" cy="72.5" r="6" fill="none" stroke="#1F5474" stroke-width="1.6"/><circle class="punto-g" style="--p:0.00" cx="12.0" cy="50.2" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.25" cx="56.0" cy="47.0" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.50" cx="100.0" cy="59.8" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.75" cx="144.0" cy="56.6" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:1.00" cx="188.0" cy="72.5" r="5.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/></svg><p><b>Cambio real, a mejor</b>Sale de la franja por el lado bueno.</p></li><li><svg viewBox="0 0 200 110" aria-hidden="true"><rect class="franja-g" x="12" y="34.3" width="176" height="31.9" fill="rgba(247,223,114,.55)"/><line x1="12" y1="98" x2="188" y2="98" stroke="#CECCC6"/><path class="trazo-g" d="M12.0 50.2 L56.0 53.4 L100.0 43.9 L144.0 37.5 L188.0 24.7" fill="none" stroke="#1F5474" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="aro-g" cx="188.0" cy="24.7" r="6" fill="none" stroke="#1F5474" stroke-width="1.6"/><circle class="punto-g" style="--p:0.00" cx="12.0" cy="50.2" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.25" cx="56.0" cy="53.4" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.50" cx="100.0" cy="43.9" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.75" cx="144.0" cy="37.5" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:1.00" cx="188.0" cy="24.7" r="5.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/></svg><p><b>Cambio real, a peor</b>Sale por el otro lado. Lo hablamos.</p></li></ul>
-      <figcaption>La franja amarilla es lo que el propio cuestionario puede
-      variar por ruido. Mientras la línea no salga de ella, todavía no se
-      puede decir que haya cambiado nada; cuando sale, sí, y es lo que
-      revisamos juntos.</figcaption>
-    </figure>
+    <h2>Hola, soy Adrián</h2>
+    <p>Atiendo a gente de veinte a cuarenta y tantos que lleva demasiado
+    tiempo esperando a estar lista.</p>
+    <p>Trabajo con terapias contextuales y cognitivo-conductuales. No
+    intentamos controlar lo que sientes: miramos qué haces con ello y qué
+    te está costando. <a href="/sobre-mi/">Quién soy, con detalle</a>.</p>
+    <p>Y si eres una persona LGTBI+, esto es un <a href="/lgtbi/">espacio
+    seguro</a>: tu nombre, tus pronombres y nada que justificar.</p>
+  <!-- Los cuatro datos comprobables, dentro de «Hola, soy Adrián»: así el
+       número de colegiado sale una vez en la página (y en el pie). -->
+  <dl class="confianza" id="confianza">
+    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M2.8 8.6 12 4.4l9.2 4.2-9.2 4.2z"/><path pathLength="1" d="M6.8 10.6v4.6c0 1.6 2.3 2.9 5.2 2.9s5.2-1.3 5.2-2.9v-4.6"/><path pathLength="1" d="M21.2 8.6v5"/></svg>Formación</dt><dd>Psicólogo colegiado <a href="https://www.copclm.com/busqueda/" target="_blank" rel="noopener">nº CM03836</a>, cursando el Máster en Psicología General Sanitaria</dd></div>
+    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M8 7V3.8h8V7"/><rect pathLength="1" x="3.8" y="7" width="16.4" height="13.2" rx="2.2"/><path pathLength="1" d="M12 11v5.2M9.4 13.6h5.2"/></svg>Dónde</dt><dd>En prácticas supervisadas en el centro sanitario Neurococos</dd></div>
+    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="2.6" y="6" width="12.6" height="12" rx="2.4"/><path pathLength="1" d="M15.2 10.6 21.4 7v10l-6.2-3.6z"/></svg>Modalidad</dt><dd>100&nbsp;% online, para quien reside en España</dd></div>
+    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="8.4"/><path pathLength="1" d="M12 6.8V12l3.4 2"/></svg>Sesión</dt><dd>60 minutos, 30&nbsp;€. La primera media hora, gratis</dd></div>
+  </dl>
+  </section>
+
+  <!-- ===== El precio ===========================================
+       Después de «Hola, soy Adrián» y no antes: «cobro menos porque estoy
+       en prácticas supervisadas» solo se entiende cuando ya se sabe quién
+       es y qué son esas prácticas (29-10). -->
+  <div class="franja marino" id="precio">
+  <h2>Cuánto cuesta la sesión</h2>
+  <div class="tarifa">
+    <p class="precio"><span class="importe"><span class="cifra">30</span><span class="moneda">€</span></span> <span>por sesión de 60 minutos</span></p>
+    <ul class="condiciones">
+      <li>La primera media hora, gratis</li>
+      <li>Semanal o quincenal, lo eliges tú</li>
+      <li>Sin bonos, sin paquetes y sin permanencia</li>
+      <li>Cancelas hasta 24 horas antes, sin coste</li>
+    </ul>
+    <p class="comparativa">
+      <span class="barra-mercado"><span class="yo"></span></span>
+      Las plataformas grandes cobran entre 39 y 55&nbsp;€ y una consulta
+      privada suele costar entre 60 y 70&nbsp;€. <strong>Cobro menos porque estoy en
+      prácticas supervisadas</strong>, y subirá cuando termine el máster.
+      <a href="/tarifas/">Pago y condiciones</a>.
+    </p>
+    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=medio" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
+  </div>
+  </div>
+
+  <!-- ===== «No se lo cuento a cualquiera» (27-10) ================
+       La razón por la que mucha gente acaba en el psicólogo que
+       conoce de algo. Aquí: qué pasa con lo que cuentas y cómo
+       conocerme antes de contar nada. -->
+  <section class="lisa" id="no-a-cualquiera">
+    <h2>No se lo cuentas a cualquiera, y está bien</h2>
+    <p>Por eso mucha gente busca a un psicólogo que ya conoce de algo. Si no
+    me conoces, puedes hacer lo mismo antes de contarme nada:</p>
+    <div class="confianza-bloque">
+      <div><h3>Lo que me cuentas está protegido</h3><p>Secreto profesional: sin tu permiso expreso no sale de la consulta, ni a tu familia ni a nadie de tu entorno. Quién más tiene acceso y las pocas excepciones, <a href="/secreto-profesional/">contado sin letra pequeña</a>.</p></div>
+      <div><h3>Conóceme antes</h3><p>Publico vídeos casi a diario en <a href="https://www.instagram.com/adricamente" target="_blank" rel="noopener">Instagram</a> y <a href="https://www.tiktok.com/@adricamente" target="_blank" rel="noopener">TikTok</a>. En dos minutos sabes cómo hablo y cómo pienso.</p></div>
+      <div><h3>Tú decides qué cuentas</h3><p>En <a href="/primera-sesion/">la primera media hora</a> puedes empezar por lo que menos te cuesta, y preguntarme todo lo que necesites saber antes.</p></div>
+    </div>
   </section>
 
   <!-- cuenta:telefono -->
-  <!-- ===== La cuenta, por dentro ================================
-       Va aquí, después de «Lo que se mide», porque es donde la portada
-       ya ha prometido la cuenta («en tu cuenta privada ves los
-       resultados en una gráfica») y todavía no la ha enseñado. En banda
-       cuadriculada: entre dos secciones lisas, nunca pegada a otra
+  <!-- ===== Lo que se mide se puede revisar =====================
+       Va después de «No se lo cuentas a cualquiera»: es lo que distingue
+       el proceso, para quien ya compara. Absorbe la antigua «Lo que se
+       mide»; la guía de lectura de la gráfica vive en /tu-cuenta/. En
+       banda cuadriculada: entre dos secciones lisas, nunca pegada a otra
        banda. Lo genera rueda/portada_cuenta.py; no se edita aquí. -->
   <section class="franja tc-seccion" aria-labelledby="tc-t">
   <div class="tc tc-completa">
     <script>document.currentScript.parentNode.classList.add('tc-js')</script>
     <div class="tc-texto">
-      <h2 id="tc-t">La cuenta, por dentro</h2>
-      <p>Si después de la media hora gratis decides seguir, en cuanto
-      reservamos la siguiente sesión te abro una cuenta privada, en el
-      móvil o el ordenador. Ahí está todo lo que pasa entre una sesión y
-      la siguiente.</p>
+      <h2 id="tc-t">Lo que se mide se puede revisar</h2>
+      <p>Sales de la sesión con tres ideas claras y el martes ya no recuerdas la segunda. Por eso, si después de la media hora gratis decides seguir, te abro una cuenta privada, en el móvil o el ordenador: el resumen de cada sesión, tus ejercicios y, antes de algunas sesiones, un cuestionario corto que ves en una gráfica con su escala. <strong>Con esa gráfica decidimos si seguimos igual o cambiamos algo.</strong></p>
     </div>
     <div class="tc-mandos">
       <div class="tc-tabs" role="tablist" aria-label="Pantallas de la cuenta">
@@ -763,81 +732,16 @@
     </div>
     <button type="button" class="tc-pausa"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path class="tc-p-pausa" d="M5 3.5v9M11 3.5v9"/><path class="tc-p-seguir" d="M5 3.2v9.6l7.6-4.8z"/></svg><span>Pausar</span></button>
     <div class="tc-pie">
-      <p>Y lo práctico, sin buscarlo: pagar la sesión, tus documentos y
-      mensajes para lo que quieras contarme entre sesiones, que no son
-      un canal de urgencias.</p>
       <p>Va cifrada: lo que escribes solo lo leemos tú, yo y el profesional
       del centro que supervisa mis prácticas, con el mismo
       <a href="/secreto-profesional/">secreto profesional</a>.</p>
-      <p class="tc-acciones"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_cuenta')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cuenta" target="_blank" rel="noopener">Reservar media hora gratis</a>
-      <a class="tc-mas" href="/tu-cuenta/">Todo lo que tiene la cuenta</a></p>
+      <p class="tc-acciones"><a class="tc-mas" href="/tu-cuenta/">Todo lo que tiene la cuenta</a></p>
       <p class="tc-nota">Capturas de una cuenta de prueba con datos inventados.</p>
     </div>
   </div>
   </section>
   <script defer src="/cuenta-telefono.js?v=be698913"></script>
 <!-- /cuenta:telefono -->
-
-  <!-- ===== Quién soy ===========================================
-       Sin segunda foto: la de arriba ya dice quién eres. -->
-  <section class="lisa">
-    <h2>Hola, soy Adrián</h2>
-    <p>Atiendo a gente de veinte a cuarenta y tantos que lleva demasiado
-    tiempo esperando a estar lista.</p>
-    <p>Trabajo con terapias contextuales y cognitivo-conductuales. No
-    intentamos controlar lo que sientes: miramos qué haces con ello y qué
-    te está costando. <a href="/sobre-mi/">Quién soy, con detalle</a>.</p>
-    <p>Y si eres una persona LGTBI+, esto es un <a href="/lgtbi/">espacio
-    seguro</a>: tu nombre, tus pronombres y nada que justificar.</p>
-  <!-- Los cuatro datos comprobables, dentro de «Hola, soy Adrián»: así el
-       número de colegiado sale una vez en la página (y en el pie). -->
-  <dl class="confianza" id="confianza">
-    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M2.8 8.6 12 4.4l9.2 4.2-9.2 4.2z"/><path pathLength="1" d="M6.8 10.6v4.6c0 1.6 2.3 2.9 5.2 2.9s5.2-1.3 5.2-2.9v-4.6"/><path pathLength="1" d="M21.2 8.6v5"/></svg>Formación</dt><dd>Psicólogo colegiado <a href="https://www.copclm.com/busqueda/" target="_blank" rel="noopener">nº CM03836</a>, cursando el Máster en Psicología General Sanitaria</dd></div>
-    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M8 7V3.8h8V7"/><rect pathLength="1" x="3.8" y="7" width="16.4" height="13.2" rx="2.2"/><path pathLength="1" d="M12 11v5.2M9.4 13.6h5.2"/></svg>Dónde</dt><dd>En prácticas supervisadas en el centro sanitario Neurococos</dd></div>
-    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="2.6" y="6" width="12.6" height="12" rx="2.4"/><path pathLength="1" d="M15.2 10.6 21.4 7v10l-6.2-3.6z"/></svg>Modalidad</dt><dd>100&nbsp;% online, para quien reside en España</dd></div>
-    <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="8.4"/><path pathLength="1" d="M12 6.8V12l3.4 2"/></svg>Sesión</dt><dd>60 minutos, 30&nbsp;€. La primera media hora, gratis</dd></div>
-  </dl>
-  </section>
-
-  <!-- ===== «No se lo cuento a cualquiera» (27-10) ================
-       La razón por la que mucha gente acaba en el psicólogo que
-       conoce de algo. Aquí: qué pasa con lo que cuentas y cómo
-       conocerme antes de contar nada. -->
-  <section class="lisa" id="no-a-cualquiera">
-    <h2>No se lo cuentas a cualquiera, y está bien</h2>
-  <figure data-f="dos-tazas" class="foto"><!-- foto:dos-tazas -->
-    <img class="foto-amb" src="/fotos/a/dos-tazas-a480.webp" srcset="/fotos/a/dos-tazas-a1200.webp 1200w, /fotos/a/dos-tazas-a800.webp 800w, /fotos/a/dos-tazas-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="Dos tazas humeantes sobre una mesa redonda de madera" loading="lazy" decoding="async">
-  </figure>
-    <p>Por eso mucha gente busca a un psicólogo que ya conoce de algo. Si no
-    me conoces, puedes hacer lo mismo antes de contarme nada:</p>
-    <div class="confianza-bloque">
-      <div><h3>Lo que me cuentas está protegido</h3><p>Secreto profesional: sin tu permiso expreso no sale de la consulta, ni a tu familia ni a nadie de tu entorno. Quién más tiene acceso y las pocas excepciones, <a href="/secreto-profesional/">contado sin letra pequeña</a>.</p></div>
-      <div><h3>Conóceme antes</h3><p>Publico vídeos casi a diario en <a href="https://www.instagram.com/adricamente" target="_blank" rel="noopener">Instagram</a> y <a href="https://www.tiktok.com/@adricamente" target="_blank" rel="noopener">TikTok</a>. En dos minutos sabes cómo hablo y cómo pienso.</p></div>
-      <div><h3>Tú decides qué cuentas</h3><p>En <a href="/primera-sesion/">la primera media hora</a> puedes empezar por lo que menos te cuesta, y preguntarme todo lo que necesites saber antes.</p></div>
-    </div>
-  </section>
-
-  <!-- ===== El precio =========================================== -->
-  <div class="franja marino" id="precio">
-  <h2>Cuánto cuesta la sesión</h2>
-  <div class="tarifa">
-    <p class="precio"><span class="importe"><span class="cifra">30</span><span class="moneda">€</span></span> <span>por sesión de 60 minutos</span></p>
-    <ul class="condiciones">
-      <li>La primera media hora, gratis</li>
-      <li>Semanal o quincenal, lo eliges tú</li>
-      <li>Sin bonos, sin paquetes y sin permanencia</li>
-      <li>Cancelas hasta 24 horas antes, sin coste</li>
-    </ul>
-    <p class="comparativa">
-      <span class="barra-mercado"><span class="yo"></span></span>
-      Las plataformas grandes cobran entre 39 y 55&nbsp;€ y una consulta
-      privada suele costar entre 60 y 70&nbsp;€. <strong>Cobro menos porque estoy en
-      prácticas supervisadas</strong>, y subirá cuando termine el máster.
-      <a href="/tarifas/">Pago y condiciones</a>.
-    </p>
-    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=medio" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
-  </div>
-  </div>
 
   <!-- ===== Dudas =============================================== -->
   <section class="lisa">
@@ -870,131 +774,30 @@
   </div>
   </section>
 
-  <!-- ===== Artículos ===========================================
-       Vuelven en renglones: los enlaces desde la portada son los que
-       más peso pasan al blog en Google. -->
-  <section class="lisa">
-    <!-- portada:guias -->
-    <h2>Para leer con calma</h2>
-    <p><strong>Guías largas, con fuentes y con algo que puedes hacer</strong> en la propia página. Estas son las que más se leen:</p>
-  <div class="filas">
-    <a class="tarjeta con-foto" href="/guias/ataque-de-ansiedad/">
-      <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/taza-manos-c240.webp" srcset="/fotos/a/taza-manos-c480.webp 480w, /fotos/a/taza-manos-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
-      <div class="cuerpo">
-      <h3>Qué hacer en un ataque de ansiedad</h3>
-      <p>Qué hacer en el momento, qué no hacer y por qué vuelve. <strong>Con una respiración guiada</strong> en la propia página.</p>
-      <span class="mas">Leer la guía &rarr;</span>
-      </div>
-    </a>
-    <a class="tarjeta con-foto" href="/guias/no-puedo-dejar-de-pensar/">
-      <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/luz-sabanas-c240.webp" srcset="/fotos/a/luz-sabanas-c480.webp 480w, /fotos/a/luz-sabanas-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
-      <div class="cuerpo">
-      <h3>Cuando no puedes dejar de pensar</h3>
-      <p>Por qué la cabeza no se apaga, <strong>sobre todo de noche</strong>, y qué es lo que la mantiene en marcha.</p>
-      <span class="mas">Leer la guía &rarr;</span>
-      </div>
-    </a>
-    <a class="tarjeta con-foto" href="/guias/necesito-ir-al-psicologo/">
-      <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/puerta-patio-c240.webp" srcset="/fotos/a/puerta-patio-c480.webp 480w, /fotos/a/puerta-patio-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
-      <div class="cuerpo">
-      <h3>¿Necesito ir al psicólogo?</h3>
-      <p>Señales de que merece la pena pedir ayuda, <strong>por dónde empezar</strong> y qué puedes hacer mientras tanto.</p>
-      <span class="mas">Leer la guía &rarr;</span>
-      </div>
-    </a>
-  </div>
-    <p><a href="/guias/">Ver las setenta guías</a>, por temas y con buscador. Y para consultar: un <a href="/glosario/">glosario</a> con la psicología en palabras normales, <a href="/salud-mental-en-cifras/">la salud mental en España en cifras</a>, con cada dato enlazado a su fuente, y los <a href="/ayuda-urgente/">teléfonos de ayuda urgente</a>.</p>
-    <p class="apunte">Recién publicadas: <a href="/guias/sesgos-cognitivos/">Sesgos cognitivos</a>, <a href="/guias/tristeza-en-navidad/">Tristeza en Navidad</a>, <a href="/guias/ganas-de-llorar/">Ganas de llorar sin motivo</a>, <a href="/guias/persona-altamente-sensible/">Persona altamente sensible (PAS)</a>, <a href="/guias/distimia/">Distimia (depresión persistente)</a>, <a href="/guias/no-se-que-hacer-con-mi-vida/">No sé qué hacer con mi vida</a>.</p>
-    <!-- /portada:guias -->
-  </section>
-
-  <!-- ===== Herramientas para usar ahora (27-10) ================ -->
-  <section class="lisa">
-    <h2>Para usar ahora, gratis y sin registro</h2>
-    <div class="herr-portada">
-      <a class="herr-mini" href="/herramientas/respiracion/">
-        <span class="herr-mini-dib respirar" aria-hidden="true"><span></span></span>
-        <strong>Respira conmigo</strong>
-        <span>Dos minutos siguiendo un círculo.</span>
-      </a>
-      <a class="herr-mini" href="/herramientas/escalera/">
-        <span class="herr-mini-dib escalon" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-        <strong>Escalera de exposición</strong>
-        <span>Acércate a un miedo paso a paso.</span>
-      </a>
-      <a class="herr-mini" href="/herramientas/diario-de-sueno/">
-        <span class="herr-mini-dib luna" aria-hidden="true"><span></span></span>
-        <strong>Diario de sueño</strong>
-        <span>Mira cómo duermes de verdad.</span>
-      </a>
-      <a class="herr-mini" href="/herramientas/valores/">
-        <span class="herr-mini-dib brujula" aria-hidden="true"><span></span></span>
-        <strong>Tus valores</strong>
-        <span>Hacia dónde quieres ir.</span>
-      </a>
+  <!-- ===== El cierre =========================================== -->
+  <section class="hoja">
+    <h2>El siguiente paso son treinta minutos</h2>
+    <p class="entrada">Me cuentas qué te trae y sales sabiendo qué haría yo
+    con ello. <strong>No tienes que decidir nada ese día.</strong></p>
+    <p class="acciones"><a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_cinta')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
+    <p class="tranquila">Online, para residentes en España, en el centro
+    sanitario Neurococos.</p>
+  <p class="apunte">
+    Las primeras consultas van en franjas fijas, y
+    el calendario te ofrece el siguiente hueco libre. No hay lista
+    de espera.
+  </p>
+    <div class="aun">
+      <h3>Si todavía no es el momento</h3>
+      <ul class="indice">
+        <li><a href="/mapa/"><b>El mapa de lo que evitas</b><span>Seis preguntas sobre una vez que evitaste algo. Diez minutos.</span></a></li>
+        <li><a href="/la-cuenta/"><b>La cuenta que no haces</b><span>Cuántas veces ha pasado ya, y qué te ha costado.</span></a></li>
+        <li><a href="/registro/"><b>La hoja de registro</b><span>Siete días apuntando lo mismo para ver el patrón.</span></a></li>
+      </ul>
+      <p class="apunte">Y para usar ahora, gratis y sin registro: <a href="/herramientas/respiracion/">Respira conmigo</a>, <a href="/herramientas/escalera/">Escalera de exposición</a>, <a href="/herramientas/diario-de-sueno/">Diario de sueño</a> y <a href="/herramientas/valores/">Tus valores</a>. <a href="/herramientas/">Todas las herramientas</a>; lo que escribes en ellas no sale de tu navegador.</p>
     </div>
-    <p><a href="/herramientas/">Todas las herramientas</a> · Lo que escribes en ellas no sale de tu navegador.</p>
   </section>
 
-  <section class="lisa">
-    <!-- portada:blog -->
-    <h2>Últimos artículos</h2>
-  <div class="filas">
-    <a class="tarjeta con-sello" href="/blog/no-hace-falta-tocar-fondo/">
-      <span class="ficha"><svg viewBox="0 0 320 180" role="img" aria-labelledby="s-no-hace-fa583-t-t" class="dibujo sello" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <title id="s-no-hace-fa583-t-t">Un marco de puerta entreabierta y un camino que la atraviesa</title>
-  <path class="reticula" d="M24 36 V144 M58 36 V144 M92 36 V144 M126 36 V144 M160 36 V144 M194 36 V144 M228 36 V144 M262 36 V144 M296 36 V144 M24 36 H296 M24 63 H296 M24 90 H296 M24 117 H296 M24 144 H296"/>
-  <rect class="tramo mio" x="176" y="40" width="58" height="100" rx="2"/>
-  <path class="eje" vector-effect="non-scaling-stroke" d="M176 40 H234 V140 M176 40 V140"/>
-  <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M176 40 L206 52 V150 L176 140"/>
-  <path class="trazo-alivio" vector-effect="non-scaling-stroke" pathLength="1" d="M30 128 C80 128 120 100 166 96 S240 92 290 92"/>
-  <circle class="hito ahora" cx="290" cy="92" r="8"/>
-</svg></span>
-      <div class="cuerpo">
-        <h3>No hace falta tocar fondo para pedir ayuda</h3>
-        <p>Esperar a estar peor para «merecer» ir al psicólogo no es prudencia. Es una regla que nadie ha escrito.</p>
-        <span class="mas">Leer &rarr;</span>
-      </div>
-    </a>
-    <a class="tarjeta con-sello" href="/blog/por-que-es-mas-facil-contarselo-a-un-desconocido/">
-      <span class="ficha"><svg viewBox="0 0 320 180" role="img" aria-labelledby="s-por-que-es895-t-t" class="dibujo sello" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <title id="s-por-que-es895-t-t">Una balanza con dos pesos distintos a cada lado</title>
-  <path class="reticula" d="M24 36 V144 M58 36 V144 M92 36 V144 M126 36 V144 M160 36 V144 M194 36 V144 M228 36 V144 M262 36 V144 M296 36 V144 M24 36 H296 M24 63 H296 M24 90 H296 M24 117 H296 M24 144 H296"/>
-  <path class="eje" vector-effect="non-scaling-stroke" d="M160 70 L144 140 H176 Z"/>
-  <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M70 60 L250 80"/>
-  <path class="guia" vector-effect="non-scaling-stroke" d="M70 60 V86 M250 80 V106"/>
-  <circle class="hito vacio" cx="70" cy="96" r="10"/>
-  <circle class="hito lleno" cx="250" cy="120" r="14"/>
-  <circle class="nodo" cx="160" cy="70" r="6"/>
-</svg></span>
-      <div class="cuerpo">
-        <h3>Por qué a veces es más fácil contárselo a alguien que no conoces</h3>
-        <p>Lo que no le dices a quien te quiere a veces sale entero delante de alguien que no forma parte de tu vida.</p>
-        <span class="mas">Leer &rarr;</span>
-      </div>
-    </a>
-    <a class="tarjeta con-sello" href="/blog/mientras-esperas-la-primera-cita/">
-      <span class="ficha"><svg viewBox="0 0 320 180" role="img" aria-labelledby="s-mientras-e927-t-t" class="dibujo sello" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <title id="s-mientras-e927-t-t">Una escalera de pasos pequeños, con un punto marcado en cada escalón</title>
-  <path class="reticula" d="M24 36 V144 M58 36 V144 M92 36 V144 M126 36 V144 M160 36 V144 M194 36 V144 M228 36 V144 M262 36 V144 M296 36 V144 M24 36 H296 M24 63 H296 M24 90 H296 M24 117 H296 M24 144 H296"/>
-  <path class="trazo-coste" vector-effect="non-scaling-stroke" pathLength="1" d="M24 140 V125 H68 V109 H112 V94 H156 V79 H200 V63 H244 V48 H288"/>
-  <circle class="hito lleno" cx="46" cy="115" r="6"/>
-  <circle class="hito lleno" cx="90" cy="99" r="6"/>
-  <circle class="hito lleno" cx="134" cy="84" r="6"/>
-  <circle class="hito vacio" cx="178" cy="69" r="6"/>
-  <circle class="hito vacio" cx="222" cy="53" r="6"/>
-  <circle class="hito ahora" cx="266" cy="38" r="8"/>
-</svg></span>
-      <div class="cuerpo">
-        <h3>Mientras esperas la primera cita</h3>
-        <p>Has pedido cita y quedan días. Qué puedes hacer mientras tanto, y qué hacer si las cosas empeoran.</p>
-        <span class="mas">Leer &rarr;</span>
-      </div>
-    </a>
-  </div>
-    <p><a href="/blog/">Todos los artículos</a> · Cinco minutos cada uno.</p>
-    <!-- /portada:blog -->
-  </section>
 
 <!-- nl:portada -->
   <section class="nl" data-ubic="portada" aria-labelledby="nl-t-portada">
@@ -1024,27 +827,21 @@
             style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
   </section>
 <!-- /nl:portada -->
-  <!-- ===== El cierre =========================================== -->
-  <section class="hoja">
-    <h2>El siguiente paso son treinta minutos</h2>
-    <p class="entrada">Me cuentas qué te trae y sales sabiendo qué haría yo
-    con ello. <strong>No tienes que decidir nada ese día.</strong></p>
-    <p class="acciones"><a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_cinta')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
-    <p class="tranquila">Online, para residentes en España, en el centro
-    sanitario Neurococos.</p>
-  <p class="apunte">
-    Las primeras consultas van en franjas fijas, y
-    el calendario te ofrece el siguiente hueco libre. No hay lista
-    de espera.
-  </p>
-    <div class="aun">
-      <h3>Si todavía no es el momento</h3>
-      <ul class="indice">
-        <li><a href="/mapa/"><b>El mapa de lo que evitas</b><span>Seis preguntas sobre una vez que evitaste algo. Diez minutos.</span></a></li>
-        <li><a href="/la-cuenta/"><b>La cuenta que no haces</b><span>Cuántas veces ha pasado ya, y qué te ha costado.</span></a></li>
-        <li><a href="/registro/"><b>La hoja de registro</b><span>Siete días apuntando lo mismo para ver el patrón.</span></a></li>
-      </ul>
-    </div>
+  <!-- ===== Lecturas =========================================
+       En texto y sin tarjetas, después del cierre y de la newsletter: es
+       para quien todavía no va a reservar. Los enlaces y sus textos se
+       quedan, porque desde la portada son los que más peso pasan a las
+       guías y al blog en Google. Lo rellena rueda/portada.py. -->
+  <section class="lisa">
+    <!-- portada:guias -->
+    <h2>Para leer con calma</h2>
+    <p><strong>Guías largas, con fuentes y con algo que puedes hacer</strong> en la propia página. Para empezar: <a href="/guias/ataque-de-ansiedad/">Qué hacer en un ataque de ansiedad</a>, <a href="/guias/no-puedo-dejar-de-pensar/">Cuando no puedes dejar de pensar</a> y <a href="/guias/necesito-ir-al-psicologo/">¿Necesito ir al psicólogo?</a>. <a href="/guias/">Ver las setenta guías</a>, por temas y con buscador.</p>
+    <p>Para consultar: un <a href="/glosario/">glosario</a> con la psicología en palabras normales, <a href="/salud-mental-en-cifras/">la salud mental en España en cifras</a>, con cada dato enlazado a su fuente, y los <a href="/ayuda-urgente/">teléfonos de ayuda urgente</a>.</p>
+    <p class="apunte">Recién publicadas: <a href="/guias/sesgos-cognitivos/">Sesgos cognitivos</a>, <a href="/guias/tristeza-en-navidad/">Tristeza en Navidad</a>, <a href="/guias/ganas-de-llorar/">Ganas de llorar sin motivo</a>, <a href="/guias/persona-altamente-sensible/">Persona altamente sensible (PAS)</a>, <a href="/guias/distimia/">Distimia (depresión persistente)</a>, <a href="/guias/no-se-que-hacer-con-mi-vida/">No sé qué hacer con mi vida</a>.</p>
+    <!-- /portada:guias -->
+    <!-- portada:blog -->
+    <p>Y artículos de cinco minutos: <a href="/blog/no-hace-falta-tocar-fondo/">No hace falta tocar fondo para pedir ayuda</a>, <a href="/blog/por-que-es-mas-facil-contarselo-a-un-desconocido/">Por qué a veces es más fácil contárselo a alguien que no conoces</a> y <a href="/blog/mientras-esperas-la-primera-cita/">Mientras esperas la primera cita</a>. <a href="/blog/">Todos los artículos</a>.</p>
+    <!-- /portada:blog -->
   </section>
 </div>
 
@@ -1221,13 +1018,6 @@
         var c = t.querySelector('.importe'); if(c) c.classList.add('visto');
         var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
       });
-
-    /* La guía de lectura de la portada: cada línea se dibuja cuando
-       se ve casi entera. En el escritorio entran las tres a la vez y
-       van una detrás de otra; en el móvil, cada una al llegar. */
-    vigila(document.querySelectorAll('.guia li'),
-      { threshold: .6, rootMargin: '0px 0px -8% 0px' },
-      function(t, n){ t.style.setProperty('--tanda', (n * .4) + 's'); t.classList.add('dibujado'); });
 
     /* El rotulador: pasa una vez por debajo de cada frase marcada
        cuando la frase entra entera en pantalla. Sin este guion (o con

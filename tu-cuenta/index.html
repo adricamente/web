@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=73">
+  <link rel="stylesheet" href="/estilos.min.css?v=74">
 
 
   <style>
@@ -171,7 +171,7 @@
 <aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=barra" target="_blank" rel="noopener">Primera sesión gratis</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=tu-cuenta&amp;utm_content=barra" target="_blank" rel="noopener">Media hora gratis</a>
 </aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -217,11 +217,11 @@
         <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
            onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=menu" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=tu-cuenta&amp;utm_content=menu" target="_blank" rel="noopener">Reservar media hora gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=tu-cuenta&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -231,6 +231,7 @@
   <main id="principal">
 
   <p class="migas"><a href="/">Inicio</a> &rsaquo; Tu cuenta</p>
+  <p class="apunte">¿Ya eres paciente? <a href="https://cuenta.adricamente.com/">Entra en tu cuenta</a>.</p>
 
   <h1>Tu cuenta: tu terapia en un solo sitio</h1>
   <p class="escena">
@@ -286,6 +287,17 @@
            sizes="(max-width:640px) 72vw, 230px" width="390" height="780" loading="lazy" decoding="async" alt="Captura de una gráfica en la cuenta: cuatro medidas de un cuestionario de bienestar, con la franja en la que un cambio todavía puede ser ruido">
     </figure>
   </div>
+
+  <!-- «Cómo se lee» (viene de la portada, 29-10): debajo de «Tu
+       evolución, con su escala», que es donde se explica la franja. -->
+  <figure class="figura ejemplo grande">
+    <p class="cab"><b>Cómo se lee</b><span>en un cuestionario en el que más bajo es mejor</span></p>
+    <ul class="guia"><li><svg viewBox="0 0 200 110" aria-hidden="true"><rect class="franja-g" x="12" y="34.3" width="176" height="31.9" fill="rgba(247,223,114,.55)"/><line x1="12" y1="98" x2="188" y2="98" stroke="#CECCC6"/><path class="trazo-g" d="M12.0 50.2 L56.0 43.9 L100.0 53.4 L144.0 47.0 L188.0 50.2" fill="none" stroke="#1F5474" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="punto-g" style="--p:0.00" cx="12.0" cy="50.2" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.25" cx="56.0" cy="43.9" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.50" cx="100.0" cy="53.4" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.75" cx="144.0" cy="47.0" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:1.00" cx="188.0" cy="50.2" r="5.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/></svg><p><b>Parecido</b>Sube y baja sin salir de la franja.</p></li><li><svg viewBox="0 0 200 110" aria-hidden="true"><rect class="franja-g" x="12" y="34.3" width="176" height="31.9" fill="rgba(247,223,114,.55)"/><line x1="12" y1="98" x2="188" y2="98" stroke="#CECCC6"/><path class="trazo-g" d="M12.0 50.2 L56.0 47.0 L100.0 59.8 L144.0 56.6 L188.0 72.5" fill="none" stroke="#1F5474" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="aro-g" cx="188.0" cy="72.5" r="6" fill="none" stroke="#1F5474" stroke-width="1.6"/><circle class="punto-g" style="--p:0.00" cx="12.0" cy="50.2" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.25" cx="56.0" cy="47.0" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.50" cx="100.0" cy="59.8" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.75" cx="144.0" cy="56.6" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:1.00" cx="188.0" cy="72.5" r="5.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/></svg><p><b>Cambio real, a mejor</b>Sale de la franja por el lado bueno.</p></li><li><svg viewBox="0 0 200 110" aria-hidden="true"><rect class="franja-g" x="12" y="34.3" width="176" height="31.9" fill="rgba(247,223,114,.55)"/><line x1="12" y1="98" x2="188" y2="98" stroke="#CECCC6"/><path class="trazo-g" d="M12.0 50.2 L56.0 53.4 L100.0 43.9 L144.0 37.5 L188.0 24.7" fill="none" stroke="#1F5474" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle class="aro-g" cx="188.0" cy="24.7" r="6" fill="none" stroke="#1F5474" stroke-width="1.6"/><circle class="punto-g" style="--p:0.00" cx="12.0" cy="50.2" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.25" cx="56.0" cy="53.4" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.50" cx="100.0" cy="43.9" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:0.75" cx="144.0" cy="37.5" r="3.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/><circle class="punto-g" style="--p:1.00" cx="188.0" cy="24.7" r="5.5" fill="#1F5474" stroke="#fff" stroke-width="1.5"/></svg><p><b>Cambio real, a peor</b>Sale por el otro lado. Lo hablamos.</p></li></ul>
+    <figcaption>La franja amarilla es lo que el propio cuestionario puede
+    variar por ruido. Mientras la línea no salga de ella, todavía no se
+    puede decir que haya cambiado nada; cuando sale, sí, y es lo que
+    revisamos juntos.</figcaption>
+  </figure>
 
   <div class="pantalla izq">
     <div>
@@ -369,7 +381,7 @@
     <p>Me cuentas qué te trae y te digo con franqueza si creo que puedo ayudarte. Si seguimos, <strong>la cuenta te llega en cuanto reservamos la siguiente</strong>.</p>
     <p>
       <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=tu-cuenta&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
     <p class="apunte" style="margin-bottom:0">¿Ya eres paciente? <a href="https://cuenta.adricamente.com/">Entra en tu cuenta</a>.</p>
@@ -547,7 +559,7 @@
         var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
       });
 
-    /* La guía de lectura de la portada: cada línea se dibuja cuando
+    /* La guía «Cómo se lee» de /tu-cuenta/: cada línea se dibuja cuando
        se ve casi entera. En el escritorio entran las tres a la vez y
        van una detrás de otra; en el móvil, cada una al llegar. */
     vigila(document.querySelectorAll('.guia li'),

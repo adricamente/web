@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=73">
+  <link rel="stylesheet" href="/estilos.min.css?v=74">
 
 
   <script type="application/ld+json">
@@ -169,7 +169,7 @@
 <aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
   <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
-     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=barra" target="_blank" rel="noopener">Primera sesión gratis</a>
+     href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=barra" target="_blank" rel="noopener">Media hora gratis</a>
 </aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
      Cuando vivía dentro, heredaba su ancho: 820 px en portada y 680
@@ -215,11 +215,11 @@
         <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
            onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
         <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
-           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=menu" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+           href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=menu" target="_blank" rel="noopener">Reservar media hora gratis</a>
       </nav>
     </details>
     <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar primera sesión gratis</a>
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
 </div>
@@ -242,6 +242,7 @@
     <img class="foto-amb" src="/fotos/a/escritorio-noche-a480.webp" srcset="/fotos/a/escritorio-noche-a1200.webp 1200w, /fotos/a/escritorio-noche-a800.webp 800w, /fotos/a/escritorio-noche-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="Un escritorio de noche con un portátil, papeles y una vela" loading="eager" fetchpriority="high" decoding="async">
   </figure>
   <p class="grande">Posponer quita malestar al instante, y <strong>lo que quita malestar se repite</strong>, aunque sepas perfectamente lo que te está costando.</p>
+  <p class="apunte">Terapia online por videollamada: sesiones de 60 minutos a 30&nbsp;€. <a onclick="window.medir&&window.medir('clic_reserva_area_arriba')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=area&amp;utm_content=area_arriba" target="_blank" rel="noopener">La primera media hora es gratis</a>.</p>
 
   <h2>Cómo se ve por dentro</h2>
   <ul class="senales">
@@ -586,7 +587,7 @@
         var caja = t.closest('.tarifa'); if(caja) caja.classList.add('visto');
       });
 
-    /* La guía de lectura de la portada: cada línea se dibuja cuando
+    /* La guía «Cómo se lee» de /tu-cuenta/: cada línea se dibuja cuando
        se ve casi entera. En el escritorio entran las tres a la vez y
        van una detrás de otra; en el móvil, cada una al llegar. */
     vigila(document.querySelectorAll('.guia li'),

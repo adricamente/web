@@ -3334,12 +3334,12 @@ main .franja.marino strong,main .idea strong{background-image:none;font-weight:i
 
 /* ---- Medir ------------------------------------------------------- */
 @media (min-width:860px){.cuaderno .medir{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}}
-.cuaderno .ejemplo{margin:18px 0 0;background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 16px 10px}
-.cuaderno .ejemplo svg{display:block;width:100%;height:auto}
-.cuaderno .ejemplo figcaption{font-size:14px;color:var(--muted);margin-top:6px}
-.cuaderno .ejemplo .cab{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}
-.cuaderno .ejemplo .cab b{font-family:var(--estrecha);font-size:1.25rem}
-.cuaderno .ejemplo .cab span{font-size:13.5px;color:var(--muted)}
+.ejemplo{margin:18px 0 0;background:#fff;border:1px solid var(--line);border-radius:3px;padding:16px 16px 10px}
+.ejemplo svg{display:block;width:100%;height:auto}
+.ejemplo figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+.ejemplo .cab{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 4px}
+.ejemplo .cab b{font-family:var(--estrecha);font-size:1.25rem}
+.ejemplo .cab span{font-size:13.5px;color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){
   .js-dibujo .ejemplo:not(.dibujado) .linea-ej{clip-path:inset(-6px calc(100% + 6px) -6px -6px)}
   .ejemplo.dibujado .linea-ej{animation:barrer 2.2s cubic-bezier(.35,.1,.45,1) .2s both}
@@ -3572,37 +3572,38 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
   .cuaderno .portada > .foto-portada{grid-row:1 / span 7;margin-top:6px}
 }
 
-/* La gráfica de «Lo que se mide», a todo el ancho y legible. */
-.cuaderno .ejemplo.grande{margin-top:22px;padding:20px 20px 14px}
-.cuaderno .ejemplo .cab b{font-size:1.35rem}
-.cuaderno .ejemplo .cab span{font-size:14px}
+/* La gráfica de ejemplo de «Cómo se lee» (/tu-cuenta/), a todo el ancho y
+   legible. Sin .cuaderno delante desde el 29-10: /tu-cuenta/ no lo lleva. */
+.ejemplo.grande{margin:22px 0 40px;padding:20px 20px 14px}  /* abajo, el mismo aire que arriba: en /tu-cuenta/ le sigue otra pantalla */
+.ejemplo .cab b{font-size:1.35rem}
+.ejemplo .cab span{font-size:14px}
 .leyenda-ej{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px;color:var(--muted);margin:8px 0 4px;max-width:none}
 .leyenda-ej i{display:inline-block;width:18px;height:10px;margin-right:6px;vertical-align:-1px;border-radius:2px}
 .leyenda-ej i.ruido{background:rgba(247,223,114,.6)}
 .leyenda-ej i.corte{height:0;border-top:2px dashed #7B4D13;border-radius:0;vertical-align:3px}
-.cuaderno .ejemplo figcaption{font-size:15px;color:var(--ink-2)}
+.ejemplo figcaption{font-size:15px;color:var(--ink-2)}
 .cuaderno .confianza{margin-top:24px}
-.cuaderno .ejemplo svg.estrecha{display:none}
+.ejemplo svg.estrecha{display:none}
 @media (max-width:620px){
-  .cuaderno .ejemplo svg.ancha{display:none}
-  .cuaderno .ejemplo svg.estrecha{display:block}
-  .cuaderno .ejemplo.grande{padding:16px 12px 12px}
+  .ejemplo svg.ancha{display:none}
+  .ejemplo svg.estrecha{display:block}
+  .ejemplo.grande{padding:16px 12px 12px}
 }
 .cuaderno .leyenda-ej{font-size:14px}
 
-/* La guía de lectura de «Lo que se mide»: tres líneas pequeñas, una al
+/* La guía «Cómo se lee» de /tu-cuenta/: tres líneas pequeñas, una al
    lado de otra; en el móvil, cada una en su renglón con el texto al
    lado. */
 .guia{list-style:none;padding:0;margin:14px 0 12px;max-width:none;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .guia li{margin:0}
 .guia svg{display:block;width:100%;height:auto}
-.cuaderno .guia p{font-size:15px;line-height:1.4;color:var(--ink-2);margin:8px 0 0}
+.guia p{font-size:15px;line-height:1.4;color:var(--ink-2);margin:8px 0 0}
 .guia b{display:block;font-family:var(--estrecha);font-weight:700;font-size:1.2rem;color:var(--ink);margin-bottom:2px}
 @media (max-width:620px){
   .guia{grid-template-columns:1fr;gap:14px}
   .guia li{display:grid;grid-template-columns:46% 1fr;gap:14px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--line)}
   .guia li:last-child{border-bottom:0;padding-bottom:0}
-  .cuaderno .guia p{margin:0}
+  .guia p{margin:0}
 }
 
 /* --- La guía de lectura se dibuja ------------------------------
@@ -3924,42 +3925,20 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .preo-rato{border-top:1px solid var(--line);margin-top:14px;padding-top:6px}
 .preo-reloj{font-family:Archivo,"Archivo reserva",sans-serif;font-weight:800;font-size:2.6rem;margin:4px 0;color:var(--accent-3)}
 
-/* Herramientas en la portada (27-10): tarjetas con un dibujo que se mueve
-   despacio. Con movimiento reducido, quietos. */
-.herr-portada{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:12px;margin:12px 0}
-.herr-mini{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:16px;transition:transform .2s,border-color .2s}
-.herr-mini:hover{transform:translateY(-3px);border-color:var(--accent-borde)}
-.herr-mini strong{font-size:1.08rem}
-.herr-mini span:last-child{color:var(--ink-2);font-size:.95rem}
-.herr-mini-dib{position:relative;width:56px;height:56px;margin-bottom:6px;display:block}
-.respirar span{position:absolute;inset:6px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#DCE8F2 0,#9DBBD3 55%,#5B86A8 100%);transform:scale(.6)}
-.escalon{display:flex!important;align-items:flex-end;gap:3px}
-.escalon span{width:11px;background:var(--accent-borde);border-radius:3px 3px 0 0}
-.escalon span:nth-child(1){height:25%}.escalon span:nth-child(2){height:50%}.escalon span:nth-child(3){height:75%}.escalon span:nth-child(4){height:100%;background:var(--accent)}
-.luna span{position:absolute;inset:8px;border-radius:50%;box-shadow:inset -12px -4px 0 0 var(--accent)}
-.brujula span{position:absolute;inset:8px;border-radius:50%;border:3px solid var(--accent-borde)}
-.brujula span::after{content:"";position:absolute;left:50%;top:6px;bottom:6px;width:4px;margin-left:-2px;background:linear-gradient(var(--accent) 50%,var(--line) 50%);border-radius:2px}
-@media (prefers-reduced-motion:no-preference){
-  .respirar span{animation:respira-mini 10s ease-in-out infinite}
-  .escalon span{animation:sube 4s ease-in-out infinite;transform-origin:bottom}
-  .escalon span:nth-child(2){animation-delay:.2s}.escalon span:nth-child(3){animation-delay:.4s}.escalon span:nth-child(4){animation-delay:.6s}
-  .brujula span::after{animation:aguja 6s ease-in-out infinite}
-}
-@keyframes respira-mini{0%,100%{transform:scale(.55)}40%{transform:scale(1)}}
-@keyframes sube{0%,100%{transform:scaleY(.85)}50%{transform:scaleY(1)}}
-@keyframes aguja{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(25deg)}}
 
 /* URLs largas en las fuentes (27-10) */
 .fuentes li,.dato-fuente,.en-corto,.caja p{overflow-wrap:anywhere}
 
-/* Cabecera en una sola fila (27-10). Con «Reservar primera sesión
-   gratis» el botón mide 240 px y la fila no cabía en 880: se partía en
-   dos. En pantallas anchas la franja de la cabecera se ensancha un poco
-   (1000 px); entre 921 y 1099 sale del menú «Primera sesión», que es la
-   misma puerta que el botón. */
+/* Cabecera en una sola fila (27-10). Con todos los enlaces la fila no
+   cabía en 880 y se partía en dos. En pantallas anchas la franja de la
+   cabecera se ensancha un poco (1000 px); en el escritorio sale del menú
+   «Herramientas» (29-10; antes salía «Primera sesión», que es la página
+   que más prepara para la media hora y no estaba en ningún menú de
+   escritorio). Herramientas sigue en el menú del móvil, en el pie y en
+   el cierre de la portada. */
 @media (min-width:1100px){.franja-cabecera .contenedor.ancho{max-width:1040px}}
 @media (min-width:921px){.cabecera{flex-wrap:nowrap}.cabecera nav{gap:6px 13px}}
-@media (min-width:921px) and (max-width:1099px){.nav-escritorio a[href="/primera-sesion/"]{display:none}.cabecera{gap:10px 16px}}
+@media (min-width:921px) and (max-width:1099px){.nav-escritorio a[href="/herramientas/"]{display:none}.cabecera{gap:10px 16px}}
 
 /* Salida rápida siempre a mano (27-10) */
 .salir-flotante{position:fixed;left:12px;bottom:12px;z-index:70;font:inherit;font-weight:700;font-size:.92rem;min-height:44px;padding:8px 14px;border-radius:999px;cursor:pointer;border:1.5px solid var(--error);background:var(--surface);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18)}
@@ -3985,14 +3964,6 @@ figure.foto{margin:30px 0 34px}
 figure.foto figcaption{font-size:14.5px;line-height:1.45;color:var(--muted);margin:9px 2px 0;max-width:var(--medida)}
 figure.foto.cabecera-foto{margin:22px 0 26px}
 figure.foto.cabecera-foto .foto-amb{max-height:420px}
-/* Foto al lado del texto en escritorio; encima, apaisada, en el móvil. */
-.foto-lado{display:block}
-.foto-lado > figure.foto{margin:6px 0 24px}
-@media (min-width:860px){
-  .foto-lado{display:grid;grid-template-columns:minmax(0,1fr) 280px;column-gap:40px;align-items:start}
-  .foto-lado > figure.foto{grid-column:2;grid-row:1 / span 20;margin:8px 0 0;position:sticky;top:112px}
-  .foto-lado > :not(figure){grid-column:1}
-}
 /* Renglones con foto: la miniatura ocupa el sitio del icono. */
 .filas > .tarjeta.con-foto{grid-template-columns:132px minmax(0,1fr) 22px;column-gap:20px;padding:16px 6px 16px 2px}
 .filas > .tarjeta.con-foto > .ficha-foto{grid-column:1;grid-row:1;display:block}
@@ -4102,7 +4073,7 @@ figure.foto.tramo img{border-radius:var(--r-m)}
 /* M4 · Cabecera alineada con la página en escritorio ancho */
 @media (min-width:1100px){
   .franja-cabecera .contenedor.ancho{max-width:var(--ancho-pagina)}
-  .nav-escritorio a[href="/primera-sesion/"]{display:none}
+  .nav-escritorio a[href="/herramientas/"]{display:none}
 }
 /* M5 · Las tres pastillas del mapa: la regla .datos de «cifras» (rejilla de
    15rem) pisa a la de las pastillas, y salen como campos de formulario */
