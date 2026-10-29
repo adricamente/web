@@ -4464,3 +4464,136 @@ main{counter-reset:is fs}
   @keyframes a-cae{from{transform:translateY(-60px)}to{transform:none}}
 }
 @media print{.anim .dibujo{opacity:1!important;animation:none!important}}
+
+/* === 30-10 · Pasada visual (informe /tmp/claude-0/diseno/PASADA_VISUAL.md)
+   Medido a 390 px, las páginas que se leen antes de reservar tenían entre
+   un 5 y un 8 % de superficie con imagen y tramos de cuatro a seis
+   pantallas de solo texto. Lo mete rueda/pasada_visual.py, entre
+   comentarios <!-- pv:… -->. Tres piezas:
+
+   1. La pareja texto + foto (.pv-par). En el ordenador, dos columnas: el
+      texto a la medida de siempre y la foto en la columna de la derecha,
+      que estaba vacía. En el móvil la foto NO va encima ni debajo, que
+      alargaría la página una foto entera: flota a un lado del párrafo, a
+      un 40 % del ancho, y el texto la rodea. Las de objetos (.obj) sí van
+      a lo ancho en el móvil, apaisadas, porque a 140 px no se leen.
+   2. La foto de Adrián en el cierre (.pv-cinta): la misma en casi todas
+      las páginas, como una firma.
+   3. Tres láminas nuevas (.pv-dib): el proceso, quién ve tu caso y el
+      precio en el mercado. Usan las piezas de 16.6 y no traen animaciones
+      propias, salvo las muestras de su leyenda. */
+.pv-par{display:flow-root}
+.pv-par > .pv-texto > :last-child{margin-bottom:0}
+.pv-par > .pv-texto > h2:first-child{margin-top:0}
+.pv-par + *{clear:both}
+.pv-foto{margin:0}
+.pv-foto img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 25%;
+  border-radius:var(--r-m);background:#A9A194}
+.pv-foto figcaption{font-size:13.5px;line-height:1.4;color:var(--muted);margin:8px 0 0;max-width:none}
+.pv-par > .pv-foto{float:right;width:42%;max-width:180px;margin:5px 0 12px 16px}
+.pv-par.estrecha > .pv-foto{width:34%;max-width:140px}
+.pv-par.obj > .pv-foto{float:none;width:auto;max-width:none;margin:2px 0 22px}
+.pv-par.obj > .pv-foto img{aspect-ratio:16/9;object-position:50% 55%;background:var(--surface-2)}
+.pv-par.obj > .pv-obj.m-c img{aspect-ratio:4/3}
+.pv-par.solo-escritorio > .pv-foto{display:none}
+/* La captura de la cuenta, en su marco de teléfono. */
+.pv-par.movil > .pv-foto{width:36%;max-width:150px}
+.pv-marco{display:block;border:4px solid var(--ink);border-radius:20px;overflow:hidden;background:var(--surface);
+  box-shadow:0 18px 34px -24px rgba(37,35,31,.55)}
+.pv-par .pv-marco img{aspect-ratio:1/2;border-radius:0;background:var(--surface)}
+/* Dos capturas: la de detrás arriba a la derecha, la de delante abajo a la
+   izquierda, en la misma celda para que el alto sea el de las dos. */
+.pv-movil.doble .pv-marcos{display:grid}
+.pv-movil.doble .pv-marco{grid-area:1/1;width:76%}
+.pv-movil.doble .pv-marco:first-child{justify-self:end;opacity:.96}
+.pv-movil.doble .pv-marco:last-child{margin-top:22%;position:relative}
+.pv-par.movil:has(.doble) > .pv-foto{width:44%;max-width:180px}
+.pv-movil figcaption{font-size:12.5px}
+/* Una lámina al lado del texto: en el móvil, debajo de él. */
+.pv-par.dibujo-lado{display:flex;flex-direction:column}
+.pv-par.dibujo-lado > .figura{order:2;margin:22px 0 6px}
+/* Tres fotos seguidas, como una hoja de contactos. */
+.pv-tira{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:22px 0 26px;max-width:var(--medida)}
+.pv-tira img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 25%;
+  border-radius:var(--r-s);background:#A9A194}
+/* La frase de la llamada de en medio, también cuando va en pareja con la
+   foto (la regla de siempre es .llamada > p:first-child). */
+.llamada > .pv-par:first-child > .pv-texto > p:first-child{font-family:"Source Sans 3","Source reserva",sans-serif;font-weight:600;
+  font-size:clamp(1.12rem,3vw,1.25rem);line-height:1.4;color:var(--ink);margin:0 0 16px;text-wrap:balance}
+/* Las cuatro áreas con su escena, para ir a cada una. */
+.pv-areas{list-style:none;padding:0;margin:20px 0 8px;max-width:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}
+.pv-areas li{margin:0}
+.pv-areas a{display:block;text-decoration:none;color:var(--accent-2);font-family:var(--estrecha);font-weight:700;font-size:15.5px;line-height:1.2}
+.pv-areas img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r-s);margin:0 0 7px;background:var(--surface-2)}
+.pv-areas a span{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.pv-areas a:hover span{color:var(--accent-3)}
+.foto-amb.pv-43{aspect-ratio:4/3}
+@media (min-width:760px){.foto-amb.pv-43{aspect-ratio:16/9}}
+/* En el móvil, los rótulos de las láminas nuevas un punto más grandes:
+   a 358 px el lienzo apenas escala y a 11 unidades quedaban en 12 px. */
+@media (max-width:599px){.pv-dib .m-txt{font-size:12.5px}}
+.anim .pv-abona{stroke:var(--borde-campo);stroke-width:1.2}
+/* El pago, en cuatro pasos: los iconos son los de línea de la web. */
+.anim .pv-nodo{fill:var(--bg);stroke:var(--accent-borde);stroke-width:1.6}
+.anim .pv-nodo.az{fill:var(--accent-soft);stroke:var(--accent-2);stroke-width:2}
+.anim .pv-ico{fill:none;stroke:var(--ink);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* La newsletter de la portada: cuatro semanas, un sobre en cada una. */
+.nl-dib{float:right;width:112px;height:auto;margin:2px 0 10px 16px}
+.nl-dib .nl-dia{fill:var(--line)}
+.nl-dib .nl-sobre{fill:var(--accent-soft);stroke:var(--accent-2);stroke-width:1.6}
+.nl-dib .nl-solapa{fill:none;stroke:var(--accent-2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.nl-cuerpo{display:flow-root}
+/* En las áreas, la foto de «Para leer con calma» va al final de la lista
+   en el móvil: delante, dejaba la lista y las preguntas sin nada. */
+@media (max-width:759px){
+  .pv-par.al-final{display:flex;flex-direction:column}
+  .pv-par.al-final > .pv-foto{order:2;margin:22px 0 0}
+}
+/* /areas/: las miniaturas de las cuatro, algo más grandes que en la portada. */
+@media (max-width:520px){.filas.pv-fichas > .tarjeta.con-foto{grid-template-columns:118px minmax(0,1fr) 18px}}
+@media (min-width:521px){.filas.pv-fichas > .tarjeta.con-foto{grid-template-columns:168px minmax(0,1fr) 22px}}
+/* La firma del cierre. */
+.cinta.pv-con-foto{display:flow-root}
+.pv-cinta{float:right;width:38%;max-width:160px;margin:2px 0 12px 16px}
+.pv-cinta img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;object-position:50% 25%;
+  border-radius:var(--r-m);background:#A9A194;box-shadow:0 18px 34px -24px rgba(37,35,31,.55)}
+/* La llamada de en medio de las áreas: una foto de verdad, no la miniatura. */
+.llamada-media.pv-llamada{grid-template-columns:120px minmax(0,1fr);gap:22px}
+.llamada-media.pv-llamada img{width:120px;height:auto;aspect-ratio:4/5;border-radius:var(--r-m);object-position:50% 25%;background:#A9A194}
+@media (max-width:520px){
+  .llamada-media.pv-llamada img{width:40%;max-width:150px;height:auto;margin:2px 14px 8px 0}
+  .llamada-media.pv-llamada .t{padding-top:2px}
+}
+/* Las láminas: la leyenda lleva sus propias muestras. */
+.pv-dib{margin:26px 0 24px}
+.pv-dib .dibujo{max-width:34rem}
+.anim .m-txt.eje-n{fill:var(--muted);font-weight:600}
+.figura .muestra.pv-hueco,.figura .muestra.pv-anillo,.figura .muestra.pv-punto{width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--accent-2)}
+.figura .muestra.pv-punto{background:var(--accent-2);border:0;width:9px;height:9px}
+.figura .muestra.pv-anillo{width:15px;height:15px;background:radial-gradient(circle,var(--accent-2) 0 2.6px,var(--bg) 3.1px)}
+@media (min-width:760px){
+  .pv-par{display:grid;grid-template-columns:minmax(0,1fr) 240px;column-gap:48px;align-items:start}
+  .pv-par > .pv-texto{grid-column:1;grid-row:1;min-width:0}
+  .pv-par > .pv-foto,.pv-par > .figura{grid-column:2;grid-row:1;float:none;width:auto;max-width:none;margin:6px 0 0}
+  .pv-par.estrecha{grid-template-columns:minmax(0,1fr) 180px}
+  .pv-par.estrecha > .pv-foto{width:auto;max-width:none}
+  .pv-par.movil{grid-template-columns:minmax(0,1fr) 190px}
+  .pv-par.movil > .pv-foto{width:auto;max-width:none}
+  .pv-par.obj > .pv-foto{margin:6px 0 0}
+  .pv-par.obj > .pv-foto img,.pv-par.obj > .pv-obj.m-c img{aspect-ratio:4/5}
+  .pv-par.solo-escritorio > .pv-foto{display:block}
+  .pv-par.solo-movil{display:block}
+  .pv-par.solo-movil > .pv-foto{display:none}
+  .pv-par.movil:has(.doble){grid-template-columns:minmax(0,1fr) 210px}
+  .pv-par.movil:has(.doble) > .pv-foto{width:auto;max-width:none}
+  .pv-areas{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  .pv-par.dibujo-lado{display:grid;grid-template-columns:minmax(0,1fr) 330px}
+  .pv-par.dibujo-lado > .figura{margin:0}
+  .pv-tira{gap:14px}
+  .pv-cinta{width:200px;max-width:none;margin:0 0 12px 48px}
+}
+@media print{.pv-foto,.pv-tira,.pv-cinta{display:none}}
+.anim .m-num-t.pv-n{font-size:10.5px}
+.anim .m-num-t.pv-n.az{fill:var(--accent-2)}
+.anim .pv-candado{fill:var(--bg);stroke:var(--ink);stroke-width:2.2}
+.anim .pv-caso{fill:var(--surface);stroke:var(--ink-2);stroke-width:1.6}

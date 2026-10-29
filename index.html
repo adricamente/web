@@ -77,7 +77,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=74">
+  <link rel="stylesheet" href="/estilos.min.css?v=75">
 
 
   <script type="application/ld+json">
@@ -540,7 +540,7 @@
     <h2>¿En qué puedo ayudarte?</h2>
   <div class="filas">
     <a class="tarjeta con-foto" href="/areas/ansiedad/">
-      <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/ventana-noche-c240.webp" srcset="/fotos/a/ventana-noche-c480.webp 480w, /fotos/a/ventana-noche-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
+      <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/movil-cama-c240.webp" srcset="/fotos/a/movil-cama-c480.webp 480w, /fotos/a/movil-cama-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
       <div class="cuerpo">
       <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="12" cy="12" r="2.1"/><path pathLength="1" d="M8.1 8.1a5.5 5.5 0 0 0 0 7.8"/><path pathLength="1" d="M15.9 8.1a5.5 5.5 0 0 1 0 7.8"/><path pathLength="1" d="M5.1 5.1a10 10 0 0 0 0 13.8"/><path pathLength="1" d="M18.9 5.1a10 10 0 0 1 0 13.8"/></svg><h3>Ansiedad</h3></span>
       <p>Las tres de la madrugada, repasando una conversación de ayer. <strong>La cabeza no se apaga aunque se lo pidas</strong>.</p>
@@ -556,7 +556,7 @@
       </div>
     </a>
     <a class="tarjeta con-foto" href="/areas/autoestima/">
-      <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/cuaderno-mano-c240.webp" srcset="/fotos/a/cuaderno-mano-c480.webp 480w, /fotos/a/cuaderno-mano-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
+      <span class="ficha-foto"><img class="foto-amb" src="/fotos/a/dos-tazas-blancas-c240.webp" srcset="/fotos/a/dos-tazas-blancas-c480.webp 480w, /fotos/a/dos-tazas-blancas-c240.webp 240w" sizes="(max-width: 520px) 92px, 132px" width="480" height="360" alt="" loading="lazy" decoding="async"></span>
       <div class="cuerpo">
       <span class="cabeza-tarjeta"><svg class="icono" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="4.5" y="2.8" width="15" height="18.4" rx="7.5"/><circle pathLength="1" cx="12" cy="10.2" r="2.5"/><path pathLength="1" d="M7.8 17.6a4.4 4.4 0 0 1 8.4 0"/></svg><h3>Autoestima e inseguridad</h3></span>
       <p>Otra vez has dicho que sí a un favor que no te tocaba. <strong>Te hablas como no le hablarías a nadie</strong>.</p>
@@ -611,17 +611,27 @@
   </section>
 
   <!-- ===== Quién soy ===========================================
-       Sin segunda foto: la de arriba ya dice quién eres. -->
+       30-10: con la foto de lado al lado del texto (pasada_visual.py).
+       La de arriba ya dice quién es; esta acompaña al saludo. -->
   <section class="lisa">
     <h2>Hola, soy Adrián</h2>
-    <p>Atiendo a gente de veinte a cuarenta y tantos que lleva demasiado
+    <!-- pv:hola -->
+  <div class="pv-par">
+    <figure class="pv-foto">
+      <img src="/fotos/adrian-online.webp" srcset="/fotos/adrian-online-240.webp 240w, /fotos/adrian-online.webp 400w" sizes="(min-width: 760px) 240px, 40vw" width="400" height="500" loading="lazy" decoding="async" alt="Adrián Cuñat, psicólogo, de tres cuartos y sonriendo, con polo verde">
+    </figure>
+    <div class="pv-texto">
+<!-- /pv:hola --><p>Atiendo a gente de veinte a cuarenta y tantos que lleva demasiado
     tiempo esperando a estar lista.</p>
     <p>Trabajo con terapias contextuales y cognitivo-conductuales. No
     intentamos controlar lo que sientes: miramos qué haces con ello y qué
     te está costando. <a href="/sobre-mi/">Quién soy, con detalle</a>.</p>
     <p>Y si eres una persona LGTBI+, esto es un <a href="/lgtbi/">espacio
     seguro</a>: tu nombre, tus pronombres y nada que justificar.</p>
-  <!-- Los cuatro datos comprobables, dentro de «Hola, soy Adrián»: así el
+  <!-- pv:hola-fin -->
+    </div>
+  </div>
+<!-- /pv:hola-fin --><!-- Los cuatro datos comprobables, dentro de «Hola, soy Adrián»: así el
        número de colegiado sale una vez en la página (y en el pie). -->
   <dl class="confianza" id="confianza">
     <div><dt><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M2.8 8.6 12 4.4l9.2 4.2-9.2 4.2z"/><path pathLength="1" d="M6.8 10.6v4.6c0 1.6 2.3 2.9 5.2 2.9s5.2-1.3 5.2-2.9v-4.6"/><path pathLength="1" d="M21.2 8.6v5"/></svg>Formación</dt><dd>Psicólogo colegiado <a href="https://www.copclm.com/busqueda/" target="_blank" rel="noopener">nº CM03836</a>, cursando el Máster en Psicología General Sanitaria</dd></div>
@@ -661,10 +671,19 @@
        conoce de algo. Aquí: qué pasa con lo que cuentas y cómo
        conocerme antes de contar nada. -->
   <section class="lisa" id="no-a-cualquiera">
-    <h2>No se lo cuentas a cualquiera, y está bien</h2>
+    <!-- pv:cualquiera -->
+  <div class="pv-par con-titulo estrecha">
+    <figure class="pv-foto">
+      <img src="/fotos/adrian-primera.webp" srcset="/fotos/adrian-primera-240.webp 240w, /fotos/adrian-primera.webp 400w" sizes="(min-width: 760px) 170px, 34vw" width="400" height="500" loading="lazy" decoding="async" alt="Adrián Cuñat, psicólogo, con la mano en la barbilla, mirando a cámara">
+    </figure>
+    <div class="pv-texto">
+<!-- /pv:cualquiera --><h2>No se lo cuentas a cualquiera, y está bien</h2>
     <p>Por eso mucha gente busca a un psicólogo que ya conoce de algo. Si no
     me conoces, puedes hacer lo mismo antes de contarme nada:</p>
-    <div class="confianza-bloque">
+    <!-- pv:cualquiera-fin -->
+    </div>
+  </div>
+<!-- /pv:cualquiera-fin --><div class="confianza-bloque">
       <div><h3>Lo que me cuentas está protegido</h3><p>Secreto profesional: sin tu permiso expreso no sale de la consulta, ni a tu familia ni a nadie de tu entorno. Quién más tiene acceso y las pocas excepciones, <a href="/secreto-profesional/">contado sin letra pequeña</a>.</p></div>
       <div><h3>Conóceme antes</h3><p>Publico vídeos casi a diario en <a href="https://www.instagram.com/adricamente" target="_blank" rel="noopener">Instagram</a> y <a href="https://www.tiktok.com/@adricamente" target="_blank" rel="noopener">TikTok</a>. En dos minutos sabes cómo hablo y cómo pienso.</p></div>
       <div><h3>Tú decides qué cuentas</h3><p>En <a href="/primera-sesion/">la primera media hora</a> puedes empezar por lo que menos te cuesta, y preguntarme todo lo que necesites saber antes.</p></div>
@@ -776,10 +795,19 @@
 
   <!-- ===== El cierre =========================================== -->
   <section class="hoja">
-    <h2>El siguiente paso son treinta minutos</h2>
+    <!-- pv:cierre -->
+  <div class="pv-par con-titulo estrecha">
+    <figure class="pv-foto">
+      <img src="/fotos/adrian-sesion.webp" srcset="/fotos/adrian-sesion-240.webp 240w, /fotos/adrian-sesion.webp 400w" sizes="(min-width: 760px) 200px, 34vw" width="400" height="500" loading="lazy" decoding="async" alt="Adrián Cuñat, psicólogo, sonriendo con un portátil en las manos">
+    </figure>
+    <div class="pv-texto">
+<!-- /pv:cierre --><h2>El siguiente paso son treinta minutos</h2>
     <p class="entrada">Me cuentas qué te trae y sales sabiendo qué haría yo
     con ello. <strong>No tienes que decidir nada ese día.</strong></p>
-    <p class="acciones"><a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_cinta')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
+    <!-- pv:cierre-fin -->
+    </div>
+  </div>
+<!-- /pv:cierre-fin --><p class="acciones"><a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_cinta')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
     <p class="tranquila">Online, para residentes en España, en el centro
     sanitario Neurococos.</p>
   <p class="apunte">
@@ -802,6 +830,7 @@
 <!-- nl:portada -->
   <section class="nl" data-ubic="portada" aria-labelledby="nl-t-portada">
     <div class="nl-cuerpo">
+      <svg class="nl-dib" viewBox="0 0 120 92" aria-hidden="true" focusable="false"><rect class="nl-dia" x="22" y="6" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="38" y="6" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="54" y="6" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="70" y="6" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="86" y="6" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="102" y="6" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="22" y="28" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="38" y="28" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="54" y="28" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="70" y="28" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="86" y="28" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="102" y="28" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="22" y="50" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="38" y="50" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="54" y="50" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="70" y="50" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="86" y="50" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="102" y="50" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="22" y="72" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="38" y="72" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="54" y="72" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="70" y="72" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="86" y="72" width="12" height="14" rx="2.5"/><rect class="nl-dia" x="102" y="72" width="12" height="14" rx="2.5"/><g transform="translate(4 4)"><rect class="nl-sobre" width="17" height="18" rx="3"/><path class="nl-solapa" d="M3 6.5l5.5 4 5.5-4"/></g><g transform="translate(4 26)"><rect class="nl-sobre" width="17" height="18" rx="3"/><path class="nl-solapa" d="M3 6.5l5.5 4 5.5-4"/></g><g transform="translate(4 48)"><rect class="nl-sobre" width="17" height="18" rx="3"/><path class="nl-solapa" d="M3 6.5l5.5 4 5.5-4"/></g><g transform="translate(4 70)"><rect class="nl-sobre" width="17" height="18" rx="3"/><path class="nl-solapa" d="M3 6.5l5.5 4 5.5-4"/></g></svg>
       <h2 class="nl-t" id="nl-t-portada">Una idea útil a la semana, en tu correo</h2>
       <p>Lees una guía entera de noche y al día siguiente no recuerdas qué ibas a probar. Por eso, de una en una: <strong>te llega un correo a la semana</strong>, con una idea y algo pequeño que probar esa semana. Al confirmar tu correo, cuatro hojas en PDF para guardar. No te voy a preguntar nada de lo que te pasa.</p>
       <form method="POST" target="nl-destino-portada" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw==">
@@ -833,7 +862,13 @@
        quedan, porque desde la portada son los que más peso pasan a las
        guías y al blog en Google. Lo rellena rueda/portada.py. -->
   <section class="lisa">
-    <!-- portada:guias -->
+    <!-- pv:leer -->
+  <div class="pv-par">
+    <figure class="pv-foto pv-flota">
+      <img src="/fotos/a/libro-ventana-v480.webp" sizes="(min-width: 760px) 240px, 40vw" width="480" height="600" loading="lazy" decoding="async" alt="Un libro abierto junto a una ventana">
+    </figure>
+    <div class="pv-texto">
+<!-- /pv:leer --><!-- portada:guias -->
     <h2>Para leer con calma</h2>
     <p><strong>Guías largas, con fuentes y con algo que puedes hacer</strong> en la propia página. Para empezar: <a href="/guias/ataque-de-ansiedad/">Qué hacer en un ataque de ansiedad</a>, <a href="/guias/no-puedo-dejar-de-pensar/">Cuando no puedes dejar de pensar</a> y <a href="/guias/necesito-ir-al-psicologo/">¿Necesito ir al psicólogo?</a>. <a href="/guias/">Ver las setenta guías</a>, por temas y con buscador.</p>
     <p>Para consultar: un <a href="/glosario/">glosario</a> con la psicología en palabras normales, <a href="/salud-mental-en-cifras/">la salud mental en España en cifras</a>, con cada dato enlazado a su fuente, y los <a href="/ayuda-urgente/">teléfonos de ayuda urgente</a>.</p>
@@ -841,7 +876,10 @@
     <!-- /portada:guias -->
     <!-- portada:blog -->
     <p>Y artículos de cinco minutos: <a href="/blog/no-hace-falta-tocar-fondo/">No hace falta tocar fondo para pedir ayuda</a>, <a href="/blog/por-que-es-mas-facil-contarselo-a-un-desconocido/">Por qué a veces es más fácil contárselo a alguien que no conoces</a> y <a href="/blog/mientras-esperas-la-primera-cita/">Mientras esperas la primera cita</a>. <a href="/blog/">Todos los artículos</a>.</p>
-    <!-- /portada:blog -->
+    <!-- /portada:blog --><!-- pv:leer-fin -->
+    </div>
+  </div>
+<!-- /pv:leer-fin -->
   </section>
 </div>
 
