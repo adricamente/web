@@ -74,7 +74,7 @@
   "description": "Por qué complaces a todo el mundo aunque te pese: el sí te ahorra el conflicto al momento, pero lo pagas después en tiempo, rabia y en no comprobar nunca el no.",
   "inLanguage": "es-ES",
   "datePublished": "2026-10-27",
-  "dateModified": "2026-10-28",
+  "dateModified": "2026-10-29",
   "author": {
     "@type": "Person",
     "name": "Adrián Cuñat Andrés",
@@ -149,6 +149,16 @@
   ]
 }
   </script>
+<!-- nl-css -->
+  <style>
+  .nl-campos--uno{grid-template-columns:minmax(0,26rem)}
+  .nl--corta{margin:36px 0 32px;padding:18px 18px 14px}
+  .nl--corta .nl-t{font-size:1.25rem}
+  .nl--corta .acepto{margin:12px 0 12px}
+  .nl--corta .nl-nota{font-size:13.5px;margin:10px 0 0}
+  @media (min-width:561px){.nl--corta form{max-width:520px}}
+  </style>
+<!-- /nl-css -->
 </head>
 
 <body>
@@ -368,18 +378,15 @@
   </section>
 
 
-<!-- nl -->
-  <section class="nl" aria-labelledby="nl-t">
-    <div class="nl-cuerpo" id="nl-cuerpo">
-      <h2 class="nl-t" id="nl-t">Lo nuevo, en tu correo</h2>
-      <p>Al apuntarte, <strong>un correo a la semana durante unos cinco meses</strong>, con una idea útil de las guías cada vez.
-      Después, uno o dos al mes con lo nuevo. No te voy a preguntar nada de lo que te pasa.</p>
-      <form id="nl-form" method="POST" target="nl-destino" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw==">
-        <div class="nl-campos">
-          <div><label class="campo" for="nl-nombre">Tu nombre</label>
-          <input type="text" id="nl-nombre" name="NOMBRE" autocomplete="given-name" required></div>
-          <div><label class="campo" for="nl-correo">Tu correo</label>
-          <input type="email" id="nl-correo" name="EMAIL" autocomplete="email" required></div>
+<!-- nl:blog_final -->
+  <section class="nl" data-ubic="blog_final" aria-labelledby="nl-t-blog-final">
+    <div class="nl-cuerpo">
+      <h2 class="nl-t" id="nl-t-blog-final">Doce frases para decir que no, en una hoja</h2>
+      <p>Para el trabajo, la familia, las amistades y la pareja, y para tenerlas a mano antes de contestar «claro, sin problema». Te la doy al confirmar tu correo, junto a otras tres, y después <strong>te llega un correo a la semana durante unos cinco meses</strong>. Lo que lleva está en <a href="/guias/decir-que-no/">la guía de decir que no</a>, gratis y sin dejar el correo: la hoja es para llevártelo.</p>
+      <form method="POST" target="nl-destino-blog-final" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw==">
+        <div class="nl-campos nl-campos--uno">
+          <div><label class="campo" for="nl-correo-blog-final">Tu correo</label>
+          <input type="email" id="nl-correo-blog-final" name="EMAIL" autocomplete="email" required></div>
         </div>
         <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
         <input type="hidden" name="locale" value="es">
@@ -394,26 +401,15 @@
           <span>Opcional: acepto que Brevo cuente si abro cada correo y en qué enlaces pincho, para saber qué correos sirven. Sin marcarla te llegan igual, y lo puedo retirar desde cualquier correo sin darme de baja.</span>
         </label>
         <p class="apunte nl-nota" style="margin-top:0">Responsable: Adrián Cuñat Andrés. Para qué: mandarte lo más útil y lo nuevo de la web y, alguna vez, información sobre las sesiones. Lo gestiona Brevo, que solo cuenta aperturas y clics si marcas la segunda casilla. Puedes acceder a tus datos, corregirlos o borrarlos: <a href="/privacidad.html">privacidad</a>.</p>
-        <button class="boton" type="submit">Apuntarme</button>
+        <button class="boton" type="submit">Mándame la hoja</button>
         <p class="apunte nl-nota">Te llegará un correo para confirmar: sin ese clic no te escribo. Esto no es un canal de ayuda;
         si estás mal ahora mismo, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
       </form>
     </div>
-    <iframe name="nl-destino" id="nl-destino" title="Envío del formulario" aria-hidden="true" tabindex="-1"
+    <iframe name="nl-destino-blog-final" title="Envío del formulario" aria-hidden="true" tabindex="-1"
             style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
-    <script>
-    (function(){
-      var f=document.getElementById('nl-form'), d=document.getElementById('nl-destino'), c=document.getElementById('nl-cuerpo'), env=false, hecho=false;
-      if(!f) return;
-      function ok(){ if(hecho) return; hecho=true; try{window.medir&&window.medir('alta_newsletter')}catch(e){}
-        c.innerHTML='<h2 class="nl-t" tabindex="-1">Mira tu correo</h2><p>Te he mandado un enlace para confirmar que eres tú. '+
-        'Si en unos minutos no lo ves, mira en promociones o en spam.</p>'; c.querySelector('h2').focus(); }
-      d.addEventListener('load', function(){ if(env) ok(); });
-      f.addEventListener('submit', function(ev){ if(f.elements['email_address_check'].value!==''){ev.preventDefault();return;} env=true; setTimeout(ok,6000); });
-    })();
-    </script>
   </section>
-<!-- /nl -->
+<!-- /nl:blog_final -->
   <h2>Sigue leyendo</h2>
   <ul class="relacionadas">
     <li><a href="/guias/decir-que-no/">Decir que no sin sentirte culpable</a><span>Guía completa: por qué cuesta tanto, por qué la culpa de después no significa que hayas hecho algo mal, qué ayuda y frases para decirlo según a quién.</span></li>
@@ -457,6 +453,7 @@
           <li><a href="/lgtbi/">Espacio seguro LGTBI+</a></li>
           <li><a href="/secreto-profesional/">Lo que me cuentas, quién lo sabe</a></li>
           <li><a href="/blog/">Blog</a></li>
+          <li><a href="/newsletter/" onclick="window.medir&amp;&amp;window.medir('clic_newsletter_pie')">La newsletter</a></li>
         </ul>
         <!-- Las dos gratis, separadas de la navegación normal: no son
              páginas de servicio, son cosas que alguien se lleva sin
@@ -653,5 +650,37 @@
     pinta();
   })();
 </script>
+<!-- nl-js -->
+<script>
+/* Newsletter (29-10). Una vez por página para todas las cajas. Cuenta por
+   TIPO de ubicación, nunca el tema. La caja «tras el PDF» solo se abre
+   cuando pdf.js avisa de que la descarga ya ha ocurrido. */
+(function(){
+  var cajas=document.querySelectorAll('.nl[data-ubic]'); if(!cajas.length) return;
+  function m(e){try{window.medir&&window.medir(e)}catch(_){}}
+  var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
+    es.forEach(function(en){ if(en.isIntersecting){ m('nl_visto_'+en.target.getAttribute('data-ubic')); io.unobserve(en.target); } });
+  },{threshold:0.3}):null;
+  Array.prototype.forEach.call(cajas,function(caja){
+    var u=caja.getAttribute('data-ubic'), f=caja.querySelector('form'), d=caja.querySelector('iframe'),
+        c=caja.querySelector('.nl-cuerpo'), env=false, hecho=false;
+    if(!f) return;
+    if(io && !caja.hidden) io.observe(caja);
+    function ok(){ if(hecho) return; hecho=true; m('alta_newsletter_'+u);
+      c.innerHTML='<h2 class="nl-t" tabindex="-1">Mira tu correo</h2><p>Te he mandado un enlace para confirmar que eres tú. '+
+        'Al pulsarlo te llevo a las cuatro hojas. Si en unos minutos no lo ves, mira en promociones o en spam.</p>';
+      c.querySelector('h2').focus(); }
+    d.addEventListener('load',function(){ if(env) ok(); });
+    f.addEventListener('submit',function(ev){ if(f.elements['email_address_check'].value!==''){ev.preventDefault();return;} env=true; setTimeout(ok,6000); });
+  });
+  var tras=document.querySelector('.nl[data-ubic="herramienta_pdf"]');
+  if(tras) document.addEventListener('adri:pdf',function(){
+    if(!tras.hidden) return;
+    tras.hidden=false; m('nl_visto_herramienta_pdf');
+    var fin=document.querySelector('.nl[data-ubic="herramienta_final"]'); if(fin) fin.hidden=true;
+  });
+})();
+</script>
+<!-- /nl-js -->
 </body>
 </html>

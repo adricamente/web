@@ -265,6 +265,10 @@
       a.href = url; a.download = op.archivo || 'adricamente-' + fecha() + '.pdf';
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      // Aviso para la caja «tras el PDF» de las herramientas (newsletter.py):
+      // la descarga ya ha ocurrido. No lleva nada de lo escrito, solo que ha
+      // pasado. Va después del clic a propósito: el PDF nunca espera a nada.
+      try { document.dispatchEvent(new CustomEvent('adri:pdf')); } catch (e) {}
       return true;
     } catch (e) { return false; }
   }

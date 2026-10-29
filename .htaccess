@@ -53,6 +53,12 @@
 </IfModule>
 
 <IfModule mod_headers.c>
+  # Las cuatro hojas de /hojas/ (29-10): fuera del buscador, para que no
+  # compitan con las guías de las que salen. Los PDF de las herramientas se
+  # hacen en el navegador y no pasan por aquí.
+  <FilesMatch "\.pdf$">
+    Header set X-Robots-Tag "noindex"
+  </FilesMatch>
   <FilesMatch "\.(webp|png|jpe?g|svg|ico|woff2)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
