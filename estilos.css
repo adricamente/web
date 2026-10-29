@@ -3872,8 +3872,12 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 @media (min-width:640px) and (prefers-reduced-motion:no-preference){
   .js-dibujo .ciclo-vivo .ciclo-flecha{stroke-dashoffset:1;transition:stroke-dashoffset .7s ease calc(var(--i) * .35s)}
   .ciclo-vivo.visto .ciclo-flecha{stroke-dashoffset:0}
-  .js-dibujo .ciclo-vivo .ciclo-pasos li{opacity:0;transition:opacity .5s ease calc(var(--i) * .35s)}
-  .ciclo-vivo.visto .ciclo-pasos li{opacity:1}
+  /* 29-10: antes era un fundido de opacidad, y durante él el texto bajaba de
+     contraste (axe lo marcaba a 1280 px). Ahora aparece entero y crece: el
+     texto siempre está a contraste completo o no está. */
+  .js-dibujo .ciclo-vivo .ciclo-pasos li{visibility:hidden;transform:translate(-50%,-50%) scale(.82);
+    transition:transform .45s var(--entra,ease) calc(var(--i) * .35s),visibility 0s linear calc(var(--i) * .35s)}
+  .ciclo-vivo.visto .ciclo-pasos li{visibility:visible;transform:translate(-50%,-50%) scale(1)}
   .ciclo-centro span{animation:gira 6s linear infinite}
 }
 @keyframes gira{to{transform:rotate(360deg)}}
