@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=72">
+  <link rel="stylesheet" href="/estilos.min.css?v=73">
 
 
   <script type="application/ld+json">
@@ -151,7 +151,149 @@
     .movil img{display:block;width:100%;height:auto}
     @media (max-width:640px){.con-pantalla{grid-template-columns:1fr;gap:14px}.movil{width:min(220px,64vw);justify-self:center}}
   </style>
-</head>
+<!-- cuenta:telefono:css -->
+  <style>
+  /* «La cuenta, por dentro». Lo genera rueda/portada_cuenta.py.
+     Las medidas del teléfono salen de tres números: --w, el ancho de la
+     pantalla; --b, el bisel; y la barra de estado, el 11,5 % del ancho
+     (la proporción de un móvil de verdad). La captura mide 1:2, así que
+     la pantalla entera mide barra + 2 anchos, y el marco y las pantallas
+     de las cinco pestañas casan al píxel sin medir nada con el guion. */
+  .tc{--w:262px;--b:9px;--s:calc(var(--w)*.115);--h:calc(var(--s) + var(--w)*2);--r:calc(var(--w)*.135);
+    --cuerpo:#1d1d1f;--rotulo:Archivo,"Archivo reserva","Helvetica Neue",sans-serif;
+    position:relative;margin:0}
+  .tc-completa{display:grid;grid-template-columns:minmax(0,1fr) calc(var(--w) + 2*var(--b) + 40px);
+    grid-template-areas:"texto escena" "mandos escena" "pausa escena" "pie escena";grid-template-rows:auto auto auto 1fr;
+    column-gap:clamp(28px,6vw,72px);align-items:start}
+  .tc-texto{grid-area:texto}.tc-mandos{grid-area:mandos}.tc-completa>.tc-pausa{grid-area:pausa;justify-self:start}.tc-escena{grid-area:escena}.tc-pie{grid-area:pie}
+  .tc-texto h2{margin-top:0}
+  .tc-texto p,.tc-pie p{max-width:34rem}
+
+  /* ---- Las pestañas ---- */
+  .tc-mandos{position:relative}
+  .tc-tabs{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px;max-width:24rem}
+  .tc-tab{position:relative;display:grid;grid-template-columns:24px 22px minmax(0,1fr);align-items:center;gap:12px;
+    width:100%;min-height:50px;margin:0;padding:12px 16px;border:1px solid transparent;border-radius:12px;
+    background:transparent;color:var(--ink-2);font:600 16.5px/1.15 var(--rotulo);text-align:left;cursor:pointer;
+    overflow:hidden;-webkit-tap-highlight-color:transparent;transition:background-color .2s,color .2s,box-shadow .2s}
+  .tc-tab:hover{background:rgba(255,255,255,.7);color:var(--ink)}
+  .tc-tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--accent);
+    box-shadow:0 1px 2px rgba(37,35,31,.06),0 10px 24px -14px rgba(31,84,116,.45)}
+  .tc-ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tc-num{font:600 12.5px/1 var(--rotulo);color:var(--muted);font-variant-numeric:tabular-nums}
+  .tc-tab[aria-selected="true"] .tc-num{color:var(--accent)}
+  /* La barra de avance es también el reloj: el guion pasa de pantalla
+     cuando termina su animación. Así pausarla con animation-play-state
+     pausa el pase sin llevar la cuenta del tiempo aparte. */
+  .tc-barra{position:absolute;left:16px;right:16px;bottom:5px;height:2px;border-radius:2px;background:var(--line);opacity:0;overflow:hidden}
+  .tc-barra::after{content:"";position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left}
+  .tc-auto .tc-tab[aria-selected="true"] .tc-barra{opacity:1}
+  .tc-auto .tc-tab[aria-selected="true"] .tc-barra::after{animation:tc-avance 7s linear forwards}
+  .tc-quieta .tc-barra::after{animation-play-state:paused !important}
+  @keyframes tc-avance{to{transform:scaleX(1)}}
+  .tc-onda{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:var(--accent);
+    opacity:0;pointer-events:none}
+  .tc-pausa{display:inline-flex;align-items:center;gap:6px;min-height:32px;margin:0 0 18px;padding:4px 10px 4px 8px;
+    border:1px solid var(--line-strong);border-radius:99px;background:var(--surface);color:var(--ink-2);
+    font:600 13.5px/1 var(--rotulo);cursor:pointer}
+  .tc-pausa:hover{color:var(--accent);border-color:var(--accent-borde)}
+  @media (prefers-reduced-motion:reduce){.tc-pausa{display:none}}
+  .tc-pausa svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .tc-pausa .tc-p-seguir{display:none;fill:currentColor;stroke:none}
+  .tc-pausa.tc-sigue .tc-p-pausa{display:none}.tc-pausa.tc-sigue .tc-p-seguir{display:block}
+
+  /* ---- El teléfono ---- */
+  .tc-escena{position:relative;min-width:0;display:grid;justify-items:center}
+  .tc-paneles{width:100%;display:grid}
+  .tc-panel{grid-area:1/1;display:flex;justify-content:center;padding-top:var(--b);border-radius:var(--r-m,12px)}
+  .tc-panel:focus-visible{outline-offset:2px}
+  .tc-panel[hidden]{display:flex;visibility:hidden}
+  .tc-panel.tc-sale{visibility:visible}
+  .tc-panel.tc-entra{z-index:1}
+  .tc-fig{margin:0;display:flex;flex-direction:column;align-items:center;width:100%}
+  .tc-pantalla{position:relative;box-sizing:border-box;width:var(--w);height:var(--h);padding-top:var(--s);
+    border-radius:var(--r);overflow:hidden;background:#fff;isolation:isolate}
+  .tc-lamina{position:relative;width:100%;will-change:transform}
+  .tc-lamina img{display:block;width:100%;height:auto;aspect-ratio:1/2;-webkit-user-drag:none;user-select:none}
+  .tc-traza{position:absolute;left:15.4%;top:45.2%;width:58.4%;height:9.9%;overflow:hidden;pointer-events:none}
+  .tc-traza span{position:absolute;inset:0 0 0 -24px;transform:translateX(100%);
+    background:linear-gradient(90deg,rgba(255,255,255,0),#fff 24px)}
+  .tc-marco{position:absolute;z-index:2;top:0;left:50%;box-sizing:border-box;pointer-events:none;
+    width:calc(var(--w) + 2*var(--b));height:calc(var(--h) + 2*var(--b));margin-left:calc(-.5*var(--w) - var(--b));
+    border:var(--b) solid var(--cuerpo);border-radius:calc(var(--r) + var(--b));
+    box-shadow:0 0 0 1.5px #55555b,0 30px 50px -24px rgba(23,63,88,.55),0 10px 18px -10px rgba(37,35,31,.35)}
+  /* Los botones del canto: el de encendido a la derecha y los dos de
+     volumen a la izquierda, con una sola sombra cada uno. */
+  .tc-marco::before,.tc-marco::after{content:"";position:absolute;width:3px;border-radius:2px;background:#3a3a3e}
+  .tc-marco::before{left:calc(-1*var(--b) - 4px);top:22%;height:7%;box-shadow:0 calc(var(--w)*.2) 0 #3a3a3e}
+  .tc-marco::after{right:calc(-1*var(--b) - 4px);top:28%;height:11%}
+  .tc-estado{position:absolute;inset:0 0 auto;height:var(--s);display:flex;align-items:center;justify-content:space-between;
+    padding:0 calc(var(--w)*.075) 0 calc(var(--w)*.09);color:var(--ink);font:600 calc(var(--w)*.052)/1 var(--rotulo)}
+  .tc-isla{position:absolute;left:50%;top:22%;width:30%;height:52%;margin-left:-15%;border-radius:99px;background:var(--cuerpo)}
+  .tc-iconos{width:calc(var(--w)*.15);fill:currentColor}
+  .tc-brillo{position:absolute;inset:0;border-radius:var(--r);
+    background:linear-gradient(118deg,rgba(255,255,255,.16),rgba(255,255,255,0) 26%)}
+  .tc-frase{margin:22px 0 0;max-width:30ch;text-align:center;font-size:16px;line-height:1.45;color:var(--ink-2)}
+  .tc-et{display:block;margin-bottom:5px;font:700 13px/1.2 var(--rotulo);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+  .tc-dedo{position:absolute;z-index:3;left:0;top:0;width:46px;opacity:0;pointer-events:none;display:none;
+    filter:drop-shadow(0 6px 8px rgba(37,35,31,.22))}
+  .tc-dedo svg{display:block;width:100%;height:auto;fill:#fff;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---- El pie ---- */
+  .tc-pie{padding-top:4px}
+  .tc-acciones{display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px;margin:22px 0 8px}
+  .tc-acciones .boton{width:auto}
+  .tc-mas{font-weight:600}
+  .tc-nota{font-size:14.5px !important;color:var(--muted);margin:10px 0 0}
+
+  /* ---- Sin guion: las cinco en fila, quietas ---- */
+  .tc:not(.tc-js) .tc-mandos,.tc:not(.tc-js) .tc-marco,.tc:not(.tc-js) .tc-pausa{display:none}
+  .tc:not(.tc-js) .tc-paneles{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px var(--b) 12px}
+  .tc:not(.tc-js) .tc-panel{flex:0 0 auto;width:calc(var(--w) + 2*var(--b));scroll-snap-align:center}
+  .tc:not(.tc-js) .tc-panel[hidden]{visibility:visible}
+  .tc:not(.tc-js) .tc-pantalla{box-shadow:0 0 0 var(--b) var(--cuerpo)}
+  .tc:not(.tc-js) .tc-pantalla{padding-top:0;height:auto}
+
+  /* ---- Móvil y tableta: una columna, las pestañas en fila ---- */
+  @media (max-width:899px){
+    .tc-completa{--w:min(244px,62vw);grid-template-columns:minmax(0,1fr);grid-template-areas:"texto" "mandos" "escena" "pausa" "pie"}
+    .tc-completa>.tc-pausa{justify-self:center;margin:16px 0 0}
+    .tc-completa .tc-mandos{display:flex;flex-direction:column;align-items:center}
+    .tc-completa .tc-tabs{flex-direction:row;gap:4px;width:100%;max-width:30rem;margin:8px 0 10px}
+    .tc-completa .tc-tab{flex:1 1 0;min-width:0;grid-template-columns:minmax(0,1fr);justify-items:center;gap:5px;
+      padding:10px 2px 13px;font-size:12.5px;text-align:center;border-radius:10px}
+    .tc-completa .tc-num,.tc-completa .tc-largo{display:none}
+    .tc-completa .tc-nombre{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+    .tc-completa .tc-barra{left:10px;right:10px;bottom:4px}
+    .tc-completa .tc-pie{margin-top:26px}
+  }
+  /* Por debajo de 360 px no caben ni «Sesiones» ni «Ejercicios» en los
+     54 px de cada pestaña: se quedan los iconos, y el nombre sigue
+     ahí para el lector de pantalla y encima de la frase de cada una. */
+  @media (max-width:359px){
+    .tc-completa .tc-nombre{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .tc-completa .tc-tab{padding:12px 2px 14px}
+  }
+
+  /* ---- Compacta (/primera-sesion/): solo iconos encima ---- */
+  .tc-compacta{--w:212px;--b:8px;display:flex;flex-direction:column;align-items:center}
+  .tc-compacta .tc-mandos{display:flex;flex-direction:column;align-items:center}
+  .tc-compacta .tc-tabs{flex-direction:row;gap:6px;margin:0 0 8px}
+  .tc-compacta .tc-tab{width:40px;height:40px;min-height:0;padding:0;grid-template-columns:1fr;justify-items:center;border-radius:50%}
+  .tc-compacta .tc-tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--sobre-accent)}
+  .tc-compacta .tc-barra{display:none}
+  .tc-compacta .tc-pausa{margin:14px 0 0}
+  .tc-compacta .tc-frase{font-size:15px}
+  .tc-compacta .tc-nota{text-align:center}
+  .con-pantalla:has(.tc){grid-template-columns:minmax(0,1fr) 252px}
+  @media (max-width:640px){
+    .tc-compacta{--w:min(220px,60vw)}
+    .con-pantalla:has(.tc){grid-template-columns:1fr}
+  }
+  </style>
+<!-- /cuenta:telefono:css -->
+
+  </head>
 
 <body>
 <a class="saltar" href="#principal">Saltar al contenido</a>
@@ -454,11 +596,61 @@
       lo importante.</p>
       <p><a href="/tu-cuenta/">Así es tu cuenta por dentro, con capturas</a></p>
     </div>
-    <figure class="movil">
-      <img src="/fotos/cuenta/inicio.webp" srcset="/fotos/cuenta/inicio.webp 390w, /fotos/cuenta/inicio-2x.webp 780w"
-           sizes="(max-width:640px) 64vw, 190px" width="390" height="780" loading="lazy" decoding="async"
-           alt="Captura del inicio de la cuenta en un móvil: la próxima sesión con el botón de la videollamada, lo pendiente y la última medida">
-    </figure>
+    <!-- cuenta:telefono -->
+    <!-- Las cinco pantallas en el sitio de la captura suelta. Lo genera
+         rueda/portada_cuenta.py; no se edita aquí. -->
+    <div class="tc tc-compacta">
+      <script>document.currentScript.parentNode.classList.add('tc-js')</script>
+      <div class="tc-mandos">
+      <div class="tc-tabs" role="tablist" aria-label="Pantallas de la cuenta">
+      <button type="button" class="tc-tab" role="tab" id="tc-tab-inicio" aria-controls="tc-pan-inicio" aria-selected="true"><svg class="tc-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 10.6 12 4l8 6.6V20h-5.4v-5.6H9.4V20H4z"/></svg><span class="solo-lectores">Inicio</span><span class="tc-barra" aria-hidden="true"></span></button>
+      <button type="button" class="tc-tab" role="tab" id="tc-tab-sesion" aria-controls="tc-pan-sesion" aria-selected="false" tabindex="-1"><svg class="tc-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="3.5" width="14" height="17" rx="2.2"/><path d="M8.6 8.4h6.8M8.6 12h6.8M8.6 15.6h4.2"/></svg><span class="solo-lectores">Sesiones</span><span class="tc-barra" aria-hidden="true"></span></button>
+      <button type="button" class="tc-tab" role="tab" id="tc-tab-registro" aria-controls="tc-pan-registro" aria-selected="false" tabindex="-1"><svg class="tc-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="5" width="16" height="15" rx="2.2"/><path d="M4 9.6h16M8.6 3v4M15.4 3v4M9 14.8l2.2 2.1 4-4.3"/></svg><span class="solo-lectores">Ejercicios</span><span class="tc-barra" aria-hidden="true"></span></button>
+      <button type="button" class="tc-tab" role="tab" id="tc-tab-evolucion" aria-controls="tc-pan-evolucion" aria-selected="false" tabindex="-1"><svg class="tc-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.6 19.6h16.8"/><rect x="4" y="9" width="16" height="6" rx="1" fill="currentColor" stroke="none" opacity=".18"/><path d="M5 13.6l4-2.6 4 1.6 6-4.2"/></svg><span class="solo-lectores">Evolución</span><span class="tc-barra" aria-hidden="true"></span></button>
+      <button type="button" class="tc-tab" role="tab" id="tc-tab-plan" aria-controls="tc-pan-plan" aria-selected="false" tabindex="-1"><svg class="tc-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.5"/><path d="M6.2 6.2l3.3 3.3M14.5 14.5l3.3 3.3M17.8 6.2l-3.3 3.3M9.5 14.5l-3.3 3.3"/></svg><span class="solo-lectores">Plan de seguridad</span><span class="tc-barra" aria-hidden="true"></span></button>
+      </div>
+    </div>
+      <div class="tc-escena">
+      <span class="tc-marco" aria-hidden="true"><span class="tc-estado"><span class="tc-hora">9:41</span><span class="tc-isla"></span><svg class="tc-iconos" viewBox="0 0 44 12" aria-hidden="true" focusable="false"><rect x="0" y="7.5" width="2.6" height="3.5" rx=".6"/><rect x="4" y="5.5" width="2.6" height="5.5" rx=".6"/><rect x="8" y="3.2" width="2.6" height="7.8" rx=".6"/><rect x="12" y="1" width="2.6" height="10" rx=".6"/><rect x="21" y="1.2" width="19" height="9.6" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".45"/><rect x="22.8" y="3" width="13" height="6" rx="1.4"/><path d="M41.6 4.6v2.8c.8-.2 1.3-.7 1.3-1.4s-.5-1.2-1.3-1.4z" opacity=".45"/></svg></span><span class="tc-brillo"></span></span>
+      <div class="tc-paneles" role="region" aria-label="Capturas de la cuenta" tabindex="0">
+      <div class="tc-panel" role="tabpanel" id="tc-pan-inicio" aria-labelledby="tc-tab-inicio" tabindex="0">
+        <figure class="tc-fig">
+          <div class="tc-pantalla"><div class="tc-lamina"><img src="/fotos/cuenta/inicio.webp" srcset="/fotos/cuenta/inicio.webp 390w, /fotos/cuenta/inicio-2x.webp 780w" sizes="(max-width: 640px) 60vw, 212px" width="390" height="780" loading="lazy" decoding="async" draggable="false" alt="Captura del inicio de la cuenta en un móvil: la próxima sesión con el botón de la videollamada, lo pendiente y la última medida"></div></div>
+          <figcaption class="tc-frase"><span class="tc-et">Inicio</span>Tu próxima sesión, con el botón de la videollamada, que se enciende diez minutos antes, y el enlace para cambiarla.</figcaption>
+        </figure>
+      </div>
+      <div class="tc-panel" role="tabpanel" id="tc-pan-sesion" aria-labelledby="tc-tab-sesion" hidden>
+        <figure class="tc-fig">
+          <div class="tc-pantalla"><div class="tc-lamina"><img src="/fotos/cuenta/sesion.webp" srcset="/fotos/cuenta/sesion.webp 390w, /fotos/cuenta/sesion-2x.webp 780w" sizes="(max-width: 640px) 60vw, 212px" width="390" height="780" loading="lazy" decoding="async" draggable="false" alt="Captura del resumen de una sesión en la cuenta: lo que vimos y lo que toca esa semana"></div></div>
+          <figcaption class="tc-frase"><span class="tc-et">Sesiones</span>Después de cada sesión te dejo un resumen corto: lo que vimos y lo que toca esa semana. Se van guardando en orden.</figcaption>
+        </figure>
+      </div>
+      <div class="tc-panel" role="tabpanel" id="tc-pan-registro" aria-labelledby="tc-tab-registro" hidden>
+        <figure class="tc-fig">
+          <div class="tc-pantalla"><div class="tc-lamina"><img src="/fotos/cuenta/registro.webp" srcset="/fotos/cuenta/registro.webp 390w, /fotos/cuenta/registro-2x.webp 780w" sizes="(max-width: 640px) 60vw, 212px" width="390" height="780" loading="lazy" decoding="async" draggable="false" alt="Captura de un ejercicio en el móvil: la semana con cuatro de siete días apuntados y lo escrito cada día"></div></div>
+          <figcaption class="tc-frase"><span class="tc-et">Ejercicios</span>Apuntas el día en dos minutos y ves la semana de un vistazo. Si quieres, un correo discreto te lo recuerda, y cada semana se descarga en PDF.</figcaption>
+        </figure>
+      </div>
+      <div class="tc-panel" role="tabpanel" id="tc-pan-evolucion" aria-labelledby="tc-tab-evolucion" hidden>
+        <figure class="tc-fig">
+          <div class="tc-pantalla"><div class="tc-lamina"><img src="/fotos/cuenta/evolucion.webp" srcset="/fotos/cuenta/evolucion.webp 390w, /fotos/cuenta/evolucion-2x.webp 780w" sizes="(max-width: 640px) 60vw, 212px" width="390" height="780" loading="lazy" decoding="async" draggable="false" alt="Captura de la gráfica de un cuestionario de bienestar en la cuenta: cuatro medidas, de 9 a 12 sobre 25, dentro de la franja en la que un cambio todavía puede ser ruido"><span class="tc-traza" aria-hidden="true"><span></span></span></div></div>
+          <figcaption class="tc-frase"><span class="tc-et">Evolución</span>Tus cuestionarios en una gráfica, con una franja que marca lo que puede ser solo ruido. Y tus objetivos, con lo que tú les das cada semana de 0 a 10.</figcaption>
+        </figure>
+      </div>
+      <div class="tc-panel" role="tabpanel" id="tc-pan-plan" aria-labelledby="tc-tab-plan" hidden>
+        <figure class="tc-fig">
+          <div class="tc-pantalla"><div class="tc-lamina"><img src="/fotos/cuenta/plan.webp" srcset="/fotos/cuenta/plan.webp 390w, /fotos/cuenta/plan-2x.webp 780w" sizes="(max-width: 640px) 60vw, 212px" width="390" height="780" loading="lazy" decoding="async" draggable="false" alt="Captura del plan de seguridad en la cuenta: las señales de alarma y lo que ayuda a bajar la intensidad, escritos por la persona"></div></div>
+          <figcaption class="tc-frase"><span class="tc-et">Plan de seguridad</span>Si en algún momento hace falta, lo escribimos juntos: a un toque desde cualquier pantalla, con el 024 y el 112 al lado.</figcaption>
+        </figure>
+      </div>
+      </div>
+      <span class="tc-dedo" aria-hidden="true"><svg viewBox="0 0 40 48" focusable="false"><path d="M15 31V7.5a3.5 3.5 0 0 1 7 0V19a3.5 3.5 0 0 1 7 .5v2a3.5 3.5 0 0 1 7 0V31c0 8.5-5 14-12.5 14H21c-4.5 0-7.5-2-10-5.5L3.9 30.4a3.2 3.2 0 0 1 5-4L15 31z"/><path d="M22 19v7M29 21.5v6" fill="none"/></svg></span>
+    </div>
+      <button type="button" class="tc-pausa"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path class="tc-p-pausa" d="M5 3.5v9M11 3.5v9"/><path class="tc-p-seguir" d="M5 3.2v9.6l7.6-4.8z"/></svg><span>Pausar</span></button>
+      <p class="tc-nota">Capturas de una cuenta de prueba con datos inventados.</p>
+    </div>
+    <script defer src="/cuenta-telefono.js?v=be698913"></script>
+<!-- /cuenta:telefono -->
   </div>
 
   <h2>Las preguntas que me hacen antes</h2>

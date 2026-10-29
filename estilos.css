@@ -4289,3 +4289,207 @@ main{counter-reset:is fs}
 @media (max-width:640px){
   .relacionadas.leer-calma li > span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;line-clamp:1;overflow:hidden}
 }
+
+/* --- 16.6 Los dibujos animados que explican (29-10) -----------------
+   Dieciséis láminas nuevas (rueda/animados.py) para los sitios donde un
+   mecanismo se entiende mejor visto que leído: la escalera, la crisis que
+   sube y baja sola, el mapa que encoge, rumiar o resolver, el rato fijo
+   de preocupación, la cama, de lo pequeño a las ganas, el listón, lo que
+   se enseña en redes, el rebote del pensamiento, la tragaperras, el botón
+   de escape, el descanso como premio, la exigencia y retirada, la balanza
+   y lo que se teme al decir que no.
+
+   Mismo idioma que las de 10.1: retícula, tinta, azul de marca y azul
+   suave. Y la misma regla de disparo que 16.3 bis: la clase `dibujado`
+   la pone el guion de siempre la primera vez que la figura entra en
+   pantalla. Aquí cambia una cosa: el estado de BASE de cada pieza es el
+   final. La animación arranca de su primer fotograma por relleno hacia
+   atrás (`both`), así que sin JavaScript, con movimiento reducido o al
+   imprimir, cada lámina se ve quieta y entera.
+
+   Los trazos de estas piezas no llevan non-scaling-stroke (si lo
+   llevaran, pathLength no serviría para dibujarlos), así que el lienzo
+   tiene techo: 34rem, como los escalones y la noche. */
+.figura.anim .dibujo{max-width:34rem}
+.anim .m-t{stroke:var(--ink);stroke-width:3.4;fill:none}
+.anim .m-t2{stroke:var(--ink);stroke-width:2.2;fill:none}
+.anim .m-a{stroke:var(--accent-2);stroke-width:3;fill:none}
+.anim .m-pico{stroke-width:4.4}
+.anim .m-fant{stroke:var(--borde-campo);stroke-width:2;fill:none;stroke-dasharray:4 5}
+.anim .m-l{stroke:var(--line-strong);stroke-width:1.2;fill:none}
+.anim .m-s{fill:var(--accent-soft);stroke:none}
+.anim .m-pa,.anim .m-yo,.anim .m-num,.anim .m-premio,.anim .m-descanso{fill:var(--accent-2);stroke:none}
+.anim .m-pt{fill:var(--ink);stroke:none}
+.anim .m-ha{fill:var(--bg);stroke:var(--accent-2);stroke-width:2.6}
+.anim .m-ha.m-negro{stroke:var(--ink)}
+.anim .m-palote,.anim .m-apunte{stroke:var(--ink-2);stroke-width:2}
+.anim .m-anillo{stroke:var(--borde-campo);stroke-width:1.2;stroke-dasharray:3 4;fill:none}
+.anim .m-sitio,.anim .m-nada,.anim .m-tarea{fill:var(--bg);stroke:var(--borde-campo);stroke-width:1.6}
+.anim .m-tarea.m-hecha{fill:var(--ink-2);stroke:var(--ink-2)}
+.anim .m-caja{fill:var(--accent-soft);stroke:var(--accent-borde);stroke-width:1.4}
+.anim .m-cama{fill:var(--accent-soft);stroke:var(--ink);stroke-width:2.4}
+.anim .m-pared{stroke:var(--line-strong);stroke-width:1.4;stroke-dasharray:4 4}
+.anim .m-ruta{stroke:var(--accent-borde);stroke-width:2;stroke-dasharray:4 5}
+.anim .m-ruta-p{stroke:var(--accent-borde);stroke-width:2}
+.anim .m-num-t{font:700 10px Archivo,"Archivo reserva",sans-serif;fill:var(--sobre-accent)}
+/* Las rayas de «no me duermo»: solo existen mientras dura la animación. */
+.anim .m-inquieto{stroke:var(--ink-2);stroke-width:2;opacity:0}
+.anim .m-antes{stroke:var(--ink-2);stroke-width:1.6;stroke-dasharray:3 3}
+.anim .m-liston{stroke:var(--ink);stroke-width:5}
+.anim .m-onda{stroke:var(--accent-borde);stroke-width:1.5;fill:none;opacity:0}
+.anim .m-bueno{fill:var(--accent-soft);stroke:var(--accent-2);stroke-width:2}
+.anim .m-espera{fill:none;stroke:var(--ink-2);stroke-width:1.8;stroke-dasharray:4 4}
+/* Los rótulos dentro del lienzo llevan un halo del color del papel para
+   poder cruzar una línea de la retícula o un anillo sin perderse. */
+.anim .m-txt{font-family:Archivo,"Archivo reserva",sans-serif;font-size:11px;font-weight:700;
+  fill:var(--ink-2);stroke:var(--bg);stroke-width:4px;paint-order:stroke;stroke-linejoin:round}
+.anim .m-txt.az{fill:var(--accent-2)}
+@media (max-width:360px){.anim .m-txt{font-size:11.5px}}
+@media (min-width:600px){.anim .m-txt{font-size:8.8px}}
+/* La balanza se queda inclinada hacia la frase regular, y los dos puntos
+   del círculo de pareja giran alrededor del centro del lienzo. */
+.anim .m-viga{transform-box:view-box;transform-origin:160px 96px;transform:rotate(12deg)}
+.anim .m-gira{transform-box:view-box;transform-origin:160px 82px}
+
+.figura .muestra.m-punto,.figura .muestra.m-malo,.figura .muestra.m-vacio,.figura .muestra.m-vacio-tinta,
+.figura .muestra.m-bueno-m{width:11px;height:11px;border-radius:50%;background:var(--accent-2)}
+.figura .muestra.m-malo{background:var(--ink)}
+.figura .muestra.m-vacio{background:var(--bg);border:2px solid var(--borde-campo)}
+.figura .muestra.m-vacio-tinta{background:var(--bg);border:2px solid var(--ink)}
+.figura .muestra.m-bueno-m{background:var(--accent-soft);border:2px solid var(--accent-2)}
+.figura .muestra.m-azul,.figura .muestra.m-flecha{background:var(--accent-2);height:3px}
+.figura .muestra.m-palo,.figura .muestra.m-flechita{width:2px;height:13px;margin:0 8px;border-radius:0;background:var(--ink-2)}
+.figura .muestra.m-raya{width:12px;height:2px;background:var(--ink-2)}
+.figura .muestra.m-nada,.figura .muestra.m-hechita,.figura .muestra.m-espera-m{width:11px;height:11px;border-radius:2px;
+  background:var(--bg);border:1.5px solid var(--borde-campo)}
+.figura .muestra.m-hechita{background:var(--ink-2);border-color:var(--ink-2)}
+.figura .muestra.m-espera-m{border:1.5px dashed var(--ink-2)}
+
+@media (prefers-reduced-motion:no-preference){
+  .js-dibujo .anim:not(.dibujado) .dibujo{opacity:0}
+  .anim.dibujado .dibujo{animation:a-ap .3s ease-out both}
+  @keyframes a-ap{from{opacity:0}to{opacity:1}}
+
+  /* Las piezas comunes: un trazo que se dibuja, algo que aparece, se
+     planta, brota o se descubre como un telón. Cada elemento trae en
+     línea su retardo (--d) y, si hace falta, su duración (--dur). */
+  .anim.dibujado .m-dib{stroke-dasharray:1 1;animation:a-trazo var(--dur,1.6s) var(--fx,var(--traza)) var(--d,0s) both}
+  @keyframes a-trazo{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  .anim.dibujado .m-ap{animation:a-ap .5s var(--entra) var(--d,0s) both}
+  .anim .m-pop,.anim .m-tira,.anim .m-zona,.anim .m-onda{transform-box:fill-box;transform-origin:center}
+  .anim .m-brota{transform-box:fill-box;transform-origin:center bottom}
+  .anim .m-ancho{transform-box:fill-box;transform-origin:left center}
+  .anim.dibujado .m-pop,.anim.dibujado .m-tira{animation:a-pop .5s var(--entra) var(--d,0s) both}
+  @keyframes a-pop{from{transform:scale(0)}60%{transform:scale(1.25)}to{transform:scale(1)}}
+  .anim.dibujado .m-brota{animation:a-brota var(--dur,.6s) var(--entra) var(--d,0s) both}
+  @keyframes a-brota{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  .anim.dibujado .m-ancho{animation:a-ancho .7s var(--entra) var(--d,0s) both}
+  @keyframes a-ancho{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .anim.dibujado .m-telon{animation:a-telon var(--dur,2.8s) cubic-bezier(.35,.1,.45,1) var(--d,0s) both}
+  @keyframes a-telon{
+    from{clip-path:inset(-12px calc(100% + 12px) -12px -12px)}
+    to{clip-path:inset(-12px -12px -12px -12px)}
+  }
+
+  /* La escalera: el punto repite escalones, baja uno en el cuarto y
+     sigue. En el área, sube de uno en uno con una pausa en cada uno. */
+  .anim.a-escalera.dibujado .m-yo{animation:a-esc-sube 5.2s linear both}
+  @keyframes a-esc-sube{
+    0%,10%{transform:translate(-217px,80px)} 5%{transform:translate(-217px,71px)}
+    17%,26%,35%{transform:translate(-163px,60px)} 22%,31%{transform:translate(-163px,51px)}
+    44%,53%{transform:translate(-109px,40px)} 49%{transform:translate(-109px,31px)}
+    61%,69%,84%{transform:translate(-55px,20px)} 65%{transform:translate(-55px,13px)}
+    75%{transform:translate(-109px,40px)}
+    93%,100%{transform:none}
+  }
+  .anim.a-escalera.simple.dibujado .m-yo{animation:a-esc-simple 4.4s var(--suave) both}
+  @keyframes a-esc-simple{
+    0%,12%{transform:translate(-217px,80px)} 22%,34%{transform:translate(-163px,60px)}
+    44%,56%{transform:translate(-109px,40px)} 66%,78%{transform:translate(-55px,20px)} 88%,100%{transform:none}
+  }
+
+  /* El mapa: la zona encoge en dos tirones y los sitios que quedan fuera
+     se vacían justo cuando la zona pasa por encima de ellos. */
+  .anim.a-mapa.dibujado .m-zona{animation:a-mapa-zona 4.6s var(--suave) both}
+  @keyframes a-mapa-zona{
+    0%,22%{transform:scale(3.3,3.217)} 40%,62%{transform:scale(2.15,2.087)} 80%,100%{transform:scale(1)}
+  }
+  .anim.a-mapa.dibujado .m-sitio.f1{animation:a-mapa-f1 4.6s linear both}
+  .anim.a-mapa.dibujado .m-sitio.f2{animation:a-mapa-f2 4.6s linear both}
+  @keyframes a-mapa-f1{0%,28%{fill:var(--accent-2);stroke:var(--accent-2)}36%,100%{fill:var(--bg);stroke:var(--borde-campo)}}
+  @keyframes a-mapa-f2{0%,68%{fill:var(--accent-2);stroke:var(--accent-2)}76%,100%{fill:var(--bg);stroke:var(--borde-campo)}}
+
+  /* El rato fijo: cada preocupación aparece a su hora (--a) y después
+     baja a la caja de la tarde (--b, desde --dx/--dy). */
+  .anim.a-rato.dibujado .m-preo{animation:a-ap .4s var(--entra) var(--a) both,a-rato .8s var(--suave) var(--b) both}
+  @keyframes a-rato{from{transform:translate(var(--dx),var(--dy))}to{transform:none}}
+
+  /* La cama: no te duermes, te levantas, luz baja, vuelves y la cama se
+     queda para dormir. */
+  .anim.a-cama.dibujado .m-yo{animation:a-cama-yo 5s var(--suave) both}
+  @keyframes a-cama-yo{
+    0%,17%{transform:none} 28%{transform:translate(78px,-52px)} 39%,58%{transform:translate(150px,31px)}
+    69%{transform:translate(78px,44px)} 80%,100%{transform:none}
+  }
+  .anim.a-cama.dibujado .m-inquieto{animation:a-cama-inq 5s linear both}
+  @keyframes a-cama-inq{0%,8%,16%{opacity:1}4%,12%{opacity:.25}19%,100%{opacity:0}}
+  .anim.a-cama.dibujado .m-cama{animation:a-cama-llena 5s linear both}
+  @keyframes a-cama-llena{0%,80%{fill:var(--bg)}100%{fill:var(--accent-soft)}}
+  .anim.a-cama.dibujado .m-luz{animation:a-cama-luz 5s linear both}
+  @keyframes a-cama-luz{0%,30%{opacity:.3}40%,100%{opacity:1}}
+
+  /* De lo pequeño a las ganas: la línea solo avanza (y sube) después de
+     que cada barra haya brotado. */
+  .anim.a-energia.dibujado .m-ganas{animation:a-ganas 4.6s linear both}
+  @keyframes a-ganas{
+    0%,11%{clip-path:inset(-12px calc(100% + 12px) -12px -12px)}
+    20%,30%{clip-path:inset(-12px calc(79.4% + 12px) -12px -12px)}
+    39%,50%{clip-path:inset(-12px calc(58.8% + 12px) -12px -12px)}
+    59%,70%{clip-path:inset(-12px calc(38.2% + 12px) -12px -12px)}
+    78%,89%{clip-path:inset(-12px calc(17.6% + 12px) -12px -12px)}
+    100%{clip-path:inset(-12px -12px -12px -12px)}
+  }
+
+  /* El listón: aparece donde va a llegar la barra (--a) y, en cuanto
+     llega, salta hacia arriba (--b). */
+  .anim.a-liston.dibujado .m-liston{animation:a-ap .4s var(--entra) var(--a) both,a-liston .45s cubic-bezier(.3,1.4,.5,1) var(--b) both}
+  @keyframes a-liston{from{transform:translateY(22px)}to{transform:none}}
+
+  /* Lo que enseña: los tres picos bajan solos a la fila de las redes. */
+  .anim.a-escaparate.dibujado .m-baja80{animation:a-ap .3s linear var(--d) both,a-escap .7s var(--suave) var(--d) both}
+  @keyframes a-escap{from{transform:translateY(-84px)}to{transform:none}}
+
+  /* El rebote: abajo, la bola sigue de largo. */
+  .anim.a-rebote.dibujado .m-pasa{animation:a-pasa 3s linear both}
+  @keyframes a-pasa{from{transform:translateX(-240px)}to{transform:none}}
+
+  /* El descanso como premio: se tachan tareas (--h), aparecen otras
+     nuevas (--n) y cada una empuja el descanso fuera del dibujo. */
+  .anim.a-descanso.dibujado .m-hecha{animation:a-hecha .3s linear var(--h) both}
+  .anim.a-descanso.dibujado .m-nueva{transform-box:fill-box;transform-origin:center;animation:a-pop .35s var(--entra) var(--n) both}
+  .anim.a-descanso.dibujado .m-nueva.m-hecha{animation:a-pop .35s var(--entra) var(--n) both,a-hecha .3s linear var(--h) both}
+  @keyframes a-hecha{from{fill:var(--bg);stroke:var(--borde-campo)}to{fill:var(--ink-2);stroke:var(--ink-2)}}
+  .anim.a-descanso.dibujado .m-empuja{animation:a-empuja 3.2s linear both}
+  @keyframes a-empuja{
+    0%,7.8%{transform:translateX(-136px)} 10%,19%{transform:translateX(-119px)} 21%,30%{transform:translateX(-102px)}
+    32%,41%{transform:translateX(-85px)} 43%,53%{transform:translateX(-68px)} 55%,64%{transform:translateX(-51px)}
+    66%,75%{transform:translateX(-34px)} 77%,86%{transform:translateX(-17px)} 88%,100%{transform:none}
+  }
+
+  /* Exigencia y retirada: vuelta y media sin alcanzarse. */
+  .anim.a-pareja.dibujado .m-gira{animation:a-gira 4s var(--traza) .3s both}
+  @keyframes a-gira{from{transform:rotate(-540deg)}to{transform:none}}
+  .anim.a-pareja.dibujado .m-onda{animation:a-onda 1s ease-out .4s 4 both}
+  @keyframes a-onda{from{opacity:.9;transform:scale(.5)}to{opacity:0;transform:scale(1.5)}}
+
+  /* La balanza: tres cosas buenas la inclinan un poco; una regular, del
+     todo. */
+  .anim.a-balanza.dibujado .m-viga{animation:a-viga 3.6s var(--suave) both}
+  @keyframes a-viga{
+    0%,12%{transform:none} 38%,50%{transform:rotate(-5deg)} 62%{transform:rotate(15deg)}
+    72%{transform:rotate(10.5deg)} 82%{transform:rotate(12.6deg)} 100%{transform:rotate(12deg)}
+  }
+  .anim.a-balanza.dibujado .m-cae{animation:a-ap .2s linear var(--d) both,a-cae .45s cubic-bezier(.5,0,.8,.4) var(--d) both}
+  @keyframes a-cae{from{transform:translateY(-60px)}to{transform:none}}
+}
+@media print{.anim .dibujo{opacity:1!important;animation:none!important}}
