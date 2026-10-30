@@ -724,8 +724,9 @@ async function panel() {
   DOCS = docs;
   const porFirmar = docs.filter(d => Number(d.requiere_firma) && Number(d.para_v) === Number(r.j.v)
                                      && (!d.firmado || faltanDatos(d)));
-  /* Lo que es para consultar (la rueda) está siempre a mano, no pendiente. */
-  const n = todas.filter(t => !(t.tipo === 'herramienta' && t.lectura && t.modo === 'vivo')).length + porFirmar.length;
+  /* Lo que es para consultar (la rueda, una guía) está siempre a mano, no
+     pendiente (30-10: cualquier lectura, no solo la que ya era «vivo»). */
+  const n = todas.filter(t => !(t.tipo === 'herramienta' && t.lectura)).length + porFirmar.length;
   $('resumen').textContent = n
     ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.')
     : 'No tienes nada pendiente.';
@@ -2489,7 +2490,7 @@ function pintaHerramientas(pendientes, vivas, copias, v) {
   const pie = (t) => {
     if (t.modo === 'registro') return t.hoy ? 'Registro · hoy: apuntado ✓'
       : (t.entradas ? 'Registro · último apunte: ' + fecha(t.ultima) : 'Registro · aún sin apuntes');
-    if (t.modo === 'vivo' && t.lectura) return 'Siempre a mano · para consultar';
+    if (t.lectura) return 'Siempre a mano · para consultar';
     if (t.modo === 'vivo') return t.actualizado ? 'Siempre a mano · cambiado el ' + fecha(t.actualizado) : 'Siempre a mano · por empezar';
     return t.caduca ? ('antes del ' + fecha(t.caduca)) : 'Pendiente';
   };
@@ -2565,6 +2566,10 @@ function pintaBloques(def, valores, modo, desactivar) {
   /* «Lo que acordamos en sesión» va el primero y destacado: es lo que
      más se lee (tareas para casa, 14-10). */
   const esAcordado = (b) => b.t === 'nota' && /^\s*lo que acordamos/i.test(b.negrita || '');
+  /* El nivel de los rótulos (30-10). La pantalla tiene su h1 (el título de
+     la herramienta): sin bloques «titulo» (h2), un apartado en h3 salta un
+     nivel, y axe lo marca (heading-order). h3 solo debajo de un «titulo». */
+  let nivel = 'h2';
   const bloques = (def.bloques || []).filter(esAcordado).concat((def.bloques || []).filter(b => !esAcordado(b)));
   bloques.forEach(b => {
     if (esAcordado(b)) {
@@ -2587,20 +2592,20 @@ function pintaBloques(def, valores, modo, desactivar) {
       raiz.appendChild(parrafo(b));
     } else if (b.t === 'titulo') {
       const h = el('h2', 'titulo-h' + (b.salto ? ' salto' : ''), b.texto);
-      raiz.appendChild(h);
+      raiz.appendChild(h); nivel = 'h3';
       if (b.sub) raiz.appendChild(el('p', 'apunte', b.sub));
     } else if (b.t === 'apartado') {
-      raiz.appendChild(el('h3', 'apartado-h', b.titulo));
+      raiz.appendChild(el(nivel, 'apartado-h', b.titulo));
       if (b.ayuda) raiz.appendChild(el('p', 'apunte', b.ayuda));
       if (b.id) raiz.appendChild(casilla(b.id, b.titulo, true, b.lineas));
     } else if (b.t === 'lista') {
-      if (b.titulo) raiz.appendChild(el('h3', 'apartado-h', b.titulo));
+      if (b.titulo) raiz.appendChild(el(nivel, 'apartado-h', b.titulo));
       const ul = el('ul');
       (b.items || []).forEach(t => ul.appendChild(el('li', null, t)));
       raiz.appendChild(ul);
     } else if (b.t === 'tabla' || b.t === 'tabla_lectura') {
       const lectura = b.t === 'tabla_lectura';
-      if (b.titulo) raiz.appendChild(el('h3', 'apartado-h', b.titulo));
+      if (b.titulo) raiz.appendChild(el(nivel, 'apartado-h', b.titulo));
       const envoltura = el('div', 'tabla-h');
       if (!lectura && b.id) envoltura.dataset.tabla = b.id;
       const tab = el('table');
@@ -2630,7 +2635,10 @@ function pintaBloques(def, valores, modo, desactivar) {
             const td = el('td');
             td.dataset.rotulo = c.rotulo;
             if (fija && fija[j] != null) td.textContent = fija[j];
-            else td.appendChild(casilla(b.id + '.' + n + '.' + c.id, c.rotulo, (b.alto || 0) > 1.2, 2));
+            /* En una fila fija (un día, una cosa acordada), la casilla dice
+               de cuál es: «Qué me llevo» a secas se repite en cada fila. */
+            else td.appendChild(casilla(b.id + '.' + n + '.' + c.id,
+              c.rotulo + (fija && fija[0] != null && j > 0 ? ' · ' + fija[0] : ''), (b.alto || 0) > 1.2, 2));
             tr.appendChild(td);
           });
           tb.appendChild(tr);
@@ -2641,7 +2649,7 @@ function pintaBloques(def, valores, modo, desactivar) {
       const fila = el('div', 'firma-h');
       [['paciente', 'Paciente'], ['profesional', 'Psicólogo']].forEach(([w, nombre]) => {
         const col = el('div', 'firma-col');
-        col.appendChild(el('h3', 'apartado-h', nombre));
+        col.appendChild(el(nivel, 'apartado-h', nombre));
         [['nombre', 'Nombre'], ['fecha', 'Fecha'], ['firma', 'Firma']].forEach(([q, r]) => {
           const caja = el('label', 'campo-h');
           caja.appendChild(el('span', 'rotulo', r));
@@ -2675,18 +2683,26 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   const cuerpo = $('h-cuerpo'); cuerpo.innerHTML = '';
   const pintado = pintaBloques(def, valores, soloLeer ? 'texto' : 'form', false);
   if (def.rueda) {
-    /* La rueda interactiva; los bloques, como versión en texto debajo. */
+    /* La rueda interactiva; los bloques, como versión en texto debajo.
+       `rueda: 'web'` = la asignación no traía los datos: los de rueda.js.
+       Si rueda.js no carga, queda el texto desplegado: se lee entera. */
     const zona = el('div', 'rueda-zona'); cuerpo.appendChild(zona);
-    cargaRueda().then(() => montaRueda(zona, def.rueda, null)).catch(() => {});
     const d = el('details', 'rueda-mas'); d.appendChild(el('summary', null, 'La rueda en texto'));
-    d.appendChild(pintado); cuerpo.appendChild(d);
+    d.appendChild(pintado);
+    if ((def.bloques || []).length) cuerpo.appendChild(d);
+    cargaRueda().then(() => {
+      const D = typeof def.rueda === 'object' ? def.rueda : window.RUEDA_DATOS;
+      if (!D || !D.familias) throw new Error('sin datos');
+      montaRueda(zona, D, null);
+    }).catch(() => { zona.remove(); d.open = true; });
   } else {
     cuerpo.appendChild(pintado);
     if (!soloLeer) ponAyudaRueda(def, cuerpo);
   }
   const lectura = def.tipo === 'lectura';
   $('h-enviar').textContent = 'Enviar';
-  $('h-pdf').textContent = 'Descargar en PDF'; $('h-pdf').hidden = false; $('h-todo').hidden = true;
+  /* El PDF imprime los bloques: una rueda sin bloques (solo el resguardo) no tendría nada que imprimir. */
+  $('h-pdf').textContent = 'Descargar en PDF'; $('h-pdf').hidden = !!def.rueda && !(def.bloques || []).length; $('h-todo').hidden = true;
   $('h-enviar').hidden = soloLeer || lectura;
   $('h-guardar').hidden = soloLeer || lectura || !HERR || !HERR.tarea;
   $('h-leido').hidden = !(lectura && !soloLeer) || !!def.rueda || (HERR && HERR.modo === 'vivo');
@@ -2700,14 +2716,29 @@ async function abrirHerramienta(id) {
   if (!r.ok || r.j.tipo !== 'herramienta') { await panel(); return; }
   /* Sellada (17-10): la definición viaja cifrada a SU clave. */
   let def = r.j.plantilla;
+  const esRueda = ((r.j.plantilla || {}).id || '') === RUEDA_ID;
   if (r.j.cifrado) {
-    if (Number(r.j.para_v) !== Number(miV)) {
-      $('panel-estado').textContent = 'Esta tarea se está actualizando tras el cambio de contraseña. En unos minutos la tienes.';
+    let abierta = null;
+    if (Number(r.j.para_v) === Number(miV)) { try { abierta = abrirDelMac(r.j.cifrado, miPublica, privada); } catch (_) {} }
+    /* La rueda es la misma para todo el mundo y está en la web: si su
+       sobre no se abre (clave cambiada, sobre roto), se enseña igual con
+       el resguardo y los datos públicos, sin esperar a que se reselle. */
+    if (!abierta && !esRueda) {
+      $('panel-estado').textContent = Number(r.j.para_v) !== Number(miV)
+        ? 'Esta tarea se está actualizando tras el cambio de contraseña. En unos minutos la tienes.'
+        : 'No se ha podido abrir esta tarea. Te la vuelvo a mandar.';
       return;
     }
-    try { def = abrirDelMac(r.j.cifrado, miPublica, privada); }
-    catch (_) { $('panel-estado').textContent = 'No se ha podido abrir esta tarea. Te la vuelvo a mandar.'; return; }
+    def = abierta || Object.assign({}, def, { bloques: [] });
   }
+  /* 30-10: la rueda se pinta por su id. Una asignación cuya definición no
+     trae la clave `rueda` (la del 25-10 si salió de un catálogo anterior,
+     o una sellada que ya no se abre) solo pintaba el texto. Los datos, los
+     de rueda.js: los mismos que /herramientas/rueda-de-las-emociones/. */
+  if (esRueda || def.id === RUEDA_ID) def = Object.assign({}, def, { id: RUEDA_ID, tipo: 'lectura', rueda: def.rueda || 'web' });
+  /* 29-10: la tarea a medida lleva su propio título (el acordado), que
+     es el de la fila; el de la plantilla puede ser el genérico. */
+  if (def.id === 'tarea-libre' && r.j.titulo) def = Object.assign({}, def, { titulo: r.j.titulo });
   /* 17-10: lo que vive (un documento que se edita siempre, un registro). */
   if (r.j.modo === 'vivo' || r.j.modo === 'registro') { await abrirViva(r, def); return; }
   HERR = { tarea: r.j.id, def, soloLeer: false };
@@ -2846,11 +2877,16 @@ function diaLargo(s) {
 }
 function uidNuevo() { const a = new Uint8Array(12); crypto.getRandomValues(a); return Array.from(a, b => b.toString(16).padStart(2, '0')).join(''); }
 /* --- La rueda de las emociones (25-10) -------------------------------- */
+const RUEDA_ID = 'rueda-emociones';
 let RUEDA_CARGA = null;
 function cargaRueda() {
   if (window.RUEDA_DATOS) return Promise.resolve();
   if (!RUEDA_CARGA) RUEDA_CARGA = new Promise((ok, mal) => {
-    const sc = document.createElement('script'); sc.src = 'rueda.js?v=2'; sc.onload = ok; sc.onerror = mal;
+    /* Relativa a propósito: el portal vive en la raíz de cuenta. (con o
+       sin barra final la página es «/»), igual que portal.css y cripto.js.
+       Un fallo de carga se puede reintentar: no se queda la promesa rota. */
+    const sc = document.createElement('script'); sc.src = 'rueda.js?v=3'; sc.onload = ok;
+    sc.onerror = () => { RUEDA_CARGA = null; sc.remove(); mal(new Error('rueda.js')); };
     document.head.appendChild(sc);
   });
   return RUEDA_CARGA;
@@ -2863,16 +2899,19 @@ function montaRueda(cont, D, usar) {
   svg.setAttribute('class', 'rueda'); svg.setAttribute('role', 'group');
   svg.setAttribute('aria-label', 'Rueda de las emociones: ocho familias en el centro y, hacia fuera, sus palabras de suave a intensa');
   caja.appendChild(svg); cont.appendChild(caja);
-  cont.appendChild(el('p', 'apunte rueda-ley', 'En el centro, la familia. Hacia fuera, cada vez más intensa.'));
+  cont.appendChild(el('p', 'apunte rueda-ley', 'En el centro, la familia. Hacia fuera, cada vez más intensa. Con teclado: Tab para entrar en la rueda y flechas para moverte por ella.'));
   const fams = el('ul', 'rueda-familias'); fams.setAttribute('aria-label', 'Las ocho familias'); cont.appendChild(fams);
   const ficha = el('section', 'caja rueda-ficha'); ficha.setAttribute('aria-live', 'polite');
-  ficha.appendChild(el('h3', null, 'Elige una emoción'));
+  /* En la pantalla de la herramienta va debajo del h1; en el diálogo,
+     debajo de su h2. Un nivel más en cada sitio (heading-order). */
+  const hN = cont.closest('dialog') ? 'h3' : 'h2';
+  ficha.appendChild(el(hN, null, 'Elige una emoción'));
   ficha.appendChild(el('p', 'nivel', 'Empieza por la familia que más se parece a lo que sientes.'));
   cont.appendChild(ficha);
   const muestra = (f, pal, k, desdeRueda) => {
     ficha.style.setProperty('--fam', f.color);
     ficha.innerHTML = '';
-    const h = el('h3', null, pal ? pal.palabra : f.nombre); h.tabIndex = -1; ficha.appendChild(h);
+    const h = el(hN, null, pal ? pal.palabra : f.nombre); h.tabIndex = -1; ficha.appendChild(h);
     ficha.appendChild(el('p', 'nivel', pal ? f.nombre + ' · intensidad ' + D.niveles[k] : 'Familia de emociones'));
     const dl = el('dl');
     const fila = (a, b) => { dl.appendChild(el('dt', null, a)); dl.appendChild(el('dd', null, b)); };
@@ -2887,7 +2926,7 @@ function montaRueda(cont, D, usar) {
       nv.forEach(p => {
         const b = el('button', null, p.palabra); b.type = 'button';
         if (pal && p.palabra === pal.palabra) b.setAttribute('aria-current', 'true');
-        b.addEventListener('click', () => { muestra(f, p, j); ficha.querySelector('h3').focus(); });
+        b.addEventListener('click', () => { muestra(f, p, j); ficha.querySelector(hN).focus(); });
         const l = el('li'); l.appendChild(b); ul.appendChild(l);
       });
       w.appendChild(ul);

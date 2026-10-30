@@ -38,25 +38,43 @@ function adr_modo_valido($m): ?string {
     return in_array($m, ['una', 'vivo', 'registro'], true) ? $m : null;
 }
 
-/** El modo de una herramienta: el que diga el catálogo o, si no, el de
- *  siempre para ese id. Una lectura (guía) es siempre de una vez. */
-/* 26-10: lo que es para consultar siempre (la rueda de las emociones):
-   «vivo» aunque sea de lectura, y aunque se asignara antes como «una». */
+/* Lo que es para consultar (30-10). Hasta el 29-10 una lectura (una guía)
+   era «de una vez»: salía pendiente hasta pulsar «Ya lo he leído», contaba
+   en el globo, en la víspera y en «Antes de la sesión». Adrián: «la rueda
+   no se rellena; es para que la conozcan. Es una herramienta, no una
+   tarea». Desde hoy TODA herramienta de `tipo: "lectura"` es «vivo»
+   (siempre a mano, en «Tus herramientas») y no cuenta como pendiente en
+   ningún sitio. Vale también para lo ya asignado: se decide al leer la
+   fila, no al guardarla.
+   ADR_SIEMPRE_A_MANO cubre la rueda por su id aunque una asignación vieja
+   no dijera bien su tipo (26-10). */
 const ADR_SIEMPRE_A_MANO = ['rueda-emociones'];
 
+/** ¿Es para consultar? Mira la plantilla guardada: la definición entera
+ *  si va en claro, o el resguardo (id y tipo) si va sellada. */
+function adr_es_lectura(array $t): bool {
+    if (($t['tipo'] ?? '') !== 'herramienta') return false;
+    $def = json_decode((string)($t['plantilla'] ?? ''), true);
+    if (!is_array($def)) return false;
+    return ($def['tipo'] ?? '') === 'lectura' || in_array((string)($def['id'] ?? ''), ADR_SIEMPRE_A_MANO, true);
+}
+
+/** El modo de una herramienta: el que diga el catálogo o, si no, el de
+ *  siempre para ese id. Lo de lectura, siempre «vivo». */
 function adr_modo_para(?array $def, $pedido = null): string {
     if (in_array((string)($def['id'] ?? ''), ADR_SIEMPRE_A_MANO, true)) return 'vivo';
-    if (($def['tipo'] ?? '') === 'lectura') return 'una';
+    if (($def['tipo'] ?? '') === 'lectura') return 'vivo';
     return adr_modo_valido($pedido) ?? adr_modo_valido($def['modo'] ?? null)
         ?? (ADR_MODOS[(string)($def['id'] ?? '')] ?? 'una');
 }
 
-/** El modo de una fila de `tareas`, también de las de antes del 17-10. */
+/** El modo de una fila de `tareas`, también de las de antes del 17-10 y
+ *  de las lecturas guardadas como «una» antes del 30-10. */
 function adr_modo_fila(array $t): string {
     if (($t['tipo'] ?? '') !== 'herramienta') return 'una';
-    $def = json_decode((string)($t['plantilla'] ?? ''), true);
-    if (is_array($def) && in_array((string)($def['id'] ?? ''), ADR_SIEMPRE_A_MANO, true)) return 'vivo';
+    if (adr_es_lectura($t)) return 'vivo';
     if ($m = adr_modo_valido($t['modo'] ?? null)) return $m;
+    $def = json_decode((string)($t['plantilla'] ?? ''), true);
     return adr_modo_para(is_array($def) ? $def : null);
 }
 
@@ -80,7 +98,7 @@ function adr_recordatorios(PDO $db, array $ADR): int {
     $ahora = adr_madrid();
     $hoy = $ahora->format('Y-m-d');
     $hm = $ahora->format('H:i');
-    $q = $db->prepare("SELECT r.cod, r.tarea, r.hora, p.correo FROM recordatorios r
+    $q = $db->prepare("SELECT r.cod, r.tarea, r.hora, p.correo, t.tipo, t.plantilla FROM recordatorios r
                        JOIN pacientes p ON p.cod = r.cod AND p.activado IS NOT NULL
                        JOIN tareas t ON t.id = r.tarea AND t.cod = r.cod
                        WHERE (r.ultimo IS NULL OR r.ultimo < ?) AND r.hora <= ?
@@ -88,6 +106,9 @@ function adr_recordatorios(PDO $db, array $ADR): int {
     $q->execute([$hoy, $hm]);
     $n = 0;
     foreach ($q->fetchAll() as $r) {
+        /* Lo que es para consultar no tiene «apunte de hoy» (30-10). La
+           cuenta no ofrece recordatorio para eso; esto es la red. */
+        if (adr_es_lectura($r)) continue;
         $limite = adr_madrid($hoy . 'T' . $r['hora'] . ':00')->modify('+3 hours');
         $ya = $db->prepare('SELECT 1 FROM entradas WHERE tarea = ? AND fecha = ? AND borrada = 0');
         $ya->execute([$r['tarea'], $hoy]);
@@ -163,6 +184,9 @@ function adr_actividad(PDO $db, string $cod, DateTimeImmutable $cita): array {
     $t->execute([$cod]);
     $pendientes = []; $pruebas = []; $herr = []; $registros = []; $vivos = [];
     foreach ($t->fetchAll() as $x) {
+        /* Lo de consultar (la rueda, una guía) ni está pendiente ni «se
+           actualiza»: no sale aquí ni en el «faltan N» de la mañana (30-10). */
+        if (adr_es_lectura($x)) continue;
         $modo = adr_modo_fila($x);
         $caducada = $x['caduca'] && substr((string)$x['caduca'], 0, 10) < adr_hoy();
         if ($x['hecho'] === null) {

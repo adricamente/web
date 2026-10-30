@@ -439,8 +439,9 @@ case 'mios': {
         $x['preguntas'] = ($x['tipo'] === 'cuestionario' && is_array($pl)) ? count($pl['items'] ?? []) : null;
         $x['modo'] = adr_modo_fila($x);
         $x['herr_id'] = $x['tipo'] === 'herramienta' ? adr_herr_id($x) : null;
-        /* 25-10: lo que es para consultar (la rueda) no cuenta como pendiente. */
-        $x['lectura'] = $x['tipo'] === 'herramienta' && is_array($pl) && ($pl['tipo'] ?? '') === 'lectura';
+        /* Lo que es para consultar (la rueda, una guía) no cuenta como
+           pendiente (25-10; 30-10: cualquier lectura, también por id). */
+        $x['lectura'] = adr_es_lectura($x);
         unset($x['plantilla']);
         $tareas[] = $x;
     }
@@ -459,8 +460,7 @@ case 'mios': {
     foreach ($vv->fetchAll() as $x) {
         $x['modo'] = adr_modo_fila($x);
         $x['herr_id'] = adr_herr_id($x);
-        $plv = json_decode((string)$x['plantilla'], true);
-        $x['lectura'] = is_array($plv) && ($plv['tipo'] ?? '') === 'lectura';
+        $x['lectura'] = adr_es_lectura($x);
         unset($x['plantilla']);
         if ($x['modo'] === 'una') continue;
         $vivas[] = $x;
@@ -1660,9 +1660,12 @@ case 'recordatorio': {
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
     $id = (int)($in['id'] ?? 0);
     $hora = (string)($in['hora'] ?? '');
-    $q = $db->prepare('SELECT 1 FROM tareas WHERE id = ? AND cod = ?');
+    $q = $db->prepare('SELECT tipo, plantilla FROM tareas WHERE id = ? AND cod = ?');
     $q->execute([$id, $cod]);
-    if (!$q->fetch()) adr_json(['error' => 'no existe'], 404);
+    $t = $q->fetch();
+    if (!$t) adr_json(['error' => 'no existe'], 404);
+    /* Lo que es para consultar no tiene apunte diario que recordar (30-10). */
+    if ($hora !== '' && adr_es_lectura($t)) adr_json(['error' => 'esto es para consultar: no lleva recordatorio'], 400);
     if ($hora === '') {
         $db->prepare('DELETE FROM recordatorios WHERE cod = ? AND tarea = ?')->execute([$cod, $id]);
         adr_json(['ok' => true, 'hora' => null]);

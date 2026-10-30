@@ -1,7 +1,9 @@
-/* La rueda de las emociones, para la cuenta (25-10). Se carga solo cuando
-   hace falta. Los datos son la clave `rueda` de catalogo_herramientas.json
-   (Offline): los mismos que la web pública. Psicoeducación, sin datos de
-   nadie, y nada de lo que se pulsa sale del navegador. */
+/* La rueda de las emociones, para la cuenta. Generado por
+   genera_rueda_web.py desde rueda-componente.js y rueda.json: no se edita a
+   mano. Se carga solo cuando hace falta. Los datos son la clave `rueda` de
+   catalogo_herramientas.json (Offline), los mismos que la web pública.
+   Psicoeducación, sin datos de nadie, y nada de lo que se pulsa sale del
+   navegador. */
 /* La rueda de las emociones: el dibujo, compartido por la web y la cuenta.
    Diseño y texto propios (Offline, src/docs_paciente/rueda_emociones.py);
    los datos son la clave `rueda` de catalogo_herramientas.json.
@@ -35,11 +37,32 @@ function pintaRueda(svg, D, alElegir) {
     e.textContent = t; svg.appendChild(e);
   }
   function giro(a) { var r = a * 180 / Math.PI; if (r > 90 && r < 270) r -= 180; if (r < -90) r += 180; return r; }
-  var marcada = null;
+  var marcada = null, botones = [];
+  /* Una sola parada de Tab para toda la rueda (28-10): con un tabindex="0"
+     por sector, salir de la rueda costaba 59 pulsaciones. Dentro, las
+     flechas recorren los sectores en el orden en que se dibujan.
+     aria-pressed dice cuál está elegida; la clase .sel solo se veía. */
   function boton(p, etiqueta, fn) {
-    p.setAttribute('tabindex', '0'); p.setAttribute('role', 'button'); p.setAttribute('aria-label', etiqueta);
-    p.addEventListener('click', function () { if (marcada) marcada.classList.remove('sel'); marcada = p; p.classList.add('sel'); fn(true); });
-    p.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.dispatchEvent(new MouseEvent('click')); } });
+    p.setAttribute('tabindex', botones.length ? '-1' : '0'); p.setAttribute('role', 'button');
+    p.setAttribute('aria-label', etiqueta); p.setAttribute('aria-pressed', 'false');
+    botones.push(p);
+    p.addEventListener('click', function () {
+      if (marcada) { marcada.classList.remove('sel'); marcada.setAttribute('aria-pressed', 'false'); }
+      marcada = p; p.classList.add('sel'); p.setAttribute('aria-pressed', 'true');
+      botones.forEach(function (b) { b.setAttribute('tabindex', b === p ? '0' : '-1'); });
+      fn(true);
+    });
+    p.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); p.dispatchEvent(new MouseEvent('click')); return; }
+      var i = botones.indexOf(p), n = botones.length, j = -1;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % n;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + n) % n;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = n - 1;
+      if (j < 0) return;
+      e.preventDefault();
+      p.setAttribute('tabindex', '-1'); botones[j].setAttribute('tabindex', '0'); botones[j].focus();
+    });
   }
   var n = D.familias.length, paso = 2 * Math.PI / n, ini = -Math.PI / 2 - paso / 2, etiquetas = [];
   D.familias.forEach(function (f, i) {

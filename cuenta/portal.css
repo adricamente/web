@@ -209,7 +209,7 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
 /* --- Herramientas ------------------------------------------------- */
 .bloque-titulo{font-size:17px;margin:26px 0 4px}
 .herr h2.titulo-h{margin:30px 0 4px}
-.herr h3.apartado-h{font-size:16.5px;margin:22px 0 4px}
+.herr .apartado-h{font-size:16.5px;font-weight:700;line-height:1.15;margin:22px 0 4px}
 .herr .apunte{margin:0 0 8px}
 /* El aviso de derechos de un instrumento: pequeño, pero entero y legible. */
 .copyright{font-size:13px;margin-top:18px;overflow-wrap:anywhere}
@@ -752,7 +752,7 @@ h3{font-weight:700}
 .rueda-palabras button:hover,.rueda-palabras button:focus-visible{border-color:var(--accent);background:var(--accent-soft)}
 @media (max-width:480px){.rueda-ficha dl{grid-template-columns:1fr}.rueda-ficha dd{margin-bottom:6px}}
 @media print{.rueda .et-anillo{display:inline}.rueda-caja{max-width:none}}
-.rueda-ficha h3{margin:0 0 4px;font-size:19px}
+.rueda-ficha h2,.rueda-ficha h3{margin:0 0 4px;font-size:19px;font-weight:700;line-height:1.15}
 .rueda-mas{margin:10px 0}
 .rueda-mas summary{cursor:pointer;font-weight:600}
 .rueda-ayuda{display:inline-flex;align-items:center;gap:6px;margin:6px 0 2px;font:inherit;font-size:14px;font-weight:600;color:var(--accent);
