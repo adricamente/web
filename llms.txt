@@ -1,6 +1,6 @@
 # adricamente
 
-> Web de Adrián Cuñat Andrés, psicólogo colegiado nº CM03836 (Colegio Oficial de Psicología de Castilla-La Mancha), cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos. No ejerce por cuenta propia: el servicio lo presta y lo factura el centro, con supervisión. Terapia psicológica online por videollamada para personas residentes en España (adultas), con terapias contextuales y cognitivo-conductuales, sobre todo para ansiedad, ánimo bajo, autoestima y procrastinación. Espacio seguro LGTBI+. Sesión de 60 minutos a 30 €; la primera media hora es gratis.
+> Web de Adrián Cuñat Andrés, psicólogo colegiado nº CM03836 (Colegio Oficial de Psicología de Castilla-La Mancha), cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos. No ejerce por cuenta propia: el servicio lo presta y lo factura el centro, con supervisión. Terapia psicológica online por videollamada para personas residentes en España (adultas), con terapias contextuales y cognitivo-conductuales, sobre todo para ansiedad, ánimo bajo, autoestima y procrastinación. Espacio seguro LGTBI+. Sesión de entre 50 y 60 minutos a 30 €; la primera media hora es gratis.
 
 Todo el contenido divulgativo es información general, con fuentes, y no sustituye una evaluación. En crisis en España: 024 (conducta suicida, 24 h, gratuito) o 112.
 
@@ -9,7 +9,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Sobre mí](https://adricamente.com/sobre-mi/): formación, situación profesional verificable y cómo trabajo.
 - [Media hora gratis](https://adricamente.com/primera-sesion/): qué pasa en la primera media hora y cómo es el proceso completo.
 - [Terapia online](https://adricamente.com/terapia-online/): cómo funciona, para quién sí y para quién no.
-- [Tarifas](https://adricamente.com/tarifas/): precio, pago con tarjeta y cancelaciones.
+- [Tarifas](https://adricamente.com/tarifas/): precio, pago con tarjeta, Apple Pay o Google Pay (Stripe) y cancelaciones.
 - [Newsletter](https://adricamente.com/newsletter/): una idea de las guías a la semana durante unos cinco meses, con un correo de muestra entero.
 - [Terapia online para la ansiedad](https://adricamente.com/areas/ansiedad/): qué la mantiene y cómo se trabaja en sesión.
 - [Terapia online para el ánimo bajo](https://adricamente.com/areas/estado-de-animo/): desgana, cansancio y cómo se trabaja.

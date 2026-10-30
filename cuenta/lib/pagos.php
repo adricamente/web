@@ -301,7 +301,7 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
         . '<p style="margin:0 0 18px">' . ($pila !== '' ? 'Hola, ' . $h($pila) . ':<br>' : '')
         . 'Tu sesión está reservada. Para dejarla confirmada solo falta el pago: puedes hacerlo ahora o en cualquier momento antes de la sesión.</p>'
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15.5px;line-height:1.4">'
-        . $fila('Sesión', 'Sesión individual · 60 minutos')
+        . $fila('Sesión', 'Sesión individual · entre 50 y 60 minutos')
         . $fila('Fecha', $h(mb_strtoupper(mb_substr($dia, 0, 1)) . mb_substr($dia, 1)) . ' de ' . $anio)
         . $fila('Hora', $hora . ' <span style="font-weight:400;color:#6C6963">(hora peninsular)</span>')
         . ($lugar ? $fila('Dónde', $h($lugar)) : '')
@@ -322,7 +322,7 @@ function adr_cita_avisa(array $ADR, PDO $db, array $cita): array {
 
     $texto = ($pila !== '' ? "Hola, $pila:\n\n" : '')
         . "Falta el pago de tu sesión. Tu sesión está reservada; para dejarla confirmada solo falta el pago: puedes hacerlo ahora o en cualquier momento antes de la sesión.\n\n"
-        . "Sesión: Sesión individual · 60 minutos\n"
+        . "Sesión: Sesión individual · entre 50 y 60 minutos\n"
         . "Fecha: $dia de $anio\nHora: $hora (hora peninsular)\n"
         . ($lugar ? "Dónde: $lugar\n" : '')
         . "Importe: $imp,00 € (exento de IVA)\n\n"
