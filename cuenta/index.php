@@ -138,6 +138,26 @@ $cuerpo .= <<<'HTML'
   <div class="pestana" id="p-inicio" data-p="inicio">
     <h1 id="hola">Tu espacio</h1>
 
+    <!-- «Tenla siempre a mano» (03-11): añadir la cuenta a la pantalla de
+         inicio del móvil. Arriba del todo porque es lo primero que tiene
+         sentido hacer al entrar desde el móvil, y compacto: dos líneas y
+         el paso exacto para ESTE teléfono y ESTE navegador (lo rellena
+         pintaInstalar). Cuándo sale lo decide el servidor (ver
+         adr_instalar_toca en api.php); si cabe en este dispositivo, el
+         navegador, sin mandar nada. En una visita en la que sale, la
+         tarjeta «¿Cómo me conociste?» espera a la siguiente: dos
+         preguntas seguidas al entrar ya son insistir. -->
+    <section class="caja instalar" id="c-instalar" aria-labelledby="t-instalar" hidden>
+      <h2 id="t-instalar">Tenla siempre a mano</h2>
+      <div id="in-cuerpo"></div>
+      <p class="cn-botones" id="in-botones">
+        <button class="enlace-boton" type="button" data-in="luego">Ahora no</button>
+        <button class="enlace-boton" type="button" data-in="no">No volver a mostrar</button>
+      </p>
+      <div class="nota bien" id="in-hecho" tabindex="-1" hidden><p id="in-hecho-t"></p></div>
+      <p class="apunte cn-estado" id="in-estado" role="status"></p>
+    </section>
+
     <!-- La próxima sesión. La publica el Mac (clase «agenda»): día, hora
          y el enlace de la videollamada, que se activa 10 minutos antes. -->
     <div class="tarjeta-sesion" id="c-agenda" hidden>
@@ -245,6 +265,13 @@ $cuerpo .= <<<'HTML'
       reconoces, cambia la contraseña y escríbeme.</p>
       <ul id="accesos" class="accesos"></ul>
       <p style="margin-top:14px"><a href="clave.php?olvide=1">Cambiar la contraseña</a></p>
+      <!-- La misma explicación que el aviso de arriba, siempre aquí, para
+           quien lo cerró. No sale si Adrián lo ha apagado para esta
+           persona. -->
+      <div class="aj-instalar" id="aj-instalar" hidden>
+        <h3>Añadir a la pantalla de inicio</h3>
+        <div id="aj-instalar-cuerpo"></div>
+      </div>
     </details>
   </div>
 
@@ -750,6 +777,7 @@ async function panel() {
   pintaAgenda(r.j.agenda, r.j.v);
   pintaPagos(r.j.pagos || []);
   pintaProgreso(r.j.progreso, r.j.v);
+  pintaInstalar(r.j.instalar);
   pintaConocido(r.j.conocido);
 
   /* Lo caducado no se enseña ni se cuenta: un número que no baja
@@ -1564,6 +1592,195 @@ function ahoraLocal() {
     signo + dd(Math.floor(off / 60)) + ':' + dd(off % 60);
 }
 
+/* --- «Tenla siempre a mano» (03-11) ------------------------------------
+   Añadir la cuenta a la pantalla de inicio. Qué teléfono y qué navegador
+   son se mira aquí, con el userAgent, y no se manda a ningún sitio: al
+   servidor solo le llega lo que pulsa («ahora no», «no volver a
+   mostrar», «instalada»), para no repetírselo.
+
+   Los pasos de cada navegador, comprobados el 03-11:
+     · Chrome: el botón de instalar (`beforeinstallprompt`) solo llega con
+       un service worker con `fetch` (developer.chrome.com/blog/
+       update-install-criteria). Por eso existe sw.js, que no guarda nada.
+     · Safari en iOS 26: «···» → Compartir → Añadir a pantalla de inicio,
+       con «Abrir como app web» (macrumors.com, how-to). Antes de iOS 26,
+       el botón Compartir de la barra.
+     · Chrome en iPhone (iOS 16.4 o posterior): Compartir, en la barra de
+       direcciones → Añadir a pantalla de inicio. Otros navegadores de
+       iPhone «probablemente» en Compartir: si no, que lo abra en Safari.
+     · Firefox en Android: menú ⋮ → Añadir a pantalla de inicio
+       (support.mozilla.org). Samsung Internet: menú ≡ → Añadir página a
+       → Pantalla de inicio. */
+let BIP = null;          /* el beforeinstallprompt guardado, si llega */
+let INSTALAR = null;     /* lo que dijo el servidor en la última vuelta */
+let IN_VISTO = false;    /* ha salido en esta visita: «¿Cómo me conociste?» espera */
+let IN_CERRADO = false;  /* lo ha cerrado en esta visita */
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  /* Sin esto Chrome pone su propia barrita abajo, encima de las pestañas. */
+  e.preventDefault();
+  BIP = e;
+  if (INSTALAR) pintaInstalar(INSTALAR);
+});
+window.addEventListener('appinstalled', () => { BIP = null; apuntaInstalada(); });
+if ('serviceWorker' in navigator) {
+  try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (_) {}
+}
+
+function enLaApp() {
+  try {
+    return ['standalone', 'fullscreen', 'minimal-ui'].some(m => matchMedia('(display-mode: ' + m + ')').matches)
+      || navigator.standalone === true;
+  } catch (_) { return navigator.standalone === true; }
+}
+function dispositivo() {
+  const ua = navigator.userAgent || '';
+  /* El iPad con iPadOS se presenta como un Mac: se distingue por la pantalla táctil. */
+  const ipad = /Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1;
+  const ios = /iPhone|iPad|iPod/.test(ua) || ipad;
+  const android = !ios && /Android/.test(ua);
+  let nav = 'otro';
+  if (/Instagram|FBAN|FBAV|FB_IAB|Line\/|GSA\//.test(ua)) nav = 'dentro';
+  else if (ios) {
+    if (/CriOS/.test(ua)) nav = 'chrome';
+    else if (/FxiOS|EdgiOS|OPiOS|DuckDuckGo|YaBrowser/.test(ua)) nav = 'otro';
+    else if (/Safari/.test(ua)) nav = 'safari';
+  } else if (android) {
+    if (/SamsungBrowser/.test(ua)) nav = 'samsung';
+    else if (/Firefox/.test(ua)) nav = 'firefox';
+    else if (/EdgA|OPR|Opera|YaBrowser/.test(ua)) nav = 'otro';
+    else if (/Chrome/.test(ua)) nav = 'chrome';
+  }
+  const v = /OS (\d+)_(\d+)/.exec(ua);
+  const sv = /Version\/(\d+)/.exec(ua);
+  return { ios, android, nav, ios_v: v ? Number(v[1]) + Number(v[2]) / 100 : null,
+           safari_v: sv ? Number(sv[1]) : null };
+}
+/* Los dibujos de los botones que hay que tocar. Propios, a trazo, del
+   color del texto; con el nombre escrito al lado, que es lo que se lee. */
+const IN_ICONO = {
+  compartir: '<svg class="ico-in" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4M8.5 10.5H6v10h12v-10h-2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  puntos: '<svg class="ico-in" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="12" cy="19" r="1.9"/></svg>',
+  mas: '<svg class="ico-in" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg>',
+  menu: '<svg class="ico-in" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+};
+const IN_CLAVE = '<p class="apunte">Al abrirla desde ahí te pedirá tu contraseña, como siempre: tu llave no se guarda en el móvil.</p>';
+const IN_OTROS = '<p class="apunte">Si otras personas usan tu móvil, quizá prefieras no añadirla: puedes entrar siempre desde el navegador.</p>';
+
+/* El texto para este dispositivo. Devuelve HTML hecho aquí, con texto
+   fijo: no lleva nada que venga de fuera. `boton`: el de un toque. */
+function pasosInstalar(d) {
+  const pasos = (lis) => '<ol class="in-pasos">' + lis.map(x => '<li>' + x + '</li>').join('') + '</ol>';
+  const intro = '<p>Ponla en la pantalla de inicio de tu móvil y ábrela como una app, de un toque.</p>';
+  if (enLaApp()) return { html: '<p>Ya la tienes en la pantalla de inicio: estás dentro de ella.</p>' };
+  if (d.nav === 'dentro') return { html: intro + '<p>Ahora estás dentro de otra app. Abre esta página en '
+    + (d.ios ? 'Safari' : 'Chrome') + ' (en el menú de esta app suele poner «Abrir en el navegador») y hazlo desde ahí.</p>' };
+  if (d.android && BIP) return { html: intro, boton: true };
+  if (d.android) {
+    const p = d.nav === 'chrome' ? pasos(['Toca el menú ' + IN_ICONO.puntos + ' (arriba a la derecha).',
+                                          'Elige <b>Añadir a pantalla de inicio</b> o <b>Instalar aplicación</b>.'])
+      : d.nav === 'firefox' ? pasos(['Toca el menú ' + IN_ICONO.puntos + '.', 'Elige <b>Añadir a pantalla de inicio</b>.'])
+      : d.nav === 'samsung' ? pasos(['Toca el menú ' + IN_ICONO.menu + ' (abajo a la derecha).',
+                                     'Elige <b>Añadir página a</b> y luego <b>Pantalla de inicio</b>.'])
+      : pasos(['Abre el menú del navegador.', 'Busca <b>Añadir a pantalla de inicio</b> o <b>Instalar</b>.'])
+        + '<p class="apunte">Si no aparece, abre esta página en Chrome y hazlo desde ahí.</p>';
+    return { html: intro + p };
+  }
+  if (d.ios) {
+    const fin = '<b>Añadir a pantalla de inicio</b> y luego <b>Añadir</b>.';
+    let p;
+    if (d.nav === 'safari' && (d.safari_v || 0) >= 26) {
+      p = pasos(['Toca ' + IN_ICONO.mas + ' (junto a la barra de direcciones) y luego <b>Compartir</b> ' + IN_ICONO.compartir + '.',
+                 'Baja y elige ' + fin, 'Deja activada la opción <b>Abrir como app web</b>.']);
+    } else if (d.nav === 'safari') {
+      p = pasos(['Toca <b>Compartir</b> ' + IN_ICONO.compartir + ' (el cuadrado con la flecha).', 'Baja y elige ' + fin]);
+    } else if (d.nav === 'chrome' && (d.ios_v || 0) >= 16.4) {
+      p = pasos(['Toca <b>Compartir</b> ' + IN_ICONO.compartir + ', en la barra de direcciones.', 'Baja y elige ' + fin]);
+    } else {
+      p = pasos(['Busca <b>Compartir</b> ' + IN_ICONO.compartir + ' en tu navegador.', 'Elige ' + fin])
+        + '<p class="apunte">Si no aparece, abre esta página en <b>Safari</b> y hazlo desde ahí.</p>';
+    }
+    return { html: intro + p };
+  }
+  /* Ordenador: el aviso no sale; en Ajustes, cómo hacerlo en el móvil. */
+  return { html: '<p>Desde el ordenador no hace falta. En el móvil, entra en tu cuenta y:</p>'
+    + '<ul class="in-pasos"><li><b>iPhone</b>, con Safari: <b>Compartir</b> ' + IN_ICONO.compartir
+    + ' → <b>Añadir a pantalla de inicio</b> (en iOS 26, primero ' + IN_ICONO.mas + ').</li>'
+    + '<li><b>Android</b>, con Chrome: menú ' + IN_ICONO.puntos + ' → <b>Añadir a pantalla de inicio</b>.</li></ul>' };
+}
+
+function pintaInstalar(s) {
+  INSTALAR = s || null;
+  const d = dispositivo();
+  const sugerir = !!(s && s.sugerir);
+  /* Dentro de la app instalada: que el servidor lo sepa una vez, para no
+     volver a sugerírselo cuando entre desde el navegador. */
+  if (s && enLaApp() && !s.instalada) { s.instalada = true; api('instalar', { accion: 'instalada' }); }
+  /* Ajustes: siempre que no esté apagado para esta persona. */
+  $('aj-instalar').hidden = !sugerir;
+  if (sugerir) {
+    const a = pasosInstalar(d);
+    $('aj-instalar-cuerpo').innerHTML = a.html;
+    if (a.boton) $('aj-instalar-cuerpo').appendChild(botonInstalar());
+  }
+  const caja = $('c-instalar');
+  const toca = sugerir && s.mostrar && !s.instalada && (d.ios || d.android) && !enLaApp() && !IN_CERRADO;
+  if (!toca) { if (!IN_CERRADO) caja.hidden = true; return; }
+  const a = pasosInstalar(d);
+  $('in-cuerpo').innerHTML = a.html + (d.ios ? IN_CLAVE : '') + IN_OTROS;
+  if (a.boton) $('in-cuerpo').insertBefore(botonInstalar(), $('in-cuerpo').children[1] || null);
+  $('in-botones').hidden = false;
+  $('in-hecho').hidden = true;
+  caja.hidden = false;
+  IN_VISTO = true;
+}
+function botonInstalar() {
+  const p = document.createElement('p');
+  p.className = 'in-boton';
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'boton'; b.textContent = 'Añadir a mi pantalla de inicio';
+  b.addEventListener('click', async () => {
+    if (!BIP) return;
+    const e = BIP; BIP = null;   /* prompt() solo vale una vez */
+    try {
+      await e.prompt();
+      const r = await e.userChoice;
+      if (r && r.outcome === 'accepted') { apuntaInstalada(); return; }
+    } catch (_) {}
+    /* Si dice que no, o falla: los pasos del menú, por si cambia de idea. */
+    if (INSTALAR) pintaInstalar(INSTALAR);
+  });
+  p.appendChild(b);
+  return p;
+}
+function inMensaje(t) {
+  $('in-cuerpo').innerHTML = '';
+  $('in-botones').hidden = true;
+  $('in-hecho-t').textContent = t;
+  $('in-hecho').hidden = false;
+  $('in-hecho').focus();
+}
+async function apuntaInstalada() {
+  if (INSTALAR) INSTALAR.instalada = true;
+  try { await api('instalar', { accion: 'instalada' }); } catch (_) {}
+  if (!$('c-instalar').hidden) { IN_CERRADO = true; inMensaje('Hecho. Ya la tienes en la pantalla de inicio.'); }
+}
+document.querySelectorAll('#c-instalar [data-in]').forEach(b => b.addEventListener('click', async () => {
+  const est = $('in-estado');
+  const botones = [...document.querySelectorAll('#c-instalar button')];
+  botones.forEach(x => { x.disabled = true; });
+  try {
+    const r = await api('instalar', { accion: b.dataset.in });
+    if (!r.ok) { est.textContent = 'No se ha podido guardar. Inténtalo otra vez.'; return; }
+    est.textContent = '';
+    IN_CERRADO = true;
+    if (INSTALAR) INSTALAR.mostrar = false;
+    inMensaje(r.j.otra_vez
+      ? 'Vale. Te lo recuerdo una sola vez más, otro día. También está en «Ajustes y seguridad».'
+      : 'Vale, no te lo vuelvo a mostrar. Si un día lo quieres, está en «Ajustes y seguridad».');
+  } finally { botones.forEach(x => { x.disabled = false; }); }
+}));
+
 /* --- «¿Cómo me conociste?» (03-11) ------------------------------------
    Ver el comentario de `conocido` en api.php. Aquí: se pinta si el
    servidor dice que toca y hay clave del Mac a la que sellar (sin ella
@@ -1572,7 +1789,9 @@ function ahoraLocal() {
    ni borra lo marcado. */
 function pintaConocido(c) {
   const caja = $('c-conocido');
-  if (!(c && c.mostrar && macPublica)) { caja.hidden = true; return; }
+  /* Una sola cosa por visita: si en esta ha salido «Tenla siempre a
+     mano», esta espera a la próxima vez que entre. */
+  if (!(c && c.mostrar && macPublica) || IN_VISTO) { caja.hidden = true; return; }
   if (!caja.hidden) return;
   $('f-conocido').reset();
   $('f-conocido').hidden = true;

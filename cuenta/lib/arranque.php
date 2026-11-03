@@ -84,6 +84,11 @@ function adr_cabeceras(): void {
         . " img-src 'self' data:;"
         . " font-src 'self';"
         . " connect-src 'self';"
+        /* 03-11: con default-src 'none', sin estas dos el navegador no
+           lee el manifiesto ni registra sw.js, y la cuenta no se puede
+           añadir a la pantalla de inicio. No avisa: solo no sale. */
+        . " manifest-src 'self';"
+        . " worker-src 'self';"
         . " form-action 'self';"
         . " frame-ancestors 'none';"
         . " base-uri 'none';"

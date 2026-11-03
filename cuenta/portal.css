@@ -791,3 +791,21 @@ h3{font-weight:700}
 .cn-estado:empty{margin:0}
 .caja.conocido .nota{margin:6px 0 2px}
 #cn-gracias:focus{outline:none}
+/* --- «Tenla siempre a mano» (03-11) --------------------------------
+   La misma nota gris que «¿Cómo me conociste?» (las dos no salen nunca
+   en la misma visita), arriba del todo y más corta. Los iconos van en
+   línea con el texto, del color del texto, para que se reconozcan en la
+   barra del navegador. */
+.caja.instalar{background:var(--surface-2);border-color:transparent;padding:16px 18px 12px;margin:0 0 22px}
+.caja.instalar > h2{margin:0 0 6px;font-size:1.45rem}
+.caja.instalar p{margin:0 0 8px}
+.caja.instalar .apunte{font-size:14.5px}
+.in-pasos{margin:4px 0 10px;padding-left:1.3em}
+.in-pasos li{margin:0 0 4px;line-height:1.45}
+.ico-in{width:1.15em;height:1.15em;vertical-align:-.2em;color:var(--accent)}
+.ico-in circle{fill:currentColor}
+.in-boton{margin:6px 0 10px}
+.aj-instalar{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
+.aj-instalar h3{font-size:1.15rem;margin:0 0 6px}
+.aj-instalar p{font-size:15px}
+#in-hecho:focus{outline:none}

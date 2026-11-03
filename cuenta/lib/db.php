@@ -194,6 +194,23 @@ function adr_db(array $ADR): PDO {
                «conocido»: el servidor no sabe qué ha marcado. */
             'conocido_cerrado' => 'TEXT',
             'conocido_luego'   => 'TEXT',
+            /* 03-11: el aviso «Tenla siempre a mano» (añadir la cuenta a
+               la pantalla de inicio). En el servidor y no en el navegador
+               porque en iPhone la app de la pantalla de inicio no comparte
+               almacenamiento con Safari, y un aviso apagado en uno
+               volvería a salir en el otro.
+                 instalar_entradas  cuántas veces ha entrado desde que
+                                    existe el aviso (empieza en 0 para
+                                    todas, también las que ya existían);
+                 instalar_estado    NULL = por enseñar; 'luego:N' = otra
+                                    vez a partir de la entrada N; 'no' =
+                                    no volver a mostrar; 'instalada';
+                 instalar_no        1 = Adrián ha marcado en la consola
+                                    «No sugerirle añadir la cuenta al
+                                    móvil». Manda sobre todo lo demás. */
+            'instalar_entradas' => 'INTEGER NOT NULL DEFAULT 0',
+            'instalar_estado'   => 'TEXT',
+            'instalar_no'       => 'INTEGER NOT NULL DEFAULT 0',
         ],
     ];
     foreach ($columnas as $tabla => $cols) {

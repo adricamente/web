@@ -182,6 +182,25 @@ function adr_retira(PDO $db): void {
 }
 adr_retira($db);
 
+/* --- «Tenla siempre a mano» (03-11) ----------------------------------
+   El aviso para añadir la cuenta a la pantalla de inicio del móvil. Sale
+   la primera vez que entra; con «Ahora no», una vez más, dos entradas
+   después (la tercera, si lo vio en la primera), y luego nunca. Nunca con
+   «No volver a mostrar», con la app ya instalada, desde un ordenador, o si
+   Adrián lo ha apagado para esa persona (`instalar_no`, desde la consola).
+
+   Lo que llega aquí es solo lo que pulsó. Qué teléfono y qué navegador usa
+   no sale del dispositivo. */
+function adr_instalar_toca(array $f): array {
+    $sugerir = !(int)($f['instalar_no'] ?? 0);
+    $e = $f['instalar_estado'] ?? null;
+    $toca = $sugerir && ($e === null
+        || (preg_match('/^luego:(\d+)$/', (string)$e, $m) && (int)$f['instalar_entradas'] >= (int)$m[1]));
+    return ['sugerir' => $sugerir, 'mostrar' => $toca,
+            'ultima' => $e !== null && str_starts_with((string)$e, 'luego:'),
+            'instalada' => $e === 'instalada'];
+}
+
 $a  = $_GET['a'] ?? '';
 $in = adr_entrada();
 
@@ -214,8 +233,8 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-03a';
-const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos'];
+const ADR_VERSION = '2026-11-03b';
+const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos', 'instalar', 'instalar_no'];
 
 switch ($a) {
 
@@ -263,7 +282,9 @@ case 'entrar': {
     adr_apunta($db, $f['cod'], 'entrada');
 
     adr_freno_limpia($db, 'ent:' . $correo);
-    $db->prepare('UPDATE pacientes SET ultimo = ? WHERE cod = ?')
+    /* instalar_entradas: para «Ahora no» del aviso de la pantalla de
+       inicio, que vuelve dos entradas después (ver `instalar`). */
+    $db->prepare('UPDATE pacientes SET ultimo = ?, instalar_entradas = instalar_entradas + 1 WHERE cod = ?')
        ->execute([adr_ahora(), $f['cod']]);
     adr_sesion_pon($f['cod'], $ADR['secreto']);
     adr_json(['ok' => true, 'envuelta' => adr_b64($f['envuelta'])]);
@@ -418,7 +439,8 @@ case 'mios': {
        la necesita, y el navegador no la tiene guardada en ningún sitio
        —lo que guarda es la privada envuelta—. No es un secreto: es
        pública, y sale de la misma cuenta que acaba de autenticarse. */
-    $p = $db->prepare('SELECT publica, publica_v, conocido_cerrado, conocido_luego FROM pacientes WHERE cod = ?');
+    $p = $db->prepare('SELECT publica, publica_v, conocido_cerrado, conocido_luego,
+                              instalar_entradas, instalar_estado, instalar_no FROM pacientes WHERE cod = ?');
     $p->execute([$cod]);
     $f = $p->fetch();
     /* Y lo que tiene pendiente. Va aquí y no en otra llamada porque
@@ -526,6 +548,12 @@ case 'mios': {
               'conocido' => ['mostrar' => $f['conocido_cerrado'] === null
                                  && ($f['conocido_luego'] === null || $f['conocido_luego'] <= adr_hoy()),
                              'ultima' => $f['conocido_luego'] !== null],
+              /* El aviso de la pantalla de inicio (03-11). El servidor
+                 solo dice si TOCA; si este dispositivo lo admite, si es un
+                 móvil y si ya está instalada lo mira el navegador, y no se
+                 manda. `sugerir` = false: Adrián lo ha apagado para esta
+                 persona, y entonces tampoco sale en Ajustes. */
+              'instalar' => adr_instalar_toca($f),
               'progreso' => $grafica ? ['id' => (int)$grafica['id'],
                                         'para_v' => (int)$grafica['para_v']] : null,
               'agenda' => $agenda ? ['id' => (int)$agenda['id'],
@@ -805,6 +833,39 @@ case 'hecho': {
     $db->prepare('UPDATE tareas SET hecho = ? WHERE id = ? AND cod = ?')
        ->execute([adr_ahora(), (int)$in['id'], $cod]);
     adr_json(['ok' => true]);
+}
+
+/* «Tenla siempre a mano»: lo que pulsó. Ver adr_instalar_toca(), arriba. */
+case 'instalar': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $acc = (string)($in['accion'] ?? '');
+    if (!in_array($acc, ['luego', 'no', 'instalada'], true)) adr_json(['error' => 'acción no válida'], 400);
+    if (!adr_freno($db, 'instalar:' . $cod, 20, 3600)) adr_json(['error' => 'despacio'], 429);
+    $q = $db->prepare('SELECT instalar_entradas, instalar_estado FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $f = $q->fetch();
+    if (!$f) adr_json(['error' => 'no existe'], 404);
+    $e = $f['instalar_estado'];
+    if ($acc === 'instalada') $nuevo = 'instalada';
+    elseif ($acc === 'no') $nuevo = ($e === 'instalada') ? 'instalada' : 'no';
+    /* El primer «Ahora no» aplaza dos entradas; el segundo cierra. */
+    elseif ($e === null) $nuevo = 'luego:' . ((int)$f['instalar_entradas'] + 2);
+    else $nuevo = ($e === 'instalada') ? 'instalada' : 'no';
+    $db->prepare('UPDATE pacientes SET instalar_estado = ? WHERE cod = ?')->execute([$nuevo, $cod]);
+    adr_json(['ok' => true, 'otra_vez' => str_starts_with($nuevo, 'luego:')]);
+}
+
+/* La casilla de la consola «No sugerirle añadir la cuenta al móvil». Hay
+   casos en los que un icono en el móvil no es buena idea (quién más mira
+   ese teléfono), y eso lo sabe Adrián, no el navegador. */
+case 'instalar_no': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $u = $db->prepare('UPDATE pacientes SET instalar_no = ? WHERE cod = ?');
+    $u->execute([!empty($in['no']) ? 1 : 0, $cod]);
+    if (!$u->rowCount()) adr_json(['error' => 'no existe'], 404);
+    adr_json(['ok' => true, 'cod' => $cod, 'no' => !empty($in['no'])]);
 }
 
 /* --- «¿Cómo me conociste?» (03-11) -------------------------------------
@@ -1348,7 +1409,8 @@ case 'panel_mac': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
 
     /* 'hoja' es el buzón de las hojas sueltas, no un paciente. */
-    $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo, aviso_privacidad, ultimo_aviso
+    $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo, aviso_privacidad, ultimo_aviso,
+                             instalar_estado, instalar_no
                       FROM pacientes WHERE cod <> 'hoja' ORDER BY alta")->fetchAll();
     $pend = [];
     /* Sin «conocido»: `recoger` no los devuelve, y un «1 por recoger»
@@ -1399,6 +1461,10 @@ case 'panel_mac': {
                alguien restablezca la contraseña, y si no se enseña en
                algún sitio no se entera nadie. */
             'por_reenviar' => $viejos[$p['cod']] ?? 0,
+            /* El aviso de la pantalla de inicio: qué pulsó (null, luego:N,
+               no, instalada) y si está apagado desde la consola. */
+            'instalar_estado' => $p['instalar_estado'],
+            'instalar_no' => (bool)(int)$p['instalar_no'],
         ];
     }
     $m = $db->query("SELECT valor FROM ajustes WHERE clave = 'mac_publica'")->fetch();
