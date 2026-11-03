@@ -28,6 +28,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 
 - [Ansiedad: la guía completa](https://adricamente.com/guias/ansiedad/): Qué es, cuándo deja de ser normal, los tipos (cada uno con su guía), las cifras en España y qué tratamiento tiene más evidencia.
 - [Miedo a hablar en público](https://adricamente.com/guias/miedo-a-hablar-en-publico/): Guía completa: cuándo son nervios y cuándo ansiedad social, qué mantiene el miedo, qué tiene estudios y cómo preparar tu próxima presentación paso a paso.
+- [Exponer en clase](https://adricamente.com/guias/exponer-en-clase/): Guía completa: por qué exponer en la universidad se hace tan cuesta arriba, y qué hacer la víspera, el día de la exposición y cualquier día de clase.
 - [Ataque de ansiedad](https://adricamente.com/guias/ataque-de-ansiedad/): Qué hacer en el momento, qué no hacer y por qué vuelve. Con una respiración guiada y un ejercicio para anclarte.
 - [No puedo dejar de pensar](https://adricamente.com/guias/no-puedo-dejar-de-pensar/): Guía completa: rumiar y preocuparse, por qué la cabeza no se apaga (sobre todo de noche), qué lo mantiene y qué tiene estudios detrás.
 - [Síntomas físicos de la ansiedad](https://adricamente.com/guias/sintomas-fisicos-de-la-ansiedad/): Corazón, aire, hormigueo, estómago, mareo: por qué el cuerpo hace cada cosa, qué mantiene el miedo al síntoma y cuándo hay que ir al médico o llamar al 112. Con un mapa para tocar.
@@ -121,6 +122,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Diario de sueño](https://adricamente.com/herramientas/diario-de-sueno/)
 - [Tiempo de preocupación](https://adricamente.com/herramientas/tiempo-de-preocupacion/)
 - [Pilla el sesgo](https://adricamente.com/herramientas/sesgos/)
+- [Mi plan para la exposición](https://adricamente.com/herramientas/plan-exposicion/)
 - [Glosario de psicología](https://adricamente.com/glosario/)
 
 
