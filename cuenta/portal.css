@@ -763,3 +763,31 @@ h3{font-weight:700}
 .rueda-dialogo::backdrop{background:rgba(37,35,31,.5)}
 .rueda-dialogo .rd-cab{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-16px;background:#fff;padding:4px 0 8px;z-index:1}
 .rueda-dialogo h2{margin:0;font-size:20px}
+/* --- «¿Cómo me conociste?» (03-11) ---------------------------------
+   Una caja gris clara, no un renglón con raya como las tareas: tiene
+   que leerse como una nota al margen, no como algo que le toca hacer.
+   Las casillas, con el mismo .opcion de los cuestionarios y 44 px de
+   alto para el dedo; a dos columnas cuando caben, para que abierta no
+   ocupe dos pantallas en el ordenador. */
+.caja.conocido{background:var(--surface-2);border-color:transparent;padding:18px 18px 14px;margin:0 0 26px}
+.caja.conocido > h2{margin:0 0 6px;font-size:1.45rem}
+.caja.conocido .apunte{margin:0 0 10px}
+.caja.conocido fieldset{border:0;padding:0;margin:4px 0 0;min-width:0}
+.caja.conocido legend{font-size:15px;color:var(--ink-2);padding:0;margin:0 0 6px}
+.cn-opciones{display:grid;grid-template-columns:1fr;gap:2px}
+.cn-opciones .opcion{font-weight:400;font-size:16px;line-height:1.3;margin:0;min-height:44px;padding:8px 8px}
+.cn-opciones .opcion:hover{background:var(--surface)}
+.cn-otro{flex-wrap:wrap;cursor:default}
+.cn-otro > label{margin:0;font-weight:400;font-size:16px;cursor:pointer}
+/* height:auto: .opcion input le pondría los 19 px de la casilla. */
+.cn-otro input[type=text]{flex:1 1 12rem;min-width:0;width:auto;height:auto;padding:8px 11px;accent-color:auto}
+@media (min-width:640px){
+  .cn-opciones{grid-template-columns:1fr 1fr;column-gap:14px}
+  .cn-opciones .cn-otro{grid-column:1 / -1}
+}
+.cn-botones{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:12px 0 0}
+.cn-botones .boton{padding:11px 20px}
+.cn-estado{margin:8px 0 0}
+.cn-estado:empty{margin:0}
+.caja.conocido .nota{margin:6px 0 2px}
+#cn-gracias:focus{outline:none}

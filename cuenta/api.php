@@ -208,14 +208,14 @@ require_once __DIR__ . '/lib/herramientas.php';
    eran unas 1.500 filas al día que no decían nada y tapaban lo que sí. */
 const ADR_RUTINA = ['recoger', 'recogido', 'claves', 'panel_mac', 'registro',
                     'firmas', 'pendientes', 'estado', 'por_reenviar', 'estado_pagos', 'estado_correo',
-                    'correos_pendientes'];
+                    'correos_pendientes', 'conocidos'];
 if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
     adr_apunta($db, 'mac', $a);
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-10-27b';
-const ADR_ACCIONES_NUEVAS = ['precargar', 'version'];
+const ADR_VERSION = '2026-11-03a';
+const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos'];
 
 switch ($a) {
 
@@ -418,7 +418,7 @@ case 'mios': {
        la necesita, y el navegador no la tiene guardada en ningún sitio
        —lo que guarda es la privada envuelta—. No es un secreto: es
        pública, y sale de la misma cuenta que acaba de autenticarse. */
-    $p = $db->prepare('SELECT publica, publica_v FROM pacientes WHERE cod = ?');
+    $p = $db->prepare('SELECT publica, publica_v, conocido_cerrado, conocido_luego FROM pacientes WHERE cod = ?');
     $p->execute([$cod]);
     $f = $p->fetch();
     /* Y lo que tiene pendiente. Va aquí y no en otra llamada porque
@@ -518,6 +518,14 @@ case 'mios': {
     adr_json(['v' => (int)$f['publica_v'], 'publica' => adr_b64($f['publica']),
               'cod' => $cod,
               'mac_publica' => $m ? $m['valor'] : null,
+              /* La tarjeta «¿Cómo me conociste?» (03-11). No es una tarea:
+                 no está en `tareas`, así que no cuenta en el globo, ni en
+                 la víspera, ni en los recordatorios, ni en antes_sesion.
+                 `ultima`: ya se aplazó una vez y el próximo «ahora no» la
+                 cierra para siempre. */
+              'conocido' => ['mostrar' => $f['conocido_cerrado'] === null
+                                 && ($f['conocido_luego'] === null || $f['conocido_luego'] <= adr_hoy()),
+                             'ultima' => $f['conocido_luego'] !== null],
               'progreso' => $grafica ? ['id' => (int)$grafica['id'],
                                         'para_v' => (int)$grafica['para_v']] : null,
               'agenda' => $agenda ? ['id' => (int)$agenda['id'],
@@ -799,6 +807,78 @@ case 'hecho': {
     adr_json(['ok' => true]);
 }
 
+/* --- «¿Cómo me conociste?» (03-11) -------------------------------------
+   Una tarjeta del panel, no una tarea: sale a toda cuenta activa (también
+   a las que se den de alta después) sin que nadie la asigne y sin
+   correo. Se cierra contestando, con «Prefiero no decirlo» o con el
+   segundo «Ahora no».
+
+   «Ahora no» la aplaza 30 días UNA vez. Volver a preguntar cada semana a
+   alguien que está en terapia por una estadística de captación sería
+   exactamente lo que no tiene que ser esta cuenta.
+
+   Lo marcado va sellado a la clave del Mac, como un mensaje. «Prefiero
+   no decirlo» no manda sobre: ha dicho que no, y un sobre «no quiso»
+   sería mandar algo igual. */
+case 'conocido': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $acc = (string)($in['accion'] ?? '');
+    if (!in_array($acc, ['enviar', 'no_decir', 'luego'], true)) adr_json(['error' => 'acción no válida'], 400);
+    if (!adr_freno($db, 'conocido:' . $cod, 10, 3600)) adr_json(['error' => 'despacio'], 429);
+    $q = $db->prepare('SELECT conocido_cerrado, conocido_luego FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $f = $q->fetch();
+    if (!$f) adr_json(['error' => 'no existe'], 404);
+    /* Dos pestañas, o un doble toque: la segunda vez no se guarda nada
+       (ni un segundo sobre). */
+    if ($f['conocido_cerrado'] !== null) adr_json(['ok' => true, 'ya' => true, 'otra_vez' => false]);
+    $cierra = $db->prepare('UPDATE pacientes SET conocido_cerrado = ? WHERE cod = ?');
+    if ($acc === 'enviar') {
+        /* Once casillas y un «otro» de 120 caracteres no llegan a 2 kB
+           sellados; 8 kB es margen, no invitación. */
+        $cifrado = adr_deb64($in['cifrado'] ?? null);
+        if (!$cifrado || strlen($cifrado) > 8192) adr_json(['error' => 'respuesta no válida'], 400);
+        $db->beginTransaction();
+        try {
+            $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase)
+                          VALUES (?,1,'Cómo me conociste',?,?,'conocido')")
+               ->execute([$cod, $cifrado, adr_ahora()]);
+            $cierra->execute([adr_ahora(), $cod]);
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            adr_json(['error' => 'no se ha podido guardar'], 500);
+        }
+        adr_json(['ok' => true, 'otra_vez' => false]);
+    }
+    if ($acc === 'luego' && $f['conocido_luego'] === null) {
+        $hasta = (new DateTimeImmutable(adr_hoy(), new DateTimeZone('Europe/Madrid')))->modify('+30 days')->format('Y-m-d');
+        $db->prepare('UPDATE pacientes SET conocido_luego = ? WHERE cod = ?')->execute([$hasta, $cod]);
+        adr_json(['ok' => true, 'otra_vez' => true]);
+    }
+    $cierra->execute([adr_ahora(), $cod]);
+    adr_json(['ok' => true, 'otra_vez' => false]);
+}
+
+/* Lo que el Mac recoge de «¿Cómo me conociste?». Sin `cod`, a propósito:
+   para contar por dónde llega la gente no hace falta saber quién, y lo
+   que no sale de aquí no hay que borrarlo allí. Se confirma con
+   `recogido`, como cualquier sobre, y se purga a los mismos 30 días. */
+case 'conocidos': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $q = $db->query("SELECT id, cifrado, creado FROM sobres
+                     WHERE direccion = 1 AND clase = 'conocido' AND recogido IS NULL
+                     ORDER BY id LIMIT 500");
+    adr_json(['sobres' => array_map(fn($s) => ['id' => (int)$s['id'], 'dia' => substr((string)$s['creado'], 0, 10),
+                                              'cifrado' => adr_b64($s['cifrado'])], $q->fetchAll()),
+              /* Para el porcentaje de respuesta, sin nombres. */
+              'cuentas_activas' => (int)$db->query("SELECT COUNT(*) FROM pacientes
+                  WHERE activado IS NOT NULL AND cod <> 'hoja'")->fetchColumn(),
+              'cerradas' => (int)$db->query("SELECT COUNT(*) FROM pacientes
+                  WHERE conocido_cerrado IS NOT NULL AND cod <> 'hoja'")->fetchColumn()]);
+}
+
 /* --- Lo que hace el Mac ---------------------------------------------- */
 
 case 'recoger': {
@@ -817,8 +897,11 @@ case 'recoger': {
        sobres pueden ser cientos de megas en una sola respuesta. Se corta
        por tamaño: lo que no quepa sale en la pasada siguiente, cinco
        minutos después. Siempre sale al menos uno. */
-    $q = $db->query('SELECT id, cod, cifrado, creado, clase FROM sobres
-                     WHERE direccion = 1 AND recogido IS NULL ORDER BY id LIMIT 50');
+    /* «conocido» no sale por aquí: todo lo de esta lista va a la ingesta
+       clínica, y cómo te conoció alguien no es historia clínica (ni es
+       del centro). Lo pide el Mac aparte, con `conocidos`. */
+    $q = $db->query("SELECT id, cod, cifrado, creado, clase FROM sobres
+                     WHERE direccion = 1 AND recogido IS NULL AND clase <> 'conocido' ORDER BY id LIMIT 50");
     $out = []; $bytes = 0;
     foreach ($q->fetchAll() as $s) {
         $bytes += strlen($s['cifrado']);
@@ -1268,9 +1351,11 @@ case 'panel_mac': {
     $ps = $db->query("SELECT cod, correo, alta, activado, publica_v, ultimo, aviso_privacidad, ultimo_aviso
                       FROM pacientes WHERE cod <> 'hoja' ORDER BY alta")->fetchAll();
     $pend = [];
-    foreach ($db->query('SELECT cod, COUNT(*) n FROM sobres
-                         WHERE direccion = 1 AND recogido IS NULL
-                         GROUP BY cod')->fetchAll() as $r) $pend[$r['cod']] = (int)$r['n'];
+    /* Sin «conocido»: `recoger` no los devuelve, y un «1 por recoger»
+       que no baja nunca parece un sobre atascado. Van en su cuenta aparte. */
+    foreach ($db->query("SELECT cod, COUNT(*) n FROM sobres
+                         WHERE direccion = 1 AND recogido IS NULL AND clase <> 'conocido'
+                         GROUP BY cod")->fetchAll() as $r) $pend[$r['cod']] = (int)$r['n'];
     $tar = []; $desde = [];
     foreach ($db->query('SELECT cod, COUNT(*) n, MIN(creado) d FROM tareas
                          WHERE hecho IS NULL GROUP BY cod')->fetchAll() as $r) {
@@ -1317,7 +1402,9 @@ case 'panel_mac': {
         ];
     }
     $m = $db->query("SELECT valor FROM ajustes WHERE clave = 'mac_publica'")->fetch();
-    adr_json(['pacientes' => $out, 'mac_publica' => $m ? $m['valor'] : null]);
+    adr_json(['pacientes' => $out, 'mac_publica' => $m ? $m['valor'] : null,
+              'conocidos_por_recoger' => (int)$db->query("SELECT COUNT(*) FROM sobres
+                  WHERE direccion = 1 AND clase = 'conocido' AND recogido IS NULL")->fetchColumn()]);
 }
 
 /* Los documentos de un paciente que hay que volver a sellar, con su

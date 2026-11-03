@@ -91,6 +91,9 @@ function adr_db(array $ADR): PDO {
          sesion      la hoja de «lo que nos llevamos» de cada sesión
          documento   consentimiento, material, cosas que se guardan
          ejercicio   lo que ha entregado él
+         conocido    su respuesta a «¿Cómo me conociste?» (03-11): no
+                     es clínica y NO sale por `recoger`, que la mandaría
+                     a la historia; el Mac la pide con `conocidos`
 
        Va en claro, y es lo ÚNICO que el servidor sabe de un sobre
        además de su tamaño. No es contenido clínico: es en qué estante
@@ -184,6 +187,13 @@ function adr_db(array $ADR): PDO {
             /* «portal-v1 2026-10-05T…»: la versión de la información de
                protección de datos que aceptó al activar, y cuándo. */
             'aviso_privacidad' => 'TEXT',
+            /* 03-11: la tarjeta «¿Cómo me conociste?». Aquí solo hay
+               CUÁNDO se cerró (contestada, «prefiero no decirlo» o el
+               segundo «ahora no») y hasta qué día se aplazó. Lo que
+               contesta va sellado al Mac en un sobre de clase
+               «conocido»: el servidor no sabe qué ha marcado. */
+            'conocido_cerrado' => 'TEXT',
+            'conocido_luego'   => 'TEXT',
         ],
     ];
     foreach ($columnas as $tabla => $cols) {
