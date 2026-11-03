@@ -2,7 +2,9 @@
 /* ===================================================================
    «Prefiero que me llames», el formulario de /empieza/ (03-11).
    -------------------------------------------------------------------
-   Recibe nombre, teléfono y una franja opcional y lo manda en un correo
+   Recibe nombre, teléfono, si prefiere llamada o WhatsApp (opcional) y
+   de qué historia viene (la UTM de la visita, que pone el guion de la
+   página; nunca nada de salud), y lo manda en un correo
    a hola@, por el mismo Gmail de hola@ (solo enviar) que usa el portal:
    reutiliza cuenta/lib/correo.php, como h/enviar.php reutiliza el
    arranque. No crea tablas, ni guarda el formulario, ni lo escribe en
@@ -44,7 +46,7 @@ const LL_A = 'hola@adricamente.com';
 const LL_WA = '34611702119';  // el mismo de /contacto/
 const LL_WA_VER = '611 70 21 19';
 const LL_CAL = 'https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=';
-const LL_FRANJAS = ['' => 'me da igual', 'manana' => 'por la mañana', 'mediodia' => 'a mediodía', 'tarde' => 'por la tarde'];
+const LL_VIAS = ['' => 'le da igual', 'llamada' => 'llamada', 'whatsapp' => 'WhatsApp'];
 
 ini_set('display_errors', '0');
 $LL_JSON = str_contains((string)($_SERVER['HTTP_ACCEPT'] ?? ''), 'application/json');
@@ -69,12 +71,12 @@ if ($ADR) {
    Un solo sitio para todos: el guion de la página enseña los que le
    llegan en el JSON. */
 function ll_alternativas(): string {
-    return ' Mientras tanto, <a href="' . LL_CAL . 'fallo" target="_blank" rel="noopener">elige tú el día y la hora</a>'
+    return ' Mientras tanto, <a href="' . LL_CAL . 'fallo">elige tú el día y la hora</a>'
          . ' o <a href="https://wa.me/' . LL_WA . '" target="_blank" rel="noopener">escríbeme por WhatsApp al ' . LL_WA_VER . '</a>.';
 }
 function ll_texto(string $que): string {
     return match ($que) {
-        'confirma' => '<p><strong>Un paso más.</strong> Comprueba que el teléfono está bien y pulsa «Quiero que me llames» otra vez.</p>',
+        'confirma' => '<p><strong>Un paso más.</strong> Comprueba que el teléfono está bien y pulsa «Enviar mi teléfono» otra vez.</p>',
         'freno'    => '<p><strong>No lo he podido enviar:</strong> han llegado muchos avisos seguidos desde esta conexión.' . ll_alternativas() . '</p>',
         'envio'    => '<p><strong>No lo he podido enviar</strong>, por un fallo de la web y no tuyo.' . ll_alternativas() . '</p>',
         default    => '',
@@ -155,9 +157,10 @@ function ll_pagina(string $modo, array $v = [], array $err = [], string $aviso =
         foreach (['nombre', 'telefono'] as $k) {
             if (($v[$k] ?? '') !== '') $h = str_replace('id="ll-' . $k . '"', 'id="ll-' . $k . '" value="' . $e($v[$k]) . '"', $h);
         }
-        if (($v['franja'] ?? '') !== '') {
-            $h = str_replace('<option value="' . $e($v['franja']) . '">', '<option value="' . $e($v['franja']) . '" selected>', $h);
+        if (($v['via'] ?? '') !== '') {
+            $h = str_replace('name="via" value="' . $e($v['via']) . '"', 'name="via" value="' . $e($v['via']) . '" checked', $h);
         }
+        if (($v['origen'] ?? '') !== '') $h = str_replace('name="origen" value=""', 'name="origen" value="' . $e($v['origen']) . '"', $h);
         if (!empty($v['privacidad'])) $h = str_replace('name="privacidad" value="1"', 'name="privacidad" value="1" checked', $h);
         if ($ficha !== '') $h = str_replace('name="ficha" value=""', 'name="ficha" value="' . $e($ficha) . '"', $h);
         foreach ($err as $k => $m) {
@@ -186,13 +189,14 @@ function ll_responde(string $estado, array $extra = [], array $v = [], int $codi
 /* --- El correo a hola@ ---------------------------------------------
    Dice lo justo para devolver la llamada en un toque. El asunto lleva
    el nombre para encontrarlo en la bandeja; el teléfono va dentro. */
-function ll_manda(array $ADR, string $nombre, array $tel, string $franja): bool {
+function ll_manda(array $ADR, string $nombre, array $tel, string $via, string $origen): bool {
     $a = (string)($ADR['empieza_a'] ?? LL_A);
     $cuando = (new DateTimeImmutable('now', new DateTimeZone('Europe/Madrid')))->format('d/m/Y H:i');
-    $f = LL_FRANJAS[$franja] ?? LL_FRANJAS[''];
+    $f = LL_VIAS[$via] ?? LL_VIAS[''];
+    $o = $origen !== '' ? str_replace('&', ' · ', $origen) : 'sin UTM propia (instagram · historia · empieza)';
     $asunto = 'Llamar para la media hora: ' . $nombre;
     $texto = "$nombre ha dejado su teléfono en adricamente.com/empieza/ para que le llames y reservar la media hora gratis.\n\n"
-           . "Teléfono: {$tel['ver']}\nMejor momento: $f\nEnviado: $cuando\n\n"
+           . "Teléfono: {$tel['ver']}\nPrefiere: $f\nDe dónde viene: $o\nEnviado: $cuando\n\n"
            . "Llamar: tel:{$tel['tel']}\nWhatsApp: https://wa.me/{$tel['wa']}\n\n"
            . "En la web se le dice que le llamas o le escribes en uno o dos días laborables desde el " . LL_WA_VER . ".\n"
            . "No se le ha preguntado el motivo.\n\n"
@@ -200,7 +204,7 @@ function ll_manda(array $ADR, string $nombre, array $tel, string $franja): bool 
     $e = fn(string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     $html = adr_correo_t('Quiere que le llames')
           . adr_correo_p('<strong>' . $e($nombre) . '</strong> ha dejado su teléfono en /empieza/ para reservar la media hora gratis.')
-          . adr_correo_p('Teléfono: <strong>' . $e($tel['ver']) . '</strong><br>Mejor momento: ' . $e($f) . '<br>Enviado: ' . $e($cuando))
+          . adr_correo_p('Teléfono: <strong>' . $e($tel['ver']) . '</strong><br>Prefiere: ' . $e($f) . '<br>De dónde viene: ' . $e($o) . '<br>Enviado: ' . $e($cuando))
           . adr_correo_boton('tel:' . $tel['tel'], 'Llamar')
           . adr_correo_p('<a href="https://wa.me/' . $e($tel['wa']) . '">Escribirle por WhatsApp</a>')
           . adr_correo_p('En la web se le dice que le llamas o le escribes en uno o dos días laborables desde el ' . LL_WA_VER
@@ -247,11 +251,16 @@ if ($metodo !== 'POST') {
     exit;
 }
 
-$franja = (string)($_POST['franja'] ?? '');
+$via = (string)($_POST['via'] ?? '');
+/* La UTM de la visita, tal como la deja el guion (utm_x=valor&…). Lo que
+   no tenga esa forma se tira sin avisar: no es un dato de la persona. */
+$origen = (string)($_POST['origen'] ?? '');
+if (!preg_match('/^utm_(?:source|medium|campaign)=[a-z0-9_-]{1,40}(?:&utm_(?:source|medium|campaign)=[a-z0-9_-]{1,40}){0,2}$/', $origen)) $origen = '';
 $v = [
     'nombre'     => ll_limpia((string)($_POST['nombre'] ?? ''), 60),
     'telefono'   => ll_limpia((string)($_POST['telefono'] ?? ''), 20),
-    'franja'     => array_key_exists($franja, LL_FRANJAS) ? $franja : '',
+    'via'        => array_key_exists($via, LL_VIAS) ? $via : '',
+    'origen'     => $origen,
     'privacidad' => !empty($_POST['privacidad']),
 ];
 
@@ -270,7 +279,7 @@ if ($v['nombre'] === '' || !preg_match('/\p{L}/u', $v['nombre'])) {
 }
 $tel = ll_telefono($v['telefono']);
 if (!$tel) $err['telefono'] = 'Revisa el teléfono: son 9 cifras, o con el prefijo delante si no es español.';
-if (!$v['privacidad']) $err['privacidad'] = 'Marca la casilla para que pueda usar tu teléfono para llamarte.';
+if (!$v['privacidad']) $err['privacidad'] = 'Marca la casilla para confirmar que has leído cómo uso tu teléfono.';
 if ($err) ll_responde('campos', ['campos' => $err], $v, 422);
 
 if (!$ADR) {
@@ -295,7 +304,7 @@ try {
         error_log('empieza: frenado');
         ll_responde('freno', [], $v, 429);
     }
-    $ok = ll_manda($ADR, $v['nombre'], $tel, $v['franja']);
+    $ok = ll_manda($ADR, $v['nombre'], $tel, $v['via'], $v['origen']);
 } catch (Throwable $t) {
     error_log('empieza: ' . get_class($t));
     $ok = false;
