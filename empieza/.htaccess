@@ -1,0 +1,12 @@
+# /empieza/ es la página de las historias de Instagram (03-11).
+# Fuera del buscador, también la respuesta de enviar.php, que es la
+# misma página con el formulario contestado. La página ya lleva su
+# <meta name="robots">; la cabecera cubre lo que no es HTML.
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+  # Lo que contesta el formulario no se guarda en ninguna caché: lleva
+  # lo que alguien acaba de escribir.
+  <Files "enviar.php">
+    Header set Cache-Control "no-store"
+  </Files>
+</IfModule>

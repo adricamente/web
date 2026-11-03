@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Media hora gratis con Adrián Cuñat, psicólogo | adricamente</title>
+  <meta name="description" content="Reserva la primera media hora gratis por videollamada, o déjame tu teléfono y te llamo. Sin tarjeta y sin compromiso.">
+  <!-- Para las historias de Instagram, no para el buscador: la página
+       que tiene que salir en Google es /primera-sesion/. -->
+  <meta name="robots" content="noindex">
+
+  <meta property="og:title" content="Media hora gratis con Adrián Cuñat, psicólogo">
+  <meta property="og:description" content="Reserva la primera media hora gratis por videollamada, o déjame tu teléfono y te llamo.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adricamente.com/empieza/">
+  <meta property="og:image" content="https://adricamente.com/og/primera-sesion.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Media hora para contarlo, y sin sorpresas. Adrián Cuñat Andrés, psicólogo colegiado nº CM03836.">
+  <meta property="og:site_name" content="adricamente">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
+  <link rel="icon" href="/favicon-512.png?v=2" type="image/png" sizes="512x512">
+  <link rel="icon" href="/marca/adricamente-baldosa.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
+  <meta name="theme-color" content="#FAF9F5">
+
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+  <script>window.medir=function(e){try{
+    if(window.plausible)window.plausible(e);
+    if(window.umami&&window.umami.track)window.umami.track(e);
+  }catch(_){}};</script>
+
+  <!-- Las mismas fuentes que el resto de la web, y por lo mismo: las
+       cinco se pintan en la primera pantalla (ver la portada). -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-800-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-400-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/archivo-latin-700-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-600-normal.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+        href="/fuentes/source-sans-3-latin-700-normal.woff2">
+  <link rel="stylesheet" href="/estilos.min.css?v=78">
+  <style>
+  /* Lo propio de /empieza/. Va aquí y no en estilos.css porque solo lo
+     usa esta página (como las cajas de la newsletter): así no hay que
+     subir el ?v= de la hoja en las ciento y pico páginas. Lo genera
+     rueda/empieza.py. */
+  .em-cab{padding:14px 0 12px;border-bottom:1px solid var(--line)}
+  .em-cab .marca{margin:0;font-size:19px}
+  .em-hero{padding-top:22px}
+  .em-hero h1{margin:0 0 12px;font-size:clamp(2.05rem,9.4vw,3rem)}
+  .em-hero .grande{margin-bottom:16px}
+  /* La foto y la identificación, en una fila. La identificación entera
+     es larga (cuatro líneas a 390 px) y por eso va pequeña y al lado de
+     la cara, no debajo del titular, que es lo que se lee primero. */
+  .em-quien{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center;margin:0 0 18px}
+  .em-foto{display:block;width:96px;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r-m)}
+  .em-quien p{margin:0;font-size:14.5px;line-height:1.4;color:var(--ink-2)}
+  .em-quien p strong{display:block;font-size:16.5px;color:var(--ink);margin-bottom:2px}
+  .em-hero .boton{max-width:420px}
+  .em-cta .boton{display:block}
+  .em-bajo{margin:8px 0 14px;font-size:14.5px}
+  /* «Prefiero que me llames»: un <details> que parece el botón
+     secundario. Sin guion se abre y se cierra igual. */
+  .ll{max-width:420px;margin:0 0 6px}
+  .ll > summary{display:flex;align-items:center;justify-content:center;gap:10px;list-style:none;max-width:none}
+  .ll > summary::-webkit-details-marker{display:none}
+  .ll > summary::after{content:"";width:8px;height:8px;margin-top:-4px;border:solid currentColor;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .ll[open] > summary::after{margin-top:4px;transform:rotate(-135deg)}
+  .ll-panel{margin-top:12px;padding:18px 18px 6px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-m)}
+  .ll-intro{font-size:15.5px;margin-bottom:14px}
+  .ll-campo{margin:0 0 14px}
+  .ll-campo label{display:block;margin:0 0 6px;font-size:15px;font-weight:600;color:var(--ink)}
+  .ll-opc{font-weight:400;color:var(--muted)}
+  .ll input[type=text],.ll input[type=tel],.ll select{font:inherit;font-size:16.5px;color:var(--ink);background:var(--surface);
+    border:1px solid var(--borde-campo);border-radius:var(--r-s);padding:12px 14px;width:100%;min-height:48px}
+  .ll select{appearance:auto}
+  .ll [aria-invalid=true]{border-color:var(--error);box-shadow:0 0 0 1px var(--error)}
+  .ll-err{margin:6px 0 0;font-size:14.5px;font-weight:600;color:var(--error)}
+  .acepto + .ll-err{margin:-8px 0 12px}
+  .ll .acepto{margin:4px 0 14px}
+  .ll .acepto input{width:24px;height:24px;margin:0}
+  .ll-trampa{display:none}
+  .ll-enviar{margin:0 0 12px}
+  .ll-nota{font-size:14.5px;color:var(--muted)}
+  .ll-aviso:empty{display:none}
+  .ll-aviso .mensaje{margin-bottom:14px}
+  .ll-hecho{padding-bottom:6px}
+  .ll-hecho:focus{outline:none}
+  .ll-hecho-t{font-size:1.15rem;margin-bottom:8px}
+  .ll-num{white-space:nowrap;font-variant-numeric:tabular-nums}
+  .ll button[disabled]{opacity:.7;cursor:progress}
+  .em-sec{margin-top:clamp(44px,6vw,72px)}
+  .em-pasos{margin-top:8px}
+  .em-pie{margin-top:48px}
+  .em-pie p{margin-bottom:10px}
+  .em-pie .legal-pie a{margin-right:2px}
+  @media (min-width:760px){
+    .em-quien{grid-template-columns:132px minmax(0,1fr);gap:20px}
+    .em-foto{width:132px}
+    .em-quien p{font-size:15.5px}
+  }
+  </style>
+</head>
+
+<body>
+<a class="saltar" href="#principal">Saltar al contenido</a>
+<!-- Sin menú y sin enlaces a la web, a propósito: esta página la abre
+     quien viene de una historia a reservar, y cada enlace de más es una
+     salida. Lo genera rueda/empieza.py; no se edita aquí. -->
+<header class="em-cab">
+  <div class="contenedor"><p class="marca">adricamente</p></div>
+</header>
+
+<div class="contenedor">
+  <main id="principal">
+
+  <section class="em-hero" aria-labelledby="em-t">
+    <h1 id="em-t">Tu primera media hora, gratis</h1>
+    <p class="grande">Me cuentas qué te está pasando y sales sabiendo <strong>qué veo y qué se podría hacer</strong>. Por videollamada, sin tarjeta y sin compromiso.</p>
+    <div class="em-quien">
+      <img class="em-foto" src="/fotos/adrian-sobremi-240.webp" srcset="/fotos/adrian-sobremi-240.webp 240w, /fotos/adrian-sobremi-300.webp 300w, /fotos/adrian-sobremi.webp 460w" sizes="(min-width: 760px) 132px, 96px" width="240" height="300" loading="eager" fetchpriority="high" decoding="async" alt="Adrián Cuñat, psicólogo, de frente, con polo verde, sonriendo">
+      <p><strong>Adrián Cuñat Andrés</strong>Psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.</p>
+    </div>
+    <p class="em-cta" style="margin:0"><a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_arriba')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=arriba" target="_blank" rel="noopener">Elegir día y hora</a></p>
+    <p class="apunte em-bajo">Se abre mi calendario: eliges un hueco y te llega el enlace por correo.</p>
+    <details class="ll" id="te-llamo">
+      <summary class="boton secundario ll-abre">Prefiero que me llames</summary>
+      <div class="ll-panel">
+        <div class="ll-aviso" id="ll-aviso" role="alert"></div>
+        <form class="ll-form" id="ll-form" method="post" action="/empieza/enviar.php#te-llamo">
+          <p class="ll-intro">Déjame tu nombre y tu teléfono y <strong>te llamo o te escribo en uno o dos días laborables</strong> para buscar un hueco. No hace falta que me cuentes nada más.</p>
+          <div class="ll-campo">
+            <label for="ll-nombre">Tu nombre</label>
+            <input id="ll-nombre" name="nombre" type="text" autocomplete="given-name" maxlength="60" required aria-describedby="ll-nombre-err">
+            <p class="ll-err" id="ll-nombre-err" hidden></p>
+          </div>
+          <div class="ll-campo">
+            <label for="ll-telefono">Teléfono</label>
+            <input id="ll-telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" required aria-describedby="ll-telefono-err">
+            <p class="ll-err" id="ll-telefono-err" hidden></p>
+          </div>
+          <div class="ll-campo">
+            <label for="ll-franja">Mejor momento para llamarte <span class="ll-opc">(si quieres)</span></label>
+            <select id="ll-franja" name="franja">
+              <option value="">Me da igual</option>
+              <option value="manana">Por la mañana</option>
+              <option value="mediodia">A mediodía</option>
+              <option value="tarde">Por la tarde</option>
+            </select>
+          </div>
+          <!-- El campo trampa: oculto con CSS, y no con hidden, porque los
+               robots que rellenan formularios saltan los type="hidden" y
+               rellenan los que parecen de verdad. Una persona no lo ve ni
+               llega a él con el tabulador. -->
+          <div class="ll-trampa"><label for="ll-web">No escribas aquí</label><input id="ll-web" name="web" type="text" tabindex="-1" autocomplete="off"></div>
+          <input type="hidden" name="ficha" value="">
+          <label class="acepto"><input id="ll-privacidad" name="privacidad" value="1" type="checkbox" required aria-describedby="ll-privacidad-err"><span>Uso tu nombre y tu teléfono solo para llamarte por esta cita, y la web no los guarda. <a href="/privacidad.html#te-llamo" target="_blank" rel="noopener">Más detalles en privacidad</a>.</span></label>
+          <p class="ll-err" id="ll-privacidad-err" hidden></p>
+          <p class="ll-enviar"><button class="boton" type="submit">Quiero que me llames</button></p>
+          <p class="ll-nota">¿Prefieres escribir tú? <a href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20vengo%20de%20Instagram.%20Quiero%20reservar%20la%20media%20hora%20gratis." target="_blank" rel="noopener" onclick="window.medir&&window.medir('clic_whatsapp_empieza')">Escríbeme por WhatsApp</a>. Si estás en peligro ahora mismo, no esperes a que te llame: <a href="tel:024">024</a> o <a href="tel:112">112</a>.</p>
+        </form>
+        <div class="ll-hecho" id="ll-hecho" tabindex="-1" hidden>
+          <p class="ll-hecho-t"><strong>Recibido, gracias.</strong></p>
+          <p>Te llamo o te escribo por WhatsApp en uno o dos días laborables desde el <strong class="ll-num">611 70 21 19</strong>. Guárdalo para reconocerlo cuando suene.</p>
+          <p>Si prefieres no esperar, puedes elegir tú el día y la hora ahora:</p>
+          <p class="ll-enviar"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_tras_llamada')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=tras_llamada" target="_blank" rel="noopener">Elegir día y hora</a></p>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <section class="em-sec" aria-labelledby="em-pasos">
+  <h2 id="em-pasos">Qué pasa en esos 30 minutos</h2>
+  <div class="pv-par obj">
+    <figure class="pv-foto pv-obj m-c">
+      <picture><source media="(min-width: 760px)" srcset="/fotos/a/p-videollamada-sofa-v480.webp" width="480" height="600"><img src="/fotos/a/p-videollamada-sofa-c480.webp" srcset="/fotos/a/p-videollamada-sofa-c480.webp 480w" sizes="100vw" width="480" height="360" loading="lazy" decoding="async" alt="Una chica en el sofá con auriculares y un portátil, con su perro al lado"></picture>
+    </figure>
+    <div class="pv-texto">
+  <ol class="pasos em-pasos">
+    <li>
+      <strong>Eliges día y hora</strong>
+      En el calendario ves los huecos libres. Te llega un correo con el
+      enlace de la videollamada y, antes de la cita, un recordatorio.
+    </li>
+    <li>
+      <strong>Me cuentas, sin guion</strong>
+      Qué te trae y desde cuándo, en el orden que te salga. La mayor parte
+      del tiempo hablas tú; si te bloqueas, tiro yo con preguntas.
+    </li>
+    <li>
+      <strong>Te digo lo que veo</strong>
+      Si creo que puedo ayudarte y cómo lo haríamos. Si no soy el sitio, a
+      dónde ir. No tienes que decidir nada ese día.
+    </li>
+  </ol>
+    </div>
+  </div>
+  </section>
+
+  <div class="franja marino" id="precio">
+  <h2>Lo que cuesta, sin letra pequeña</h2>
+  <div class="tarifa">
+    <p class="precio"><span class="importe"><span class="cifra">30</span><span class="moneda">€</span></span> <span>por sesión de entre 50 y 60 minutos, si decides seguir</span></p>
+    <ul class="condiciones">
+      <li>La primera media hora, gratis y sin tarjeta</li>
+      <li>Cada sesión se paga antes, con tarjeta, Apple Pay o Google Pay</li>
+      <li>Sin bonos, sin paquetes y sin permanencia</li>
+      <li>Cancelas hasta 24 horas antes, sin coste</li>
+    </ul>
+    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=medio" target="_blank" rel="noopener">Elegir día y hora</a></p>
+  </div>
+  </div>
+
+  <section class="em-sec" aria-labelledby="em-cuenta">
+  <h2 id="em-cuenta">Si seguimos, lo tienes todo en tu cuenta</h2>
+  <div class="pv-par movil">
+    <figure class="pv-foto pv-movil doble">
+      <span class="pv-marcos">
+      <span class="pv-marco"><img src="/fotos/cuenta/sesion.webp" srcset="/fotos/cuenta/sesion.webp 390w, /fotos/cuenta/sesion-2x.webp 780w" sizes="(min-width: 760px) 150px, 34vw" width="390" height="780" loading="lazy" decoding="async" alt="Captura del resumen de una sesión en la cuenta: lo que vimos y lo que toca esa semana"></span>
+      <span class="pv-marco"><img src="/fotos/cuenta/evolucion.webp" srcset="/fotos/cuenta/evolucion.webp 390w, /fotos/cuenta/evolucion-2x.webp 780w" sizes="(min-width: 760px) 150px, 34vw" width="390" height="780" loading="lazy" decoding="async" alt="Captura de la gráfica de un cuestionario en la cuenta, con las medidas de cada semana"></span>
+      </span>
+      <figcaption>Capturas de una cuenta de prueba con datos inventados.</figcaption>
+    </figure>
+    <div class="pv-texto">
+      <p>Después de cada sesión te dejo <strong>un resumen corto de lo que vimos</strong> en una cuenta privada, en el móvil o el ordenador, con tus ejercicios y tus cuestionarios en una gráfica.</p>
+      <p>Va cifrada: lo que escribes solo lo leemos tú, yo y quien supervisa mis prácticas, con el mismo secreto profesional.</p>
+    </div>
+  </div>
+  </section>
+
+  <section class="em-sec" aria-labelledby="em-faq">
+  <h2 id="em-faq">Lo que se suele preguntar antes</h2>
+  <div class="faq">
+      <details>
+        <summary>¿Tengo que preparar algo?</summary>
+        <p>No. Ni ordenarlo ni traerlo escrito. ¿No sabes por dónde empezar? Esa es la primera pregunta que te hago, y se responde hablando. Solo necesitas un sitio donde hablar tranquilo media hora: el coche aparcado vale.</p>
+      </details>
+      <details>
+        <summary>¿Y si me pongo nervioso o nerviosa?</summary>
+        <p>Es lo más normal y no pasa nada. Si te quedas en blanco, tiro yo con preguntas; si lloras, esperamos y seguimos cuando puedas. No es un examen y no tienes que hacerlo bien.</p>
+      </details>
+      <details>
+        <summary>¿Es por videollamada?</summary>
+        <p>Sí, por Google Meet. El enlace te llega por correo al reservar y otra vez en el recordatorio. En el móvil puede pedirte la aplicación, así que mejor instalarla antes. Es mejor con la cámara encendida, pero si el primer día no puedes, hablamos con ella apagada.</p>
+      </details>
+      <details>
+        <summary>¿Queda constancia en algún sitio?</summary>
+        <p>Lo que me cuentas está bajo secreto profesional: sin tu permiso no sale del centro ni de mi supervisión, y la sesión no se graba. Lo que queda es la cita en mi calendario (tu nombre, tu correo y la hora) y, si hay que anotar algo, va a tu historia clínica, que custodia el centro sanitario Neurococos como obliga la ley. En esta web no queda nada de lo que hablamos.</p>
+      </details>
+  </div>
+  </section>
+
+  <section class="cinta pv-con-foto">
+    <figure class="pv-cinta pv-persona">
+      <img src="/fotos/a/p-chico-calle-v480.webp" sizes="(min-width: 760px) 200px, 34vw" width="480" height="600" loading="lazy" decoding="async" alt="Un chico con auriculares y mochila caminando por la acera, mirando el móvil">
+    </figure>
+    <h2>¿Buscamos un hueco?</h2>
+    <p>Treinta minutos, <strong>gratis</strong>, por videollamada.</p>
+    <p>
+      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_final')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=final" target="_blank" rel="noopener">Elegir día y hora</a>
+    </p>
+    <p class="tranquiliza">O, si lo prefieres, <a href="#te-llamo">déjame tu teléfono y te llamo</a>.</p>
+    <p class="apunte" style="margin-bottom:0">Online y solo para mayores de 18 años residentes en España, dentro del centro sanitario Neurococos.</p>
+  </section>
+
+  </main>
+
+  <footer class="em-pie">
+    <p><strong>Adrián Cuñat Andrés</strong>, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos. Hasta terminar el máster no ejerzo por cuenta propia: la atención se presta dentro del centro sanitario y con supervisión.</p>
+    <p class="legal-pie">Si estás en peligro ahora mismo: <a href="tel:024">024</a> (conducta suicida, 24&nbsp;h) &middot; <a href="tel:112">112</a> &middot; <a href="/ayuda-urgente/">Más teléfonos de ayuda</a>.</p>
+    <p class="legal-pie"><a href="/privacidad.html">Privacidad</a> &middot; <a href="/aviso-legal.html">Aviso legal</a> &middot; <a href="/cookies.html">Cookies</a>. Las fotos de ambiente son de Unsplash: no son pacientes ni mi consulta.</p>
+  </footer>
+</div>
+
+<script>
+  /* «Prefiero que me llames», con guion. Sin él, el formulario va por un
+     POST normal y enviar.php contesta con la misma página (ver allí).
+     Con él:
+     · al abrir el panel pide a enviar.php una ficha firmada con la hora:
+       es el tiempo mínimo del antispam, que no se puede poner en un HTML
+       estático. Si llega pronto o sin ficha, el servidor dice cuánto
+       esperar y esto reintenta solo.
+     · los errores los escribe el servidor (un solo sitio para los
+       textos) y aquí solo se colocan junto a su campo.
+     · al terminar enseña la confirmación y le pasa el foco, para que el
+       lector de pantalla la lea. */
+  (function(){
+    var d = document.getElementById('te-llamo');
+    var f = document.getElementById('ll-form');
+    if(!d || !f || !window.fetch || !window.FormData) return;
+    var hecho = document.getElementById('ll-hecho');
+    var aviso = document.getElementById('ll-aviso');
+    var boton = f.querySelector('button[type=submit]');
+    var texto = boton.textContent;
+    var abierto = false, pidiendo = null;
+    function mide(e){ if(window.medir) window.medir(e); }
+    function pideFicha(){
+      if(f.elements.ficha.value || pidiendo) return;
+      pidiendo = fetch(f.getAttribute('action').split('#')[0] + '?ficha=1', { headers: { Accept: 'application/json' } })
+        .then(function(r){ return r.json(); })
+        .then(function(j){ if(j && j.ficha) f.elements.ficha.value = j.ficha; })
+        .catch(function(){})
+        .then(function(){ pidiendo = null; });
+    }
+    function alAbrir(){
+      if(!d.open) return;
+      if(!abierto){ abierto = true; mide('empieza_llamada_abre'); }
+      pideFicha();
+    }
+    d.addEventListener('toggle', function(){
+      alAbrir();
+      /* Al abrirlo con el dedo, el panel nace debajo del borde de la
+         pantalla (el botón está al final de la primera). Se sube lo justo
+         para que se vea el primer campo; sin animación si se ha pedido
+         menos movimiento. */
+      if(!d.open) return;
+      var r = d.querySelector('.ll-panel').getBoundingClientRect();
+      if(r.top > window.innerHeight * .6){
+        var suave = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+        window.scrollBy({ top: r.top - window.innerHeight * .25, behavior: suave ? 'smooth' : 'auto' });
+      }
+    });
+    alAbrir();
+    /* Los enlaces a #te-llamo de más abajo abren el panel y dejan el
+       cursor en el primer campo. Sin guion, el enlace lleva al botón. */
+    [].forEach.call(document.querySelectorAll('a[href="#te-llamo"]'), function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        d.open = true; alAbrir();
+        d.scrollIntoView({ block: 'start' });
+        var n = document.getElementById('ll-nombre');
+        if(n && !f.hidden) n.focus({ preventScroll: true });
+      });
+    });
+    f.noValidate = true;
+    function limpia(){
+      aviso.innerHTML = '';
+      [].forEach.call(f.querySelectorAll('[aria-invalid]'), function(x){ x.removeAttribute('aria-invalid'); });
+      [].forEach.call(f.querySelectorAll('.ll-err'), function(p){ p.hidden = true; p.textContent = ''; });
+    }
+    function errores(j){
+      var primero = null;
+      Object.keys(j.campos || {}).forEach(function(k){
+        var c = document.getElementById('ll-' + k), p = document.getElementById('ll-' + k + '-err');
+        if(!c || !p) return;
+        c.setAttribute('aria-invalid', 'true');
+        p.textContent = j.campos[k]; p.hidden = false;
+        if(!primero) primero = c;
+      });
+      if(j.mensaje) aviso.innerHTML = '<div class="mensaje error">' + j.mensaje + '</div>';
+      if(primero) primero.focus();
+    }
+    function listo(){
+      f.hidden = true; hecho.hidden = false; hecho.focus();
+      mide('empieza_llamada_enviada');
+    }
+    function envia(intento){
+      boton.disabled = true; boton.textContent = 'Enviando…';
+      fetch(f.getAttribute('action').split('#')[0], { method: 'POST', body: new FormData(f), headers: { Accept: 'application/json' } })
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if(j.ok) return listo();
+          if(j.error === 'espera' && intento < 2){
+            if(j.ficha) f.elements.ficha.value = j.ficha;
+            return setTimeout(function(){ envia(intento + 1); }, Math.min(j.espera || 3000, 5000));
+          }
+          boton.disabled = false; boton.textContent = texto;
+          errores(j);
+        })
+        .catch(function(){
+          boton.disabled = false; boton.textContent = texto;
+          errores({ mensaje: '<p><strong>No ha salido.</strong> Puede que se haya cortado la conexión: prueba otra vez en un momento, o elige tú el día y la hora con el botón de arriba.</p>' });
+        });
+    }
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(boton.disabled) return;
+      limpia(); envia(0);
+    });
+  })();
+</script>
+</body>
+</html>
