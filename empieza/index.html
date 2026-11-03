@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Media hora gratis con Adrián Cuñat, psicólogo | adricamente</title>
-  <meta name="description" content="Reserva la primera media hora gratis por videollamada, o déjame tu teléfono y te llamo. Sin tarjeta y sin compromiso.">
+  <title>Primera sesión gratis, 30 minutos | Adrián Cuñat, psicólogo</title>
+  <meta name="description" content="Primera sesión gratis: 30 minutos por videollamada para contarme qué te pasa y que te diga qué veo. O déjame tu teléfono y te llamo. Sin tarjeta.">
   <!-- Para las historias de Instagram, no para el buscador: la página
        que tiene que salir en Google es /primera-sesion/. -->
   <meta name="robots" content="noindex">
 
-  <meta property="og:title" content="Media hora gratis con Adrián Cuñat, psicólogo">
-  <meta property="og:description" content="Reserva la primera media hora gratis por videollamada, o déjame tu teléfono y te llamo.">
+  <meta property="og:title" content="Primera sesión gratis, 30 minutos, con Adrián Cuñat, psicólogo">
+  <meta property="og:description" content="30 minutos por videollamada para contarme qué te pasa y que te diga qué veo. Sin tarjeta y sin compromiso.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/empieza/">
   <meta property="og:image" content="https://adricamente.com/og/primera-sesion.jpg">
@@ -103,6 +103,17 @@
   .ll-num{white-space:nowrap;font-variant-numeric:tabular-nums}
   .ll button[disabled]{opacity:.7;cursor:progress}
   .em-sec{margin-top:clamp(44px,6vw,72px)}
+  .em-sub strong{color:var(--ink)}
+  /* Las dos listas de valor: una marca de tinta en vez de la viñeta, para
+     que se lean como puntos sueltos y no como un párrafo partido. */
+  .em-lleva,.em-por{list-style:none;padding:0;margin:14px 0 16px}
+  .em-lleva li,.em-por li{position:relative;padding-left:30px;margin-bottom:12px}
+  .em-lleva li::before,.em-por li::before{content:"";position:absolute;left:3px;top:.42em;width:13px;height:7px;
+    border:solid var(--accent);border-width:0 0 2.5px 2.5px;transform:rotate(-45deg)}
+  .em-por li strong{display:block}
+  .em-cta-medio{margin:22px 0 0}
+  #precio .comparativa{margin-bottom:18px}
+  .em-cta-medio .boton{max-width:420px}
   .em-pasos{margin-top:8px}
   .em-pie{margin-top:48px}
   .em-pie p{margin-bottom:10px}
@@ -128,8 +139,13 @@
   <main id="principal">
 
   <section class="em-hero" aria-labelledby="em-t">
-    <h1 id="em-t">Tu primera media hora, gratis</h1>
-    <p class="grande">Me cuentas qué te está pasando y, antes de colgar, <strong>te digo qué veo y qué se podría hacer</strong>. Por videollamada, sin tarjeta y sin compromiso.</p>
+    <!-- «Primera sesión gratis» es como lo dice Adrián en las historias.
+         El subtítulo va pegado y dice «30 minutos» en la primera pantalla:
+         sin él se leería como una sesión de terapia entera, y no lo es (RD
+         1907/1996 y Ley de Competencia Desleal, art. 5: engaño sobre las
+         características del servicio). -->
+    <h1 id="em-t">Primera sesión gratis</h1>
+    <p class="grande em-sub"><strong>30 minutos por videollamada</strong> para contarme qué te pasa, que te diga qué veo y si puedo ayudarte. Sin tarjeta y sin compromiso.</p>
     <div class="em-quien">
       <img class="em-foto" src="/fotos/adrian-sobremi-240.webp" srcset="/fotos/adrian-sobremi-240.webp 240w, /fotos/adrian-sobremi-300.webp 300w, /fotos/adrian-sobremi.webp 460w" sizes="(min-width: 760px) 132px, 96px" width="240" height="300" loading="eager" fetchpriority="high" decoding="async" alt="Adrián Cuñat, psicólogo, de frente, con polo verde, sonriendo">
       <p><strong>Adrián Cuñat Andrés</strong>Psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.</p>
@@ -188,8 +204,25 @@
     </details>
   </section>
 
+  <!-- Cada bloque de aquí abajo contesta a una duda de quien viene de una
+       historia (auditoría de conversión, 03-11): ¿para qué me sirve?,
+       ¿cómo va?, ¿por qué él?, ¿cuánto cuesta después?, y las preguntas.
+       La llamada se repite cada dos o tres bloques. No hay barra fija
+       abajo: en el móvil tapaba el formulario al escribir y el sitio ya
+       las quitó por falta de efecto medido (ver /primera-sesion/). -->
+  <section class="em-sec" aria-labelledby="em-lleva">
+  <h2 id="em-lleva">Qué te llevas de esa media hora</h2>
+  <ul class="em-lleva">
+    <li><strong>Decirlo en voz alta</strong> a alguien preparado para escucharlo, sin que te interrumpa ni te juzgue.</li>
+    <li><strong>Mi lectura de lo que me cuentas</strong>: qué veo, en palabras normales y sin diagnósticos, que en media hora no se hacen.</li>
+    <li><strong>Si creo que puedo ayudarte</strong>, cómo lo haríamos, cada cuánto y cuánto cuesta.</li>
+    <li><strong>Si no soy la persona adecuada</strong>, a quién acudir.</li>
+  </ul>
+  <p>No tienes que decidir nada ese día.</p>
+  </section>
+
   <section class="em-sec" aria-labelledby="em-pasos">
-  <h2 id="em-pasos">Qué pasa en esos 30 minutos</h2>
+  <h2 id="em-pasos">Cómo van esos 30 minutos</h2>
   <div class="pv-par obj">
     <figure class="pv-foto pv-obj m-c">
       <picture><source media="(min-width: 760px)" srcset="/fotos/a/p-videollamada-sofa-v480.webp" width="480" height="600"><img src="/fotos/a/p-videollamada-sofa-c480.webp" srcset="/fotos/a/p-videollamada-sofa-c480.webp 480w" sizes="100vw" width="480" height="360" loading="lazy" decoding="async" alt="Una chica en el sofá con auriculares y un portátil, con su perro al lado"></picture>
@@ -208,56 +241,24 @@
     </li>
     <li>
       <strong>Te digo lo que pienso</strong>
-      Si creo que puedo ayudarte y cómo lo haríamos. Si no soy el sitio, a
-      dónde ir. No tienes que decidir nada ese día.
+      Y me preguntas lo que quieras: cómo trabajo, quién ve qué, cuánto
+      cuesta seguir.
     </li>
   </ol>
     </div>
   </div>
+  <p class="em-cta-medio"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_tras_pasos')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=tras_pasos">Elegir día y hora</a></p>
   </section>
 
-  <!-- Orden (auditoría de conversión, 03-11): las dudas justo después
-       de los pasos, que es donde aparecen; luego el precio, y la cuenta
-       al final, porque habla de lo que pasa si se sigue. -->
-  <section class="em-sec" aria-labelledby="em-faq">
-  <h2 id="em-faq">Lo que se suele preguntar antes</h2>
-  <div class="faq">
-      <details>
-        <summary>¿Tengo que preparar algo?</summary>
-        <p>No. Ni ordenarlo ni traerlo escrito. ¿No sabes por dónde empezar? Esa es la primera pregunta que te hago, y se responde hablando. Solo necesitas un sitio donde hablar tranquilo media hora: el coche aparcado vale.</p>
-      </details>
-      <details>
-        <summary>¿Y si me pongo nervioso o nerviosa?</summary>
-        <p>Es lo más normal y no pasa nada. Si te quedas en blanco, tiro yo con preguntas; si lloras, esperamos y seguimos cuando puedas. No es un examen y no tienes que hacerlo bien.</p>
-      </details>
-      <details>
-        <summary>¿Es por videollamada?</summary>
-        <p>Sí, por Google Meet. El enlace te llega por correo al reservar y otra vez en el recordatorio. En el móvil puede pedirte la aplicación, así que mejor instalarla antes. Es mejor con la cámara encendida, pero si el primer día no puedes, hablamos con ella apagada.</p>
-      </details>
-      <details>
-        <summary>¿Queda constancia en algún sitio?</summary>
-        <p>Lo que me cuentas está bajo secreto profesional: sin tu permiso no sale del centro ni de mi supervisión, salvo en los casos excepcionales que marca la ley, y la sesión no se graba. Lo que queda es la cita en mi calendario (tu nombre, tu correo y la hora) y, si hay que anotar algo, va a tu historia clínica, que custodia el centro sanitario Neurococos como obliga la ley. En esta web no queda nada de lo que hablamos.</p>
-      </details>
-  </div>
-  </section>
-
-  <div class="franja marino" id="precio">
-  <h2>Lo que cuesta, sin letra pequeña</h2>
-  <div class="tarifa">
-    <p class="precio"><span class="importe"><span class="cifra">30</span><span class="moneda">€</span></span> <span>por sesión de entre 50 y 60 minutos, si decides seguir</span></p>
-    <ul class="condiciones">
-      <li>La primera media hora, gratis y sin tarjeta</li>
-      <li>Cada sesión se paga antes, con tarjeta, Apple Pay o Google Pay</li>
-      <li>Sin bonos, sin paquetes y sin permanencia</li>
-      <li>Cancelas hasta 24 horas antes, sin coste</li>
-    </ul>
-    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
-       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=medio">Elegir día y hora</a></p>
-  </div>
-  </div>
-
-  <section class="em-sec" aria-labelledby="em-cuenta">
-  <h2 id="em-cuenta">Si seguimos, lo tienes todo en tu cuenta</h2>
+  <section class="em-sec" aria-labelledby="em-por">
+  <h2 id="em-por">Por qué conmigo</h2>
+  <ul class="em-por">
+    <li><strong>Dentro de un centro sanitario.</strong> Atiendo online desde el centro sanitario Neurococos y reviso los casos con un profesional colegiado del centro, con el mismo secreto profesional.</li>
+    <li><strong>Terapias contextuales y cognitivo-conductuales.</strong> En vez de buscar durante meses por qué eres así, miramos qué haces cuando aparece el malestar y qué te está costando, y lo cambiamos poco a poco, con tareas entre sesiones.</li>
+  </ul>
+  <!-- La cuenta va aquí, junto a la razón que enseña, y no en un bloque
+       suyo al final: es un argumento para elegir, no un anexo. -->
   <div class="pv-par movil">
     <figure class="pv-foto pv-movil doble">
       <span class="pv-marcos">
@@ -267,9 +268,75 @@
       <figcaption>Capturas de una cuenta de prueba con datos inventados.</figcaption>
     </figure>
     <div class="pv-texto">
-      <p>Después de cada sesión te dejo <strong>un resumen corto de lo que vimos</strong> en una cuenta privada, en el móvil o el ordenador, con tus ejercicios y tus cuestionarios en una gráfica.</p>
-      <p>Va cifrada: lo que escribes solo lo leemos tú, yo y quien supervisa mis prácticas, con el mismo secreto profesional.</p>
+  <ul class="em-por">
+    <li><strong>Lo que se mide se puede revisar.</strong> Si seguimos, tienes una cuenta privada con el resumen de cada sesión y tus cuestionarios en una gráfica. En la cuarta sesión miramos juntos si se mueve; si no, cambiamos el plan.</li>
+  </ul>
     </div>
+  </div>
+  </section>
+
+  <div class="franja marino" id="precio">
+  <h2>Lo que cuesta, sin letra pequeña</h2>
+  <div class="tarifa">
+    <p class="precio"><span class="importe"><span class="cifra">30</span><span class="moneda">€</span></span> <span>por sesión de entre 50 y 60 minutos, si decides seguir</span></p>
+    <ul class="condiciones">
+      <li>La primera sesión, de 30 minutos, gratis y sin tarjeta</li>
+      <li>Cada sesión se paga antes, con tarjeta, Apple Pay o Google Pay</li>
+      <li>Sin bonos, sin paquetes y sin permanencia</li>
+      <li>Cancelas hasta 24 horas antes, sin coste</li>
+    </ul>
+    <!-- Las cifras y su fuente, las de /cuanto-cuesta-un-psicologo-online/
+         (la «media de 66 € en Doctoralia» que se propuso no tiene fuente
+         en la web, así que no va). -->
+    <p class="comparativa">Un psicólogo que pasa consulta online por su cuenta suele cobrar entre 60 y 70&nbsp;€ (perfiles de Doctoralia en Madrid y Valencia, octubre de 2026), y las plataformas grandes, entre 39 y 55&nbsp;€. <strong>Cobro menos porque estoy en prácticas supervisadas</strong>, y subirá cuando termine el máster.</p>
+    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
+       href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=medio">Elegir día y hora</a></p>
+  </div>
+  </div>
+
+  <section class="em-sec" aria-labelledby="em-faq">
+  <h2 id="em-faq">Lo que se suele preguntar antes</h2>
+  <div class="faq">
+      <details>
+        <summary>¿Es gratis de verdad o luego me van a cobrar?</summary>
+        <p>Es gratis de verdad. Son 30 minutos para conocernos y ver qué te pasa, no una sesión de terapia: no se paga ni antes ni después y no se convierte sola en nada. Si decides seguir, las sesiones de trabajo duran entre 50 y 60 minutos y cuestan 30 €, y la siguiente la reservas tú, si quieres.</p>
+      </details>
+      <details>
+        <summary>¿Tengo que poner la tarjeta?</summary>
+        <p>No. Para reservar la media hora no se pide ningún dato de pago. El pago solo aparece si decides seguir, y se hace antes de cada sesión de trabajo.</p>
+      </details>
+      <details>
+        <summary>¿Y si no sé qué decir o me pongo a llorar?</summary>
+        <p>No hace falta preparar nada: ¿no sabes por dónde empezar? Esa es la primera pregunta que te hago. Si te quedas en blanco, tiro yo con preguntas; si lloras, esperamos y seguimos cuando puedas. No es un examen y no tienes que hacerlo bien.</p>
+      </details>
+      <details>
+        <summary>¿Cómo es la videollamada? ¿Tengo que poner la cámara?</summary>
+        <p>Es por Google Meet: el enlace te llega por correo al reservar y otra vez en el recordatorio. En el móvil puede pedirte la aplicación, así que mejor instalarla antes. Es mejor con la cámara encendida, porque la mitad de lo que se dice no está en las palabras, pero si el primer día no puedes, hablamos con ella apagada.</p>
+      </details>
+      <details>
+        <summary>¿Lo sabrá alguien, mi familia o mi trabajo?</summary>
+        <p>No por mí. Lo que me cuentas está bajo secreto profesional: sin tu permiso no sale del centro ni de mi supervisión, salvo en los casos excepcionales que marca la ley, y la sesión no se graba. Lo que queda es la cita en mi calendario (tu nombre, tu correo y la hora) y, si hay que anotar algo, va a tu historia clínica, que custodia el centro sanitario Neurococos como obliga la ley. Si te preocupa que te oigan en casa, el coche aparcado y unos auriculares sirven.</p>
+      </details>
+      <details>
+        <summary>¿Cuánto dura una terapia?</summary>
+        <p>No hay un número fijo y desconfía de quien te lo dé antes de conocerte: depende de qué te pasa, desde cuándo y qué buscas. Lo que sí hay aquí: hacia la tercera sesión te doy una estimación de cuántas harán falta, la revisamos cada cuatro, y si no se mueve, cambiamos el plan o te ayudo a buscar otro sitio.</p>
+      </details>
+      <details>
+        <summary>¿Y si después no quiero seguir?</summary>
+        <p>No hace falta que digas nada. Si no reservas, no pasa nada y no te voy a escribir para insistir. Y si prefieres decírmelo, mejor: me sirve para saber qué no encajó.</p>
+      </details>
+      <details>
+        <summary>¿Atiendes a menores?</summary>
+        <p>No. Solo atiendo a mayores de 18 años. Si tienes menos, lo que necesitas es un profesional de psicología infanto-juvenil, y es mejor saberlo antes de reservar.</p>
+      </details>
+      <details>
+        <summary>¿Y si no vivo en España?</summary>
+        <p>Solo atiendo a personas residentes en España, también por videollamada.</p>
+      </details>
+      <details>
+        <summary>¿Y si es una urgencia?</summary>
+        <p>Esto no es un servicio de urgencias. Si estás en peligro ahora mismo o piensas en hacerte daño, no esperes a una cita: llama al <a href="tel:024">024</a>, que atiende la conducta suicida las 24 horas, o al <a href="tel:112">112</a>.</p>
+      </details>
   </div>
   </section>
 
