@@ -90,6 +90,10 @@ $cuerpo = <<<HTML
     </form>
 
     <p class="apunte"><a href="clave.php?olvide=1">No me acuerdo de mi contraseña</a></p>
+    <!-- 04-11: quien llega aquí sin cuenta todavía. Aquí no se crea:
+         se crea con el enlace de un solo uso de la invitación. -->
+    <p class="apunte" id="invitacion">¿Aún no tienes cuenta y te ha llegado una
+    invitación? Usa el enlace de ese correo para crearla.</p>
 
     <div class="caja plana" style="margin-top:22px">
       <p class="apunte" style="margin:0">Tu contraseña no sale de este

@@ -20,9 +20,24 @@ require __DIR__ . '/lib/pagina.php';
 
 $cuerpo = <<<HTML
 <div class="centrado">
-  <h1>Tu cuenta</h1>
-  <p class="apunte">Elige una contraseña. Con ella se abre lo que te
-  mando, así que hay dos cosas que conviene saber antes de teclearla.</p>
+  <!-- 04-11: «Crea tu cuenta», no «Tu cuenta»: una persona invitada leyó
+       esta página como la de entrar. -->
+  <h1 id="titulo">Crea tu cuenta</h1>
+
+  <!-- Si el enlace no vale, se dice ANTES de pedir la contraseña (la
+       página lo pregunta al abrirse, sin gastarlo: api.php?a=ficha), y
+       con lo que hay que hacer en cada caso. Sin guion, la página se ve
+       como siempre y el aviso sale al pulsar «Crear mi cuenta». -->
+  <div id="no-vale" hidden>
+    <div class="nota ojo" id="nv-caja"><p id="nv-t"></p></div>
+    <p id="nv-entrar" hidden><a class="boton ancho" href="index.php">Entrar</a></p>
+    <p id="nv-olvide" class="apunte" hidden><a href="clave.php?olvide=1">No me acuerdo de mi contraseña</a></p>
+  </div>
+
+  <div id="crear">
+  <p class="apunte">Es la primera vez: aquí eliges la contraseña de tu
+  cuenta. Con ella se abre lo que te mando, así que hay dos cosas que
+  conviene saber antes de teclearla.</p>
 
   <div class="nota ojo">
     <p><strong>Esta contraseña no se puede recuperar, se cambia.</strong>
@@ -86,6 +101,7 @@ $cuerpo = <<<HTML
     <p><button class="boton ancho" id="b" type="submit">Crear mi cuenta</button></p>
     <p class="apunte" id="estado" role="status"></p>
   </form>
+  </div>
 </div>
 HTML;
 
@@ -99,6 +115,43 @@ import { listo, crearIdentidad } from './cripto.js';
 
 const $ = (id) => document.getElementById(id);
 function falla(t) { $('mal-t').textContent = t; $('mal').hidden = false; }
+
+/* Lo que se dice en cada caso (04-11). Caducado no invita a entrar: no
+   tiene cuenta. Ya usado sí, con el botón. «No existe» también cubre el
+   enlace de una invitación que caducó hace días: a los 7 días sin
+   activar se borra todo, enlace incluido, y ya no se puede distinguir. */
+const NO_VALE = {
+  caducado: ['Este enlace ha caducado',
+    'Este enlace ha caducado: dura 7 días. Escríbeme a hola@adricamente.com o contesta al correo y te mando otro.'],
+  usado: ['Tu cuenta ya está creada',
+    'Esta cuenta ya está creada: entra con tu correo y la contraseña que elegiste.'],
+  no_existe: ['Este enlace no es válido',
+    'Este enlace no es válido. Comprueba que lo has abierto entero desde el correo de invitación. Si es de hace más de una semana, puede haber caducado: escríbeme a hola@adricamente.com y te mando otro.'],
+};
+function noVale(estado) {
+  const [t, x] = NO_VALE[estado] || NO_VALE.no_existe;
+  $('titulo').textContent = t;
+  $('nv-t').textContent = x;
+  $('nv-entrar').hidden = $('nv-olvide').hidden = estado !== 'usado';
+  /* Ya creada no es un problema: el aviso, en azul y no en naranja. */
+  $('nv-caja').className = 'nota ' + (estado === 'usado' ? 'info' : 'ojo');
+  $('crear').hidden = true;
+  $('no-vale').hidden = false;
+  document.title = t + ' | adricamente';
+}
+const papelDeAqui = new URLSearchParams(location.search).get('p') || '';
+/* Antes de pedir nada: ¿vale el enlace? La consulta no lo gasta. Si no
+   se puede preguntar (sin red, o muchas consultas seguidas), se deja la
+   página como está y lo dirá al crear la cuenta. */
+(async () => {
+  if (!papelDeAqui) { noVale('no_existe'); return; }
+  try {
+    const r = await fetch('api.php?a=ficha', { method: 'POST', headers: { 'content-type': 'application/json' },
+                                                body: JSON.stringify({ papel: papelDeAqui, tipo: 'alta' }) });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok && j.estado && j.estado !== 'vale') noVale(j.estado);
+  } catch (_) {}
+})();
 
 $('f').addEventListener('submit', async (ev) => {
   ev.preventDefault();
@@ -126,9 +179,11 @@ $('f').addEventListener('submit', async (ev) => {
       }),
     });
     const j = await r.json().catch(() => ({}));
-    if (!r.ok) { falla(j.error === 'ese enlace ya no vale'
-        ? 'Este enlace ya se ha usado o ha caducado. Si ya creaste tu cuenta, entra en cuenta.adricamente.com con tu correo y tu contraseña. Si no la recuerdas, escríbeme y te paso un enlace para poner otra.'
-        : 'No hemos podido crear la cuenta. Inténtalo otra vez.'); return; }
+    if (!r.ok) {
+      const m = /^enlace_(caducado|usado|no_existe)$/.exec(j.error || '');
+      if (m) { noVale(m[1]); return; }
+      falla('No hemos podido crear la cuenta. Inténtalo otra vez.'); return;
+    }
 
     /* A entrar con la contraseña recién elegida. Ver el comentario de
        arriba: es la única forma de que la compruebe hoy y no dentro de

@@ -385,8 +385,18 @@ case 'reset': {
     if ($a === 'activar' && ($in['aviso'] ?? '') !== ADR_AVISO_V) {
         adr_json(['error' => 'falta aceptar la información de protección de datos'], 400);
     }
-    $cod = adr_ficha_gasta($db, (string)($in['papel'] ?? ''), $a === 'activar' ? 'alta' : 'reset');
-    if ($cod === null) adr_json(['error' => 'ese enlace ya no vale'], 400);
+    /* 04-11: al activar, por qué no vale, con un código para cada caso
+       (activar.php dice una cosa distinta en cada uno). El de la
+       contraseña nueva sigue con su error de siempre, con el motivo al
+       lado. */
+    $tipo_f = $a === 'activar' ? 'alta' : 'reset';
+    $estado = adr_ficha_estado($db, (string)($in['papel'] ?? ''), $tipo_f);
+    if ($estado !== 'vale') {
+        adr_json($a === 'activar' ? ['error' => 'enlace_' . $estado]
+                                  : ['error' => 'ese enlace ya no vale', 'motivo' => $estado], 400);
+    }
+    $cod = adr_ficha_gasta($db, (string)($in['papel'] ?? ''), $tipo_f);
+    if ($cod === null) adr_json(['error' => $a === 'activar' ? 'enlace_usado' : 'ese enlace ya no vale'], 400);
 
     $sal      = adr_deb64($in['sal'] ?? null, 16);
     $envuelta = adr_deb64($in['envuelta'] ?? null);
@@ -466,6 +476,15 @@ case 'reset': {
 /* --- He olvidado la contraseña ---------------------------------------
    Contesta lo mismo exista o no la cuenta. Lo que cambia es si sale
    un correo, y eso no se ve desde fuera. */
+/* ¿Vale este enlace? Sin gastarlo (04-11). Lo pregunta activar.php al
+   abrirse, antes de pedir la contraseña. Mismo freno que activar: no
+   sirve para ir probando papeles. */
+case 'ficha': {
+    if (!adr_freno($db, 'fic:' . adr_huella(), 30)) adr_json(['error' => 'despacio'], 429);
+    $tipo = ($in['tipo'] ?? 'alta') === 'reset' ? 'reset' : 'alta';
+    adr_json(['estado' => adr_ficha_estado($db, (string)($in['papel'] ?? ''), $tipo)]);
+}
+
 case 'olvide': {
     $correo = adr_correo_normal((string)($in['correo'] ?? ''));
     if (!adr_freno($db, 'olv:' . $correo, 5, 3600) || !adr_freno($db, 'olv:' . adr_huella(), 20)) {

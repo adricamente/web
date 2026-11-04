@@ -414,6 +414,28 @@ function adr_ficha(PDO $db, string $cod, string $tipo, int $horas): string {
     return $papel;
 }
 
+/** Cómo está un papel, SIN gastarlo (04-11): 'vale', 'caducado',
+ *  'usado' o 'no_existe'. Para que activar.php diga qué pasa ANTES de
+ *  pedir dos contraseñas, y que un enlace caducado no se lea como «entra».
+ *
+ *  No dice nada de nadie: solo responde a quien tiene el papel (32 bytes
+ *  al azar), y no devuelve ni el correo ni el código. Un alta cuya cuenta
+ *  ya está activada cuenta como 'usado' aunque ESE papel no se gastara
+ *  (el Mac pudo dar dos enlaces): con él se pondría otra llave encima y
+ *  lo que ya tiene dejaría de abrirse.
+ *  Tras la limpieza de los 7 días (adr_limpia_altas) el papel ya no está:
+ *  sale 'no_existe', y el mensaje de la página lo tiene en cuenta. */
+function adr_ficha_estado(PDO $db, string $papel, string $tipo): string {
+    $q = $db->prepare('SELECT f.caduca, f.usada, p.activado FROM fichas f LEFT JOIN pacientes p ON p.cod = f.cod
+                       WHERE f.huella = ? AND f.tipo = ?');
+    $q->execute([hash('sha256', $papel), $tipo]);
+    $f = $q->fetch();
+    if (!$f) return 'no_existe';
+    if ($f['usada'] !== null || ($tipo === 'alta' && $f['activado'] !== null)) return 'usado';
+    if ((int)$f['caduca'] < time()) return 'caducado';
+    return 'vale';
+}
+
 /** Gasta el papel. Devuelve el cod, o null. Un papel vale UNA vez. */
 function adr_ficha_gasta(PDO $db, string $papel, string $tipo): ?string {
     $q = $db->prepare('SELECT cod, caduca, usada FROM fichas WHERE huella = ? AND tipo = ?');
