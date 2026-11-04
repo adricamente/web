@@ -213,8 +213,10 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
 .herr .apunte{margin:0 0 8px}
 /* El aviso de derechos de un instrumento: pequeño, pero entero y legible. */
 .copyright{font-size:13px;margin-top:18px;overflow-wrap:anywhere}
+/* El borde de las casillas, con 3:1 sobre el fondo (WCAG 1.4.11): con
+   --line apenas se veía dónde se escribe. */
 .herr textarea,.herr input[type=text]{width:100%;font:inherit;padding:9px 11px;
-  border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface)}
+  border:1px solid var(--borde-campo);border-radius:var(--r-s);background:var(--surface)}
 .herr textarea{resize:vertical}
 .herr input:disabled,.herr textarea:disabled{background:var(--surface-2);color:var(--muted)}
 .campos-fila{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0}
@@ -683,25 +685,14 @@ h3{font-weight:700}
 .reg-semana{border-top:1px solid var(--line);padding:2px 0 10px}
 .reg-semana > summary{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .reg-semana > summary span{font-weight:500;color:var(--muted)}
-.reg-tira{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:4px 0 12px;max-width:430px}
-.reg-dia{font:inherit;border:1px solid var(--line-strong);background:var(--surface);border-radius:10px;padding:6px 0;
-  display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;color:var(--ink-2)}
-.reg-dia span{font-size:12px;font-weight:700;color:var(--muted)}
-.reg-dia b{font-size:16px}
-.reg-dia.hecho{background:#E4F2EA;border-color:#9CCDB2;color:#1E6B45}
-.reg-dia.hoy{outline:2px solid var(--accent);outline-offset:1px}
-.reg-dia:disabled{opacity:.4;cursor:default}
-.reg-entrada{display:block;width:100%;text-align:left;font:inherit;background:var(--surface);border:1px solid var(--line);
-  border-radius:var(--r-s);padding:10px 12px;margin:0 0 8px;cursor:pointer;color:var(--ink)}
-.reg-entrada:hover{border-color:var(--accent)}
-.reg-entrada strong{display:block;font-size:15.5px}
-.reg-entrada span{display:block;font-size:14.5px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
 .reg-resto{margin-top:26px;border-top:1px solid var(--line);padding-top:4px}
 .reg-editor .campo-h{display:block;margin:0 0 14px}
 .reg-editor .campo-h .rotulo{display:block;font-weight:600;margin:0 0 4px}
 .reg-editor input[type=date]{font:inherit;padding:8px 10px;border:1px solid var(--borde-campo);border-radius:6px}
 .reg-dia-t{font-size:18px;font-weight:700;margin:0 0 10px}
-.reg-ejemplo{color:var(--muted);font-size:14.5px;background:var(--surface-2);border-radius:6px;padding:8px 10px}
+.reg-ejemplo{color:var(--ink-2);font-size:14.5px;background:var(--surface-2);border-radius:6px;padding:0 12px;margin:0 0 14px}
+.reg-ejemplo > summary{cursor:pointer;font-weight:700;color:var(--accent-3);min-height:44px;display:flex;align-items:center}
+.reg-ejemplo ul{margin:0;padding:0 0 10px 1.2em}
 .reg-botones{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
 @media print{.solo-impresion .hoja .apunte{color:#333}}
 .reg-chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -809,3 +800,252 @@ h3{font-weight:700}
 .aj-instalar h3{font-size:1.15rem;margin:0 0 6px}
 .aj-instalar p{font-size:15px}
 #in-hecho:focus{outline:none}
+
+/* =================================================================
+   Herramientas más visuales (04-11)
+   -----------------------------------------------------------------
+   Botones para las escalas y las opciones, deslizador para 0-100,
+   listas de una línea por cosa, fichas por fila, la semana de un
+   registro en tabla y las líneas pequeñas de los números. Todo el
+   color sale de :root; los tonos de los números, también.
+   ================================================================= */
+:root{
+  /* --accent mezclado con blanco al 18, 40, 62 y 90 %. Con texto oscuro
+     los tres primeros y con blanco el último: los cuatro pasan 4,5:1. */
+  --tono-0:var(--surface-2); --tono-1:#D7E0E6; --tono-2:#A5BBC7; --tono-3:#7495A9; --tono-4:#356582;
+}
+/* Los botones de escala, en rejilla: 0-5 en una fila; 0-10 en dos filas
+   en el móvil (seis y cinco) y en una desde 520 px. */
+.reg-chips.escala{display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:6px;max-width:34rem}
+.reg-chips.escala.muchos{grid-template-columns:repeat(6,minmax(0,1fr))}
+@media (min-width:520px){.reg-chips.escala.muchos{grid-template-columns:repeat(var(--n),minmax(0,1fr))}}
+.reg-chips.escala .reg-chip{min-width:0;padding:0;font-size:18px}
+.reg-chip:hover{border-color:var(--accent)}
+.ctl-escala,.ctl-opciones,.ctl-deslizador,.ctl-lista{margin:4px 0 12px}
+.ctl-escala .rotulo,.ctl-opciones .rotulo,.ctl-deslizador .rotulo,.ctl-lista > .rotulo{font-weight:600;color:var(--ink)}
+.ctl-nota{font-size:13.5px;margin:0 0 6px !important}
+/* El deslizador: el número grande a su derecha; sin marcar, el pulgar
+   apagado y un guion en vez de número (un 0 que nadie ha puesto se leería
+   como un 0). */
+/* Acotado a .ctl-deslizador: .deslizador a secas es el de «Mis
+   objetivos» (valorar de 0 a 10), que no cambia. */
+.ctl-deslizador .deslizador{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.deslizador-pista{flex:1 1 12rem;min-width:0}
+.ctl-deslizador .deslizador input[type=range]{flex:none;width:100%;margin:8px 0 0;height:32px;accent-color:var(--accent);cursor:pointer}
+.ctl-deslizador.sin-valor input[type=range]{opacity:.45}
+/* Las marcas: los números, centrados sobre su sitio. El margen de 8 px
+   es medio pulgar: el centro del pulgar no llega a los bordes de la
+   barra, y sin él la raya del 100 caía fuera de donde se para. */
+.deslizador-ext{position:relative;height:30px;margin:0 8px;font-size:13px;color:var(--ink-2)}
+.deslizador-ext span{position:absolute;bottom:0;transform:translateX(-50%);font-variant-numeric:tabular-nums;line-height:1.2}
+.deslizador-ext.con-rayas::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;
+  background:repeating-linear-gradient(to right,var(--line-strong) 0 1px,transparent 1px calc(100% / var(--pasos)));
+  border-right:1px solid var(--line-strong)}
+.valor-num{font-family:var(--titulo);font-weight:800;font-size:26px;min-width:2.6em;text-align:center;
+  color:var(--accent-3);background:var(--accent-soft);border-radius:var(--r-s);padding:4px 8px;line-height:1.2}
+.ctl-deslizador.sin-valor .valor-num{color:var(--muted);background:var(--surface-2)}
+.herr input[type=date],.herr input[type=time]{font:inherit;padding:8px 10px;border:1px solid var(--borde-campo);border-radius:6px;background:var(--surface);max-width:100%}
+.herr input.corto{max-width:9rem}
+/* Las listas: una línea por cosa, con su número; Intro abre otra. */
+.lista-h{list-style:none;counter-reset:linea;padding:0;margin:6px 0 4px;display:flex;flex-direction:column;gap:8px}
+.lista-h li{counter-increment:linea;display:flex;align-items:flex-start;gap:8px}
+.lista-h li::before{content:counter(linea);flex:none;width:28px;height:28px;margin-top:8px;border-radius:50%;
+  background:var(--accent-soft);color:var(--accent-3);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+/* field-sizing: la línea crece con lo escrito donde se puede; donde no,
+   ajustaAltos() en el guion. */
+.lista-h textarea{flex:1;min-width:0;resize:none;min-height:44px;overflow:hidden;field-sizing:content}
+.lista-quitar{font:inherit;font-size:14px;flex:none;min-height:44px;padding:0 10px;border:0;background:transparent;
+  color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.lista-mas{align-self:flex-start;margin:4px 0 0 36px;font-weight:600;min-height:44px}
+.valor-lista{padding-left:1.3em}
+.valor-lista li{margin:0 0 2px}
+/* Apartados numerados y el progreso. */
+.apartado-h.paso{display:flex;align-items:flex-start;gap:10px}
+.paso-n{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;
+  border-radius:99px;background:var(--accent);color:var(--surface);font-size:14.5px;margin-top:-4px}
+.seccion-h{border-left:3px solid var(--line);padding:2px 0 4px 14px;margin:18px 0 0}
+.seccion-h.hecha{border-left-color:var(--accent)}
+.seccion-h > .apartado-h:first-child{margin-top:4px}
+.progreso-h{position:sticky;top:58px;z-index:2;background:var(--bg);padding:8px 0 6px;margin:0 0 6px}
+.progreso-t{margin:0 0 5px;font-size:14.5px;font-weight:600;color:var(--ink-2)}
+@media print{.progreso-h{display:none}}
+/* Notas, avisos y fuentes, con su icono a la izquierda (decorativo). */
+.con-ico{position:relative;padding-left:44px !important}
+.con-ico > .ico{position:absolute;left:14px;top:13px;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;color:var(--accent)}
+.auxilio.con-ico > .ico{color:var(--aviso);top:17px;left:16px}
+.auxilio.con-ico{padding-left:46px !important}
+.fuente-h.con-ico{padding-left:28px !important}
+.fuente-h.con-ico > .ico{left:0;top:1px;width:17px;height:17px;color:var(--muted)}
+.acordado-h.con-ico > .ico{color:var(--accent-3)}
+.herr .nota-h{border-left:3px solid var(--accent);background:var(--accent-soft);color:var(--ink);margin:12px 0 14px}
+.lista-l{padding-left:1.2em}
+.lista-l li{margin:0 0 6px}
+.lista-l li::marker{color:var(--accent)}
+/* Las tablas para leer: filas alternas y la primera columna en negrita. */
+.tabla-h.lectura table{border-radius:var(--r-s);overflow:hidden}
+.tabla-h.lectura th{background:var(--accent-soft);color:var(--accent-3);border-color:var(--line)}
+.tabla-h.lectura tbody tr:nth-child(even) td{background:var(--surface-2)}
+.tabla-h.lectura td.primera{font-weight:700;color:var(--ink)}
+.tabla-h.lectura td{line-height:1.45}
+@media (max-width:560px){
+  .tabla-h.lectura tr{padding:10px 12px;background:var(--surface)}
+  .tabla-h.lectura tbody tr:nth-child(even) td{background:transparent}
+  .tabla-h.lectura td.primera{font-size:16.5px;font-family:var(--titulo)}
+  .tabla-h.lectura td.primera::before{display:none}
+}
+/* Fichas: una por fila de la tabla. */
+.tabla-h.fichas{overflow:visible}
+.ficha{border:1px solid var(--line-strong);border-radius:var(--r-m);background:var(--surface);padding:12px 14px 6px;margin:0 0 12px;min-width:0}
+.ficha legend{font-family:var(--titulo);font-weight:700;font-size:15.5px;padding:0 6px;color:var(--accent-3)}
+.ficha-campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:4px 16px}
+.ficha-campos > .ctl-escala,.ficha-campos > .ctl-opciones,.ficha-campos > .ctl-deslizador,.ficha-campos > .ctl-lista{grid-column:1/-1}
+.ficha-campos > .campo-h{margin:0 0 10px}
+.ficha-campos .rotulo{font-weight:600}
+.ficha-fija p{margin:0;font-weight:600}
+.ficha.ejemplo{background:var(--surface-2);border-style:dashed;color:var(--ink-2);font-size:14.5px;padding:0 14px}
+.ficha.ejemplo .ficha-t{font-weight:700;cursor:pointer;padding:10px 0;min-height:44px;display:flex;align-items:center;gap:6px;color:var(--accent-3)}
+.ficha.ejemplo[open] .ficha-t{padding-bottom:6px}
+.ficha.ejemplo dl{margin:0 0 6px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+.ficha.ejemplo dt{font-weight:600}
+.ficha.ejemplo dd{margin:0}
+.guardado-h{font-size:14px;color:var(--ink-2);margin-top:-6px}
+/* El registro: «Hoy · Ayer · Otro día». */
+.reg-cuando{margin:0 0 10px}
+.reg-cuando-b{display:flex;flex-wrap:wrap;gap:8px}
+.reg-otro{margin:0 0 14px}
+.reg-medias{margin:0 0 16px}
+.reg-medias .reg-botones{margin-top:8px}
+/* La semana en tabla. Sin alto máximo: una tabla con su propia barra
+   dentro de la página es un segundo scroll que en el móvil atrapa el
+   dedo, y siete filas caben. Si aun así no cabe de lado (un registro con
+   muchas columnas cortas), se desplaza con el día fijo a la izquierda. */
+.reg-tabla{overflow-x:auto;margin:4px 0 12px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface)}
+.reg-tabla-t{border-collapse:separate;border-spacing:0;width:100%;font-size:14.5px}
+.reg-tabla-t th,.reg-tabla-t td{padding:7px 8px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line)}
+.reg-tabla-t thead th{background:var(--surface-2);font-size:13px;font-weight:700;color:var(--ink-2);line-height:1.25;
+  max-width:6.5em;overflow-wrap:break-word;hyphens:auto}
+.reg-tabla-t tbody th{position:sticky;left:0;background:var(--surface);z-index:1;white-space:nowrap;width:1%}
+.reg-tabla-t thead th:first-child{position:sticky;left:0;z-index:2;max-width:none}
+.reg-tabla-t tr.hoy > *{background:var(--accent-soft)}
+.reg-tabla-t tr.hoy > th{box-shadow:inset 4px 0 0 var(--accent)}
+.reg-tabla-t tr.futuro .reg-dia{opacity:.55}
+.reg-tabla-t td.sin-nada{color:var(--muted);font-style:italic}
+.reg-tabla-t td.num{text-align:center}
+.reg-tabla-t td.vacia .nada{color:var(--muted)}
+.v-num{display:inline-block;min-width:2.2em;padding:3px 6px;border-radius:6px;font-weight:700;text-align:center;
+  font-variant-numeric:tabular-nums;color:var(--ink)}
+.v-num.n0{background:var(--tono-0)}
+.v-num.n1{background:var(--tono-1)}
+.v-num.n2{background:var(--tono-2)}
+.v-num.n3{background:var(--tono-3)}
+.v-num.n4{background:var(--tono-4);color:var(--surface)}
+.v-op{font-weight:600}
+.v-txt{display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-width:8em;overflow-wrap:anywhere}
+.reg-dia{font:inherit;font-weight:700;display:flex;align-items:center;gap:8px;min-height:40px;padding:4px 10px;border-radius:8px;
+  border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);cursor:pointer;width:100%;justify-content:space-between}
+.reg-dia:hover:not(:disabled){border-color:var(--accent)}
+.reg-dia:disabled{cursor:default}
+.reg-dia.hecho{border-color:var(--exito);background:var(--exito-soft)}
+.reg-dia-e{color:var(--accent);font-size:16px}
+.reg-dia.hecho .reg-dia-e{color:var(--exito)}
+/* En el móvil, cada día es una tarjeta: el día arriba y lo apuntado en
+   pastillas «Rótulo: valor». Lo vacío no ocupa sitio. */
+@media (max-width:560px){
+  .reg-tabla{max-height:none;overflow:visible;border:0;background:transparent}
+  .reg-tabla-t,.reg-tabla-t tbody,.reg-tabla-t tr,.reg-tabla-t th,.reg-tabla-t td{display:block}
+  .reg-tabla-t thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .reg-tabla-t tr{border:1px solid var(--line-strong);border-radius:var(--r-m);background:var(--surface);margin:0 0 8px;padding:8px 10px}
+  .reg-tabla-t tr.hoy{border-color:var(--accent);box-shadow:inset 4px 0 0 var(--accent)}
+  .reg-tabla-t tr.hoy > *,.reg-tabla-t tr.hoy > th{background:transparent;box-shadow:none}
+  .reg-tabla-t tbody th{position:static;padding:0;border:0;white-space:normal;width:auto}
+  .reg-tabla-t td{border:0;padding:0}
+  .reg-tabla-t td.vacia{display:none}
+  .reg-tabla-t tr:not(.sin) th{margin-bottom:6px}
+  .reg-tabla-t tr:not(.sin){display:flex;flex-wrap:wrap;gap:6px}
+  .reg-tabla-t tr:not(.sin) th{flex-basis:100%}
+  .reg-tabla-t td.num,.reg-tabla-t td.corta{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);
+    border-radius:99px;padding:3px 4px 3px 10px;font-size:14px}
+  .reg-tabla-t td.corta{padding-right:10px}
+  .reg-tabla-t td.txt{flex-basis:100%;font-size:14.5px}
+  .reg-tabla-t td::before{content:attr(data-rotulo);color:var(--ink-2);font-weight:600}
+  .reg-tabla-t td.txt::before{content:attr(data-rotulo) ": "}
+  .reg-tabla-t td.txt .v-txt{display:inline}
+  .reg-tabla-t td.sin-nada{display:none}
+  .reg-tabla-t td.sin-nada::before{content:none}
+  .reg-tabla-t tr.sin{padding:4px}
+  .reg-dia{border:0;background:transparent;padding:4px 6px}
+  .reg-dia.hecho{background:transparent}
+  .reg-tabla-t tr.sin .reg-dia{font-weight:600;color:var(--ink-2)}
+}
+/* Las líneas pequeñas de los números. */
+.reg-graficas-t{margin:4px 0 8px;font-size:16.5px}
+/* Dos por fila ya en el móvil: cinco líneas a todo el ancho eran cinco
+   pantallas de dibujo para unos pocos puntos. */
+.reg-graficas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,10.5rem),1fr));gap:10px;margin:0 0 16px}
+.reg-grafica{margin:0;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface);padding:10px 12px 8px}
+.reg-grafica figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 8px;font-size:14px;margin:0 0 4px;line-height:1.3}
+.reg-grafica figcaption span{color:var(--ink-2);white-space:nowrap}
+.reg-linea{display:block;width:100%;height:auto}
+.reg-linea .serie{fill:none;stroke:var(--accent);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.reg-linea circle{fill:var(--surface);stroke:var(--accent);stroke-width:2}
+.reg-linea .eje{stroke:var(--line-strong);stroke-width:1}
+.reg-linea .eje.tenue{stroke-dasharray:3 4}
+.reg-grafica-ejes{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+
+/* Arriba del registro: lo que ya lleva esta semana. */
+.reg-resumen{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;
+  padding:0 0 12px;margin:0 0 2px;border-bottom:1px solid var(--line-strong)}
+.reg-resumen-t{margin:0;display:flex;flex-direction:column;gap:1px;font-size:16px;color:var(--accent-3)}
+.reg-resumen-u{font-size:14px;color:var(--ink-2)}
+.reg-tira7{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,30px);gap:4px}
+.reg-tira7 li{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11.5px;font-weight:700;color:var(--ink-2)}
+.reg-tira7 b{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--line-strong);font-size:13px;color:var(--ink-2)}
+.reg-tira7 li.si b{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.reg-tira7 li.hoy b{box-shadow:0 0 0 2px var(--accent-soft),0 0 0 4px var(--accent)}
+.reg-tira7 li.futuro b{background:transparent;border-style:dashed;color:var(--muted)}
+/* Lo escrito de un apunte, junto en una columna. */
+.reg-tabla-t thead th.th-junta{min-width:11rem;max-width:none}
+.reg-tabla-t td.junta .v-par{margin:0 0 3px;line-height:1.4}
+.reg-tabla-t td.junta .v-par:last-child{margin:0}
+.reg-tabla-t td.junta strong{font-weight:600;color:var(--ink-2)}
+.reg-tabla-t td.junta .v-txt{display:inline;min-width:0}
+@media (max-width:560px){
+  .reg-tabla-t tr.futuro{display:none}
+  .reg-tabla-t td.junta{flex-basis:100%;font-size:14.5px}
+  .reg-tabla-t td.junta::before{content:none}
+  .reg-tabla-t td.junta.vacia{display:none}
+}
+/* Lo ya enviado, para leer: limpio, sin cajas vacías. */
+.herr.copia .valor{border:0;padding:2px 0 6px;min-height:0}
+.herr.copia .valor.leido{white-space:pre-wrap;color:var(--ink)}
+.herr.copia .valor.sin-resp{color:var(--muted)}
+.herr.copia .valor-esc{display:flex;align-items:center;gap:6px}
+.herr.copia .valor-esc .de{font-size:13.5px;color:var(--ink-2)}
+.herr.copia .campo-h .rotulo{font-weight:600;color:var(--ink-2);font-size:14px}
+.herr.copia .apartado-h + .valor,.herr.copia .apunte + .valor{background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-s);padding:10px 12px;margin:4px 0 10px}
+.herr.copia .tabla-h tbody tr:nth-child(even) td{background:var(--surface-2)}
+.herr.copia .tabla-h td{vertical-align:top}
+@media (max-width:560px){ .herr.copia .tabla-h tbody tr:nth-child(even) td{background:transparent} }
+/* Para leer no hace falta la tabla apaisada de 900 px: sin casillas, el
+   texto se reparte en el ancho que hay y no queda una franja que se
+   desplaza de lado (y que el teclado no podría alcanzar). */
+@media (min-width:561px){ .herr.apaisado.copia .tabla-h table{min-width:0} }
+/* En dos columnas el dibujo encoge: el trazo, no. */
+.reg-linea .serie,.reg-linea circle,.reg-linea .eje{vector-effect:non-scaling-stroke}
+/* Los pasos en orden (04-11): «1) … 2) …» de un párrafo y las listas
+   que son un orden. El número en un círculo de borde, sin relleno: así
+   sale igual en el PDF, donde los fondos no se imprimen. */
+.pasos-l{list-style:none;counter-reset:paso;padding:0;margin:8px 0 4px;display:flex;flex-direction:column;gap:8px}
+.pasos-l li{counter-increment:paso;position:relative;padding:2px 0 0 38px;min-height:28px;line-height:1.5}
+.pasos-l li::before{content:counter(paso);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;
+  border:2px solid var(--accent);color:var(--accent-3);font-weight:700;font-size:14px;line-height:22px;text-align:center;
+  font-variant-numeric:tabular-nums}
+.con-pasos > p{margin:0 0 4px}
+.nota-h.con-pasos .pasos-l{margin-bottom:0}
+/* Desde arriba del registro, a las líneas de sus números. */
+.reg-resumen-ir{font-size:14px;font-weight:600}
+#reg-graficas-t{scroll-margin-top:70px}
+#reg-graficas-t:focus{outline:none}

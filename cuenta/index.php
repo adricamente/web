@@ -570,6 +570,10 @@ $cuerpo .= <<<'HTML'
       <button class="enlace-boton" id="h-volver" type="button">← Volver</button>
     </p>
     <p class="apunte" id="h-estado" role="status"></p>
+    <!-- Dónde está ya lo escrito (04-11): «en este dispositivo», «en tu
+         cuenta». Cambia como mucho una vez por minuto: no se anuncia en
+         cada tecla. -->
+    <p class="apunte guardado-h" id="h-guardado" aria-live="polite"></p>
   </form>
   <div class="auxilio h-riesgo" hidden>
     <p><strong>024</strong> · atención a la conducta suicida, 24 horas,
@@ -2889,33 +2893,430 @@ function el(tag, clase, texto) {
   if (texto != null) e.textContent = texto;
   return e;
 }
+/* «1) Pies en el suelo. 2) Coge aire… 3) …» dentro de un párrafo
+   (04-11): en el catálogo, cuatro herramientas cuentan así sus pasos, y
+   seis pasos en un bloque de texto corrido se leen como un muro. Solo si
+   van seguidos desde el 1 y son tres o más: un «2)» suelto en una frase
+   no parte nada. El texto no cambia, solo se reparte: lo de antes del
+   1), en su párrafo; cada paso, en su línea. */
+function pasosEnLinea(s) {
+  s = String(s || '');
+  const pos = []; let desde = 0;
+  for (let k = 1; k <= 20; k++) {
+    const re = new RegExp('(^|\\s)' + k + '\\)\\s', 'g'); re.lastIndex = desde;
+    const m = re.exec(s); if (!m) break;
+    pos.push({ i: m.index + m[1].length, fin: re.lastIndex }); desde = re.lastIndex;
+  }
+  if (pos.length < 3) return null;
+  return { antes: s.slice(0, pos[0].i).replace(/\s+$/, ''),
+           pasos: pos.map((p, j) => s.slice(p.fin, j + 1 < pos.length ? pos[j + 1].i : s.length).trim()) };
+}
+function listaPasos(items) {
+  const ol = el('ol', 'pasos-l');
+  items.forEach(t => ol.appendChild(el('li', null, t)));
+  return ol;
+}
 function parrafo(b, clase) {
-  const p = el('p', clase);
+  const d = pasosEnLinea(b.texto);
+  const p = el('p', d ? null : clase);
   if (b.negrita) p.appendChild(el('strong', null, b.negrita));
-  p.appendChild(document.createTextNode(b.texto || ''));
-  return p;
+  p.appendChild(document.createTextNode(d ? d.antes : (b.texto || '')));
+  if (!d) return p;
+  const caja = el('div', (clase ? clase + ' ' : '') + 'con-pasos');
+  if (p.textContent.trim()) caja.appendChild(p);
+  caja.appendChild(listaPasos(d.pasos));
+  return caja;
+}
+
+/* --- Cómo se rellena cada casilla (04-11) ------------------------------
+   El catálogo trae pistas en columnas, campos y apartados (`entrada:
+   escala | opciones | numero | fecha | lista`). Cambian cómo se pinta,
+   no lo que se guarda: el valor sigue siendo el mismo texto que antes
+   («4», «sí», «A, levantarme», «04-11-2026», líneas unidas por \n), y el
+   Mac lo lee igual. Sin pista, la casilla de siempre; y en lo asignado
+   antes de las pistas se deduce del rótulo («(0-5)», «(sí/no)»), como ya
+   hacía el registro. Si lo guardado no cabe en el control (texto libre
+   donde ahora hay botones), sale la casilla de texto con lo escrito:
+   nunca se esconde ni se pierde nada. */
+let NUM_ID = 0;
+function idNuevo(p) { NUM_ID += 1; return 'hx-' + p + NUM_ID; }
+function corto(r) { return String(r || '').replace(/\s*\([^)]*\)\s*$/, ''); }
+function pista(c) {
+  if (!c) return null;
+  const n = (x, d) => (x === undefined || x === null || x === '' || isNaN(+x)) ? d : +x;
+  if (c.entrada === 'escala') {
+    const min = n(c.min, 0), max = n(c.max, 10), paso = n(c.paso, 1) || 1;
+    return (max > min && paso > 0 && (max - min) / paso <= 200) ? { tipo: 'escala', min, max, paso } : null;
+  }
+  if (c.entrada === 'opciones') {
+    return (Array.isArray(c.opciones) && c.opciones.length && c.opciones.length <= 12)
+      ? { tipo: 'opciones', opciones: c.opciones.map(String), multiple: !!c.multiple } : null;
+  }
+  if (['numero', 'fecha', 'hora', 'lista'].includes(c.entrada)) return { tipo: c.entrada };
+  if (c.entrada) return null;
+  const r = String(c.rotulo || '');
+  const m = /\((\d+)\s*[-–]\s*(\d+)\)\s*$/.exec(r);
+  if (m && +m[2] > +m[1] && +m[2] - +m[1] <= 10) return { tipo: 'escala', min: +m[1], max: +m[2], paso: 1 };
+  if (/\(sí\/no\)\s*$/i.test(r)) return { tipo: 'opciones', opciones: ['sí', 'no'], multiple: false };
+  return null;
+}
+/* 0-5 y 0-10, botones: un número es un toque. Lo que va más allá de 10
+   (los porcentajes, 0-100 de 10 en 10), deslizador con el número al
+   lado, como pide el catálogo: once botones «0 10 20 … 100» ocupaban dos
+   filas en el móvil y se leían como una escala de 0 a 10. */
+function sonBotones(p) { return (p.max - p.min) <= 10 && (p.max - p.min) / p.paso <= 10; }
+function pasosDe(p) {
+  const out = [];
+  for (let k = 0; p.min + k * p.paso <= p.max + 1e-9; k++) out.push(String(Math.round((p.min + k * p.paso) * 1000) / 1000));
+  return out;
+}
+function cabe(p, v) {
+  v = String(v == null ? '' : v).trim();
+  if (!v || !p) return true;
+  if (p.tipo === 'escala') {
+    const x = Number(v.replace(',', '.'));
+    return isFinite(x) && x >= p.min && x <= p.max && (!sonBotones(p) || pasosDe(p).includes(String(x)));
+  }
+  if (p.tipo === 'opciones') {
+    const ops = p.opciones.map(o => o.toLowerCase());
+    return (p.multiple ? v.split(/\s*,\s*/) : [v]).every(x => ops.includes(x.toLowerCase()));
+  }
+  if (p.tipo === 'fecha') return /^\d{2}-\d{2}-\d{4}$/.test(v);
+  if (p.tipo === 'hora') return /^\d{1,2}:\d{2}$/.test(v);
+  return true;
+}
+/* Los botones y el deslizador cambian un campo oculto: se avisa con un
+   «input» que sube, como si se hubiera escrito, para que el borrador se
+   guarde igual que con el teclado. */
+function marcaCambio(h) { h.dispatchEvent(new Event('input', { bubbles: true })); }
+/* Las líneas de una lista crecen con lo escrito. Al pintar aún no están
+   en la página y no tienen alto: se ajustan al montarla, una vez. */
+function ajustaAltos(raiz) {
+  requestAnimationFrame(() => (raiz || document).querySelectorAll('.lista-h textarea').forEach(t => {
+    t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px';
+  }));
+}
+function cajaTexto(clave, id, valor, multilinea, lineas, aria) {
+  const c = multilinea ? document.createElement('textarea') : document.createElement('input');
+  if (multilinea) c.rows = lineas || 3; else c.type = 'text';
+  c.dataset[clave] = id;
+  c.value = valor || '';
+  c.maxLength = multilinea ? 4000 : 300;
+  if (aria) c.setAttribute('aria-label', aria);
+  return c;
+}
+
+/* Un control con su rótulo. `o`: clave ('campo' o 'col'), id, valor,
+   rotulo; `por`, el id de un encabezado que ya lo nombra (un apartado). */
+function control(p, o) {
+  const v = String(o.valor == null ? '' : o.valor);
+  if (p && !cabe(p, v)) p = null;
+  const oculto = (val) => { const h = document.createElement('input'); h.type = 'hidden'; h.dataset[o.clave] = o.id; h.value = val; return h; };
+  const rotulo = () => { const s = el('span', 'rotulo', o.rotulo); s.id = idNuevo('r'); return s; };
+  if (!p || p.tipo === 'numero') {
+    const lab = el('label', 'campo-h');
+    if (!o.por) lab.appendChild(el('span', 'rotulo', o.rotulo));
+    const c = cajaTexto(o.clave, o.id, v, !p && o.multilinea, o.lineas, o.por ? o.rotulo : null);
+    if (p) { c.inputMode = 'decimal'; c.maxLength = 40; c.classList.add('corto'); }
+    lab.appendChild(c);
+    return lab;
+  }
+  /* `entrada: "hora"` (04-11, preparado: aún no viene en el catálogo).
+     El selector de hora ya da «23:40», que es lo que se guarda: no hace
+     falta campo oculto. Lo escrito antes a mano («sobre las 11») no cabe
+     y sale en su casilla de texto (cabe()). */
+  if (p.tipo === 'hora') {
+    const lab = el('label', 'campo-h ctl-hora');
+    if (!o.por) lab.appendChild(el('span', 'rotulo', o.rotulo));
+    const d = document.createElement('input'); d.type = 'time';
+    d.dataset[o.clave] = o.id;
+    if (o.por) d.setAttribute('aria-label', o.rotulo);
+    d.value = v ? v.padStart(5, '0') : '';
+    lab.appendChild(d);
+    return lab;
+  }
+  if (p.tipo === 'fecha') {
+    const lab = el('label', 'campo-h ctl-fecha');
+    if (!o.por) lab.appendChild(el('span', 'rotulo', o.rotulo));
+    const h = oculto(v);
+    const d = document.createElement('input'); d.type = 'date';
+    if (o.por) d.setAttribute('aria-label', o.rotulo);
+    d.value = v ? v.split('-').reverse().join('-') : '';
+    d.addEventListener('change', () => { h.value = d.value ? d.value.split('-').reverse().join('-') : ''; marcaCambio(h); });
+    lab.append(d, h);
+    return lab;
+  }
+  const caja = el('div', 'campo-h ctl-' + (p.tipo === 'lista' ? 'lista' : p.tipo === 'opciones' ? 'opciones' : (sonBotones(p) ? 'escala' : 'deslizador')));
+  let nombra = o.por;
+  if (!nombra) { const r = rotulo(); caja.appendChild(r); nombra = r.id; }
+  const h = oculto(v);
+  if (p.tipo === 'escala' && !sonBotones(p)) {
+    const fila = el('div', 'deslizador');
+    const r = document.createElement('input'); r.type = 'range';
+    r.min = String(p.min); r.max = String(p.max); r.step = String(p.paso); r.id = idNuevo('d');
+    r.setAttribute('aria-labelledby', nombra);
+    /* El número, grande y a la vista. El deslizador ya lo dice al lector
+       de pantalla: el `output` no lo repite. */
+    const out = el('output', 'valor-num'); out.setAttribute('for', r.id); out.setAttribute('aria-hidden', 'true');
+    const quitar = el('button', 'enlace-boton', 'Quitar'); quitar.type = 'button';
+    quitar.setAttribute('aria-label', 'Quitar el número de ' + corto(o.rotulo));
+    const pon = (val) => {
+      h.value = val; caja.classList.toggle('sin-valor', val === ''); quitar.hidden = val === '';
+      out.textContent = val === '' ? '—' : val;
+      r.value = val === '' ? String(p.min) : val;
+      if (val === '') r.setAttribute('aria-valuetext', 'sin marcar'); else r.removeAttribute('aria-valuetext');
+    };
+    r.addEventListener('input', (ev) => { ev.stopPropagation(); pon(r.value); marcaCambio(h); });
+    /* Sin marcar, el pulgar está en el mínimo: pulsar ahí (o Inicio) no
+       cambia el valor y no salta «input». Esto marca ese mínimo. */
+    const marcaSiVacio = () => { if (h.value === '') { pon(r.value); marcaCambio(h); } };
+    r.addEventListener('pointerup', marcaSiVacio);
+    r.addEventListener('keyup', (ev) => { if (/^(Arrow|Home|End|Page)/.test(ev.key)) marcaSiVacio(); });
+    quitar.addEventListener('click', () => { pon(''); marcaCambio(h); r.focus(); });
+    /* Marcas debajo (04-11): una raya por paso, si son veinte o menos, y
+       el número en el principio, la mitad y el final. Sin marcas, «60»
+       en una barra lisa no se sabía dónde caía. Decorativas: el
+       deslizador ya dice su valor y sus extremos al lector de pantalla. */
+    const n = Math.round((p.max - p.min) / p.paso);
+    const ext = el('div', 'deslizador-ext'); ext.setAttribute('aria-hidden', 'true');
+    if (n <= 20) { ext.classList.add('con-rayas'); ext.style.setProperty('--pasos', String(n)); }
+    const mitad = p.min + Math.round(n / 2) * p.paso;
+    [[p.min, 0], [mitad, (mitad - p.min) / (p.max - p.min)], [p.max, 1]].forEach(([x, t], k) => {
+      if (k === 1 && (n < 2 || n % 2)) return;
+      const s = el('span', null, String(Math.round(x * 1000) / 1000)); s.style.left = (t * 100) + '%'; ext.appendChild(s);
+    });
+    const col = el('div', 'deslizador-pista'); col.append(r, ext);
+    fila.append(col, out, quitar);
+    caja.append(fila, h);
+    pon(v.trim() === '' ? '' : String(Number(v.replace(',', '.'))));
+    return caja;
+  }
+  if (p.tipo === 'lista') {
+    caja.setAttribute('role', 'group'); caja.setAttribute('aria-labelledby', nombra);
+    const nombre = corto(o.rotulo).replace(/^\d+\s*[.·]\s*/, '');
+    const ol = el('ol', 'lista-h');
+    const junta = () => { h.value = [...ol.querySelectorAll('textarea')].map(t => t.value.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n'); };
+    const renum = () => ol.querySelectorAll('li').forEach((li, i) => {
+      li.querySelector('textarea').setAttribute('aria-label', nombre + ', línea ' + (i + 1));
+      li.querySelector('button').setAttribute('aria-label', 'Quitar la línea ' + (i + 1));
+    });
+    const alto = (t) => { if (t.isConnected) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; } };
+    const linea = (texto) => {
+      const li = el('li');
+      const t = document.createElement('textarea'); t.rows = Math.min(5, Math.max(1, Math.ceil(texto.length / 34))); t.value = texto; t.maxLength = 1000;
+      /* Una línea es una cosa: Intro abre la siguiente, y lo pegado con
+         saltos se reparte en líneas. */
+      t.addEventListener('input', () => {
+        if (/\n/.test(t.value)) {
+          const trozos = t.value.split(/\n+/);
+          t.value = trozos.shift();
+          let ant = li;
+          trozos.filter(x => x.trim()).forEach(x => { const n = linea(x); ant.after(n); ant = n; });
+          renum();
+        }
+        junta(); alto(t);
+      });
+      t.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing) {
+          ev.preventDefault();
+          const n = linea(''); li.after(n); renum(); n.querySelector('textarea').focus();
+        } else if (ev.key === 'Backspace' && !t.value && ol.children.length > 1) {
+          ev.preventDefault();
+          const otra = li.previousElementSibling || li.nextElementSibling;
+          li.remove(); renum(); junta(); marcaCambio(h); otra.querySelector('textarea').focus();
+        }
+      });
+      const q = el('button', 'lista-quitar', 'Quitar'); q.type = 'button';
+      q.addEventListener('click', () => {
+        const otra = li.nextElementSibling || li.previousElementSibling;
+        if (ol.children.length > 1) li.remove(); else li.querySelector('textarea').value = '';
+        renum(); junta(); marcaCambio(h);
+        (otra ? otra.querySelector('textarea') : ol.querySelector('textarea')).focus();
+      });
+      li.append(t, q);
+      return li;
+    };
+    const lineas = v.split('\n').map(x => x.trim()).filter(Boolean);
+    (lineas.length ? lineas : ['']).forEach(x => ol.appendChild(linea(x)));
+    renum();
+    const mas = el('button', 'enlace-boton lista-mas', '+ Añadir otra'); mas.type = 'button';
+    mas.addEventListener('click', () => { const n = linea(''); ol.appendChild(n); renum(); n.querySelector('textarea').focus(); });
+    caja.append(ol, mas, h);
+    return caja;
+  }
+  /* Escala corta u opciones: botones grandes, pulsado = aria-pressed. Otra
+     pulsación en el mismo lo desmarca. */
+  caja.setAttribute('role', 'group'); caja.setAttribute('aria-labelledby', nombra);
+  const ops = p.tipo === 'escala' ? pasosDe(p) : p.opciones;
+  const multiple = p.tipo === 'opciones' && p.multiple;
+  const fila = el('div', 'reg-chips' + (p.tipo === 'escala' ? ' escala' + (ops.length > 6 ? ' muchos' : '') : ''));
+  if (p.tipo === 'escala') fila.style.setProperty('--n', String(ops.length));
+  const marcados = () => (multiple ? h.value.split(/\s*,\s*/) : [h.value]).filter(Boolean).map(x => x.toLowerCase());
+  const pinta = () => fila.querySelectorAll('.reg-chip').forEach(x => x.setAttribute('aria-pressed', String(marcados().includes(x.dataset.op))));
+  ops.forEach(op => {
+    const bt = el('button', 'reg-chip', op); bt.type = 'button'; bt.dataset.op = op.toLowerCase();
+    bt.addEventListener('click', () => {
+      const lo = op.toLowerCase();
+      if (multiple) { const s = new Set(marcados()); if (s.has(lo)) s.delete(lo); else s.add(lo); h.value = ops.filter(x => s.has(x.toLowerCase())).join(', '); }
+      else h.value = h.value.toLowerCase() === lo ? '' : op;
+      pinta(); marcaCambio(h);
+    });
+    fila.appendChild(bt);
+  });
+  pinta();
+  if (multiple) caja.appendChild(el('p', 'apunte ctl-nota', 'Puedes marcar varias.'));
+  caja.append(fila, h);
+  return caja;
+}
+
+/* Iconos sobrios, de trazo, siempre decorativos: el texto de al lado dice
+   lo mismo. */
+function icono(nombre) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const s = document.createElementNS(NS, 'svg');
+  s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('class', 'ico');
+  s.setAttribute('aria-hidden', 'true'); s.setAttribute('focusable', 'false');
+  const D = {
+    info: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z', 'M12 11v5', 'M12 7.6v.4'],
+    aviso: ['M12 3.5 2.8 19.5h18.4z', 'M12 10v4', 'M12 16.8v.4'],
+    libro: ['M5 4.5h11a3 3 0 0 1 3 3v12H8a3 3 0 0 1-3-3z', 'M5 16.5a3 3 0 0 1 3-3h11'],
+    acuerdo: ['M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z', 'M8 12.5l2.6 2.6L16.2 9.4'],
+  }[nombre] || [];
+  D.forEach(d => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); s.appendChild(p); });
+  return s;
+}
+function conIcono(nodo, nombre) { nodo.classList.add('con-ico'); nodo.prepend(icono(nombre)); return nodo; }
+/* «1. Mis señales» → el número en su círculo. El espacio queda en el
+   texto para que el lector diga «1 Mis señales», no «1Mis». */
+function rotuloNumerado(tag, clase, texto, id) {
+  const h = el(tag, clase);
+  if (id) h.id = id;
+  const m = /^(\d+)\s*[.·]\s*(.+)$/.exec(String(texto || ''));
+  if (m) { h.classList.add('paso'); h.append(el('span', 'paso-n', m[1]), document.createTextNode(' ' + m[2])); }
+  else h.textContent = texto || '';
+  return h;
+}
+
+/* Una tabla de una ficha como fichas (04-11): una por fila. Una tabla
+   con botones o deslizadores, o con cinco columnas o más, no cabe en una
+   pantalla: en el móvil se cortaba y en el escritorio quedaban casillas
+   de dos dedos. Los id son los de siempre: `{tabla}.{fila}.{columna}`. */
+function fichas(b, valores) {
+  const env = el('div', 'tabla-h fichas'); env.dataset.tabla = b.id;
+  /* El ejemplo, plegado: se abre si hace falta y no empuja las fichas
+     media pantalla hacia abajo cada vez. */
+  if (b.ejemplo) {
+    const e = el('details', 'ficha ejemplo');
+    e.appendChild(el('summary', 'ficha-t', 'Ver un ejemplo'));
+    const dl = el('dl');
+    b.columnas.forEach((c, j) => { if (b.ejemplo[j]) dl.append(el('dt', null, corto(c.rotulo)), el('dd', null, b.ejemplo[j])); });
+    e.appendChild(dl); env.appendChild(e);
+  }
+  /* Las filas libres vacías, menos la primera, se esconden: seis fichas
+     en blanco seguidas eran tres pantallas de casillas. Siguen en la
+     página (`hidden`), así que lo que se guarda tiene las mismas claves
+     de siempre; «+ Añadir otra fila» las va enseñando (ponFilasExtra). */
+  const llena = (n) => b.columnas.some(c => String(valores[b.id + '.' + n + '.' + c.id] || '').trim());
+  const filas = idsTabla(b);
+  const ultimaLlena = filas.reduce((m, x) => (!x.fija && llena(x.n) ? x.n : m), 0);
+  let vacias = 1 + ((typeof HERR !== 'undefined' && HERR && HERR.verFilas && HERR.verFilas[b.id]) || 0);
+  filas.forEach(({ n, fija }) => {
+    const fs = el('fieldset', 'ficha');
+    if (!fija && n > ultimaLlena) { if (vacias <= 0) fs.hidden = true; vacias--; }
+    /* `fila` en el catálogo («Crisis», «Pico») nombra las filas libres:
+       «Crisis 2» dice más que «Fila 2». Sin él, «Fila». */
+    const nombre = (fija && fija[0] != null) ? String(fija[0]) : (b.fila ? String(b.fila) : 'Fila') + ' ' + n;
+    fs.appendChild(el('legend', null, nombre));
+    const dentro = el('div', 'ficha-campos');
+    b.columnas.forEach((c, j) => {
+      if (fija && fija[j] != null) {
+        if (j > 0) { const d = el('div', 'campo-h ficha-fija'); d.append(el('span', 'rotulo', c.rotulo), el('p', null, String(fija[j]))); dentro.appendChild(d); }
+        return;
+      }
+      const id = b.id + '.' + n + '.' + c.id;
+      dentro.appendChild(control(pista(c), { clave: 'campo', id, valor: valores[id] || '', rotulo: c.rotulo, multilinea: true, lineas: 2 }));
+    });
+    fs.appendChild(dentro); env.appendChild(fs);
+  });
+  return env;
+}
+
+/* Cuántos apartados llevan algo (04-11). Solo en lo que tiene tres o
+   más: en una ficha de dos casillas, un contador es ruido. */
+function ponProgreso(raiz) {
+  const secs = [...raiz.querySelectorAll('.seccion-h')].filter(s => s.querySelector('[data-campo]'));
+  if (secs.length < 3) return;
+  const caja = el('div', 'progreso-h');
+  const t = el('p', 'progreso-t'); t.setAttribute('aria-live', 'polite');
+  const barra = el('div', 'progreso-barra'); barra.setAttribute('aria-hidden', 'true');
+  const i = el('i'); barra.appendChild(i);
+  caja.append(t, barra);
+  const cuenta = () => {
+    let n = 0;
+    secs.forEach(s => {
+      const lleno = [...s.querySelectorAll('[data-campo]')].some(c => String(c.value || '').trim());
+      s.classList.toggle('hecha', lleno);
+      if (lleno) n++;
+    });
+    const txt = 'Llevas ' + n + ' de ' + secs.length + ' apartados';
+    if (t.textContent !== txt) t.textContent = txt;
+    i.style.width = Math.round(100 * n / secs.length) + '%';
+  };
+  raiz.addEventListener('input', cuenta);
+  cuenta();
+  raiz.prepend(caja);
+}
+
+/* Un valor ya enviado, para leerlo: el número en su pastilla con el
+   tono de la semana y «de 10» al lado; las opciones, en negrita; una
+   lista, con viñetas; nada, una raya («sin respuesta» para el lector). */
+function valorLeido(p, v) {
+  const s = String(v == null ? '' : v).trim();
+  if (!s) { const d = el('div', 'valor sin-resp'); d.append(el('span', null, '—'), el('span', 'oculto-visual', 'sin respuesta')); return d; }
+  if (p && p.tipo === 'lista') {
+    const ul = el('ul', 'valor valor-lista');
+    s.split('\n').filter(x => x.trim()).forEach(x => ul.appendChild(el('li', null, x)));
+    return ul;
+  }
+  const t = tonoDe(p, s);
+  if (t !== null) {
+    const d = el('div', 'valor valor-esc');
+    d.append(el('span', 'v-num n' + t, s), el('span', 'de', 'de ' + p.max));
+    return d;
+  }
+  if (p && p.tipo === 'opciones') { const d = el('div', 'valor'); d.appendChild(el('span', 'v-op', s)); return d; }
+  return el('div', 'valor leido', s);
 }
 
 /* Pinta los bloques. modo 'form' = casillas; modo 'texto' = lo escrito,
-   como texto (para leer una copia enviada y para imprimir). */
+   como texto (para leer una copia enviada y para imprimir: ahí van las
+   tablas de papel de siempre, sin botones). */
 function pintaBloques(def, valores, modo, desactivar) {
-  const raiz = el('div', 'herr' + (def.apaisado ? ' apaisado' : ''));
-  const casilla = (id, rotulo, multilinea, lineas, bloqueada) => {
+  /* modo 'copia' (04-11): lo ya enviado, en pantalla. Como 'texto', pero
+     para leer y no para imprimir: los números con su tono y «de 10», lo
+     vacío como una raya en vez de una caja en blanco, y fuera las filas
+     de tabla que no tienen nada. */
+  const copia = modo === 'copia';
+  const raiz = el('div', 'herr' + (def.apaisado ? ' apaisado' : '') + (copia ? ' copia' : ''));
+  const form = modo === 'form';
+  const casilla = (id, rotulo, multilinea, lineas, bloqueada, p) => {
     const v = valores[id] || '';
-    if (modo === 'texto') {
+    if (copia) return valorLeido(p, v);
+    if (!form) {
+      if (p && p.tipo === 'lista' && v.trim()) {
+        const ul = el('ul', 'valor valor-lista');
+        v.split('\n').filter(x => x.trim()).forEach(x => ul.appendChild(el('li', null, x)));
+        return ul;
+      }
       const d = el('div', 'valor' + (multilinea ? ' multi' : ''), v);
       if (multilinea) d.style.minHeight = (1.6 * (lineas || 2)) + 'em';
       return d;
     }
-    const c = multilinea ? document.createElement('textarea') : document.createElement('input');
-    if (multilinea) c.rows = lineas || 3; else c.type = 'text';
-    c.dataset.campo = id;
-    c.value = v;
-    c.maxLength = multilinea ? 4000 : 300;
-    if (rotulo) c.setAttribute('aria-label', rotulo);
+    const c = cajaTexto('campo', id, v, multilinea, lineas, rotulo);
     if (desactivar || bloqueada) c.disabled = true;
     return c;
   };
+  const vivo = (p) => form && !desactivar && p;
   /* «Lo que acordamos en sesión» va el primero y destacado: es lo que
      más se lee (tareas para casa, 14-10). */
   const esAcordado = (b) => b.t === 'nota' && /^\s*lo que acordamos/i.test(b.negrita || '');
@@ -2923,58 +3324,95 @@ function pintaBloques(def, valores, modo, desactivar) {
      la herramienta): sin bloques «titulo» (h2), un apartado en h3 salta un
      nivel, y axe lo marca (heading-order). h3 solo debajo de un «titulo». */
   let nivel = 'h2';
+  /* Cada apartado (y cada texto con título) abre una sección: lo que
+     cuenta el progreso, y lo que se marca como hecho. */
+  let destino = raiz;
+  const seccion = () => { destino = el('div', 'seccion-h'); raiz.appendChild(destino); };
   const bloques = (def.bloques || []).filter(esAcordado).concat((def.bloques || []).filter(b => !esAcordado(b)));
   bloques.forEach(b => {
     if (esAcordado(b)) {
-      raiz.appendChild(parrafo(b, 'acordado-h'));
+      raiz.appendChild(conIcono(parrafo(b, 'acordado-h'), 'acuerdo'));
     } else if (b.t === 'campos') {
       const fila = el('div', 'campos-fila');
       b.campos.forEach(k => {
-        const caja = el('label', 'campo-h');
-        caja.style.flex = (k.ancho || 6) + ' 1 ' + Math.max(8, (k.ancho || 6) * 1.6) + 'rem';
-        caja.appendChild(el('span', 'rotulo', k.rotulo));
-        caja.appendChild(casilla(k.id, k.rotulo, false));
+        const p = pista(k);
+        let caja;
+        if (vivo(p)) caja = control(p, { clave: 'campo', id: k.id, valor: valores[k.id] || '', rotulo: k.rotulo });
+        else {
+          caja = el('label', 'campo-h');
+          caja.appendChild(el('span', 'rotulo', k.rotulo));
+          caja.appendChild(casilla(k.id, k.rotulo, false, 0, false, p));
+        }
+        const ancho = (p && p.tipo === 'escala') ? Math.max(k.ancho || 6, 14) : (k.ancho || 6);
+        caja.style.flex = ancho + ' 1 ' + Math.max(8, ancho * 1.6) + 'rem';
         fila.appendChild(caja);
       });
-      raiz.appendChild(fila);
+      destino.appendChild(fila);
     } else if (b.t === 'nota') {
-      raiz.appendChild(parrafo(b, 'nota-h'));
+      destino.appendChild(conIcono(parrafo(b, 'nota-h'), 'info'));
     } else if (b.t === 'advertencia') {
-      const d = el('div', 'auxilio'); d.appendChild(parrafo(b)); raiz.appendChild(d);
+      const d = el('div', 'auxilio con-ico'); d.append(icono('aviso'), parrafo(b)); destino.appendChild(d);
     } else if (b.t === 'texto') {
-      raiz.appendChild(parrafo(b));
+      if (b.titulo) { seccion(); destino.appendChild(rotuloNumerado(nivel, 'apartado-h', b.titulo)); }
+      if (b.texto || b.negrita) destino.appendChild(parrafo(b));
     } else if (b.t === 'titulo') {
       const h = el('h2', 'titulo-h' + (b.salto ? ' salto' : ''), b.texto);
-      raiz.appendChild(h); nivel = 'h3';
+      raiz.appendChild(h); nivel = 'h3'; destino = raiz;
       if (b.sub) raiz.appendChild(el('p', 'apunte', b.sub));
     } else if (b.t === 'apartado') {
-      raiz.appendChild(el(nivel, 'apartado-h', b.titulo));
-      if (b.ayuda) raiz.appendChild(el('p', 'apunte', b.ayuda));
-      if (b.id) raiz.appendChild(casilla(b.id, b.titulo, true, b.lineas));
+      seccion();
+      const hid = idNuevo('a');
+      destino.appendChild(rotuloNumerado(nivel, 'apartado-h', b.titulo, hid));
+      if (b.ayuda) destino.appendChild(el('p', 'apunte', b.ayuda));
+      if (b.id) {
+        const p = pista(b);
+        if (vivo(p)) destino.appendChild(control(p, { clave: 'campo', id: b.id, valor: valores[b.id] || '', rotulo: b.titulo, por: hid, multilinea: true, lineas: b.lineas }));
+        else destino.appendChild(casilla(b.id, b.titulo, true, b.lineas, false, p));
+      }
     } else if (b.t === 'lista') {
-      if (b.titulo) raiz.appendChild(el(nivel, 'apartado-h', b.titulo));
-      const ul = el('ul');
-      (b.items || []).forEach(t => ul.appendChild(el('li', null, t)));
-      raiz.appendChild(ul);
+      if (b.titulo) destino.appendChild(el(nivel, 'apartado-h', b.titulo));
+      /* Una lista que es un orden («Cómo usarla», «Lo primero, siempre…»)
+         va con sus números; una que es un montón de cosas (los
+         compromisos del plan), con viñetas. `pasos: true | false` en el
+         catálogo lo dice; sin él, se deduce del título. */
+      const esPasos = b.pasos === true || (b.pasos !== false && /^(c[oó]mo\b|lo primero|pasos?\b|paso a paso)/i.test(String(b.titulo || '').trim()));
+      if (esPasos) destino.appendChild(listaPasos(b.items || []));
+      else {
+        const ul = el('ul', 'lista-l');
+        (b.items || []).forEach(t => ul.appendChild(el('li', null, t)));
+        destino.appendChild(ul);
+      }
     } else if (b.t === 'tabla' || b.t === 'tabla_lectura') {
       const lectura = b.t === 'tabla_lectura';
-      if (b.titulo) raiz.appendChild(el(nivel, 'apartado-h', b.titulo));
-      const envoltura = el('div', 'tabla-h');
+      if (b.titulo) destino.appendChild(el(nivel, 'apartado-h', b.titulo));
+      if (!lectura && form && !desactivar && b.id) {
+        const fx = colsFijas(b);
+        const entran = b.columnas.filter((c, j) => !fx.includes(j));
+        if (entran.length >= 5 || entran.some(c => pista(c))) { destino.appendChild(fichas(b, valores)); return; }
+      }
+      const envoltura = el('div', 'tabla-h' + (lectura ? ' lectura' : ''));
       if (!lectura && b.id) envoltura.dataset.tabla = b.id;
       const tab = el('table');
       const thead = el('thead'), trh = el('tr');
       const cols = lectura ? b.columnas.map(c => ({ rotulo: c[0], ancho: c[1] })) : b.columnas;
-      cols.forEach(c => { const th = el('th', null, c.rotulo); th.style.width = (c.ancho || 4) + 'em'; trh.appendChild(th); });
+      /* Una cabecera sin rótulo (la columna de los nombres de fila en las
+         fichas PU) se queda vacía a la vista, pero el lector de pantalla
+         necesita algo que decir al cruzar la celda (axe: empty-table-header). */
+      cols.forEach((c, j) => {
+        const th = el('th', null, c.rotulo); th.scope = 'col'; th.style.width = (c.ancho || 4) + 'em';
+        if (!String(c.rotulo || '').trim()) th.appendChild(el('span', 'oculto-visual', j === 0 ? 'Apartado' : 'Columna ' + (j + 1)));
+        trh.appendChild(th);
+      });
       thead.appendChild(trh); tab.appendChild(thead);
       const tb = el('tbody');
       if (lectura) {
         (b.filas || []).forEach(f => {
           const tr = el('tr');
-          f.forEach((x, j) => { const td = el('td', null, x); td.dataset.rotulo = cols[j].rotulo; tr.appendChild(td); });
+          f.forEach((x, j) => { const td = el('td', j === 0 ? 'primera' : null, x); td.dataset.rotulo = cols[j].rotulo; tr.appendChild(td); });
           tb.appendChild(tr);
         });
       } else {
-        if (b.ejemplo) {
+        if (b.ejemplo && !copia) {
           const tr = el('tr', 'ejemplo');
           b.ejemplo.forEach((x, i) => {
             const td = el('td', null, (i === 0 ? 'Ejemplo: ' : '') + x);
@@ -2983,6 +3421,7 @@ function pintaBloques(def, valores, modo, desactivar) {
           tb.appendChild(tr);
         }
         idsTabla(b).forEach(({ n, fija }) => {
+          if (copia && !b.columnas.some((c, j) => !(fija && fija[j] != null) && String(valores[b.id + '.' + n + '.' + c.id] || '').trim())) return;
           const tr = el('tr');
           b.columnas.forEach((c, j) => {
             const td = el('td');
@@ -2991,13 +3430,14 @@ function pintaBloques(def, valores, modo, desactivar) {
             /* En una fila fija (un día, una cosa acordada), la casilla dice
                de cuál es: «Qué me llevo» a secas se repite en cada fila. */
             else td.appendChild(casilla(b.id + '.' + n + '.' + c.id,
-              c.rotulo + (fija && fija[0] != null && j > 0 ? ' · ' + fija[0] : ''), (b.alto || 0) > 1.2, 2));
+              c.rotulo + (fija && fija[0] != null && j > 0 ? ' · ' + fija[0] : ''), (b.alto || 0) > 1.2, 2, false, pista(c)));
             tr.appendChild(td);
           });
           tb.appendChild(tr);
         });
       }
-      tab.appendChild(tb); envoltura.appendChild(tab); raiz.appendChild(envoltura);
+      if (copia && !tb.children.length) { destino.appendChild(el('p', 'apunte', 'Nada escrito aquí.')); return; }
+      tab.appendChild(tb); envoltura.appendChild(tab); destino.appendChild(envoltura);
     } else if (b.t === 'firma') {
       const fila = el('div', 'firma-h');
       [['paciente', 'Paciente'], ['profesional', 'Psicólogo']].forEach(([w, nombre]) => {
@@ -3012,11 +3452,12 @@ function pintaBloques(def, valores, modo, desactivar) {
         });
         fila.appendChild(col);
       });
-      raiz.appendChild(fila);
+      destino.appendChild(fila);
     } else if (b.t === 'fuente') {
-      raiz.appendChild(el('p', 'fuente-h', b.texto));
+      raiz.appendChild(conIcono(el('p', 'fuente-h', b.texto), 'libro'));
     }
   });
+  if (form && !desactivar) ponProgreso(raiz);
   return raiz;
 }
 
@@ -3034,7 +3475,7 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   $('h-subtitulo').textContent = def.subtitulo || '';
   document.querySelectorAll('.h-riesgo').forEach(x => { x.hidden = !def.riesgo; });
   const cuerpo = $('h-cuerpo'); cuerpo.innerHTML = '';
-  const pintado = pintaBloques(def, valores, soloLeer ? 'texto' : 'form', false);
+  const pintado = pintaBloques(def, valores, soloLeer ? 'copia' : 'form', false);
   if (def.rueda) {
     /* La rueda interactiva; los bloques, como versión en texto debajo.
        `rueda: 'web'` = la asignación no traía los datos: los de rueda.js.
@@ -3060,8 +3501,10 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   $('h-guardar').hidden = soloLeer || lectura || !HERR || !HERR.tarea;
   $('h-leido').hidden = !(lectura && !soloLeer) || !!def.rueda || (HERR && HERR.modo === 'vivo');
   $('h-estado').textContent = (soloLeer || lectura) ? '' :
-    'Puedes rellenarla poco a poco: «Guardar y seguir otro día» la guarda cifrada y la retomas desde cualquier dispositivo. Cuando esté completa, «Enviar».';
+    'Puedes rellenarla poco a poco: se guarda sola mientras escribes, en este dispositivo y cifrada en tu cuenta, y la retomas desde cualquier sitio. Cuando esté completa, «Enviar».';
+  $('h-guardado').textContent = '';
   ver('v-herr');
+  ajustaAltos(cuerpo);
 }
 
 async function abrirHerramienta(id) {
@@ -3118,12 +3561,58 @@ async function abrirCopia(id) {
     'Enviada el ' + fecha(d.completado_en));
 }
 
-$('h-cuerpo').addEventListener('input', () => {
-  if (!HERR || HERR.soloLeer || !HERR.tarea || HERR.modo === 'registro') return;
-  try { localStorage.setItem(claveHerr(), JSON.stringify({ campos: camposDelForm(), guardado: new Date().toISOString() })); } catch (_) {}
+/* --- Que no se pierda lo escrito (04-11) --------------------------------
+   · De una vez: en cada cambio, a este dispositivo; y a los pocos segundos,
+     sellado a SU clave, a la cuenta (guardar_borrador), sin pulsar nada.
+     Así sigue al salir y volver, y desde otro móvil. Como mucho una
+     subida cada 45 s (80 por hora): el portal frena los borradores a
+     120 por hora, y así siempre le queda margen a «Guardar y seguir
+     otro día».
+   · Vivo: a este dispositivo en cada cambio. A la cuenta va al pulsar
+     «Guardar», porque guardar ahí es mandarle a Adrián una versión, y
+     una versión por tecla no le sirve a nadie.
+   · Registro: el apunte que se está escribiendo y «Lo demás de la
+     ficha», a este dispositivo; el apunte llega a la cuenta al guardarlo.
+   Lo de este dispositivo se queda al salir de la cuenta: salir borra la
+   llave, no lo escrito. */
+const SUBIDA = { pendiente: null, reloj: null, ultima: 0 };
+function horaCorta() { return new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' }); }
+function avisoGuardado(t) { const x = t + ' · ' + horaCorta(); if ($('h-guardado').textContent !== x) $('h-guardado').textContent = x; }
+function leeLocal(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (_) { return null; } }
+function ponLocal(k, x) { try { localStorage.setItem(k, JSON.stringify(x)); return true; } catch (_) { return false; } }
+function borraLocal(k) { try { localStorage.removeItem(k); } catch (_) {} }
+function programaSubida(tarea, x) {
+  /* Lo que se sube es lo de ESTE momento y a ESTA tarea: si cuando salta
+     el reloj ya está en otra herramienta, no se mezcla. */
+  SUBIDA.pendiente = { tarea, x };
+  clearTimeout(SUBIDA.reloj);
+  SUBIDA.reloj = setTimeout(subeBorrador, Math.max(6000, 45000 - (Date.now() - SUBIDA.ultima)));
+}
+function cancelaSubida() { clearTimeout(SUBIDA.reloj); SUBIDA.pendiente = null; }
+async function subeBorrador() {
+  const p = SUBIDA.pendiente;
+  clearTimeout(SUBIDA.reloj); SUBIDA.pendiente = null;
+  if (!p || !miPublica) return;
+  SUBIDA.ultima = Date.now();
+  const r = await api('guardar_borrador', { id: p.tarea, cifrado: sellarHaciaElMac(p.x, miPublica) });
+  if (HERR && HERR.tarea === p.tarea && !HERR.soloLeer) {
+    if (r.ok) avisoGuardado('Guardado en tu cuenta y en este dispositivo');
+    else if (r.j.error === 'despacio') programaSubida(p.tarea, p.x);
+  }
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden && SUBIDA.pendiente) subeBorrador(); });
+$('h-cuerpo').addEventListener('input', (ev) => {
+  if (!HERR || HERR.soloLeer || !HERR.tarea) return;
+  if (HERR.modo === 'registro' && !HERR.sinTabla) { guardaLocalRegistro(ev.target); return; }
+  const x = { campos: camposDelForm(), guardado: new Date().toISOString() };
+  const ok = ponLocal(claveHerr(), x);
+  if (HERR.modo === 'vivo' || HERR.sinTabla) { if (ok) avisoGuardado('Guardado en este dispositivo; pulsa «Guardar» para que llegue a tu cuenta'); return; }
+  if (ok) avisoGuardado('Guardado en este dispositivo');
+  programaSubida(HERR.tarea, x);
 });
 $('h-guardar').addEventListener('click', async () => {
   if (!HERR || HERR.soloLeer || !HERR.tarea) return;
+  cancelaSubida();
   $('h-guardar').disabled = true;
   try {
     const x = { campos: camposDelForm(), guardado: new Date().toISOString() };
@@ -3137,9 +3626,12 @@ $('h-guardar').addEventListener('click', async () => {
 
 $('h-form').addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  if (!HERR || HERR.soloLeer || HERR.modo === 'registro') return;
+  if (!HERR || HERR.soloLeer || (HERR.modo === 'registro' && !HERR.sinTabla)) return;
   $('h-enviar').disabled = true;
-  if (HERR.modo === 'vivo') {
+  /* Un registro sin tabla (Examinar un pensamiento, la flecha
+     descendente) se pinta y se guarda como un documento vivo. Antes del
+     04-11 este botón no hacía nada en ellos: se salía aquí arriba. */
+  if (HERR.modo === 'vivo' || HERR.sinTabla) {
     try {
       const x = await guardarVivo();
       if (!x) { $('h-estado').textContent = 'No se ha podido guardar. Inténtalo otra vez.'; return; }
@@ -3148,6 +3640,7 @@ $('h-form').addEventListener('submit', async (ev) => {
     } finally { $('h-enviar').disabled = false; }
     return;
   }
+  cancelaSubida();
   try {
     const campos = camposDelForm();
     const momento = ahoraLocal();
@@ -3181,7 +3674,11 @@ $('h-leido').addEventListener('click', async () => {
    librerías de fuera, que esta página no carga ninguna. */
 $('h-pdf').addEventListener('click', () => {
   if (!HERR) return;
-  if (HERR.modo === 'registro') { imprimeHojas([hojaSemana(lunesDe(hoyISO()))]); return; }
+  /* Un registro sin tabla (Examinar un pensamiento, la flecha
+     descendente) se rellena como un documento vivo y se imprime como él:
+     por el camino de las semanas no hay semana que imprimir, y fallaba
+     (HERR.entradas no existe) sin que saliera nada. */
+  if (HERR.modo === 'registro' && !HERR.sinTabla) { imprimeHojas([hojaSemana(lunesDe(hoyISO()))]); return; }
   const valores = HERR.soloLeer ? (HERR.valores || {}) : camposDelForm();
   const cont = $('h-imprimir'); cont.innerHTML = '';
   /* Hijo directo de <body>, para que al imprimir se pueda esconder todo
@@ -3388,6 +3885,16 @@ function ponFilasExtra(raiz, defDeTablas, rehacer) {
     const b = (defDeTablas.bloques || []).find(x => x.t === 'tabla' && x.id === t.dataset.tabla);
     if (!b) return;
     const bt = boton('+ Añadir otra fila', 'enlace-boton', () => {
+      /* Primero, las fichas vacías que ya estaban (escondidas). */
+      HERR.verFilas = HERR.verFilas || {};
+      HERR.verFilas[b.id] = (HERR.verFilas[b.id] || 0) + 1;
+      const oculta = t.querySelector('.ficha[hidden]');
+      if (oculta) {
+        oculta.hidden = false;
+        const c = oculta.querySelector('textarea, input:not([type=hidden]), button');
+        if (c) c.focus();
+        return;
+      }
       const v = camposDelForm(); const y = window.scrollY;
       b.filas = (b.filas || 0) + 1;
       rehacer(v);
@@ -3435,6 +3942,8 @@ async function abrirViva(r, def) {
     montaVivo(valores, r.j.actualizado);
   } else {
     HERR.resto = valores;
+    HERR.restoGuardado = (guardado && guardado.guardado) || '';
+    HERR.actualizado = r.j.actualizado || null;
     await montaRegistro();
   }
 }
@@ -3468,7 +3977,7 @@ function vigila() {
 }
 async function compruebaCambios() {
   if (!HERR || !HERR.tarea || $('v-herr').hidden || document.hidden) { if (!HERR || $('v-herr').hidden) { clearInterval(VIGIA); VIGIA = null; } return; }
-  if (HERR.modo === 'vivo' && HERR.def.tipo !== 'lectura') {
+  if ((HERR.modo === 'vivo' || HERR.sinTabla) && HERR.def.tipo !== 'lectura') {
     const r = await api('tarea&id=' + encodeURIComponent(HERR.tarea));
     if (!r.ok || !r.j.actualizado || r.j.actualizado === HERR.visto || !r.j.borrador) return;
     if (Number(r.j.borrador_v) !== Number(miV)) return;
@@ -3516,7 +4025,14 @@ async function guardarVivo() {
 /* --- Registro ---------------------------------------------------------- */
 async function montaRegistro(msg) {
   HERR.principal = tablaPrincipal(HERR.def);
-  if (!HERR.principal) { montaVivo(HERR.resto || {}, null); return; }
+  if (!HERR.principal) {
+    HERR.sinTabla = true;
+    let v = HERR.resto || {};
+    const local = leeLocal(claveHerr());
+    if (local && (local.guardado || '') > (HERR.restoGuardado || '')) v = local.campos || {};
+    montaVivo(v, HERR.actualizado);
+    return;
+  }
   const r = await api('entradas&id=' + encodeURIComponent(HERR.tarea));
   const ents = []; let viejas = 0;
   ((r.ok && r.j.entradas) || []).forEach(e => {
@@ -3546,35 +4062,214 @@ function partesRegistro() {
   };
 }
 
-function resumenFila(e) {
-  const cols = colsEntrada(HERR.principal);
-  const trozos = cols.map(c => [c.rotulo, (e.fila[c.id] || '').trim()]).filter(x => x[1]);
-  if (!trozos.length) return 'Sin nada escrito';
-  return trozos.slice(0, 2).map(([r, v]) => r.replace(/\s*\(.*?\)\s*$/, '') + ': ' + (v.length > 70 ? v.slice(0, 68) + '…' : v)).join(' · ');
+/* --- La semana, a la vista (04-11) --------------------------------------
+   Antes: una tira de siete días con ✓ y una tarjeta por apunte con las
+   dos primeras columnas en texto. Ahora una tabla de verdad: una fila
+   por día (o por apunte, si no es diario), una columna por cosa que se
+   apunta, hoy marcado, y en el móvil cada fila es una tarjeta con lo
+   rellenado. Los números llevan dentro su valor y un fondo de claro a
+   oscuro: el color ayuda, pero no es lo único que lo dice (se lee en
+   escala de grises). La misma paleta neutra en todas las columnas,
+   también en las de riesgo: en la cuenta del paciente no hay rojo de
+   alarma. */
+const DIAS_C = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
+function diaCorto(f) {
+  const base = DIAS_C[diaSemana(f)] + ' ' + deISO(f).getDate();
+  return f === hoyISO() ? 'Hoy · ' + base : (f === sumaDias(hoyISO(), -1) ? 'Ayer · ' + base : base);
+}
+/* Cinco tonos fijos (portal.css, .n0-.n4) en vez de un degradado: con
+   un degradado continuo hay un tramo en el que ni el texto oscuro ni el
+   blanco llegan a 4,5:1. */
+function tonoDe(p, v) {
+  const s = String(v == null ? '' : v).trim(), n = Number(s.replace(',', '.'));
+  if (!p || p.tipo !== 'escala' || s === '' || !isFinite(n)) return null;
+  const t = (n - p.min) / (p.max - p.min);
+  return t <= 0 ? 0 : Math.min(4, Math.ceil(t * 4));
+}
+function celdaValor(col, v) {
+  const p = pista(col), s = String(v == null ? '' : v).trim();
+  const td = el('td');
+  td.dataset.rotulo = corto(col.rotulo);
+  if (!s) { td.className = 'vacia'; td.appendChild(el('span', 'nada', '—')); return td; }
+  const t = tonoDe(p, s);
+  if (t !== null) { td.className = 'num'; td.appendChild(el('span', 'v-num n' + t, s)); }
+  else if (p && ['opciones', 'numero', 'fecha', 'hora'].includes(p.tipo)) { td.className = 'corta'; td.appendChild(el('span', 'v-op', s)); }
+  else { td.className = 'txt'; td.appendChild(el('span', 'v-txt', s.length > 120 ? s.slice(0, 118) + '…' : s)); }
+  return td;
+}
+/* Qué columnas van sueltas en la tabla de la semana. Con cuatro o menos,
+   todas. Con más, sueltas las cortas (números, opciones, fechas: lo que
+   se compara de un día a otro) y lo escrito junto en una última columna
+   «Lo que escribiste»: diez columnas no caben en 720 px y la tabla se
+   iba de lado, con el texto cortado. Si el catálogo dice cuáles
+   (`resumen_semana`), mandan esas. */
+function columnasSemana(def, cols) {
+  const pedidas = Array.isArray(def.resumen_semana) ? def.resumen_semana : null;
+  let sueltas;
+  if (pedidas) sueltas = cols.filter(c => pedidas.includes(c.id));
+  else if (cols.length <= 4) sueltas = cols;
+  else sueltas = cols.filter(c => { const p = pista(c); return p && p.tipo !== 'lista'; });
+  const juntas = cols.filter(c => !sueltas.includes(c));
+  return { sueltas, juntas };
+}
+function celdaJunta(juntas, fila) {
+  const td = el('td', 'txt junta');
+  td.dataset.rotulo = 'Lo que escribiste';
+  const con = juntas.map(c => [corto(c.rotulo), String(fila[c.id] == null ? '' : fila[c.id]).trim()]).filter(x => x[1]);
+  if (!con.length) { td.className = 'vacia junta'; td.appendChild(el('span', 'nada', '—')); return td; }
+  con.forEach(([r, v]) => {
+    const p = el('p', 'v-par');
+    p.append(el('strong', null, r + ': '), el('span', 'v-txt', v.length > 160 ? v.slice(0, 158) + '…' : v));
+    td.appendChild(p);
+  });
+  return td;
+}
+function tablaSemana(l, es) {
+  const b = HERR.principal, diario = esDiario(b), hoy = hoyISO();
+  const { sueltas, juntas } = columnasSemana(HERR.def, colsEntrada(b));
+  const cols = sueltas;
+  const ncols = sueltas.length + (juntas.length ? 1 : 0);
+  const filas = diario
+    ? Array.from({ length: 7 }, (_, k) => sumaDias(l, k)).map(f => ({ f, e: es.find(x => x.fecha === f) || null }))
+    : es.slice().sort((a, x) => (a.fecha < x.fecha ? -1 : a.fecha > x.fecha ? 1 : (a.creado < x.creado ? -1 : 1))).map(e => ({ f: e.fecha, e }));
+  const env = el('div', 'reg-tabla');
+  const t = el('table', 'reg-tabla-t');
+  t.appendChild(el('caption', 'oculto-visual', (l === lunesDe(hoy) ? 'Esta semana' : 'Semana del ' + fecha(l)) +
+    ', ' + (diario ? 'un día por fila' : 'un apunte por fila') + '. Pulsa el día para apuntarlo o corregirlo.'));
+  const th0 = el('thead'), trh = el('tr');
+  const thd = el('th', null, 'Día'); thd.scope = 'col'; trh.appendChild(thd);
+  cols.forEach(c => { const th = el('th', null, corto(c.rotulo)); th.scope = 'col'; trh.appendChild(th); });
+  if (juntas.length) { const th = el('th', 'th-junta', 'Lo que escribiste'); th.scope = 'col'; trh.appendChild(th); }
+  th0.appendChild(trh); t.appendChild(th0);
+  const tb = el('tbody');
+  filas.forEach(({ f, e }) => {
+    const tr = el('tr', [f === hoy ? 'hoy' : '', e ? '' : 'sin', f > hoy ? 'futuro' : ''].filter(Boolean).join(' '));
+    if (f === hoy) tr.setAttribute('aria-current', 'date');
+    const th = el('th'); th.scope = 'row';
+    const bt = el('button', 'reg-dia' + (e ? ' hecho reg-entrada' : '') + (f === hoy ? ' hoy' : ''));
+    bt.type = 'button';
+    bt.append(el('span', 'reg-dia-n', diaCorto(f)),
+              el('span', 'reg-dia-e', e ? '✓' : (f > hoy ? '' : '+')),
+              el('span', 'oculto-visual', e ? ', apuntado: ver o corregir' : (f > hoy ? ', aún no ha llegado' : ', sin apuntar: apuntar')));
+    if (f > hoy) bt.disabled = true;
+    else bt.addEventListener('click', () => editaEntrada(e || { fecha: f, otroDia: f !== hoy }));
+    th.appendChild(bt); tr.appendChild(th);
+    if (e) {
+      cols.forEach(c => tr.appendChild(celdaValor(c, e.fila[c.id])));
+      if (juntas.length) tr.appendChild(celdaJunta(juntas, e.fila));
+    } else { const td = el('td', 'sin-nada', f > hoy ? '' : 'Sin apuntar'); td.colSpan = Math.max(1, ncols); tr.appendChild(td); }
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb); env.appendChild(t);
+  return env;
 }
 
-function tarjetaEntrada(e) {
-  const t = boton('', '', () => editaEntrada(e));
-  t.className = 'reg-entrada';
-  t.append(el('strong', null, diaLargo(e.fecha)), el('span', null, resumenFila(e)));
-  return t;
+/* Cómo van sus números (04-11): una línea pequeña por columna con
+   números, si hay tres días o más en las últimas cuatro semanas. Sin
+   librerías: un SVG. Sin «mejor» ni «peor» ni colores de semáforo: son
+   sus datos, sin puntuar. El lector de pantalla oye los números. */
+function graficasRegistro() {
+  const b = HERR.principal;
+  const cols = colsEntrada(b).filter(c => { const p = pista(c); return p && (p.tipo === 'escala' || p.tipo === 'numero'); });
+  if (!cols.length) return null;
+  const desde = sumaDias(hoyISO(), -27);
+  const ents = HERR.entradas.filter(e => e.fecha >= desde)
+    .sort((a, x) => (a.fecha < x.fecha ? -1 : a.fecha > x.fecha ? 1 : (a.creado < x.creado ? -1 : 1)));
+  const caja = el('div', 'reg-graficas');
+  const NS = 'http://www.w3.org/2000/svg';
+  const W = 240, H = 64, M = 7;
+  cols.forEach(c => {
+    const p = pista(c);
+    const pts = ents.map(e => { const s = String(e.fila[c.id] || '').trim(); return { f: e.fecha, s, v: Number(s.replace(',', '.')) }; })
+      .filter(x => x.s !== '' && isFinite(x.v));
+    if (new Set(pts.map(x => x.f)).size < 3) return;
+    const min = p.tipo === 'escala' ? p.min : 0;
+    const max = p.tipo === 'escala' ? p.max : Math.max(1, ...pts.map(x => x.v));
+    const t0 = deISO(pts[0].f).getTime(), t1 = deISO(pts[pts.length - 1].f).getTime();
+    const X = (x, i) => t1 > t0 ? M + (deISO(x.f).getTime() - t0) / (t1 - t0) * (W - 2 * M) : M + i * (W - 2 * M) / Math.max(1, pts.length - 1);
+    const Y = (v) => H - M - (Math.min(max, Math.max(min, v)) - min) / (max - min) * (H - 2 * M);
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('class', 'reg-linea');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', corto(c.rotulo) + ', de ' + min + ' a ' + max + ': ' +
+      pts.slice(-14).map(x => DIAS_C[diaSemana(x.f)] + ' ' + deISO(x.f).getDate() + ', ' + x.s).join('; '));
+    const linea = (y, clase) => { const l = document.createElementNS(NS, 'line'); l.setAttribute('x1', M); l.setAttribute('x2', W - M); l.setAttribute('y1', y); l.setAttribute('y2', y); l.setAttribute('class', clase); svg.appendChild(l); };
+    linea(Y(min), 'eje'); linea(Y(max), 'eje tenue');
+    const pl = document.createElementNS(NS, 'polyline');
+    pl.setAttribute('points', pts.map((x, i) => X(x, i).toFixed(1) + ',' + Y(x.v).toFixed(1)).join(' '));
+    pl.setAttribute('class', 'serie'); svg.appendChild(pl);
+    pts.forEach((x, i) => { const k = document.createElementNS(NS, 'circle'); k.setAttribute('cx', X(x, i).toFixed(1)); k.setAttribute('cy', Y(x.v).toFixed(1)); k.setAttribute('r', '3.2'); svg.appendChild(k); });
+    const fig = el('figure', 'reg-grafica');
+    const cap = el('figcaption');
+    cap.append(el('strong', null, corto(c.rotulo)), el('span', null, 'último: ' + pts[pts.length - 1].s));
+    const ejes = el('div', 'reg-grafica-ejes'); ejes.setAttribute('aria-hidden', 'true');
+    ejes.append(el('span', null, fecha(pts[0].f)), el('span', null, min + '–' + max), el('span', null, fecha(pts[pts.length - 1].f)));
+    fig.append(cap, svg, ejes);
+    caja.appendChild(fig);
+  });
+  return caja.children.length ? caja : null;
 }
 
-function tiraSemana(l, es) {
-  const t = el('div', 'reg-tira');
-  const hoy = hoyISO();
-  for (let k = 0; k < 7; k++) {
-    const f = sumaDias(l, k);
-    const hecho = es.some(e => e.fecha === f);
-    const c = el('button', 'reg-dia' + (hecho ? ' hecho' : '') + (f === hoy ? ' hoy' : ''));
-    c.type = 'button';
-    c.append(el('span', null, 'LMXJVSD'[k]), el('b', null, hecho ? '✓' : String(deISO(f).getDate())));
-    c.setAttribute('aria-label', diaLargo(f) + (hecho ? ': apuntado' : ': sin apuntar'));
-    if (f > hoy) c.disabled = true;
-    else c.addEventListener('click', () => editaEntrada(es.find(e => e.fecha === f) || { fecha: f }));
-    t.appendChild(c);
+/* El apunte a medias y «Lo demás de la ficha», en este dispositivo. */
+function claveApunte() { return claveHerr() + '.apunte'; }
+function claveResto() { return claveHerr() + '.resto'; }
+function filaDelEditor() {
+  const fila = {};
+  document.querySelectorAll('#h-cuerpo .reg-editor [data-col]').forEach(i => { fila[i.dataset.col] = i.value; });
+  return fila;
+}
+function guardaLocalRegistro(t) {
+  if (!t || !t.closest) return;
+  if (t.closest('.reg-resto')) {
+    const campos = {};
+    document.querySelectorAll('#h-cuerpo .reg-resto [data-campo]').forEach(c => { campos[c.dataset.campo] = c.value; });
+    if (ponLocal(claveResto(), { campos, guardado: new Date().toISOString() })) {
+      const est = document.querySelector('.reg-resto .reg-resto-estado');
+      if (est) est.textContent = 'Guardado en este dispositivo · ' + horaCorta() + '. Pulsa «Guardar» para que llegue a tu cuenta.';
+    }
+  } else if (t.closest('.reg-editor') && HERR.editando) {
+    const fi = $('reg-fecha');
+    if (ponLocal(claveApunte(), { uid: HERR.editando.uid, fecha: fi ? fi.value : hoyISO(), fila: filaDelEditor(),
+                                  base: HERR.editando.base, guardado: new Date().toISOString() })) {
+      avisoGuardado('A medias, guardado en este dispositivo. Pulsa «Guardar» para apuntarlo');
+    }
   }
-  return t;
+}
+function aMedias() {
+  const d = leeLocal(claveApunte());
+  if (!d || !d.fila || !Object.values(d.fila).some(v => String(v || '').trim())) return null;
+  if (JSON.stringify(d.fila) === d.base) return null;
+  return d;
+}
+
+/* Lo ya rellenado, de un vistazo, arriba (04-11): «Esta semana: 3 de 7
+   días» y una tira de siete casillas. La tira es decorativa: la frase
+   dice lo mismo, y la dice el lector de pantalla. */
+function resumenRegistro(diario, hoy) {
+  const l = lunesDe(hoy), d7 = sumaDias(l, 6);
+  const es = HERR.entradas.filter(e => e.fecha >= l && e.fecha <= d7);
+  const dias = new Set(es.map(e => e.fecha));
+  const caja = el('div', 'reg-resumen');
+  const ult = HERR.entradas.reduce((m, e) => (e.fecha > m ? e.fecha : m), '');
+  const cuando = !ult ? '' : ult === hoy ? 'hoy' : ult === sumaDias(hoy, -1) ? 'ayer' : diaLargo(ult).toLowerCase();
+  const t = el('p', 'reg-resumen-t');
+  t.appendChild(el('strong', null, 'Esta semana: ' + (diario
+    ? dias.size + ' de 7 días apuntados'
+    : (es.length === 1 ? '1 apunte' : es.length + ' apuntes'))));
+  if (cuando) t.appendChild(el('span', 'reg-resumen-u', 'Último: ' + cuando));
+  else t.appendChild(el('span', 'reg-resumen-u', 'Aún no hay ninguno'));
+  caja.appendChild(t);
+  if (diario) {
+    const tira = el('ol', 'reg-tira7'); tira.setAttribute('aria-hidden', 'true');
+    for (let k = 0; k < 7; k++) {
+      const f = sumaDias(l, k);
+      const li = el('li', [dias.has(f) ? 'si' : '', f === hoy ? 'hoy' : '', f > hoy ? 'futuro' : ''].filter(Boolean).join(' '));
+      li.append(el('span', null, 'LMXJVSD'[k]), el('b', null, dias.has(f) ? '✓' : String(deISO(f).getDate())));
+      tira.appendChild(li);
+    }
+    caja.appendChild(tira);
+  }
+  return caja;
 }
 
 function cajaRecordatorio() {
@@ -3611,6 +4306,7 @@ function cajaRecordatorio() {
 function pintaRegistro(msg) {
   const def = HERR.def, b = HERR.principal, diario = esDiario(b);
   const P = partesRegistro();
+  HERR.editando = null;
   $('h-etiqueta').textContent = 'Registro';
   $('h-titulo').textContent = def.titulo;
   $('h-subtitulo').textContent = def.subtitulo || '';
@@ -3618,7 +4314,7 @@ function pintaRegistro(msg) {
   $('h-enviar').hidden = true; $('h-guardar').hidden = true; $('h-leido').hidden = true;
   $('h-pdf').hidden = false; $('h-pdf').textContent = 'Descargar esta semana en PDF';
   $('h-todo').hidden = !HERR.entradas.length;
-  $('h-estado').textContent = '';
+  $('h-estado').textContent = ''; $('h-guardado').textContent = '';
   const c = $('h-cuerpo'); c.innerHTML = '';
   const raiz = el('div', 'herr registro');
   if (P.acordado.length) raiz.appendChild(pintaBloques(Object.assign({}, def, { bloques: P.acordado }), {}, 'texto', true));
@@ -3628,6 +4324,7 @@ function pintaRegistro(msg) {
   const caja = el('div', 'reg-hoy');
   const deHoy = HERR.entradas.filter(e => e.fecha === hoy);
   if (msg) caja.appendChild(el('p', 'reg-msg', msg));
+  caja.appendChild(resumenRegistro(diario, hoy));
   if (diario && deHoy.length) {
     caja.appendChild(el('p', 'reg-hecho', '✓ Hoy ya lo has apuntado'));
     caja.appendChild(boton('Ver o corregir lo de hoy', 'suave', () => editaEntrada(deHoy[0])));
@@ -3637,6 +4334,25 @@ function pintaRegistro(msg) {
   caja.appendChild(boton(diario ? 'Apuntar otro día' : 'Es de otro día', 'enlace-boton',
     () => editaEntrada({ fecha: sumaDias(hoy, -1), otroDia: true })));
   raiz.appendChild(caja);
+
+  /* Lo que dejó a medias (cerró, se fue la cobertura, salió de la cuenta). */
+  const med = aMedias();
+  if (med) {
+    const m = el('div', 'reg-medias nota info');
+    m.appendChild(el('p', null, 'Tienes un apunte a medias, sin guardar: ' + diaLargo(med.fecha).toLowerCase() + '.'));
+    const bs = el('p', 'reg-botones');
+    let seguro = false;
+    const tira = boton('Descartarlo', 'enlace-boton', () => {
+      if (!seguro) { seguro = true; tira.textContent = '¿Seguro? Pulsa otra vez para descartarlo'; return; }
+      borraLocal(claveApunte()); m.remove();
+    });
+    bs.append(boton('Seguir con él', '', () => {
+      const e = med.uid ? HERR.entradas.find(x => x.uid === med.uid) : null;
+      editaEntrada(Object.assign({}, e || { fecha: med.fecha }, { medias: true, otroDia: med.fecha !== hoy }));
+    }), tira);
+    m.appendChild(bs);
+    raiz.appendChild(m);
+  }
   raiz.appendChild(cajaRecordatorio());
 
   if (HERR.viejas) raiz.appendChild(el('p', 'nota info', HERR.viejas + (HERR.viejas === 1 ? ' apunte anterior' : ' apuntes anteriores') +
@@ -3657,35 +4373,56 @@ function pintaRegistro(msg) {
   porSemana[esta] = porSemana[esta] || [];
   raiz.appendChild(el('h2', 'titulo-h', 'Tus apuntes'));
   Object.keys(porSemana).sort().reverse().forEach(l => {
-    const es = porSemana[l].slice().sort((a, x) => (a.fecha < x.fecha ? 1 : a.fecha > x.fecha ? -1 : (a.creado < x.creado ? 1 : -1)));
+    const es = porSemana[l];
     const dias = new Set(es.map(e => e.fecha)).size;
     const d = document.createElement('details'); d.className = 'reg-semana'; d.open = (l === esta);
     const s = document.createElement('summary');
     s.append(el('strong', null, l === esta ? 'Esta semana' : 'Semana del ' + fecha(l) + ' al ' + fecha(sumaDias(l, 6))),
              el('span', null, diario ? dias + ' de 7 días' : es.length + (es.length === 1 ? ' apunte' : ' apuntes')));
     d.appendChild(s);
-    if (diario) d.appendChild(tiraSemana(l, es));
-    if (!es.length) d.appendChild(el('p', 'apunte', 'Aún nada esta semana.'));
-    es.forEach(e => d.appendChild(tarjetaEntrada(e)));
+    if (diario || es.length) d.appendChild(tablaSemana(l, es));
+    else d.appendChild(el('p', 'apunte', 'Aún nada esta semana.'));
     if (es.length) d.appendChild(boton('Esta semana en PDF', 'enlace-boton', () => imprimeHojas([hojaSemana(l)])));
     raiz.appendChild(d);
   });
+  /* Las líneas, después de la semana: lo primero que se busca es qué
+     falta por apuntar; cómo van los números, después. */
+  const gr = graficasRegistro();
+  if (gr) {
+    const hg = el('h3', 'reg-graficas-t', 'Tus números, las últimas cuatro semanas'); hg.id = 'reg-graficas-t'; hg.tabIndex = -1;
+    raiz.append(hg, gr);
+    /* Arriba, junto a «Esta semana: 3 de 7», el camino a las líneas: lo
+       primero es qué falta por apuntar, pero que se vea que están. */
+    const rs = raiz.querySelector('.reg-resumen');
+    if (rs) {
+      const a = el('a', 'reg-resumen-ir', 'Ver cómo van tus números'); a.href = '#reg-graficas-t';
+      a.addEventListener('click', (ev) => { ev.preventDefault(); hg.scrollIntoView({ block: 'start' }); hg.focus({ preventScroll: true }); });
+      rs.appendChild(a);
+    }
+  }
 
   /* Lo de la ficha que no es un apunte («Esta semana usé mi plan…»,
-     «Mi frase»): se guarda como un documento vivo. */
+     «Mi frase»): se guarda como un documento vivo. Lo escrito sin
+     guardar, de este dispositivo, si es más nuevo que lo de la cuenta. */
   if (P.resto.length) {
     const sec = el('section', 'reg-resto');
-    sec.appendChild(el('h2', 'titulo-h', 'Lo demás de la ficha'));
-    const dr = ampliaDef(Object.assign({}, def, { bloques: P.resto }), HERR.resto || {});
-    sec.appendChild(pintaBloques(dr, HERR.resto || {}, 'form', false));
+    sec.setAttribute('aria-labelledby', 'reg-resto-t');
+    const hr = el('h2', 'titulo-h', 'Lo demás de la ficha'); hr.id = 'reg-resto-t';
+    sec.appendChild(hr);
+    let vr = HERR.resto || {};
+    const local = leeLocal(claveResto());
+    if (local && (local.guardado || '') > (HERR.restoGuardado || '')) vr = Object.assign({}, vr, local.campos || {});
+    const dr = ampliaDef(Object.assign({}, def, { bloques: P.resto }), vr);
+    sec.appendChild(pintaBloques(dr, vr, 'form', false));
     ponAyudaRueda(dr, sec);
-    const est = el('p', 'apunte'); est.setAttribute('role', 'status');
+    const est = el('p', 'apunte reg-resto-estado'); est.setAttribute('role', 'status');
     const g = boton('Guardar', 'suave', async () => {
       g.disabled = true;
       try {
         const x = await guardarVivo();
         if (!x) { est.textContent = 'No se ha podido guardar. Inténtalo otra vez.'; return; }
-        HERR.resto = x.campos;
+        HERR.resto = x.campos; HERR.restoGuardado = new Date().toISOString();
+        borraLocal(claveResto());
         est.textContent = 'Guardado.';
       } finally { g.disabled = false; }
     });
@@ -3696,65 +4433,72 @@ function pintaRegistro(msg) {
   if (P.fuente.length) raiz.appendChild(pintaBloques(Object.assign({}, def, { bloques: P.fuente }), {}, 'texto', true));
   c.appendChild(raiz);
   ver('v-herr');
+  ajustaAltos(c);
 }
 
 function editaEntrada(e) {
   const b = HERR.principal, diario = esDiario(b), cols = colsEntrada(b);
   /* Un día, un apunte: si ese día ya tiene, se abre ése. */
-  if (!e.uid && diario) { const ex = HERR.entradas.find(x => x.fecha === e.fecha); if (ex) e = Object.assign({}, ex, { otroDia: e.otroDia }); }
-  $('h-pdf').hidden = true; $('h-todo').hidden = true;
+  if (!e.uid && diario) { const ex = HERR.entradas.find(x => x.fecha === e.fecha); if (ex) e = Object.assign({}, ex, { otroDia: e.otroDia, medias: e.medias }); }
+  const hoy = hoyISO(), ayer = sumaDias(hoy, -1);
+  /* Lo que dejó a medias en este dispositivo para este mismo apunte. */
+  const d = leeLocal(claveApunte());
+  const suyo = d && (e.medias || (e.uid ? d.uid === e.uid : (!d.uid && d.fecha === (e.fecha || hoy))));
+  const fila = suyo ? (d.fila || {}) : (e.fila || {});
+  HERR.editando = { uid: e.uid || null, base: JSON.stringify(e.fila || {}) };
+  $('h-pdf').hidden = true; $('h-todo').hidden = true; $('h-guardado').textContent = '';
   const c = $('h-cuerpo'); c.innerHTML = '';
   const f = el('div', 'herr reg-editor');
   f.appendChild(el('h2', 'titulo-h', e.uid ? 'Corregir un apunte' : (diario ? 'Apuntar el día' : 'Nuevo apunte')));
-  const lf = el('label', 'campo-h');
+  if (suyo) f.appendChild(el('p', 'nota info', 'Recuperado lo que dejaste a medias. Revísalo y pulsa «Guardar».'));
+  /* De qué día es (04-11): «Hoy · Ayer · Otro día» a un toque. Se
+     rellena a menudo al día siguiente, y antes eso era buscar un enlace
+     y un calendario. */
+  const cuando = el('div', 'reg-cuando'); cuando.setAttribute('role', 'group'); cuando.setAttribute('aria-label', 'De qué día es');
+  const lf = el('label', 'campo-h reg-otro');
   lf.appendChild(el('span', 'rotulo', 'Día'));
   const fi = document.createElement('input'); fi.type = 'date'; fi.id = 'reg-fecha';
-  fi.max = hoyISO(); fi.min = sumaDias(hoyISO(), -60); fi.value = e.fecha || hoyISO();
+  fi.max = hoy; fi.min = sumaDias(hoy, -60); fi.value = (suyo && d.fecha) || e.fecha || hoy;
   lf.appendChild(fi);
-  if (!e.otroDia && !e.uid) lf.hidden = true;
-  f.appendChild(el('p', 'reg-dia-t', diaLargo(fi.value)));
-  f.appendChild(lf);
-  fi.addEventListener('change', () => {
+  const bHoy = boton('Hoy', 'reg-chip', () => ponFecha(hoy, false));
+  const bAyer = boton('Ayer', 'reg-chip', () => ponFecha(ayer, false));
+  const bOtro = boton('Otro día', 'reg-chip', () => { lf.hidden = false; marca(); fi.focus(); });
+  [bHoy, bAyer, bOtro].forEach(x => { x.className = 'reg-chip'; });
+  const marca = () => {
+    const otro = !lf.hidden || (fi.value !== hoy && fi.value !== ayer);
+    bHoy.setAttribute('aria-pressed', String(!otro && fi.value === hoy));
+    bAyer.setAttribute('aria-pressed', String(!otro && fi.value === ayer));
+    bOtro.setAttribute('aria-pressed', String(otro));
+  };
+  const alCambiar = () => {
     if (!fi.value) return;
     f.querySelector('.reg-dia-t').textContent = diaLargo(fi.value);
-    if (diario && !e.uid) { const ex = HERR.entradas.find(x => x.fecha === fi.value); if (ex) editaEntrada(Object.assign({}, ex, { otroDia: true })); }
-  });
+    marca();
+    if (diario && !e.uid) { const ex = HERR.entradas.find(x => x.fecha === fi.value); if (ex) { editaEntrada(Object.assign({}, ex, { otroDia: true })); return; } }
+    marcaCambio(fi);
+  };
+  const ponFecha = (v, otro) => { fi.value = v; lf.hidden = !otro; alCambiar(); };
+  fi.addEventListener('change', alCambiar);
+  lf.hidden = !(fi.value !== hoy && fi.value !== ayer);
+  const chips = el('div', 'reg-cuando-b'); chips.append(bHoy, bAyer, bOtro);
+  cuando.appendChild(chips);
+  f.appendChild(el('p', 'reg-dia-t', diaLargo(fi.value)));
+  f.append(cuando, lf);
+  marca();
   if (b.ejemplo) {
     const fx = colsFijas(b);
-    const ej = b.columnas.map((col, j) => fx.includes(j) || !b.ejemplo[j] ? null : col.rotulo.replace(/\s*\(.*?\)\s*$/, '') + ': ' + b.ejemplo[j]).filter(Boolean);
-    if (ej.length) f.appendChild(el('p', 'reg-ejemplo', 'Ejemplo · ' + ej.join(' · ')));
+    const ej = b.columnas.map((col, j) => fx.includes(j) || !b.ejemplo[j] ? null : corto(col.rotulo) + ': ' + b.ejemplo[j]).filter(Boolean);
+    /* Plegado, como en las fichas: se mira una vez y luego estorba. */
+    if (ej.length) {
+      const d = el('details', 'reg-ejemplo');
+      d.appendChild(el('summary', null, 'Ver un ejemplo'));
+      const ul = el('ul'); ej.forEach(x => ul.appendChild(el('li', null, x)));
+      d.appendChild(ul); f.appendChild(d);
+    }
   }
   cols.forEach(col => {
-    /* Una escala corta («(0-5)», «(sí/no)»): botones, dos toques. */
-    const m = /\((\d+)\s*[-–]\s*(\d+)\)\s*$/.exec(col.rotulo);
-    const sino = /\(sí\/no\)\s*$/i.test(col.rotulo);
-    if ((m && +m[2] > +m[1] && +m[2] - +m[1] <= 10) || sino) {
-      const g = el('div', 'campo-h');
-      const rid = 'reg-r-' + col.id;
-      g.appendChild(el('span', 'rotulo', col.rotulo)).id = rid;
-      const h = document.createElement('input'); h.type = 'hidden'; h.dataset.col = col.id;
-      h.value = (e.fila || {})[col.id] || '';
-      const fila = el('div', 'reg-chips'); fila.setAttribute('role', 'group'); fila.setAttribute('aria-labelledby', rid);
-      const ops = sino ? ['sí', 'no'] : Array.from({ length: +m[2] - +m[1] + 1 }, (_, k) => String(+m[1] + k));
-      ops.forEach(o => {
-        const bt = el('button', 'reg-chip', o); bt.type = 'button';
-        bt.setAttribute('aria-pressed', String(h.value.toLowerCase() === o));
-        bt.addEventListener('click', () => {
-          h.value = h.value.toLowerCase() === o ? '' : o;
-          fila.querySelectorAll('.reg-chip').forEach(x => x.setAttribute('aria-pressed', String(x.textContent === h.value)));
-        });
-        fila.appendChild(bt);
-      });
-      g.append(fila, h); f.appendChild(g);
-      return;
-    }
-    const lab = el('label', 'campo-h');
-    lab.appendChild(el('span', 'rotulo', col.rotulo));
     const largo = (b.alto || 0) > 1.2 || (col.ancho || 4) >= 8 || col.rotulo.length > 40;
-    const inp = largo ? document.createElement('textarea') : document.createElement('input');
-    if (largo) inp.rows = 3; else inp.type = 'text';
-    inp.dataset.col = col.id; inp.value = (e.fila || {})[col.id] || ''; inp.maxLength = 4000;
-    lab.appendChild(inp); f.appendChild(lab);
+    f.appendChild(control(pista(col), { clave: 'col', id: col.id, valor: fila[col.id] || '', rotulo: col.rotulo, multilinea: largo, lineas: 3 }));
   });
   ponAyudaRueda(HERR.def, f);
   const est = el('p', 'apunte'); est.id = 'reg-estado'; est.setAttribute('role', 'status');
@@ -3769,7 +4513,17 @@ function editaEntrada(e) {
     });
     bs.appendChild(q);
   }
-  bs.appendChild(boton('Cancelar', 'enlace-boton', () => pintaRegistro()));
+  /* Cancelar con algo escrito pregunta antes de tirarlo: un toque sin
+     querer no se lleva lo escrito. «← Volver» no lo tira: se queda a
+     medias en este dispositivo. */
+  let tirar = false;
+  const x = boton('Cancelar', 'enlace-boton', () => {
+    const cambiado = JSON.stringify(filaDelEditor()) !== HERR.editando.base && Object.values(filaDelEditor()).some(v => String(v).trim());
+    if (cambiado && !tirar) { tirar = true; x.textContent = '¿Descartar lo escrito? Pulsa otra vez'; return; }
+    borraLocal(claveApunte());
+    pintaRegistro();
+  });
+  bs.appendChild(x);
   f.append(bs, est);
   c.appendChild(f);
   window.scrollTo(0, 0);
@@ -3789,8 +4543,7 @@ async function guardaEntrada(e) {
   const est = $('reg-estado');
   const fecha = $('reg-fecha').value;
   if (!fecha || fecha > hoyISO()) { est.textContent = 'Elige un día de hoy hacia atrás.'; return; }
-  const fila = {};
-  document.querySelectorAll('#h-cuerpo [data-col]').forEach(i => { fila[i.dataset.col] = i.value; });
+  const fila = filaDelEditor();
   if (!Object.values(fila).some(v => v.trim())) { est.textContent = 'Escribe algo antes de guardar.'; return; }
   let uid = e.uid;
   if (!uid && esDiario(HERR.principal)) { const ex = HERR.entradas.find(x => x.fecha === fecha); if (ex) uid = ex.uid; }
@@ -3799,7 +4552,8 @@ async function guardaEntrada(e) {
   const r = await api('entrada', { id: HERR.tarea, uid, fecha,
     cifrado: sellarHaciaElMac(sobreEntrada(uid, fecha, fila, false), macPublica),
     copia: sellarHaciaElMac(copia, miPublica) });
-  if (!r.ok) { est.textContent = r.j.error === 'despacio' ? 'Demasiados cambios seguidos: espera un poco.' : 'No se ha podido guardar. Inténtalo otra vez.'; return; }
+  if (!r.ok) { est.textContent = r.j.error === 'despacio' ? 'Demasiados cambios seguidos: espera un poco. Lo escrito sigue aquí.' : 'No se ha podido guardar. Inténtalo otra vez: lo escrito sigue aquí.'; return; }
+  borraLocal(claveApunte());
   HERR.entradas = HERR.entradas.filter(x => x.uid !== uid).concat([{ uid, fecha, fila, creado: new Date().toISOString() }]);
   pintaRegistro(fecha === hoyISO() ? '✓ Guardado. Lo de hoy, apuntado.' : '✓ Guardado: ' + diaLargo(fecha).toLowerCase() + '.');
 }
@@ -3808,6 +4562,7 @@ async function quitaEntrada(e) {
   const r = await api('entrada', { id: HERR.tarea, uid: e.uid, fecha: e.fecha, borrar: true,
     cifrado: sellarHaciaElMac(sobreEntrada(e.uid, e.fecha, null, true), macPublica) });
   if (!r.ok) { $('reg-estado').textContent = 'No se ha podido quitar. Inténtalo otra vez.'; return; }
+  borraLocal(claveApunte());
   HERR.entradas = HERR.entradas.filter(x => x.uid !== e.uid);
   pintaRegistro('Apunte quitado.');
 }
@@ -3857,7 +4612,7 @@ $('h-todo').addEventListener('click', () => {
   imprimeHojas(semanas.map(hojaSemana));
 });
 
-$('h-volver').addEventListener('click', panel);
+$('h-volver').addEventListener('click', () => { if (SUBIDA.pendiente) subeBorrador(); panel(); });
 
 /* El plan de seguridad: se busca entre sus copias enviadas (se abren
    aquí, con su clave) la más reciente que sea de riesgo. */
