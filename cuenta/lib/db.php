@@ -211,6 +211,16 @@ function adr_db(array $ADR): PDO {
             'instalar_entradas' => 'INTEGER NOT NULL DEFAULT 0',
             'instalar_estado'   => 'TEXT',
             'instalar_no'       => 'INTEGER NOT NULL DEFAULT 0',
+            /* 04-11: el consentimiento, antes que nada.
+                 ci_exigido     1 = cuenta activada desde el 04-11: nada
+                                que se rellene se abre hasta que haya un
+                                consentimiento firmado (adr_ci_falta).
+                                Las de antes, NULL: siguen como estaban.
+                 ci_al_activar  «<sha256> <fecha>»: el portal le dejó el
+                                consentimiento vigente al activar. El Mac
+                                lo lee en `claves` y no publica el suyo. */
+            'ci_exigido'    => 'INTEGER',
+            'ci_al_activar' => 'TEXT',
         ],
     ];
     foreach ($columnas as $tabla => $cols) {

@@ -112,15 +112,90 @@ function adr_limpia_altas(PDO $db): int {
     $n = 0;
     foreach ($q->fetchAll() as $r) {
         $db->beginTransaction();
-        foreach (['fichas', 'tareas', 'recurrencias', 'sobres'] as $t) {
+        /* 04-11: desde que el Mac deja cuestionarios ANTES de activar,
+           una invitación que caduca se lleva también sus tareas. Y todo
+           lo demás que pueda llevar su código, aunque sin haber entrado
+           nunca no debería tenerlo: entradas, recordatorios y correos
+           en cola. Las citas (pagos) no: son del cobro, no de la cuenta. */
+        foreach (['fichas', 'tareas', 'recurrencias', 'sobres', 'entradas', 'recordatorios', 'correos_cola'] as $t) {
             $db->prepare("DELETE FROM $t WHERE cod = ?")->execute([$r['cod']]);
         }
+        /* Los frenos llevan el código al final («firma:<cod>»). Se
+           compara el final exacto: con LIKE, el «_» de un código
+           base64url sería un comodín. */
+        $db->prepare("DELETE FROM intentos WHERE length(clave) > length(?) AND substr(clave, -length(?) - 1) = ':' || ?")
+           ->execute([$r['cod'], $r['cod'], $r['cod']]);
         $db->prepare('DELETE FROM accesos WHERE quien = ?')->execute([$r['cod']]);
         $db->prepare('DELETE FROM pacientes WHERE cod = ? AND activado IS NULL')->execute([$r['cod']]);
         $db->commit();
         $n++;
     }
     return $n;
+}
+
+/* --- El consentimiento, antes que nada (04-11) -------------------------
+   Lo pide Offline: quien activa la cuenta y ve el consentimiento cinco
+   minutos después ya se ha ido. Así que el Mac sube aquí el texto
+   VIGENTE (`consentimiento_vigente`, es el mismo para todos y no dice
+   nada de nadie), y el portal se lo deja al activar, sellado a su
+   clave como si lo hubiera publicado el Mac: mismo título, mismo
+   sobre ({texto}), y la firma sale por el camino de siempre, con la
+   huella del texto exacto. El texto no lo escribe el portal: si el Mac
+   no lo ha subido, o la huella no cuadra, no se deja nada y se sigue
+   como antes (lo publica el Mac al ver la cuenta activada). */
+function adr_ci_vigente(PDO $db): ?array {
+    $f = $db->query("SELECT valor FROM ajustes WHERE clave = 'consentimiento_vigente'")->fetch();
+    $x = $f ? json_decode((string)$f['valor'], true) : null;
+    if (!is_array($x) || !is_string($x['texto'] ?? null) || !is_string($x['titulo'] ?? null)
+        || !hash_equals((string)($x['sha256'] ?? ''), hash('sha256', $x['texto']))) return null;
+    return $x;
+}
+/* Exactamente lo que sella el Mac en acc_publicar: {"texto": …}. */
+function adr_sella_ci(array $ci, string $publica): string {
+    return sodium_crypto_box_seal(json_encode(['texto' => $ci['texto']], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $publica);
+}
+/** ¿Le falta el consentimiento para poder rellenar algo?
+ *
+ *  Solo en las cuentas activadas desde el 04-11 (`ci_exigido`): a las de
+ *  antes no se les cierra de golpe lo que ya usaban (su consentimiento
+ *  puede estar firmado en papel sin que conste aquí). Vale cualquier
+ *  consentimiento firmado de la cuenta, también el que el Mac publica
+ *  como firmado en papel. `id`: el que tiene por firmar, si ya está. */
+function adr_ci_falta(PDO $db, string $cod): array {
+    $p = $db->prepare('SELECT ci_exigido, publica_v FROM pacientes WHERE cod = ?');
+    $p->execute([$cod]);
+    $f = $p->fetch();
+    if (!$f || !(int)$f['ci_exigido']) return ['falta' => false, 'id' => null, 'titulo' => null];
+    $q = $db->prepare("SELECT 1 FROM sobres WHERE cod = ? AND direccion = 2 AND firmado IS NOT NULL
+                       AND titulo LIKE '%onsentimiento%' LIMIT 1");
+    $q->execute([$cod]);
+    if ($q->fetch()) return ['falta' => false, 'id' => null, 'titulo' => null];
+    $q = $db->prepare("SELECT id, titulo FROM sobres WHERE cod = ? AND direccion = 2 AND requiere_firma = 1
+                       AND firmado IS NULL AND titulo LIKE '%onsentimiento%' AND para_v = ?
+                       ORDER BY id DESC LIMIT 1");
+    $q->execute([$cod, (int)$f['publica_v']]);
+    $s = $q->fetch();
+    return ['falta' => true, 'id' => $s ? (int)$s['id'] : null, 'titulo' => $s ? $s['titulo'] : null];
+}
+/** Lo que se rellena: un cuestionario, valorar los objetivos o una
+ *  herramienta para rellenar. Lo que no: un deber (se marca hecho), lo
+ *  que es para leer y el plan de seguridad, que tiene que poder
+ *  abrirse siempre (riesgo). */
+function adr_rellenable(array $t): bool {
+    $tipo = $t['tipo'] ?? 'cuestionario';
+    if ($tipo === 'deber') return false;
+    if ($tipo !== 'herramienta') return true;
+    if (adr_es_lectura($t)) return false;
+    $def = json_decode((string)($t['plantilla'] ?? ''), true);
+    return !(is_array($def) && (!empty($def['riesgo']) || ($def['id'] ?? '') === 'plan-seguridad'));
+}
+/* Corta aquí, con el mismo error en todas las puertas, lo que no se
+   puede rellenar todavía. */
+function adr_ci_corta(PDO $db, string $cod, array $t): void {
+    if (adr_rellenable($t) && adr_ci_falta($db, $cod)['falta']) {
+        adr_json(['error' => 'primero_consentimiento',
+                  'mensaje' => 'Primero, el consentimiento: léelo y fírmalo, y después podrás rellenar esto.'], 403);
+    }
 }
 
 /** Materializa las medidas periódicas que ya tocan.
@@ -340,8 +415,48 @@ case 'reset': {
     if ($a === 'activar') {
         /* Qué versión de la información leyó, y cuándo: lo que hay que
            poder enseñar si alguien lo pregunta. */
-        $db->prepare('UPDATE pacientes SET aviso_privacidad = ? WHERE cod = ?')
+        $db->prepare('UPDATE pacientes SET aviso_privacidad = ?, ci_exigido = 1 WHERE cod = ?')
            ->execute([ADR_AVISO_V . ' ' . adr_ahora(), $cod]);
+        /* 04-11: el consentimiento vigente, ya, sin esperar al Mac (ver
+           adr_ci_vigente). Solo si no tiene ninguno: al activar nunca lo
+           tiene (`publicar` exige cuenta activa), pero no se duplica nada
+           por si acaso. Si algo falla, la cuenta se activa igual y el Mac
+           publica el suyo como siempre. */
+        try {
+            $ci = adr_ci_vigente($db);
+            $ya = $db->prepare("SELECT 1 FROM sobres WHERE cod = ? AND direccion = 2 AND titulo LIKE '%onsentimiento%' LIMIT 1");
+            $ya->execute([$cod]);
+            if ($ci && !$ya->fetch()) {
+                $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
+                $v->execute([$cod]);
+                $ahora = adr_ahora();
+                $db->beginTransaction();
+                $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, para_v, creado, clase, requiere_firma)
+                              VALUES (?,2,?,?,?,?,'documento',1)")
+                   ->execute([$cod, $ci['titulo'], adr_sella_ci($ci, $publica), (int)$v->fetch()['publica_v'], $ahora]);
+                $db->prepare('UPDATE pacientes SET ci_al_activar = ? WHERE cod = ?')
+                   ->execute([$ci['sha256'] . ' ' . $ahora, $cod]);
+                $db->commit();
+            }
+        } catch (Throwable $e) {
+            if ($db->inTransaction()) $db->rollBack();
+            adr_apunta($db, $cod, 'consentimiento al activar: no se ha podido dejar', false);
+        }
+    }
+    /* Contraseña nueva con el consentimiento del portal aún sin firmar:
+       el sobre viejo ya no lo abre su clave nueva. Se vuelve a sellar
+       aquí mismo con el vigente, que el portal tiene, en vez de dejarlo
+       «actualizando» (y lo demás cerrado) hasta que pase el Mac. */
+    if ($a === 'reset') {
+        $ci = adr_ci_vigente($db);
+        $m = $db->prepare('SELECT ci_al_activar, publica_v FROM pacientes WHERE cod = ?');
+        $m->execute([$cod]);
+        $pm = $m->fetch();
+        if ($ci && $pm && $pm['ci_al_activar']) {
+            $db->prepare("UPDATE sobres SET cifrado = ?, para_v = ? WHERE cod = ? AND direccion = 2 AND requiere_firma = 1
+                            AND firmado IS NULL AND titulo = ?")
+               ->execute([adr_sella_ci($ci, $publica), (int)$pm['publica_v'], $cod, $ci['titulo']]);
+        }
     }
     adr_apunta($db, $cod, $a === 'activar' ? 'activación de la cuenta' : 'contraseña nueva');
     adr_sesion_pon($cod, $ADR['secreto']);
@@ -464,6 +579,7 @@ case 'mios': {
         /* Lo que es para consultar (la rueda, una guía) no cuenta como
            pendiente (25-10; 30-10: cualquier lectura, también por id). */
         $x['lectura'] = adr_es_lectura($x);
+        $x['rellenable'] = adr_rellenable($x);
         unset($x['plantilla']);
         $tareas[] = $x;
     }
@@ -483,6 +599,7 @@ case 'mios': {
         $x['modo'] = adr_modo_fila($x);
         $x['herr_id'] = adr_herr_id($x);
         $x['lectura'] = adr_es_lectura($x);
+        $x['rellenable'] = adr_rellenable($x);
         unset($x['plantilla']);
         if ($x['modo'] === 'una') continue;
         $vivas[] = $x;
@@ -540,6 +657,11 @@ case 'mios': {
     adr_json(['v' => (int)$f['publica_v'], 'publica' => adr_b64($f['publica']),
               'cod' => $cod,
               'mac_publica' => $m ? $m['valor'] : null,
+              /* 04-11: si le falta el consentimiento, lo que se rellena
+                 sale cerrado («Primero, el consentimiento») y el
+                 consentimiento, el primero. El servidor lo corta igual
+                 (adr_ci_corta): esto es para que lo vea. */
+              'consentimiento' => adr_ci_falta($db, $cod),
               /* La tarjeta «¿Cómo me conociste?» (03-11). No es una tarea:
                  no está en `tareas`, así que no cuenta en el globo, ni en
                  la víspera, ni en los recordatorios, ni en antes_sesion.
@@ -1028,12 +1150,14 @@ case 'recogido': {
    vez — que es justo quien necesita que le reenvíen. */
 case 'claves': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
-    $q = $db->query('SELECT cod, publica, publica_v, activado FROM pacientes
+    $q = $db->query('SELECT cod, publica, publica_v, activado, ci_al_activar FROM pacientes
                      WHERE activado IS NOT NULL');
     $out = [];
     foreach ($q->fetchAll() as $p) {
+        /* `ci_al_activar` (04-11): «<sha256> <fecha>» si el portal le dejó
+           el consentimiento al activar. Con eso, el Mac no publica el suyo. */
         $out[] = ['cod' => $p['cod'], 'v' => (int)$p['publica_v'],
-                  'publica' => adr_b64($p['publica'])];
+                  'publica' => adr_b64($p['publica']), 'ci_al_activar' => $p['ci_al_activar']];
     }
     adr_json(['claves' => $out]);
 }
@@ -1548,6 +1672,46 @@ case 'mac_publica': {
     adr_json(['ok' => true]);
 }
 
+/* El texto vigente del consentimiento (04-11), para dejarlo al activar.
+   Lo sube el Mac desde el mismo fichero del que lo lee «Cargar el
+   consentimiento v2», con su huella: si la huella no es la del texto
+   que llega, no se guarda (una coma distinta y el sistema clínico no
+   reconocería la firma). Idempotente: subir el mismo no cambia nada, así
+   que el Mac puede mandarlo en cada pasada y un cambio de versión llega
+   en la siguiente. {quitar: true} lo borra y se vuelve a lo de antes.
+   Sin `texto`, dice cuál tiene (para comprobar). */
+case 'consentimiento_vigente': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    if (!empty($in['quitar'])) {
+        $db->exec("DELETE FROM ajustes WHERE clave = 'consentimiento_vigente'");
+        adr_json(['ok' => true, 'vigente' => null]);
+    }
+    if (!array_key_exists('texto', $in)) {
+        $ci = adr_ci_vigente($db);
+        adr_json(['vigente' => $ci ? ['titulo' => $ci['titulo'], 'sha256' => $ci['sha256'], 'puesto' => $ci['puesto'] ?? null] : null]);
+    }
+    $texto = (string)$in['texto'];
+    $titulo = trim(preg_replace('/\s+/u', ' ', (string)($in['titulo'] ?? '')));
+    $sha = strtolower((string)($in['sha256'] ?? ''));
+    if ($texto === '' || strlen($texto) > 200 * 1024 || !mb_check_encoding($texto, 'UTF-8')) adr_json(['error' => 'texto no válido'], 400);
+    /* El título tiene que decir «consentimiento»: es lo que hace que la
+       cuenta pida los datos y la contraseña al firmar, y que `firmar` lo
+       trate como tal. */
+    if (!preg_match('/consentimiento/iu', $titulo) || mb_strlen($titulo) > 80) adr_json(['error' => 'el título tiene que decir «consentimiento» (80 caracteres como mucho)'], 400);
+    if (!preg_match('/^[0-9a-f]{64}$/', $sha) || !hash_equals($sha, hash('sha256', $texto))) {
+        adr_json(['error' => 'la huella no es la de este texto', 'calculada' => hash('sha256', $texto)], 400);
+    }
+    $antes = adr_ci_vigente($db);
+    if ($antes && $antes['sha256'] === $sha && $antes['titulo'] === $titulo) adr_json(['ok' => true, 'cambiado' => false, 'sha256' => $sha]);
+    $db->prepare('INSERT INTO ajustes (clave, valor, puesto) VALUES (?,?,?)
+                  ON CONFLICT(clave) DO UPDATE SET valor = excluded.valor, puesto = excluded.puesto')
+       ->execute(['consentimiento_vigente',
+                  json_encode(['titulo' => $titulo, 'texto' => $texto, 'sha256' => $sha, 'puesto' => adr_ahora()], JSON_UNESCAPED_UNICODE),
+                  adr_ahora()]);
+    adr_apunta($db, 'mac', 'consentimiento vigente: ' . substr($sha, 0, 12));
+    adr_json(['ok' => true, 'cambiado' => true, 'sha256' => $sha]);
+}
+
 /* --- Las tareas ------------------------------------------------------ */
 
 /* El Mac asigna un cuestionario. La plantilla viaja y se guarda EN
@@ -1563,9 +1727,22 @@ case 'asignar': {
     $titulo = trim(preg_replace('/\s+/u', ' ', (string)($in['titulo'] ?? '')));
     $plantilla = $in['plantilla'] ?? null;
 
-    $q = $db->prepare('SELECT 1 FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    /* 04-11: un CUESTIONARIO se puede dejar antes de que active la
+       cuenta. Su plantilla es pública y va en claro; lo que se sella es
+       la respuesta, a la clave del Mac, así que no hace falta la suya. Lo
+       que va sellado a SU clave (una herramienta) o dice algo de ella
+       (los objetivos) sigue esperando a la activación. El aviso por
+       correo no sale (adr_avisa solo avisa a cuentas activas): la
+       invitación ya la manda el Mac. Si la invitación caduca sin
+       activar, adr_limpia_altas se lleva también estas tareas. */
+    $q = $db->prepare('SELECT activado FROM pacientes WHERE cod = ?');
     $q->execute([$cod]);
-    if (!$q->fetch()) adr_json(['error' => 'ese paciente no tiene cuenta activa'], 404);
+    $pac = $q->fetch();
+    $es_cuestionario = !in_array($in['tipo'] ?? '', ['herramienta', 'objetivos'], true);
+    if (!$pac || ($pac['activado'] === null && ($cod === 'hoja' || !$es_cuestionario))) {
+        adr_json(['error' => 'ese paciente no tiene cuenta activa',
+                  'sin_activar' => $pac && $pac['activado'] === null], 404);
+    }
 
     /* Una HERRAMIENTA (plan de seguridad, autorregistro, guía) no es un
        cuestionario: no tiene ítems ni opciones, tiene bloques y campos.
@@ -1675,6 +1852,7 @@ case 'tarea': {
     $q->execute([(int)($_GET['id'] ?? 0), $cod]);
     $t = $q->fetch();
     if (!$t) adr_json(['error' => 'no existe'], 404);
+    adr_ci_corta($db, $cod, $t);
     $modo = adr_modo_fila($t);
     /* Un documento vivo o un registro se siguen abriendo después de
        empezarlos: es su gracia. Lo de una vez, no. */
@@ -1708,6 +1886,9 @@ case 'guardar_borrador': {
     $cif = adr_deb64($in['cifrado'] ?? null);
     if (!$cif || strlen($cif) > 512 * 1024) adr_json(['error' => 'borrador no válido'], 400);
     if (!adr_freno($db, 'borr:' . $cod, 120, 3600)) adr_json(['error' => 'despacio'], 429);
+    $tq = $db->prepare('SELECT tipo, plantilla FROM tareas WHERE id = ? AND cod = ?');
+    $tq->execute([(int)($in['id'] ?? 0), $cod]);
+    if ($tt = $tq->fetch()) adr_ci_corta($db, $cod, $tt);
     $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
     $v->execute([$cod]);
     $q = $db->prepare('UPDATE tareas SET borrador = ?, borrador_v = ? WHERE id = ? AND cod = ? AND hecho IS NULL');
@@ -1738,6 +1919,7 @@ case 'guardar_vivo': {
     $q->execute([$id, $cod]);
     $t = $q->fetch();
     if (!$t || $t['hecho'] === 'retirada' || adr_modo_fila($t) === 'una') adr_json(['error' => 'no existe'], 404);
+    adr_ci_corta($db, $cod, $t);
     $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
     $v->execute([$cod]);
     $pv = (int)$v->fetch()['publica_v'];
@@ -1773,6 +1955,7 @@ case 'entrada': {
     $q->execute([$id, $cod]);
     $t = $q->fetch();
     if (!$t || $t['hecho'] === 'retirada' || adr_modo_fila($t) !== 'registro') adr_json(['error' => 'no existe'], 404);
+    adr_ci_corta($db, $cod, $t);
     $v = $db->prepare('SELECT publica_v FROM pacientes WHERE cod = ?');
     $v->execute([$cod]);
     $pv = (int)$v->fetch()['publica_v'];
@@ -1895,11 +2078,12 @@ case 'entregar': {
     if (!$cifrado || strlen($cifrado) > 65536) adr_json(['error' => 'sobre no válido'], 400);
     if (!adr_freno($db, 'ent:' . $cod, 60, 3600)) adr_json(['error' => 'despacio'], 429);
 
-    $q = $db->prepare('SELECT titulo, hecho FROM tareas WHERE id = ? AND cod = ?');
+    $q = $db->prepare('SELECT titulo, hecho, tipo, plantilla FROM tareas WHERE id = ? AND cod = ?');
     $q->execute([$id, $cod]);
     $t = $q->fetch();
     if (!$t) adr_json(['error' => 'no existe'], 404);
     if ($t['hecho'] !== null) adr_json(['error' => 'ya la habías entregado'], 409);
+    adr_ci_corta($db, $cod, $t);
 
     $copia = null; $copia_v = null;
     if (!empty($in['copia'])) {
@@ -2049,7 +2233,7 @@ case 'registro': {
 /* Qué documentos para firmar tiene cada uno y si los ha firmado. */
 case 'firmas': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
-    $q = $db->query('SELECT cod, titulo, creado, firmado FROM sobres
+    $q = $db->query('SELECT id, cod, titulo, creado, firmado, firma_v, firma_huella FROM sobres
                      WHERE direccion = 2 AND requiere_firma = 1 ORDER BY id');
     adr_json(['firmas' => $q->fetchAll()]);
 }
@@ -2059,11 +2243,15 @@ case 'firmas': {
    título es lo que ya está en claro en el servidor («PHQ-9»). */
 case 'pendientes': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
-    $q = $db->query("SELECT t.cod, t.id, t.titulo, t.tipo, t.origen, t.creado, t.recordada
+    /* 04-11: también lo de las cuentas aún sin activar (los cuestionarios
+       que el Mac deja antes), con `activada: false`, para que el Mac vea
+       que han llegado y no las cuente como «lleva días sin contestar». */
+    $q = $db->query("SELECT t.cod, t.id, t.titulo, t.tipo, t.origen, t.creado, t.recordada,
+                            (p.activado IS NOT NULL) AS activada
                      FROM tareas t JOIN pacientes p ON p.cod = t.cod
-                     WHERE t.hecho IS NULL AND p.activado IS NOT NULL
+                     WHERE t.hecho IS NULL AND p.cod <> 'hoja'
                      ORDER BY t.cod, t.creado");
-    adr_json(['pendientes' => $q->fetchAll()]);
+    adr_json(['pendientes' => array_map(function ($f) { $f['activada'] = (bool)$f['activada']; return $f; }, $q->fetchAll())]);
 }
 
 /* El estado de la instalación, para que el Mac pueda comprobarlo sin

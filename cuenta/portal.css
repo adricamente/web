@@ -1049,3 +1049,14 @@ h3{font-weight:700}
 .reg-resumen-ir{font-size:14px;font-weight:600}
 #reg-graficas-t{scroll-margin-top:70px}
 #reg-graficas-t:focus{outline:none}
+
+/* --- El consentimiento, lo primero (04-11) ---------------------------
+   La tarjeta de arriba de Inicio, con el borde del color de la marca:
+   es lo único que hay que hacer antes que lo demás. Y en «Tareas», su
+   fila, con el mismo borde; lo que se rellena, con su sello de espera
+   en vez del botón. */
+.caja.ci-primero{border:2px solid var(--accent);box-shadow:var(--shadow)}
+.caja.ci-primero h2{margin-top:0}
+.caja.ci-primero p:last-child{margin-bottom:0}
+#tareas > .fila.primero{background:var(--accent-soft);border-left:4px solid var(--accent);padding-left:10px}
+.sello.espera{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line-strong);white-space:normal;text-align:center}

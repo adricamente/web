@@ -138,6 +138,17 @@ $cuerpo .= <<<'HTML'
   <div class="pestana" id="p-inicio" data-p="inicio">
     <h1 id="hola">Tu espacio</h1>
 
+    <!-- Lo primero: el consentimiento (04-11). Sale mientras falte (solo
+         en cuentas activadas desde el 04-11; ver adr_ci_falta) y, hasta
+         que esté firmado, lo que se rellena espera: cuestionarios,
+         valoraciones y herramientas, menos el plan de seguridad y lo que
+         es para leer. Arriba del todo, antes de «Tenla siempre a mano». -->
+    <section class="caja ci-primero" id="c-ci" aria-labelledby="t-ci" hidden>
+      <h2 id="t-ci">Lo primero: tu consentimiento</h2>
+      <p id="ci-texto">Antes de empezar, lee el consentimiento informado y fírmalo aquí mismo. Son unos minutos. Después podrás rellenar lo que te he dejado.</p>
+      <p><button class="boton" type="button" id="ci-abrir">Leer y firmar</button></p>
+    </section>
+
     <!-- «Tenla siempre a mano» (03-11): añadir la cuenta a la pantalla de
          inicio del móvil. Arriba del todo porque es lo primero que tiene
          sentido hacer al entrar desde el móvil, y compacto: dos líneas y
@@ -625,6 +636,10 @@ const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar'
 let PLAN = null;   // id de su plan de seguridad enviado, si tiene
 let HERR_FILAS = {};      // id de tarea → su fila del panel (modo, recordatorio…)
 let PLAN_TAREA = null;    // su plan de seguridad vivo, si lo tiene
+/* 04-11: el consentimiento pendiente, {falta, id, titulo} (CI, sin P,
+   es la lista de casillas del formulario). Con falta, lo que se rellena espera al
+   consentimiento (el servidor lo corta igual: adr_ci_corta). */
+let CIP = { falta: false, id: null, titulo: null };
 function ver(cual) {
   VISTAS.forEach(v => { $(v).hidden = (v !== cual); });
   /* La ayuda urgente está en todas las pantallas de la cuenta; el
@@ -714,6 +729,13 @@ $('f-entrar').addEventListener('submit', async (ev) => {
     }, 15);
 
     await panel();
+    /* Recién activada (activar.php manda aquí con ?nueva=1): lo primero
+       que ve es el consentimiento, no un panel con cosas cerradas. Se
+       quita la marca de la dirección para que recargar no lo repita. */
+    if (new URLSearchParams(location.search).get('nueva') === '1') {
+      try { history.replaceState(null, '', location.pathname + location.hash); } catch (_) {}
+      if (CIP.falta && CIP.id) await abrirFirma(CIP.id, CIP.titulo);
+    }
 
   } catch (e) {
     const m = String((e && e.message) || e);
@@ -778,11 +800,14 @@ async function panel() {
   macPublica = r.j.mac_publica || null;
   miCod = r.j.cod || null;
   miV = r.j.v;
+  CIP = r.j.consentimiento || { falta: false, id: null, titulo: null };
+  pintaCI();
   pintaAgenda(r.j.agenda, r.j.v);
   pintaPagos(r.j.pagos || []);
   pintaProgreso(r.j.progreso, r.j.v);
   pintaInstalar(r.j.instalar);
-  pintaConocido(r.j.conocido);
+  /* Mientras falte el consentimiento, ninguna otra pregunta. */
+  pintaConocido(CIP.falta ? null : r.j.conocido);
 
   /* Lo caducado no se enseña ni se cuenta: un número que no baja
      solo genera culpa. El servidor ya no lo manda; esto es la red. */
@@ -819,12 +844,22 @@ async function panel() {
   $('globo-tareas').hidden = !n;
   $('globo-tareas').textContent = n ? String(n) : '';
   const ct = $('tareas'); ct.innerHTML = '';
+  /* El consentimiento, el primero (04-11). */
+  porFirmar.sort((a, b) => Number(esConsentimiento(b.titulo)) - Number(esConsentimiento(a.titulo)));
+  if (CIP.falta && !CIP.id) {
+    const f = fila('Consentimiento informado', 'Te llega aquí en unos minutos para leerlo y firmarlo. Lo demás espera hasta entonces.');
+    f.classList.add('firmar', 'primero');
+    ct.appendChild(f);
+  }
   porFirmar.forEach(d => {
     const re = !!d.firmado;
-    const f = fila(d.titulo || 'Documento', !re ? 'Para leer y firmar'
+    const primero = CIP.falta && !re && esConsentimiento(d.titulo);
+    const f = fila(d.titulo || 'Documento', primero ? 'Lo primero: léelo y fírmalo. Después podrás rellenar lo demás.'
+      : !re ? 'Para leer y firmar'
       : soloFrase(d) ? 'Hemos corregido una frase del formulario: revísalo y vuelve a firmar (tus datos ya están puestos)'
       : 'Faltan tus datos: complétalos y vuelve a firmar');
     f.classList.add('firmar');
+    if (primero) f.classList.add('primero');
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button'; b.textContent = !re ? 'Leer y firmar' : soloFrase(d) ? 'Revisar y firmar' : 'Completar y firmar';
     b.addEventListener('click', () => abrirFirma(d.id, d.titulo, re, soloFrase(d)));
@@ -837,6 +872,7 @@ async function panel() {
     const pie = [t.preguntas ? 'unos ' + Math.max(1, Math.round(t.preguntas * 10 / 60)) + ' min' : null,
                  t.caduca ? 'antes del ' + fecha(t.caduca) : null].filter(Boolean).join(' · ');
     const f = fila(t.titulo, pie || null);
+    if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); ct.appendChild(f); return; }
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button';
     b.textContent = esDeber ? 'Ver' : esValorar ? 'Valorar' : 'Rellenar';
@@ -1791,6 +1827,25 @@ document.querySelectorAll('#c-instalar [data-in]').forEach(b => b.addEventListen
    no hay a dónde mandarlo, y una pregunta que no se puede contestar no
    se hace). Si ya estaba a la vista, actualizar el panel no la cierra
    ni borra lo marcado. */
+/* --- El consentimiento, lo primero (04-11) ----------------------------- */
+function pintaCI() {
+  const caja = $('c-ci');
+  caja.hidden = !CIP.falta;
+  if (!CIP.falta) return;
+  $('ci-texto').textContent = CIP.id
+    ? 'Antes de empezar, lee el consentimiento informado y fírmalo aquí mismo. Son unos minutos. Después podrás rellenar lo que te he dejado.'
+    : 'Antes de empezar hace falta tu consentimiento informado. Te llega aquí en unos minutos para leerlo y firmarlo; lo demás espera hasta entonces.';
+  $('ci-abrir').hidden = !CIP.id;
+}
+$('ci-abrir').addEventListener('click', () => { if (CIP.id) abrirFirma(CIP.id, CIP.titulo); });
+/* En lugar del botón, lo que dice por qué no se abre todavía. Un botón
+   apagado no explica nada y el lector de pantalla lo salta. */
+function esperaCI() {
+  const e = document.createElement('span');
+  e.className = 'sello espera'; e.textContent = 'Primero, el consentimiento';
+  return e;
+}
+
 function pintaConocido(c) {
   const caja = $('c-conocido');
   /* Una sola cosa por visita: si en esta ha salido «Tenla siempre a
@@ -2853,6 +2908,7 @@ function pintaHerramientas(pendientes, vivas, copias, v) {
   };
   pendientes.concat(vivas).forEach(t => {
     const f = fila(t.titulo, pie(t));
+    if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); c.appendChild(f); return; }
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button';
     b.textContent = (t.modo === 'registro' && !t.hoy) ? 'Apuntar' : 'Abrir';

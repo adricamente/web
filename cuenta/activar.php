@@ -76,6 +76,13 @@ $cuerpo = <<<HTML
       <label class="acepto"><input type="checkbox" id="aviso" required>
       He leído esta información sobre mis datos en el portal.</label>
     </div>
+    <!-- 04-11: el orden, dicho antes. Al entrar sale el consentimiento
+         informado (lo deja el portal al activar, o el Mac en unos
+         minutos si aún no ha subido el texto vigente) y, hasta firmarlo,
+         no se abre nada que se rellene. -->
+    <p class="apunte" id="despues">Después, al entrar, lo primero será leer y
+    firmar el consentimiento informado de la atención. Hasta entonces no
+    tendrás que rellenar nada.</p>
     <p><button class="boton ancho" id="b" type="submit">Crear mi cuenta</button></p>
     <p class="apunte" id="estado" role="status"></p>
   </form>
