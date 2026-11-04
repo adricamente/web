@@ -255,7 +255,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/mapa/</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-11-04</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/la-cuenta/</loc>
@@ -297,7 +297,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/herramientas/rueda-de-las-emociones/</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-11-04</lastmod>
   </url>
   <url>
     <loc>https://adricamente.com/guias/</loc>
@@ -503,7 +503,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/autocritica/</loc>
-    <lastmod>2026-10-30</lastmod>
+    <lastmod>2026-11-04</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/cuaderno-mano-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a900.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a900.webp</image:loc></image:image>
@@ -1194,5 +1194,21 @@
     <image:image><image:loc>https://adricamente.com/fotos/a/autobus-luz-a900.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a900.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/camino-otono-a800.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/herramientas/dejar-que-cuente/</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/herramientas/diario-de-crisis-de-ansiedad/</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/herramientas/lo-que-haces-bien/</loc>
+    <lastmod>2026-11-04</lastmod>
+  </url>
+  <url>
+    <loc>https://adricamente.com/herramientas/planifica-tu-semana/</loc>
+    <lastmod>2026-11-04</lastmod>
   </url>
 </urlset>
