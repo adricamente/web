@@ -616,6 +616,10 @@ $cuerpo .= <<<'HTML'
   <p class="etiqueta" id="h-etiqueta">Herramienta</p>
   <h1 id="h-titulo">…</h1>
   <p class="apunte" id="h-subtitulo"></p>
+  <!-- 04-11: las herramientas con `ayuda: "respiracion-guiada"` (respirar,
+       bajar la intensidad, el diario de crisis) abren encima el círculo de
+       adricamente.com/herramientas/respiracion/. No guarda ni envía nada. -->
+  <p class="h-ayuda" id="h-ayuda" hidden><button class="boton suave" type="button" id="b-respira">Respirar conmigo</button></p>
   <!-- Con riesgo (el plan de seguridad), el 024 y el 112 van arriba y
        abajo de TODA la pantalla, y también en el PDF. -->
   <div class="auxilio h-riesgo" hidden>
@@ -653,6 +657,37 @@ $cuerpo .= <<<'HTML'
     <button class="enlace-boton" type="button" id="rd-cerrar">Cerrar</button>
   </div>
   <div id="rd-cuerpo"></div>
+</dialog>
+
+<!-- Respirar conmigo (04-11): el mismo círculo y el mismo 5-4-3-2-1 que la
+     página pública de respiración, encima de la herramienta. Nada se
+     guarda ni se envía; al cerrarlo se vuelve donde se estaba. -->
+<dialog id="respira-dialogo" class="rueda-dialogo respira-dialogo" aria-labelledby="rs-t">
+  <div class="rd-cab">
+    <h2 id="rs-t">Respirar conmigo</h2>
+    <button class="enlace-boton" type="button" id="rs-cerrar">Cerrar</button>
+  </div>
+  <p class="apunte">Suelta el aire más largo de lo que lo tomas. Elige una y sigue el círculo con la vista: dos minutos bastan.</p>
+  <div class="respira" id="respira">
+    <div class="respira-modos" role="group" aria-label="Elige cómo respirar">
+      <button type="button" data-modo="lenta" aria-pressed="true">Respiración lenta (4 y 6)</button>
+      <button type="button" data-modo="suspiro" aria-pressed="false">Suspiro cíclico</button>
+    </div>
+    <div class="respira-circulo" aria-hidden="true"></div>
+    <p class="respira-fase" aria-live="polite">Cuando quieras</p>
+    <p class="respira-cuenta">Dos minutos bastan para empezar.</p>
+    <div class="respira-acciones"><button type="button" class="principal" id="rs-boton">Empezar</button></div>
+  </div>
+  <p class="apunte">Si al respirar te mareas o te pones más nerviosa o nervioso, para y ánclate en lo que tienes delante:</p>
+  <div class="anclaje" id="anclaje" aria-live="polite">
+    <p class="an-n"></p>
+    <h3 class="an-t" tabindex="-1"></h3>
+    <p class="an-d"></p>
+    <div class="acciones">
+      <button type="button" data-a="ant">Anterior</button>
+      <button type="button" class="principal" data-a="sig">Siguiente</button>
+    </div>
+  </div>
 </dialog>
 
 <!-- Lo que se imprime: una copia estática, con lo escrito como texto.
@@ -3708,6 +3743,7 @@ function claveHerr() { return 'adr.herr.' + HERR.tarea; }
 function montaHerramienta(def, valores, soloLeer, etiqueta) {
   $('h-etiqueta').textContent = etiqueta;
   $('h-titulo').textContent = def.titulo;
+  $('h-ayuda').hidden = def.ayuda !== 'respiracion-guiada';
   $('h-subtitulo').textContent = def.subtitulo || '';
   document.querySelectorAll('.h-riesgo').forEach(x => { x.hidden = !def.riesgo; });
   const cuerpo = $('h-cuerpo'); cuerpo.innerHTML = '';
@@ -4060,6 +4096,71 @@ async function abreRuedaPara(campo) {
 }
 $('rd-cerrar').addEventListener('click', () => $('rueda-dialogo').close());
 
+/* --- Respirar conmigo (04-11) -------------------------------------------
+   El mismo guion que herramientas/respiracion/ de la web (dos modos y el
+   5-4-3-2-1), metido en un diálogo. Al cerrarlo se para y el foco vuelve
+   al botón que lo abrió. */
+(function () {
+  const dlg = $('respira-dialogo');
+  const MODOS = {
+    lenta: [['Toma aire', 4, 1], ['Suéltalo despacio', 6, 0.45]],
+    suspiro: [['Toma aire por la nariz', 2, 0.85], ['Un poco más', 1, 1], ['Suéltalo largo, por la boca', 6, 0.45]],
+  };
+  let modo = 'lenta', reloj = null, fin = 0;
+  const circ = dlg.querySelector('.respira-circulo'), fase = dlg.querySelector('.respira-fase'),
+        cuenta = dlg.querySelector('.respira-cuenta'), boton = $('rs-boton');
+  function para() {
+    clearTimeout(reloj); reloj = null;
+    circ.style.transitionDuration = '1s';
+    circ.style.setProperty('--escala', '.45');
+    fase.textContent = 'Cuando quieras';
+    cuenta.textContent = 'Dos minutos bastan para empezar.';
+    boton.textContent = 'Empezar';
+  }
+  function empieza() {
+    fin = Date.now() + 120000; boton.textContent = 'Parar';
+    let i = 0;
+    (function paso() {
+      const ps = MODOS[modo], p = ps[i % ps.length];
+      circ.style.transitionDuration = p[1] + 's';
+      circ.style.setProperty('--escala', String(p[2]));
+      fase.textContent = p[0];
+      const quedan = Math.max(0, Math.round((fin - Date.now()) / 1000));
+      cuenta.textContent = quedan > 0 ? 'Quedan ' + Math.floor(quedan / 60) + ':' + String(quedan % 60).padStart(2, '0') : 'Ya está. Puedes seguir si quieres.';
+      i++;
+      if (Date.now() >= fin && i % ps.length === 0) { para(); fase.textContent = 'Bien hecho'; cuenta.textContent = 'Fíjate en cómo está el cuerpo ahora, sin juzgarlo.'; return; }
+      reloj = setTimeout(paso, p[1] * 1000);
+    })();
+  }
+  dlg.querySelectorAll('[data-modo]').forEach(b => b.addEventListener('click', () => {
+    modo = b.dataset.modo;
+    dlg.querySelectorAll('[data-modo]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    if (reloj) { para(); empieza(); }
+  }));
+  boton.addEventListener('click', () => { if (reloj) para(); else empieza(); });
+  const PASOS = [
+    ['5', 'Cinco cosas que ves', 'Nómbralas en voz baja, con detalle: «una taza azul con el asa rota».'],
+    ['4', 'Cuatro cosas que puedes tocar', 'Tócalas de verdad: la tela del pantalón, el borde de la mesa, el suelo bajo los pies.'],
+    ['3', 'Tres cosas que oyes', 'Las de cerca y las de lejos: un coche, la nevera, tu propia respiración.'],
+    ['2', 'Dos cosas que hueles', 'Si no hueles nada, acércate algo: la manga, el café, el jabón de las manos.'],
+    ['1', 'Una cosa que saboreas', 'O un sorbo de agua, despacio. Y ahora mira cómo estás.'],
+  ];
+  let k = 0;
+  const anc = $('anclaje'), n = anc.querySelector('.an-n'), t = anc.querySelector('.an-t'), d = anc.querySelector('.an-d');
+  const ant = anc.querySelector('[data-a=ant]'), sig = anc.querySelector('[data-a=sig]');
+  function pinta() {
+    n.textContent = PASOS[k][0]; t.textContent = PASOS[k][1]; d.textContent = PASOS[k][2];
+    ant.disabled = k === 0; sig.textContent = k === PASOS.length - 1 ? 'Volver a empezar' : 'Siguiente';
+  }
+  ant.addEventListener('click', () => { if (k > 0) { k--; pinta(); } });
+  sig.addEventListener('click', () => { k = k === PASOS.length - 1 ? 0 : k + 1; pinta(); t.focus(); });
+  let desde = null;
+  $('b-respira').addEventListener('click', () => { desde = document.activeElement; k = 0; pinta(); para(); dlg.showModal(); });
+  $('rs-cerrar').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', (ev) => { if (ev.target === dlg) dlg.close(); });
+  dlg.addEventListener('close', () => { para(); if (desde && desde.focus) desde.focus(); });
+  pinta(); para();
+})();
 $('rueda-dialogo').addEventListener('click', (ev) => { if (ev.target === $('rueda-dialogo')) $('rueda-dialogo').close(); });
 /* Junto a cada casilla con «ayuda: rueda-emociones» (o «ayuda_campo» en
    un apartado), un botón que abre la rueda. Vale para cualquier
@@ -4361,11 +4462,42 @@ function celdaJunta(juntas, fila) {
   });
   return td;
 }
+/* La eficiencia del sueño (04-11, «Dormir mejor» v2), con la fórmula del
+   diario de sueño de la web: horas que crees que dormiste ÷ (de acostarte
+   a levantarte). Sale en la semana si la herramienta tiene las tres
+   columnas; si falta un dato o no se entiende («sobre las 12»), no se
+   calcula. Es su dato, sin colores ni «bien» o «mal», y no se envía. */
+function minutosDeHora(v) {
+  const m = /^\s*(\d{1,2})(?:\s*[:.h'’]\s*(\d{2}))?\s*h?\s*$/i.exec(String(v || ''));
+  if (!m || +m[1] > 24 || (m[2] && +m[2] > 59)) return null;
+  return (+m[1] % 24) * 60 + (m[2] ? +m[2] : 0);
+}
+function horasDormidas(v) {
+  const s = String(v || '').trim().toLowerCase();
+  let m = /^(\d{1,2})(?:[.,](\d+))?\s*(?:h|horas?)?$/.exec(s);
+  if (m) { const x = Number(m[1] + '.' + (m[2] || '0')); return x <= 24 ? x : null; }
+  m = /^(\d{1,2})\s*(?:h|horas?|:)\s*(\d{1,2})\s*(?:m|min|minutos)?$/.exec(s);
+  if (m && +m[2] < 60) { const x = +m[1] + +m[2] / 60; return x <= 24 ? x : null; }
+  return null;
+}
+function conEficiencia(cols) {
+  const ids = new Set(cols.map(c => c.id));
+  return ids.has('acostarme') && ids.has('levantarme') && ids.has('dormido');
+}
+function eficiencia(fila) {
+  const a = minutosDeHora(fila.acostarme), l = minutosDeHora(fila.levantarme), h = horasDormidas(fila.dormido);
+  if (a === null || l === null || h === null) return null;
+  const cama = (l - a + 1440) % 1440;
+  if (!cama) return null;
+  const e = Math.round(100 * h * 60 / cama);
+  return e >= 0 && e <= 100 ? e : null;   // más horas dormidas que en la cama: no cuadra, no se inventa
+}
 function tablaSemana(l, es) {
   const b = HERR.principal, diario = esDiario(b), hoy = hoyISO();
   const { sueltas, juntas } = columnasSemana(HERR.def, colsEntrada(b));
   const cols = sueltas;
-  const ncols = sueltas.length + (juntas.length ? 1 : 0);
+  const efi = conEficiencia(colsEntrada(b));
+  const ncols = sueltas.length + (juntas.length ? 1 : 0) + (efi ? 1 : 0);
   const filas = diario
     ? Array.from({ length: 7 }, (_, k) => sumaDias(l, k)).map(f => ({ f, e: es.find(x => x.fecha === f) || null }))
     : es.slice().sort((a, x) => (a.fecha < x.fecha ? -1 : a.fecha > x.fecha ? 1 : (a.creado < x.creado ? -1 : 1))).map(e => ({ f: e.fecha, e }));
@@ -4376,6 +4508,7 @@ function tablaSemana(l, es) {
   const th0 = el('thead'), trh = el('tr');
   const thd = el('th', null, 'Día'); thd.scope = 'col'; trh.appendChild(thd);
   cols.forEach(c => { const th = el('th', null, corto(c.rotulo)); th.scope = 'col'; trh.appendChild(th); });
+  if (efi) { const th = el('th', null, 'Eficiencia del sueño'); th.scope = 'col'; trh.appendChild(th); }
   if (juntas.length) { const th = el('th', 'th-junta', 'Lo que escribiste'); th.scope = 'col'; trh.appendChild(th); }
   th0.appendChild(trh); t.appendChild(th0);
   const tb = el('tbody');
@@ -4393,11 +4526,18 @@ function tablaSemana(l, es) {
     th.appendChild(bt); tr.appendChild(th);
     if (e) {
       cols.forEach(c => tr.appendChild(celdaValor(c, e.fila[c.id])));
+      if (efi) {
+        const x = eficiencia(e.fila || {});
+        const td = el('td', x === null ? 'vacia' : 'corta'); td.dataset.rotulo = 'Eficiencia del sueño';
+        td.appendChild(x === null ? el('span', 'nada', '—') : el('span', 'v-op', x + ' %'));
+        tr.appendChild(td);
+      }
       if (juntas.length) tr.appendChild(celdaJunta(juntas, e.fila));
     } else { const td = el('td', 'sin-nada', f > hoy ? '' : 'Sin apuntar'); td.colSpan = Math.max(1, ncols); tr.appendChild(td); }
     tb.appendChild(tr);
   });
   t.appendChild(tb); env.appendChild(t);
+  if (efi) env.appendChild(el('p', 'apunte reg-efi', 'Eficiencia del sueño: qué parte del tiempo en la cama pasaste dormida o dormido (las horas que crees que dormiste entre las que van de acostarte a levantarte). Si falta un dato, no se calcula.'));
   return env;
 }
 
@@ -4546,6 +4686,7 @@ function pintaRegistro(msg) {
   HERR.editando = null;
   $('h-etiqueta').textContent = 'Registro';
   $('h-titulo').textContent = def.titulo;
+  $('h-ayuda').hidden = def.ayuda !== 'respiracion-guiada';
   $('h-subtitulo').textContent = def.subtitulo || '';
   document.querySelectorAll('.h-riesgo').forEach(x => { x.hidden = !def.riesgo; });
   $('h-enviar').hidden = true; $('h-guardar').hidden = true; $('h-leido').hidden = true;

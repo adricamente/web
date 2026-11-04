@@ -1084,3 +1084,31 @@ h3{font-weight:700}
 .i-tema-t{display:flex;flex-direction:column;gap:1px}
 .i-tema-d{font-size:14.5px;color:var(--ink-2)}
 #i-hecho:focus{outline:none}
+
+/* --- Respirar conmigo (04-11) ------------------------------------------
+   El círculo y el 5-4-3-2-1 de herramientas/respiracion/ de la web, en el
+   diálogo de la cuenta. Los colores del círculo, como tokens. */
+:root{--respira-1:#DCE8F2;--respira-2:#9DBBD3;--respira-3:#5B86A8}
+.h-ayuda{margin:0 0 14px}
+.respira-dialogo{width:min(560px,calc(100vw - 16px))}
+.respira{text-align:center;margin:6px 0 16px}
+.respira-modos{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 10px}
+.respira-modos button,.respira-acciones button,.anclaje button{font:inherit;font-size:15.5px;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--borde-campo);background:var(--surface);color:var(--ink)}
+.respira-modos button[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.respira-acciones button.principal,.anclaje button.principal{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
+.anclaje button:disabled{opacity:.5;cursor:default}
+.respira-circulo{--escala:.45;width:min(220px,58vw);aspect-ratio:1/1;margin:6px auto 10px;border-radius:50%;
+  background:radial-gradient(circle at 50% 45%,var(--respira-1) 0,var(--respira-2) 55%,var(--respira-3) 100%);
+  transform:scale(var(--escala));transition:transform 1s linear}
+.respira-fase{font-family:var(--titulo);font-weight:700;font-size:1.4rem;min-height:2rem;margin:0}
+.respira-cuenta{color:var(--ink-2);margin:2px 0 10px}
+.respira-acciones{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+@media (prefers-reduced-motion:reduce){.respira-circulo{transition:none !important}}
+.anclaje{border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;margin:6px 0 0}
+.anclaje .an-n{font-family:var(--titulo);font-weight:800;font-size:2.2rem;line-height:1;color:var(--accent);margin:0 0 4px}
+.anclaje .an-t{font-size:1.1rem;margin:0 0 4px}
+.anclaje .an-t:focus{outline:none}
+.anclaje .acciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+/* La eficiencia del sueño, debajo de la semana. */
+.reg-efi{font-size:13.5px;margin:6px 10px 10px}
