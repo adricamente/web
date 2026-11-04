@@ -1143,17 +1143,13 @@ footer{
 }
 footer p{font-size:13.5px;color:var(--muted);line-height:1.55;max-width:62ch}
 
-/* --- 7 bis. La última línea del pie ------------------------------
-   Aquí había un bloque grande con los teléfonos de urgencia y otro
-   con el descargo de "esto no sustituye a un profesional". Los dos
-   fuera: en la página que tiene que convencer a alguien de pedir
-   cita, un muro de advertencias se lee como desconfianza y no como
-   responsabilidad. El descargo completo está en el aviso legal, que
-   es su sitio, y el aviso con contexto sigue dentro de cada página
-   de área, que es donde de verdad se lee.
-
-   Se queda una línea con los dos teléfonos, en letra pequeña y sin
-   dramatismo. No estorba y está el día que hace falta.
+/* --- 7 bis. La letra pequeña del pie de /empieza/ ----------------
+   El pie a columnas llevó hasta el 03-11 una última línea con el 024,
+   el 112, lo legal y el aviso de las fotos. Se quitó por decisión de
+   Adrián: lo legal está en «Contacto y legal», los teléfonos en
+   «Ayuda urgente: teléfonos» y el aviso de las fotos en
+   /como-escribo-las-guias/#fotos (ver rueda/pie.py). Esta clase solo
+   la usa ya el pie propio de /empieza/, que no tiene columnas.
    ---------------------------------------------------------------- */
 
 .legal-pie{
