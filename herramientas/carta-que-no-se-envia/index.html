@@ -24,7 +24,7 @@
   <meta property="og:image" content="https://adricamente.com/og/herramientas-carta-que-no-se-envia.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Una carta que no se envía, y un rato con fin. Adrián Cuñat Andrés, psicólogo colegiado nº CM03836.">
+  <meta property="og:image:alt" content="Una carta que no se envía, y un rato con fin. Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.">
   <meta property="og:site_name" content="adricamente">
   <meta property="og:locale" content="es_ES">
   <meta name="twitter:card" content="summary_large_image">
@@ -218,6 +218,7 @@
   #carta .ct-botones button{margin:0}
   .ct-riesgo{background:var(--aviso-soft);border-radius:var(--r-m);padding:12px 16px;margin:10px 0}
   .ct-riesgo p{margin:0}
+  .ct-riesgo .ct-nota-riesgo{margin-top:6px;font-size:.92rem;color:var(--ink-2)}
   .ct-cierre{border-top:1px solid var(--line);margin-top:20px;padding-top:4px}
   .ct-fin{font-weight:700}
   .ct-rejilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:0 16px}
@@ -328,8 +329,10 @@
   <div class="caja ct-aviso">
     <p style="margin-bottom:0">Puede doler, y se puede parar cuando quieras. Si la muerte ha sido hace muy poco, o ha sido
     por suicidio o de una forma traumática, mejor hacerlo con alguien cerca o con ayuda: lo cuento en <a
-    href="/guias/duelo/#suicidio">cuando la muerte ha sido por suicidio</a>. <strong>Si en algún momento piensas en hacerte daño, deja esto y llama al <a href="tel:024">024</a></strong>:
-    es gratuito y atiende las 24 horas. Si hay peligro, el <a href="tel:112">112</a>.</p>
+    href="/guias/duelo/#suicidio">cuando la muerte ha sido por suicidio</a>. <strong>Si en algún momento piensas en hacerte daño, o en no seguir aquí o irte con quien ha muerto, deja esto
+    y llama al <a href="tel:024">024</a></strong>: es gratuito y atiende las 24 horas. Si hay peligro, el <a href="tel:112">112</a>.
+    Si tienes menos de 18 años, mejor con un adulto de confianza cerca. El Teléfono ANAR, <a href="tel:900202010">900 20 20 10</a>,
+    es gratuito y atiende las 24 horas.</p>
   </div>
 
   <div class="herr" id="carta">
@@ -368,6 +371,7 @@
       <p><strong>Lo que acabas de escribir importa.</strong> Si estás pensando en hacerte daño, llama ahora al <a
       href="tel:024">024</a>. Es gratuito y atiende las 24 horas. Si hay peligro inmediato, el <a href="tel:112">112</a>.
       No tienes que terminar esto.</p>
+      <p class="ct-nota-riesgo">Esto lo comprueba solo tu navegador: no se envía ni se guarda.</p>
     </div>
     <div class="ct-solo-js">
       <p class="ct-tiempo" id="ct-tiempo" role="timer" aria-live="off">El rato empieza cuando pulses «Empezar el rato».</p>
@@ -450,7 +454,7 @@
   como indicio, no como prueba. De ahí las preguntas y los veinte minutos.</p>
   <p>Cuando el duelo se atasca, escribir a la persona es una pieza de un tratamiento guiado, no un ejercicio suelto.
   En un ensayo, cinco semanas de terapia por internet con un terapeuta mejoraron mucho más que la lista de espera
-  (Wagner y otros, 2006); en otro, la exposición por internet a la pérdida se sostuvo mejor que la activación conductual
+  (Wagner y otros, 2006); en otro ensayo pequeño, la exposición a la pérdida por internet también mostró efecto
   (Eisma y otros, 2015). <strong>Si se ha atascado, se trata, y se trata con alguien</strong>: lo cuento en <a
   href="/guias/duelo/#ayuda">cuándo pedir ayuda</a>.</p>
 
@@ -490,7 +494,7 @@
   <ol class="fuentes">
     <li>Eisma, M. C., Boelen, P. A., van den Bout, J., Stroebe, W., Schut, H. A. W., Lancee, J. y Stroebe, M. S. (2015). Internet-based exposure and behavioral activation for complicated grief and rumination: a randomized controlled trial. <em>Behavior Therapy</em>, 46(6), 729-748. https://doi.org/10.1016/j.beth.2015.05.007</li>
     <li>Lichtenthal, W. G. y Cruess, D. G. (2010). Effects of directed written disclosure on grief and distress symptoms among bereaved individuals. <em>Death Studies</em>, 34(6), 475-499. https://doi.org/10.1080/07481187.2010.483332</li>
-    <li>Stroebe, M. y Schut, H. (1999). The dual process model of coping with bereavement: rationale and description. <em>Death Studies</em>, 23(3), 197-224.</li>
+    <li>Stroebe, M. y Schut, H. (1999). The dual process model of coping with bereavement: rationale and description. <em>Death Studies</em>, 23(3), 197-224. https://doi.org/10.1080/074811899201046</li>
     <li>Stroebe, M., Stroebe, W., Schut, H., Zech, E. y van den Bout, J. (2002). Does disclosure of emotions facilitate recovery from bereavement? Evidence from two prospective studies. <em>Journal of Consulting and Clinical Psychology</em>, 70(1), 169-178. https://doi.org/10.1037/0022-006X.70.1.169</li>
     <li>Wagner, B., Knaevelsrud, C. y Maercker, A. (2006). Internet-based cognitive-behavioral therapy for complicated grief: a randomized controlled trial. <em>Death Studies</em>, 30(5), 429-453. https://doi.org/10.1080/07481180600614385</li>
   </ol>
@@ -518,9 +522,13 @@
   var $ = function (id) { return document.getElementById(id); };
   var CC = 'adri-carta', CF = 'adri-carta-fechas', PREG = ['Lo que echo de menos','Lo que no te dije','Lo que te diría hoy','Lo que me enseñaste','Lo que me llevo de ti','Lo que me cuesta perdonarte, o perdonarme'];
   var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-  // Lo que no es estilo ni duelo «normal»: si aparece, la caja del 024.
-  // Corre aquí, sobre el texto en memoria, y no se apunta en ningún sitio.
-  var RIESGO = /\b(me quiero morir|quiero morirme|no quiero (seguir|vivir)|quiero irme contigo|irme contigo|quiero irme con (él|ella)|reunirme contigo|reunirme con (él|ella)|estar contigo pronto|acabar con todo|quitarme la vida|hacerme daño|matarme)\b/i;
+  // Lo que no es duelo «normal»: si aparece, la caja del 024. Corre aquí,
+  // sobre el texto en memoria, y no se apunta en ningún sitio. 04-11, revisión
+  // clínico-legal: sin \b (en JavaScript \b no reconoce la ñ ni las tildes, y
+  // «daño» o «él» no casaban) y con las formas de decirlo en duelo («llévame
+  // contigo», «reunirme con mi padre»). Salta de más a propósito: una caja
+  // tranquila de sobra cuesta menos que una que falta.
+  var RIESGO = /(me quiero morir|quiero morir|morirme|suicid|matarme|quitarme la vida|hacerme da[ñn]o|acabar con todo|no quiero (seguir|vivir|estar aqu)|dejar de vivir|(irme|ir|me voy|reunirme|estaré|estar) contigo|ll[eé]vame contigo|(irme|reunirme) con (él|el|ella|mi ))/i;
   var fin = 0, quedaMs = 0, reloj = null, total = 0, terminado = false, fechas = [];
   function voz(t) { $('ct-voz').textContent = t; }
   function estado(t) { $('ct-estado').textContent = t; }
@@ -592,10 +600,11 @@
 
   // ---- Lo que se escribe ----
   var avisado = false;
+  function riesgo() {
+    if (!avisado && RIESGO.test($('ct-texto').value + ' ' + $('ct-desp-t').value)) { avisado = true; $('ct-riesgo').hidden = false; }
+  }
   raiz.addEventListener('input', function (ev) {
-    if (ev.target.id === 'ct-texto' || ev.target.id === 'ct-desp-t') {
-      if (!avisado && RIESGO.test($('ct-texto').value + ' ' + $('ct-desp-t').value)) { avisado = true; $('ct-riesgo').hidden = false; }
-    }
+    if (ev.target.id === 'ct-texto' || ev.target.id === 'ct-desp-t') riesgo();
     if (/^ct-(para|texto|desp-t)$/.test(ev.target.id)) guarda();
   });
   raiz.addEventListener('change', function (ev) { if (ev.target.name === 'ct-desp') guarda(); });
@@ -692,6 +701,7 @@
     // Una carta recuperada no reabre el rato: se empieza otro si se quiere.
     if (c.terminado) { $('ct-cierre').hidden = false; raiz.querySelector('.ct-fin').textContent = 'Has recuperado lo que escribiste. Si quieres otro rato, bórralo o sigue escribiendo.'; }
     estado('Has recuperado la carta que guardaste en este navegador.');
+    riesgo();   // la caja también sale con una carta recuperada
   }
   if (f && f.length) { fechas = f; $('ct-rec-fechas').checked = true; }
   pintaFechas(); texto();
