@@ -153,15 +153,61 @@ $cuerpo .= <<<'HTML'
       <p><button class="boton" type="button" id="ci-abrir">Leer y firmar</button></p>
     </section>
 
+    <!-- «¿Cómo me conociste?» (03-11; obligatoria desde el 04-11, lo pide
+         Adrián). Una tarjeta del panel, no una tarea: no cuenta en el
+         globo ni en ningún correo. Arriba, destacada, y siempre ahí hasta
+         contestarla: sin «Ahora no» ni forma de cerrarla. Contestar es
+         obligatorio, decir el canal no: «Prefiero no decirlo» es una
+         opción más de la lista (exclusiva) y se envía como `ninguno`.
+         No bloquea nada del panel. Va después del consentimiento (que
+         la esconde mientras falte) y antes de «Tenla siempre a mano».
+         El título ya hace la pregunta; la leyenda del grupo la repite
+         solo para el lector de pantalla. -->
+    <section class="caja conocido" id="c-conocido" aria-labelledby="t-conocido" hidden>
+      <h2 id="t-conocido">¿Cómo me conociste?</h2>
+      <p class="apunte" id="cn-para">Una pregunta rápida para saber por dónde llega la gente. Si prefieres no decirlo, también es una respuesta. No cambia nada de tu terapia.
+        <a href="https://adricamente.com/privacidad.html#conocido" target="_blank" rel="noopener">Cómo lo trato</a></p>
+      <form id="f-conocido" novalidate>
+        <fieldset>
+          <legend><span class="oculto-visual">¿Cómo me conociste? </span>Puedes marcar varias.</legend>
+          <div class="cn-opciones">
+            <label class="opcion"><input type="checkbox" name="cn" value="instagram"> Instagram</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="tiktok"> TikTok</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="youtube"> YouTube</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="google"> Google (buscando en internet)</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="web"> La web adricamente.com (una guía, una herramienta…)</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="doctoralia"> Doctoralia</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="neurococos"> El centro Neurococos</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="conocido"> Me lo recomendó alguien que me conoce (amigo/a, familia)</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="profesional"> Me lo recomendó otro profesional (médico, psicólogo…)</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="newsletter"> La newsletter</label>
+            <div class="opcion cn-otro">
+              <input type="checkbox" name="cn" value="otro" id="cn-otro">
+              <label for="cn-otro">Otro:</label>
+              <label for="cn-otro-t" class="oculto-visual">Otro: escribe cuál</label>
+              <input type="text" id="cn-otro-t" maxlength="120" autocomplete="off">
+            </div>
+            <label class="opcion cn-ninguno"><input type="checkbox" name="cn" value="ninguno" id="cn-ninguno"> Prefiero no decirlo</label>
+          </div>
+        </fieldset>
+        <p class="cn-botones">
+          <button class="boton" type="submit" id="cn-enviar" disabled aria-describedby="cn-falta">Enviar</button>
+          <span class="apunte" id="cn-falta">Marca al menos una opción para enviar.</span>
+        </p>
+      </form>
+      <p class="apunte cn-estado" id="cn-estado" role="status"></p>
+      <div class="nota bien" id="cn-gracias" tabindex="-1" hidden><p id="cn-gracias-t"></p></div>
+    </section>
+
     <!-- «Tenla siempre a mano» (03-11): añadir la cuenta a la pantalla de
          inicio del móvil. Arriba del todo porque es lo primero que tiene
          sentido hacer al entrar desde el móvil, y compacto: dos líneas y
          el paso exacto para ESTE teléfono y ESTE navegador (lo rellena
          pintaInstalar). Cuándo sale lo decide el servidor (ver
          adr_instalar_toca en api.php); si cabe en este dispositivo, el
-         navegador, sin mandar nada. En una visita en la que sale, la
-         tarjeta «¿Cómo me conociste?» espera a la siguiente: dos
-         preguntas seguidas al entrar ya son insistir. -->
+         navegador, sin mandar nada. Una cosa cada vez (04-11): espera a
+         que esté firmado el consentimiento y contestado «¿Cómo me
+         conociste?», que va antes; sale en cuanto se contesta. -->
     <section class="caja instalar" id="c-instalar" aria-labelledby="t-instalar" hidden>
       <h2 id="t-instalar">Tenla siempre a mano</h2>
       <div id="in-cuerpo"></div>
@@ -205,55 +251,6 @@ $cuerpo .= <<<'HTML'
       <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>
 
-    <!-- «¿Cómo me conociste?» (03-11). Una tarjeta del panel, no una
-         tarea: no cuenta en el globo ni en ningún correo. Va después de
-         lo que importa (la sesión, el pago, lo que toca) y antes de lo
-         que se consulta. Plegada ocupa tres renglones; las casillas
-         solo salen al pulsar «Contestar», porque once casillas abiertas
-         empujarían los pagos media pantalla hacia abajo.
-         El título ya hace la pregunta; la leyenda del grupo la repite
-         solo para el lector de pantalla, que entra en el grupo sin
-         haber leído el título. -->
-    <section class="caja conocido" id="c-conocido" aria-labelledby="t-conocido" hidden>
-      <h2 id="t-conocido">Una pregunta rápida: ¿cómo me conociste?</h2>
-      <p class="apunte" id="cn-para">Me sirve para saber por dónde llega la gente. Es opcional y no cambia nada de tu terapia.
-        <a href="https://adricamente.com/privacidad.html#conocido" target="_blank" rel="noopener">Cómo lo trato</a></p>
-      <p class="cn-botones" id="cn-cerrada">
-        <button class="boton suave" type="button" id="cn-abrir">Contestar</button>
-        <button class="enlace-boton" type="button" data-cn="no_decir">Prefiero no decirlo</button>
-        <button class="enlace-boton" type="button" data-cn="luego">Ahora no</button>
-      </p>
-      <form id="f-conocido" hidden novalidate>
-        <fieldset>
-          <legend><span class="oculto-visual">¿Cómo me conociste? </span>Puedes marcar varias.</legend>
-          <div class="cn-opciones">
-            <label class="opcion"><input type="checkbox" name="cn" value="instagram"> Instagram</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="tiktok"> TikTok</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="youtube"> YouTube</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="google"> Google (buscando en internet)</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="web"> La web adricamente.com (una guía, una herramienta…)</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="doctoralia"> Doctoralia</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="neurococos"> El centro Neurococos</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="conocido"> Me lo recomendó alguien que me conoce (amigo/a, familia)</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="profesional"> Me lo recomendó otro profesional (médico, psicólogo…)</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="newsletter"> La newsletter</label>
-            <div class="opcion cn-otro">
-              <input type="checkbox" name="cn" value="otro" id="cn-otro">
-              <label for="cn-otro">Otro:</label>
-              <label for="cn-otro-t" class="oculto-visual">Otro: escribe cuál</label>
-              <input type="text" id="cn-otro-t" maxlength="120" autocomplete="off">
-            </div>
-          </div>
-        </fieldset>
-        <p class="cn-botones">
-          <button class="boton" type="submit" id="cn-enviar">Enviar</button>
-          <button class="enlace-boton" type="button" data-cn="no_decir">Prefiero no decirlo</button>
-          <button class="enlace-boton" type="button" data-cn="luego">Ahora no</button>
-        </p>
-      </form>
-      <p class="apunte cn-estado" id="cn-estado" role="status"></p>
-      <div class="nota bien" id="cn-gracias" tabindex="-1" hidden><p id="cn-gracias-t"></p></div>
-    </section>
 
     <!-- Pagos (14-10): cada sesión de pago con su botón «Pagar la sesión»
          (Stripe: tarjeta, Apple Pay, Google Pay) o «Pagada ✓». El enlace
@@ -809,9 +806,11 @@ async function panel() {
   pintaAgenda(r.j.agenda, r.j.v);
   pintaPagos(r.j.pagos || []);
   pintaProgreso(r.j.progreso, r.j.v);
-  pintaInstalar(r.j.instalar);
-  /* Mientras falte el consentimiento, ninguna otra pregunta. */
+  /* Primero el consentimiento, luego «¿Cómo me conociste?», luego el
+     aviso de instalar: uno cada vez, en ese orden. Mientras falte el
+     consentimiento, ninguna otra pregunta. */
   pintaConocido(CIP.falta ? null : r.j.conocido);
+  pintaInstalar(r.j.instalar);
 
   /* Lo caducado no se enseña ni se cuenta: un número que no baja
      solo genera culpa. El servidor ya no lo manda; esto es la red. */
@@ -1657,7 +1656,7 @@ function ahoraLocal() {
        → Pantalla de inicio. */
 let BIP = null;          /* el beforeinstallprompt guardado, si llega */
 let INSTALAR = null;     /* lo que dijo el servidor en la última vuelta */
-let IN_VISTO = false;    /* ha salido en esta visita: «¿Cómo me conociste?» espera */
+let CN_PENDIENTE = false; /* «¿Cómo me conociste?» a la vista, sin contestar: esto espera */
 let IN_CERRADO = false;  /* lo ha cerrado en esta visita */
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -1768,7 +1767,8 @@ function pintaInstalar(s) {
     if (a.boton) $('aj-instalar-cuerpo').appendChild(botonInstalar());
   }
   const caja = $('c-instalar');
-  const toca = sugerir && s.mostrar && !s.instalada && (d.ios || d.android) && !enLaApp() && !IN_CERRADO;
+  const toca = sugerir && s.mostrar && !s.instalada && (d.ios || d.android) && !enLaApp() && !IN_CERRADO
+    && !CN_PENDIENTE && !CIP.falta;
   if (!toca) { if (!IN_CERRADO) caja.hidden = true; return; }
   const a = pasosInstalar(d);
   $('in-cuerpo').innerHTML = a.html + (d.ios ? IN_CLAVE : '') + IN_OTROS;
@@ -1776,7 +1776,6 @@ function pintaInstalar(s) {
   $('in-botones').hidden = false;
   $('in-hecho').hidden = true;
   caja.hidden = false;
-  IN_VISTO = true;
 }
 function botonInstalar() {
   const p = document.createElement('p');
@@ -1852,81 +1851,89 @@ function esperaCI() {
 
 function pintaConocido(c) {
   const caja = $('c-conocido');
-  /* Una sola cosa por visita: si en esta ha salido «Tenla siempre a
-     mano», esta espera a la próxima vez que entre. */
-  if (!(c && c.mostrar && macPublica) || IN_VISTO) { caja.hidden = true; return; }
+  CN_PENDIENTE = !!(c && c.mostrar && macPublica);
+  if (!CN_PENDIENTE) { caja.hidden = true; return; }
   if (!caja.hidden) return;
   $('f-conocido').reset();
-  $('f-conocido').hidden = true;
-  $('cn-cerrada').hidden = false;
+  $('f-conocido').hidden = false;
   $('cn-para').hidden = false;
   $('cn-gracias').hidden = true;
   $('cn-estado').textContent = '';
+  cnPuede();
   caja.hidden = false;
 }
-$('cn-abrir').addEventListener('click', () => {
-  $('cn-cerrada').hidden = true;
-  $('f-conocido').hidden = false;
-  /* El foco a la primera casilla: el botón que se pulsó ya no existe a
-     la vista, y dejarlo en el aire manda al lector de pantalla al
-     principio de la página. */
-  $('f-conocido').querySelector('input[name=cn]').focus();
+/* «Enviar», apagado hasta que haya algo marcado, con la frase de al lado
+   diciendo por qué (aria-describedby). «Prefiero no decirlo» es
+   exclusiva: marcarla quita las demás, y marcar otra la quita a ella. */
+function cnPuede() {
+  const n = document.querySelectorAll('#f-conocido input[name=cn]:checked').length;
+  $('cn-enviar').disabled = !n;
+  $('cn-falta').hidden = !!n;
+}
+$('f-conocido').addEventListener('change', (ev) => {
+  const t = ev.target;
+  if (t && t.name === 'cn' && t.checked) {
+    if (t.value === 'ninguno') {
+      document.querySelectorAll('#f-conocido input[name=cn]').forEach(x => { if (x !== t) x.checked = false; });
+      $('cn-otro-t').value = '';
+    } else $('cn-ninguno').checked = false;
+  }
+  $('cn-estado').textContent = '';
+  cnPuede();
 });
 /* Quien escribe en «Otro» quiere decir «otro»: no le hacemos marcar la
    casilla además. Borrar el texto no la desmarca (puede estar corrigiendo). */
-$('cn-otro-t').addEventListener('input', () => { if ($('cn-otro-t').value.trim()) $('cn-otro').checked = true; });
-/* El aviso de «marca al menos una» se va en cuanto marca algo. */
-$('f-conocido').addEventListener('change', () => { $('cn-estado').textContent = ''; });
-document.querySelectorAll('#c-conocido [data-cn]').forEach(b =>
-  b.addEventListener('click', () => cnAccion(b.dataset.cn)));
-$('f-conocido').addEventListener('submit', (ev) => { ev.preventDefault(); cnAccion('enviar'); });
-
-async function cnAccion(accion) {
-  const est = $('cn-estado');
-  const cuerpo = { accion };
-  if (accion === 'enviar') {
-    const marcadas = [...document.querySelectorAll('#f-conocido input[name=cn]:checked')];
-    const otro = $('cn-otro-t').value.trim().slice(0, 120);
-    if (!marcadas.length) {
-      est.textContent = 'Marca al menos una opción. Si prefieres no contestar, pulsa «Prefiero no decirlo».';
-      $('f-conocido').querySelector('input[name=cn]').focus();
-      return;
-    }
-    if ($('cn-otro').checked && !otro) {
-      est.textContent = 'Escribe en «Otro» por dónde fue, o desmárcalo.';
-      $('cn-otro-t').focus();
-      return;
-    }
-    /* Las claves (`canales`) son fijas para que el Mac pueda contar; los
-       rótulos van al lado para que se lea sin tabla de traducción.
-       `pregunta` dice qué lista de opciones vio: si un día cambia, los
-       recuentos de antes y de después no se mezclan sin darse cuenta.
-       Ni cod_web ni hora: para contar canales no hacen falta. */
-    cuerpo.cifrado = sellarHaciaElMac({
-      v: 1, tipo: 'conocido', pregunta: 'conocido-v1', origen: 'cuenta',
-      canales: marcadas.map(x => x.value),
-      rotulos: marcadas.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
-      otro: $('cn-otro').checked ? otro : null,
-      dia: new Date().toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }),
-    }, macPublica);
+$('cn-otro-t').addEventListener('input', () => {
+  if ($('cn-otro-t').value.trim() && !$('cn-otro').checked) {
+    $('cn-otro').checked = true;
+    $('cn-ninguno').checked = false;
+    cnPuede();
   }
-  const botones = [...document.querySelectorAll('#c-conocido button')];
-  botones.forEach(b => { b.disabled = true; });
-  est.textContent = accion === 'enviar' ? 'Enviando…' : '';
+});
+$('f-conocido').addEventListener('submit', (ev) => { ev.preventDefault(); cnEnviar(); });
+
+async function cnEnviar() {
+  const est = $('cn-estado');
+  const marcadas = [...document.querySelectorAll('#f-conocido input[name=cn]:checked')];
+  const otro = $('cn-otro-t').value.trim().slice(0, 120);
+  if (!marcadas.length) { cnPuede(); return; }
+  if ($('cn-otro').checked && !otro) {
+    est.textContent = 'Escribe en «Otro» por dónde fue, o desmárcalo.';
+    $('cn-otro-t').focus();
+    return;
+  }
+  /* Las claves (`canales`) son fijas para que el Mac pueda contar; los
+     rótulos van al lado para que se lea sin tabla de traducción.
+     `pregunta`: conocido-v2 desde el 04-11 (la lista lleva «Prefiero no
+     decirlo», que va como canal `ninguno` y cuenta como respuesta, y ya
+     no hay «Ahora no»): los recuentos de la v1 y de la v2 no se mezclan
+     sin darse cuenta. Ni cod_web ni hora: para contar no hacen falta. */
+  const cifrado = sellarHaciaElMac({
+    v: 1, tipo: 'conocido', pregunta: 'conocido-v2', origen: 'cuenta',
+    canales: marcadas.map(x => x.value),
+    rotulos: marcadas.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
+    otro: $('cn-otro').checked ? otro : null,
+    dia: new Date().toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }),
+  }, macPublica);
+  $('cn-enviar').disabled = true;
+  est.textContent = 'Enviando…';
+  let hecho = false;
   try {
-    const r = await api('conocido', cuerpo);
+    const r = await api('conocido', { accion: 'enviar', cifrado });
     if (!r.ok) { est.textContent = 'No se ha podido guardar. Inténtalo otra vez.'; return; }
+    hecho = true;
     est.textContent = '';
-    $('cn-cerrada').hidden = true;
     $('f-conocido').hidden = true;
     $('cn-para').hidden = true;
-    $('cn-gracias-t').textContent = accion === 'enviar'
-      ? 'Gracias. Me ha llegado cifrado, como todo lo de tu cuenta. No te lo vuelvo a preguntar.'
-      : r.j.otra_vez ? 'Vale. Te lo vuelvo a preguntar una sola vez, dentro de un mes.'
-      : 'Vale. No te lo vuelvo a preguntar.';
+    $('cn-gracias-t').textContent = marcadas.some(x => x.value === 'ninguno')
+      ? 'Gracias. No te lo vuelvo a preguntar.'
+      : 'Gracias. Me ha llegado cifrado, como todo lo de tu cuenta. No te lo vuelvo a preguntar.';
     $('cn-gracias').hidden = false;
     $('cn-gracias').focus();
-  } finally { botones.forEach(b => { b.disabled = false; }); }
+    /* Contestada: ya puede salir lo que esperaba detrás. */
+    CN_PENDIENTE = false;
+    if (INSTALAR) pintaInstalar(INSTALAR);
+  } finally { if (!hecho) cnPuede(); }
 }
 
 /* Actualizar SIN recargar. Recargar tiraría la clave de memoria y

@@ -684,11 +684,10 @@ case 'mios': {
               /* La tarjeta «¿Cómo me conociste?» (03-11). No es una tarea:
                  no está en `tareas`, así que no cuenta en el globo, ni en
                  la víspera, ni en los recordatorios, ni en antes_sesion.
-                 `ultima`: ya se aplazó una vez y el próximo «ahora no» la
-                 cierra para siempre. */
-              'conocido' => ['mostrar' => $f['conocido_cerrado'] === null
-                                 && ($f['conocido_luego'] === null || $f['conocido_luego'] <= adr_hoy()),
-                             'ultima' => $f['conocido_luego'] !== null],
+                 04-11: hasta contestarla, siempre. Quien la aplazó con el
+                 «Ahora no» de antes la vuelve a ver ya (`conocido_luego`
+                 se queda, pero ya no cuenta). */
+              'conocido' => ['mostrar' => $f['conocido_cerrado'] === null],
               /* El aviso de la pantalla de inicio (03-11). El servidor
                  solo dice si TOCA; si este dispositivo lo admite, si es un
                  móvil y si ya está instalada lo mira el navegador, y no se
@@ -1026,7 +1025,10 @@ case 'conocido': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
     $acc = (string)($in['accion'] ?? '');
-    if (!in_array($acc, ['enviar', 'no_decir', 'luego'], true)) adr_json(['error' => 'acción no válida'], 400);
+    /* 04-11: obligatoria. Ya no hay «Ahora no» ni «Prefiero no decirlo»
+       sin sobre: «Prefiero no decirlo» es una opción de la lista y llega
+       como canal `ninguno` dentro del sobre, como cualquier respuesta. */
+    if ($acc !== 'enviar') adr_json(['error' => 'acción no válida: se contesta con «enviar» (también «Prefiero no decirlo»)'], 400);
     if (!adr_freno($db, 'conocido:' . $cod, 10, 3600)) adr_json(['error' => 'despacio'], 429);
     $q = $db->prepare('SELECT conocido_cerrado, conocido_luego FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
     $q->execute([$cod]);
@@ -1054,13 +1056,7 @@ case 'conocido': {
         }
         adr_json(['ok' => true, 'otra_vez' => false]);
     }
-    if ($acc === 'luego' && $f['conocido_luego'] === null) {
-        $hasta = (new DateTimeImmutable(adr_hoy(), new DateTimeZone('Europe/Madrid')))->modify('+30 days')->format('Y-m-d');
-        $db->prepare('UPDATE pacientes SET conocido_luego = ? WHERE cod = ?')->execute([$hasta, $cod]);
-        adr_json(['ok' => true, 'otra_vez' => true]);
-    }
-    $cierra->execute([adr_ahora(), $cod]);
-    adr_json(['ok' => true, 'otra_vez' => false]);
+    adr_json(['error' => 'acción no válida'], 400);
 }
 
 /* Lo que el Mac recoge de «¿Cómo me conociste?». Sin `cod`, a propósito:
