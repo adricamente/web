@@ -754,10 +754,10 @@ h3{font-weight:700}
 .rueda-dialogo::backdrop{background:rgba(37,35,31,.5)}
 .rueda-dialogo .rd-cab{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-16px;background:#fff;padding:4px 0 8px;z-index:1}
 .rueda-dialogo h2{margin:0;font-size:20px}
-/* --- «¿Cómo me conociste?» (03-11) ---------------------------------
-   Una caja gris clara, no un renglón con raya como las tareas: tiene
-   que leerse como una nota al margen, no como algo que le toca hacer.
-   Las casillas, con el mismo .opcion de los cuestionarios y 44 px de
+/* --- «¿Cómo me conociste?» (03-11; 04-11: obligatoria) --------------
+   Una caja propia, no un renglón con raya como las tareas: desde el
+   04-11, blanca y con el borde de la marca (ver más abajo), porque hay
+   que contestarla. Las casillas, con el mismo .opcion de los cuestionarios y 44 px de
    alto para el dedo; a dos columnas cuando caben, para que abierta no
    ocupe dos pantallas en el ordenador. */
 /* 04-11: obligatoria y arriba. Destacada como el consentimiento (borde
@@ -1067,3 +1067,20 @@ h3{font-weight:700}
    respuesta (y quita las demás). En dos columnas, a todo el ancho. */
 .cn-opciones .cn-ninguno{grid-column:1 / -1;border-top:1px solid var(--line);margin-top:4px;padding-top:12px}
 .cn-botones .boton:disabled{opacity:.55;cursor:not-allowed}
+
+/* --- Para qué es cada prueba (04-11) ---------------------------------- */
+.para-que{font-size:17px;color:var(--ink);margin:-4px 0 14px}
+.sin-malas{font-weight:600;color:var(--accent-3);margin:10px 0 12px}
+.apunte.tecnico{font-size:13px;margin:18px 0 0}
+
+/* --- «Me interesaría trabajar…» (04-11) -------------------------------- */
+.i-temas{border:0;padding:0;margin:14px 0 10px;min-width:0}
+.i-temas legend{font-weight:700;margin:0 0 6px;padding:0}
+#i-temas{display:grid;grid-template-columns:1fr;gap:4px}
+@media (min-width:640px){#i-temas{grid-template-columns:1fr 1fr;column-gap:14px}}
+.i-tema{display:flex;align-items:flex-start;gap:10px;min-height:44px;padding:8px;border-radius:var(--r-s);cursor:pointer;font-weight:400}
+.i-tema:hover{background:var(--surface-2)}
+.i-tema input{margin-top:4px;flex:none;width:20px;height:20px;accent-color:var(--accent)}
+.i-tema-t{display:flex;flex-direction:column;gap:1px}
+.i-tema-d{font-size:14.5px;color:var(--ink-2)}
+#i-hecho:focus{outline:none}

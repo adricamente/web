@@ -135,7 +135,7 @@ $cuerpo .= <<<'HTML'
     minutos vuelven a estar aquí. No se ha perdido nada.</p>
   </div>
   <div class="nota bien" id="recibido" role="status" hidden>
-    <p><strong>Recibido.</strong> Lo tendré delante en tu próxima sesión.</p>
+    <p><strong>Gracias.</strong> Lo veremos juntos en la próxima sesión.</p>
   </div>
 
   <!-- ============================ INICIO ============================ -->
@@ -307,6 +307,25 @@ $cuerpo .= <<<'HTML'
     <section class="caja bloque" id="c-herramientas" aria-labelledby="t-herr">
       <h2 id="t-herr">Tus herramientas</h2>
       <div id="herramientas"></div>
+    </section>
+
+    <!-- 04-11: «Para cuando lo necesites»: las pocas herramientas que el
+         catálogo marca `abierta` (la rueda, respirar, dormir, la guía),
+         para cualquier cuenta y sin asignarlas. Las que ya te mandé salen
+         donde ya las tienes, no aquí otra vez. No son pruebas: las
+         pruebas las elijo yo. -->
+    <section class="caja bloque" id="c-biblioteca" aria-labelledby="t-bib" hidden>
+      <h2 id="t-bib">Para cuando lo necesites</h2>
+      <p class="apunte">Herramientas que puedes abrir cuando quieras, sin esperar a que te las mande. Lo que apuntes me llega igual.</p>
+      <div id="biblioteca"></div>
+    </section>
+
+    <!-- 04-11: «Me interesaría trabajar…»: dice un tema y lo hablamos en
+         la próxima sesión. Lo que se manda lo decido yo. -->
+    <section class="caja bloque" id="c-temas" aria-labelledby="t-temas" hidden>
+      <h2 id="t-temas">Me interesaría trabajar…</h2>
+      <p class="apunte" id="temas-intro"></p>
+      <p><button class="boton suave" type="button" id="b-temas">Elegir un tema</button></p>
     </section>
 
     <section class="caja bloque" id="c-hechas" aria-labelledby="t-hechas">
@@ -508,6 +527,10 @@ $cuerpo .= <<<'HTML'
 <section id="v-tarea" class="vista" hidden>
   <p class="etiqueta">Cuestionario</p>
   <h1 id="t-titulo">…</h1>
+  <!-- 04-11: para qué te lo pido, en una o dos frases (`para_que`, del
+       catálogo), y luego la consigna de siempre. El título es el que ve
+       el paciente (`titulo_paciente`); el técnico, pequeño, al final. -->
+  <p class="para-que" id="t-para" hidden></p>
   <!-- El enunciado (20-10). Iba en gris, como un apunte, y una persona
        nos contó que se lo saltó en sus tres primeros cuestionarios: leyó
        el título y fue directa a la pregunta 1, que era lo primero en
@@ -519,6 +542,7 @@ $cuerpo .= <<<'HTML'
     <p id="t-cabecera" hidden></p>
   </div>
   <p class="apunte" id="t-pista" hidden></p>
+  <p class="sin-malas" id="t-sinmal">No hay respuestas buenas ni malas: marca lo que más se parezca a cómo estás.</p>
 
   <div class="progreso-barra" role="progressbar" aria-label="Preguntas contestadas"
        aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" id="t-barra">
@@ -556,8 +580,36 @@ $cuerpo .= <<<'HTML'
     <!-- El aviso de derechos que exige la licencia de algunos
          instrumentos (el CORE-10: CC BY-NC-ND). Lo trae la plantilla;
          sin él, ese cuestionario no se puede usar. -->
+    <p class="apunte tecnico" id="t-tecnico" hidden></p>
     <p class="apunte copyright" id="t-copyright" hidden></p>
   </form>
+</section>
+
+<!-- «Me interesaría trabajar…» (04-11). Un tema de la lista (uno), una
+     caja de texto (obligatoria con «Otra cosa») y el aviso de que esto no
+     es para urgencias, a la vista. Sale sellado al Mac; sin correo. -->
+<section id="v-interes" class="vista" hidden>
+  <p class="etiqueta">Para la próxima sesión</p>
+  <h1 id="i-titulo">Me interesaría trabajar…</h1>
+  <p id="i-explicacion"></p>
+  <div class="auxilio"><p id="i-aviso"></p></div>
+  <form id="i-form" novalidate>
+    <fieldset class="i-temas">
+      <legend>Elige un tema</legend>
+      <div id="i-temas"></div>
+    </fieldset>
+    <div class="campo">
+      <label for="i-texto" id="i-texto-l">Si quieres, cuéntamelo en pocas palabras (opcional)</label>
+      <textarea id="i-texto" rows="4" maxlength="500" autocomplete="off"></textarea>
+    </div>
+    <p class="cn-botones">
+      <button class="boton" type="submit" id="i-enviar">Enviar</button>
+      <button class="enlace-boton" type="button" id="i-volver">← Volver</button>
+    </p>
+    <p class="apunte" id="i-estado" role="status"></p>
+  </form>
+  <div class="nota bien" id="i-hecho" tabindex="-1" hidden><p id="i-hecho-t"></p>
+    <p><button class="enlace-boton" type="button" id="i-volver2">← Volver</button></p></div>
 </section>
 
 <section id="v-herr" class="vista" hidden>
@@ -633,7 +685,7 @@ let miCorreo = null;   /* para volver a pedir la contraseña al firmar el consen
 let DOCS = [];        /* los documentos de la última vuelta del panel */
 
 const $ = (id) => document.getElementById(id);
-const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr', 'v-valorar'];
+const VISTAS = ['v-entrar', 'v-panel', 'v-doc', 'v-tarea', 'v-deber', 'v-firmar', 'v-herr', 'v-valorar', 'v-interes'];
 let PLAN = null;   // id de su plan de seguridad enviado, si tiene
 let HERR_FILAS = {};      // id de tarea → su fila del panel (modo, recordatorio…)
 let PLAN_TAREA = null;    // su plan de seguridad vivo, si lo tiene
@@ -802,6 +854,7 @@ async function panel() {
   miCod = r.j.cod || null;
   miV = r.j.v;
   CIP = r.j.consentimiento || { falta: false, id: null, titulo: null };
+  TITULOS = r.j.titulos_paciente || {};
   pintaCI();
   pintaAgenda(r.j.agenda, r.j.v);
   pintaPagos(r.j.pagos || []);
@@ -825,8 +878,12 @@ async function panel() {
   PLAN_TAREA = planT ? planT.id : null;
   if (PLAN_TAREA) { PLAN = null; $('b-plan').hidden = false; }
   else buscaPlan(docs.filter(d => d.clase === 'herramienta'), r.j.v);
-  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta'), vivas,
+  /* Lo abierto desde la biblioteca sale en la biblioteca, no aquí. */
+  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta' && t.origen !== 'biblioteca'),
+                    vivas.filter(t => t.origen !== 'biblioteca'),
                     docs.filter(d => d.clase === 'herramienta'), r.j.v);
+  pintaBiblioteca(r.j.biblioteca || [], vivas);
+  pintaTemas(r.j.temas);
 
   /* «Para antes de tu sesión»: lo pendiente, con cuánto lleva, y el
      documento por firmar si lo hay. Lo de las herramientas va en su
@@ -874,7 +931,7 @@ async function panel() {
     const esValorar = (t.tipo === 'objetivos');
     const pie = [t.preguntas ? 'unos ' + Math.max(1, Math.round(t.preguntas * 10 / 60)) + ' min' : null,
                  t.caduca ? 'antes del ' + fecha(t.caduca) : null].filter(Boolean).join(' · ');
-    const f = fila(t.titulo, pie || null);
+    const f = fila(t.titulo_paciente || t.titulo, pie || null);
     if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); ct.appendChild(f); return; }
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button';
@@ -973,7 +1030,7 @@ async function panel() {
    con tipo «firma» para lo firmado. */
 async function pintaHechas(hs, meta, v) {
   const c = $('hechas');
-  let todo = hs.map(h => ({ titulo: h.titulo, fecha: h.hecho, firma: false }));
+  let todo = hs.map(h => ({ titulo: h.titulo_paciente || h.titulo, fecha: h.hecho, firma: false }));
   if (meta && Number(meta.para_v) === Number(v)) {
     try {
       const r = await api('abrir&id=' + encodeURIComponent(meta.id));
@@ -2428,6 +2485,10 @@ async function pintaProgreso(meta, v) {
 /* Se dibujan aparte para poder redibujarlas al girar el móvil o cambiar
    el ancho de la ventana: el lienzo se ajusta al ancho real. */
 let SERIES = null, RESIZE = null;
+/* 04-11: cada gráfica con el nombre que ve el paciente («Tu estado de
+   ánimo»), si el catálogo lo trae; el técnico, debajo. */
+let TITULOS = {};
+const nombrePrueba = (m) => TITULOS[m.instrumento] || m.instrumento || 'Cuestionario';
 window.addEventListener('resize', () => {
   clearTimeout(RESIZE);
   RESIZE = setTimeout(() => { if (SERIES && !$('v-panel').hidden) dibujaSeries(); }, 250);
@@ -2440,14 +2501,14 @@ function dibujaSeries() {
   /* En el inicio, una línea: la última medida de cada uno, dicha de
      forma que no se pueda leer «GAD-72»: «GAD-7: 2 sobre 21». */
   const lineas = series.map(m => { const u = ultimaDe(m);
-    return u ? (m.instrumento || 'Cuestionario') + ': ' + cifra(u.valor) + ' sobre ' + cifra(m.maximo || 27) : null; })
+    return u ? nombrePrueba(m) + ': ' + cifra(u.valor) + ' sobre ' + cifra(m.maximo || 27) : null; })
     .filter(Boolean);
   if (lineas.length) {
     const minis = document.createElement('span');
     minis.className = 'minis';
     series.forEach(m => { const u = ultimaDe(m); if (!u) return;
       const e = document.createElement('span'); e.className = 'mini';
-      const n = document.createElement('span'); n.className = 'n'; n.textContent = m.instrumento || 'Cuestionario';
+      const n = document.createElement('span'); n.className = 'n'; n.textContent = nombrePrueba(m);
       const v = document.createElement('span'); v.className = 'v'; v.textContent = cifra(u.valor);
       const de = document.createElement('small'); de.textContent = 'de ' + cifra(m.maximo || 27);
       v.appendChild(de); e.append(n, v, chispa(m)); minis.appendChild(e); });
@@ -2469,10 +2530,10 @@ function dibujaSeries() {
          última medida con su escala y su fecha. */
       const cab = document.createElement('figcaption');
       const nombre = document.createElement('h3');
-      nombre.className = 'g-nombre'; nombre.textContent = m.instrumento || 'Cuestionario';
+      nombre.className = 'g-nombre'; nombre.textContent = nombrePrueba(m);
       const sub = document.createElement('p');
       sub.className = 'g-sub';
-      sub.textContent = [QUE_MIDE[m.instrumento],
+      sub.textContent = [nombrePrueba(m) !== m.instrumento ? m.instrumento : null, QUE_MIDE[m.instrumento],
         m.direccion === 'mas_es_mejor' ? 'aquí, más alto es mejor' : 'aquí, más bajo es mejor']
         .filter(Boolean).join(' · ');
       cab.append(nombre, sub);
@@ -2553,7 +2614,15 @@ async function abrirTarea(id) {
   if (!r.ok) { await panel(); return; }
   TAREA = r.j;
   const P = TAREA.plantilla;
-  $('t-titulo').textContent = TAREA.titulo;
+  /* 04-11: el nombre que ve el paciente y para qué es. El técnico, al
+     final y pequeño, por transparencia; nunca como título. */
+  const tp = (typeof P.titulo_paciente === 'string' && P.titulo_paciente.trim()) ? P.titulo_paciente.trim() : '';
+  $('t-titulo').textContent = tp || TAREA.titulo;
+  $('t-para').textContent = typeof P.para_que === 'string' ? P.para_que : '';
+  $('t-para').hidden = !$('t-para').textContent.trim();
+  const tec = P.instrumento || TAREA.titulo;
+  $('t-tecnico').textContent = tp && tec ? 'Nombre técnico de este cuestionario: ' + tec + '.' : '';
+  $('t-tecnico').hidden = !(tp && tec);
   /* Las instrucciones del instrumento (cuando las trae) y la frase que
      encabeza los ítems. Una cabecera de una o dos palabras («Ítem») es
      el rótulo de una columna del papel, no una frase: no se enseña. Y
@@ -2902,6 +2971,106 @@ $('t-form').addEventListener('submit', async (ev) => {
    queda en «Mis herramientas»: un plan de seguridad que desaparece al
    enviarlo no sirve el día que hace falta. */
 let HERR = null;   // {tarea, def, soloLeer}
+
+/* --- «Para cuando lo necesites» (04-11) ---------------------------------
+   Las herramientas `abierta` del catálogo. La primera vez que se abre una,
+   el servidor le crea su tarea (api.php: biblioteca) y desde ahí es una
+   herramienta más: lo que apunta va con `desde_biblioteca: true`. */
+let BIB_TAREAS = new Set();
+function pintaBiblioteca(lista, vivas) {
+  const c = $('biblioteca'); c.innerHTML = '';
+  const suyas = lista.filter(b => !b.asignada);
+  BIB_TAREAS = new Set(suyas.filter(b => b.tarea).map(b => b.tarea));
+  $('c-biblioteca').hidden = !suyas.length;
+  suyas.forEach(b => {
+    const viva = b.tarea ? vivas.find(t => t.id === b.tarea) : null;
+    const pie = [b.para_que, viva && viva.modo === 'registro' && viva.entradas ? 'Último apunte: ' + fecha(viva.ultima) : null]
+      .filter(Boolean).join(' · ');
+    const f = fila(b.titulo, pie || null);
+    if (CIP.falta && !b.lectura) { f.appendChild(esperaCI()); c.appendChild(f); return; }
+    const bt = document.createElement('button');
+    bt.className = 'boton'; bt.type = 'button'; bt.textContent = 'Abrir';
+    bt.addEventListener('click', async () => {
+      bt.disabled = true;
+      try {
+        let id = b.tarea;
+        if (!id) {
+          const r = await api('biblioteca', { id: b.id });
+          if (!r.ok) { $('panel-estado').textContent = 'No se ha podido abrir. Inténtalo otra vez.'; return; }
+          id = r.j.id;
+          await panel();
+        }
+        await abrirHerramienta(id);
+      } finally { bt.disabled = false; }
+    });
+    f.appendChild(bt); c.appendChild(f);
+  });
+}
+/* Lo que se manda desde una herramienta de la biblioteca lo dice dentro. */
+function conBiblioteca(sobre) { if (HERR && BIB_TAREAS.has(HERR.tarea)) sobre.desde_biblioteca = true; return sobre; }
+
+/* --- «Me interesaría trabajar…» (04-11) --------------------------------- */
+let TEMAS = null;
+function pintaTemas(t) {
+  TEMAS = t && Array.isArray(t.temas) && t.temas.length ? t : null;
+  $('c-temas').hidden = !TEMAS;
+  if (!TEMAS) return;
+  $('t-temas').textContent = TEMAS.titulo || 'Me interesaría trabajar…';
+  $('temas-intro').textContent = TEMAS.explicacion || '';
+}
+function textoObligatorio() { const m = document.querySelector('#i-temas input:checked'); return !!m && m.value === 'otro'; }
+function pintaTextoInteres() {
+  const obl = textoObligatorio();
+  $('i-texto-l').textContent = obl ? 'Cuéntamelo en pocas palabras' : 'Si quieres, cuéntamelo en pocas palabras (opcional)';
+  if (obl) $('i-texto').setAttribute('aria-required', 'true'); else $('i-texto').removeAttribute('aria-required');
+}
+$('b-temas').addEventListener('click', () => {
+  if (!TEMAS) return;
+  $('i-titulo').textContent = TEMAS.titulo || 'Me interesaría trabajar…';
+  $('i-explicacion').textContent = TEMAS.explicacion || '';
+  $('i-aviso').textContent = TEMAS.aviso || 'Esto no es para urgencias. Si estás en peligro, llama al 024 o al 112.';
+  const c = $('i-temas'); c.innerHTML = '';
+  TEMAS.temas.forEach(x => {
+    const lab = document.createElement('label'); lab.className = 'opcion i-tema';
+    const r = document.createElement('input'); r.type = 'radio'; r.name = 'tema'; r.value = x.id;
+    const t = document.createElement('span'); t.className = 'i-tema-t';
+    const st = document.createElement('strong'); st.textContent = x.titulo;
+    t.appendChild(st);
+    if (x.descripcion) { const d = document.createElement('span'); d.className = 'i-tema-d'; d.textContent = x.descripcion; t.appendChild(d); }
+    lab.append(r, t); c.appendChild(lab);
+  });
+  $('i-texto').value = ''; $('i-texto').maxLength = TEMAS.max_texto || 500;
+  $('i-estado').textContent = '';
+  $('i-form').hidden = false; $('i-hecho').hidden = true;
+  pintaTextoInteres();
+  ver('v-interes');
+});
+$('i-temas').addEventListener('change', () => { $('i-estado').textContent = ''; pintaTextoInteres(); });
+$('i-volver').addEventListener('click', panel);
+$('i-volver2').addEventListener('click', panel);
+$('i-form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const m = document.querySelector('#i-temas input:checked');
+  const texto = $('i-texto').value.trim().slice(0, (TEMAS && TEMAS.max_texto) || 500);
+  if (!m) { $('i-estado').textContent = 'Elige un tema.'; document.querySelector('#i-temas input').focus(); return; }
+  if (m.value === 'otro' && !texto) { $('i-estado').textContent = 'Con «Otra cosa», cuéntamelo en pocas palabras.'; $('i-texto').focus(); return; }
+  $('i-enviar').disabled = true;
+  try {
+    /* La forma acordada con el Mac, y su cod_web como todo lo de la cuenta. */
+    const sobre = { tipo: 'interes', tema: m.value, texto: texto || null, escrito_en: ahoraLocal(),
+                    origen: 'cuenta', cod_web: miCod };
+    const r = await api('interes', { cifrado: sellarHaciaElMac(sobre, macPublica) });
+    if (!r.ok) {
+      $('i-estado').textContent = r.j.error === 'tres_al_dia'
+        ? 'Por hoy ya me has mandado tres. Mañana puedes mandar otro, o cuéntamelo en la sesión.'
+        : 'No se ha podido enviar. Inténtalo otra vez.';
+      return;
+    }
+    $('i-form').hidden = true;
+    $('i-hecho-t').textContent = (TEMAS && TEMAS.tras_enviar) || 'Gracias. Lo hablamos en la próxima sesión.';
+    $('i-hecho').hidden = false; $('i-hecho').focus();
+  } finally { $('i-enviar').disabled = false; }
+});
 
 function pintaHerramientas(pendientes, vivas, copias, v) {
   const c = $('herramientas'); c.innerHTML = '';
@@ -3713,8 +3882,8 @@ $('h-form').addEventListener('submit', async (ev) => {
     const momento = ahoraLocal();
     /* El sobre, exactamente con la forma acordada con el sistema
        clínico: sin `instrumento` ni `respuestas`. */
-    const sobre = { herramienta: HERR.def.id, tarea: HERR.tarea, campos, completado_en: momento,
-                    origen: 'cuenta', cod_web: miCod };
+    const sobre = conBiblioteca({ herramienta: HERR.def.id, tarea: HERR.tarea, campos, completado_en: momento,
+                    origen: 'cuenta', cod_web: miCod });
     const cifrado = sellarHaciaElMac(sobre, macPublica);
     const copia = sellarHaciaElMac({ def: HERR.def, campos, completado_en: momento }, miPublica);
     const r = await api('entregar', { id: HERR.tarea, cifrado, copia });
@@ -3890,6 +4059,7 @@ async function abreRuedaPara(campo) {
   dlg.showModal();
 }
 $('rd-cerrar').addEventListener('click', () => $('rueda-dialogo').close());
+
 $('rueda-dialogo').addEventListener('click', (ev) => { if (ev.target === $('rueda-dialogo')) $('rueda-dialogo').close(); });
 /* Junto a cada casilla con «ayuda: rueda-emociones» (o «ayuda_campo» en
    un apartado), un botón que abre la rueda. Vale para cualquier
@@ -4079,8 +4249,8 @@ async function compruebaCambios() {
 async function guardarVivo() {
   const campos = camposDelForm();
   const momento = ahoraLocal();
-  const sobre = { herramienta: HERR.def.id, tarea: HERR.tarea, modo: HERR.modo, parte: HERR.modo === 'registro' ? 'resto' : 'documento',
-                  campos, completado_en: momento, origen: 'cuenta', cod_web: miCod };
+  const sobre = conBiblioteca({ herramienta: HERR.def.id, tarea: HERR.tarea, modo: HERR.modo, parte: HERR.modo === 'registro' ? 'resto' : 'documento',
+                  campos, completado_en: momento, origen: 'cuenta', cod_web: miCod });
   const copia = { campos, guardado: new Date().toISOString() };
   const r = await api('guardar_vivo', { id: HERR.tarea, cifrado: sellarHaciaElMac(sobre, macPublica),
                                        copia: sellarHaciaElMac(copia, miPublica) });
@@ -4601,9 +4771,9 @@ function sobreEntrada(uid, fecha, fila, borrada) {
   const n = esDiario(b) ? diaSemana(fecha) + 1 : 1;
   const campos = {};
   Object.keys(fila || {}).forEach(k => { campos[b.id + '.' + n + '.' + k] = fila[k]; });
-  return { herramienta: HERR.def.id, tarea: HERR.tarea, modo: 'registro', entrada: { uid, fecha, borrada: !!borrada },
+  return conBiblioteca({ herramienta: HERR.def.id, tarea: HERR.tarea, modo: 'registro', entrada: { uid, fecha, borrada: !!borrada },
            tabla: b.id, fila: fila || {}, campos, semana: lunesDe(fecha),
-           completado_en: ahoraLocal(), origen: 'cuenta', cod_web: miCod };
+           completado_en: ahoraLocal(), origen: 'cuenta', cod_web: miCod });
 }
 
 async function guardaEntrada(e) {

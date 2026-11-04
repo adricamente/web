@@ -308,8 +308,9 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-03b';
-const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos', 'instalar', 'instalar_no'];
+const ADR_VERSION = '2026-11-04a';
+const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos', 'instalar', 'instalar_no',
+                             'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
 
 switch ($a) {
 
@@ -582,7 +583,7 @@ case 'mios': {
        pantalla es una pantalla que se dibuja a trozos. */
     /* Lo caducado no sale: ni se puede hacer a tiempo ni debe quedarse
        en el contador para siempre. «antes del 10» incluye el día 10. */
-    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado FROM tareas
+    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen FROM tareas
                        WHERE cod = ? AND hecho IS NULL
                          AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)
                        ORDER BY id");
@@ -593,6 +594,11 @@ case 'mios': {
     foreach ($t->fetchAll() as $x) {
         $pl = json_decode((string)$x['plantilla'], true);
         $x['preguntas'] = ($x['tipo'] === 'cuestionario' && is_array($pl)) ? count($pl['items'] ?? []) : null;
+        /* 04-11: el nombre que ve el paciente («Tu estado de ánimo») en vez
+           del técnico («PHQ-9»), si la plantilla lo trae. Solo para
+           pintar: el título de la tarea sigue siendo el de siempre. */
+        $x['titulo_paciente'] = ($x['tipo'] === 'cuestionario' && is_string($pl['titulo_paciente'] ?? null))
+            ? mb_substr($pl['titulo_paciente'], 0, 80) : null;
         $x['modo'] = adr_modo_fila($x);
         $x['herr_id'] = $x['tipo'] === 'herramienta' ? adr_herr_id($x) : null;
         /* Lo que es para consultar (la rueda, una guía) no cuenta como
@@ -606,7 +612,7 @@ case 'mios': {
        documento que se edita siempre, un registro de entradas), con lo
        justo para pintar la lista: cuántas entradas, de qué días, y su
        recordatorio si se lo ha puesto. */
-    $vv = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado FROM tareas
+    $vv = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen FROM tareas
                         WHERE cod = ? AND tipo = 'herramienta' AND hecho IS NOT NULL AND hecho <> 'retirada'
                         ORDER BY id");
     $vv->execute([$cod]);
@@ -647,7 +653,9 @@ case 'mios': {
                        ORDER BY hecho DESC LIMIT 80");
     $h->execute([$cod]);
     /* Lo vivo y los registros no «se completan»: siguen en «Tus herramientas». */
-    $hechas = array_slice(array_values(array_map(fn($x) => ['titulo' => $x['titulo'], 'tipo' => $x['tipo'], 'hecho' => $x['hecho']],
+    $hechas = array_slice(array_values(array_map(fn($x) => ['titulo' => $x['titulo'], 'tipo' => $x['tipo'], 'hecho' => $x['hecho'],
+            'titulo_paciente' => (function ($pl) { $pl = json_decode((string)$pl, true);
+                return is_array($pl) && is_string($pl['titulo_paciente'] ?? null) ? mb_substr($pl['titulo_paciente'], 0, 80) : null; })($x['plantilla'])],
         array_filter($h->fetchAll(), fn($x) => adr_modo_fila($x) === 'una'))), 0, 40);
 
     /* Los mensajes, en su propio hilo y en las dos direcciones. */
@@ -681,6 +689,48 @@ case 'mios': {
                  consentimiento, el primero. El servidor lo corta igual
                  (adr_ci_corta): esto es para que lo vea. */
               'consentimiento' => adr_ci_falta($db, $cod),
+              /* 04-11: la biblioteca «Para cuando lo necesites» (lo que el
+                 catálogo marca `abierta`), con la tarea que ya tenga de cada
+                 una: `asignada` = se la mandó Adrián (entonces sale donde
+                 ya la tiene, no aquí); si no, la de la biblioteca, si la
+                 ha abierto alguna vez. */
+              'biblioteca' => (function () use ($ADR, $db, $cod) {
+                  $bib = adr_biblioteca($ADR);
+                  if (!$bib) return [];
+                  $q = $db->prepare("SELECT id, plantilla, origen FROM tareas WHERE cod = ? AND tipo = 'herramienta'
+                                     AND (hecho IS NULL OR hecho <> 'retirada') ORDER BY id");
+                  $q->execute([$cod]);
+                  $suyas = [];
+                  foreach ($q->fetchAll() as $t) {
+                      $h = adr_herr_id($t);
+                      if (!$h || !isset($bib[$h])) continue;
+                      $asig = ($t['origen'] ?? '') !== 'biblioteca';
+                      if (!isset($suyas[$h]) || $asig) $suyas[$h] = ['tarea' => (int)$t['id'], 'asignada' => $asig];
+                  }
+                  $out = [];
+                  foreach ($bib as $id => $d) {
+                      $out[] = ['id' => $id, 'titulo' => mb_substr((string)($d['titulo'] ?? $id), 0, 80),
+                                'para_que' => is_string($d['para_que'] ?? null) ? mb_substr($d['para_que'], 0, 240) : null,
+                                'lectura' => ($d['tipo'] ?? '') === 'lectura' || in_array($id, ADR_SIEMPRE_A_MANO, true),
+                                'tarea' => $suyas[$id]['tarea'] ?? null, 'asignada' => $suyas[$id]['asignada'] ?? false];
+                  }
+                  return $out;
+              })(),
+              /* 04-11: «Me interesaría trabajar…»: el catálogo de temas,
+                 tal cual lo pinta la cuenta (texto público). */
+              'temas' => (function () use ($ADR) {
+                  $c = adr_catalogo($ADR, 'temas');
+                  if (!is_array($c) || !is_array($c['temas'] ?? null)) return null;
+                  $t = fn($x, $n) => is_string($x) ? mb_substr($x, 0, $n) : '';
+                  return ['titulo' => $t($c['titulo'] ?? 'Me interesaría trabajar…', 80), 'explicacion' => $t($c['explicacion'] ?? '', 600),
+                          'aviso' => $t($c['aviso'] ?? '', 400), 'tras_enviar' => $t($c['tras_enviar'] ?? 'Gracias.', 300),
+                          'max_texto' => max(50, min(2000, (int)($c['max_texto'] ?? 500))),
+                          'temas' => array_values(array_map(fn($x) => ['id' => (string)$x['id'], 'titulo' => $t($x['titulo'], 80),
+                                                                       'descripcion' => $t($x['descripcion'] ?? '', 200)],
+                              array_filter($c['temas'], fn($x) => is_array($x) && preg_match('/^[a-z0-9_-]{1,40}$/', (string)($x['id'] ?? ''))
+                                                                  && is_string($x['titulo'] ?? null))))];
+              })(),
+              'titulos_paciente' => adr_titulos_paciente($ADR),
               /* La tarjeta «¿Cómo me conociste?» (03-11). No es una tarea:
                  no está en `tareas`, así que no cuenta en el globo, ni en
                  la víspera, ni en los recordatorios, ni en antes_sesion.
@@ -953,6 +1003,46 @@ case 'firmar': {
         }
     }
     adr_json(['ok' => true, 'firmado' => adr_ahora(), 'version' => $version]);
+}
+
+/* Abrir una herramienta de la biblioteca (04-11). Si ya la tiene (se la
+   mandó Adrián o ya la abrió), esa. Si no, se le crea su tarea en ese
+   momento, sin aviso y ya «empezada» (`hecho` = ahora, como un documento
+   vivo que se ha guardado): así no cuenta como pendiente en ningún sitio
+   (globo, `pendientes`, víspera, recordatorios) y lo que apunte va por
+   el camino de siempre, con su tarea. `origen: 'biblioteca'`. */
+case 'biblioteca': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    if (!adr_freno($db, 'bib:' . $cod, 30, 3600)) adr_json(['error' => 'despacio'], 429);
+    $id = (string)($in['id'] ?? '');
+    $bib = adr_biblioteca($ADR);
+    if (!isset($bib[$id])) adr_json(['error' => 'esa herramienta no está en la biblioteca'], 404);
+    $q = $db->prepare("SELECT id, plantilla FROM tareas WHERE cod = ? AND tipo = 'herramienta'
+                       AND (hecho IS NULL OR hecho <> 'retirada') ORDER BY id DESC");
+    $q->execute([$cod]);
+    foreach ($q->fetchAll() as $t) if (adr_herr_id($t) === $id) adr_json(['ok' => true, 'id' => (int)$t['id'], 'nueva' => false]);
+    $def = $bib[$id];
+    $ahora = adr_ahora();
+    $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, tipo, modo, hecho, origen)
+                  VALUES (?,?,?,?,'herramienta',?,?,'biblioteca')")
+       ->execute([$cod, mb_substr((string)($def['titulo'] ?? $id), 0, 80, 'UTF-8'), json_encode($def, JSON_UNESCAPED_UNICODE),
+                  $ahora, adr_modo_para($def), $ahora]);
+    adr_json(['ok' => true, 'id' => (int)$db->lastInsertId(), 'nueva' => true]);
+}
+
+/* «Me interesaría trabajar…» (04-11): un tema, sellado al Mac, como un
+   mensaje. Sin correo a nadie: el Mac avisa a Adrián y lo archiva para
+   la próxima sesión (va por `recoger`, clase «interes»). Tres al día. */
+case 'interes': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $cif = adr_deb64($in['cifrado'] ?? null);
+    if (!$cif || strlen($cif) > 16384) adr_json(['error' => 'no válido'], 400);
+    if (!adr_freno($db, 'interes:' . $cod, 3, 86400)) adr_json(['error' => 'tres_al_dia'], 429);
+    $db->prepare("INSERT INTO sobres (cod, direccion, titulo, cifrado, creado, clase) VALUES (?,1,'Me interesaría trabajar',?,?,'interes')")
+       ->execute([$cod, $cif, adr_ahora()]);
+    adr_json(['ok' => true]);
 }
 
 /* Marcar un deber como hecho. Sin nota: la nota, si la hay, se manda
@@ -2148,14 +2238,29 @@ case 'catalogo': {
     $tipo = (string)($in['tipo'] ?? '');
     $contenido = (string)($in['contenido'] ?? '');
     $sha = strtolower((string)($in['sha256'] ?? ''));
-    if (!in_array($tipo, ['instrumentos', 'herramientas'], true)) adr_json(['error' => 'tipo no válido'], 400);
+    if (!in_array($tipo, ['instrumentos', 'herramientas', 'temas'], true)) adr_json(['error' => 'tipo no válido'], 400);
     if ($contenido === '' || strlen($contenido) > 2 * 1024 * 1024) adr_json(['error' => 'contenido vacío o demasiado grande'], 400);
     if (!hash_equals(hash('sha256', $contenido), $sha)) adr_json(['error' => 'la sha256 no coincide: no ha llegado entero'], 400);
     $lista = json_decode($contenido, true);
-    if (!is_array($lista) || !array_is_list($lista) || !$lista) adr_json(['error' => 'no es una lista JSON'], 400);
-    $clave = $tipo === 'instrumentos' ? 'instrumento' : 'id';
-    foreach ($lista as $d) {
-        if (!is_array($d) || !is_string($d[$clave] ?? null)) adr_json(['error' => "cada entrada necesita «{$clave}»"], 400);
+    if ($tipo === 'temas') {
+        /* 04-11: «Me interesaría trabajar…». Es un OBJETO, no una lista:
+           los textos de la pantalla y los temas. Se comprueba lo que la
+           cuenta pinta; un tema sin id o sin título no se podría elegir. */
+        if (!is_array($lista) || array_is_list($lista) || !is_array($lista['temas'] ?? null) || !$lista['temas']
+            || !is_string($lista['explicacion'] ?? null) || !is_string($lista['aviso'] ?? null)) {
+            adr_json(['error' => 'temas: hace falta un objeto con explicacion, aviso y temas'], 400);
+        }
+        foreach ($lista['temas'] as $t) {
+            if (!is_array($t) || !preg_match('/^[a-z0-9_-]{1,40}$/', (string)($t['id'] ?? '')) || !is_string($t['titulo'] ?? null)) {
+                adr_json(['error' => 'cada tema necesita «id» y «titulo»'], 400);
+            }
+        }
+    } else {
+        if (!is_array($lista) || !array_is_list($lista) || !$lista) adr_json(['error' => 'no es una lista JSON'], 400);
+        $clave = $tipo === 'instrumentos' ? 'instrumento' : 'id';
+        foreach ($lista as $d) {
+            if (!is_array($d) || !is_string($d[$clave] ?? null)) adr_json(['error' => "cada entrada necesita «{$clave}»"], 400);
+        }
     }
 
     $dir = dirname($ADR['datos']) . '/catalogos';

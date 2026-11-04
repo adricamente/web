@@ -268,3 +268,44 @@ function adr_resumen_dia(PDO $db, array $ADR, bool $forzar = false): ?array {
     if (!empty($r['enviado']) || ($r['error'] ?? '') === 'en_cola') $marca();
     return ['citas' => $n, 'enviado' => !empty($r['enviado']), 'lineas' => $lineas];
 }
+
+/* --- Lo que sale de los catálogos para la cuenta (04-11) ---------------
+   Los catálogos los sube el Mac (`catalogo`) a datos/catalogos/. Son texto
+   público, sin datos de nadie. Si un catálogo no está, o no se lee, lo que
+   depende de él no sale: la cuenta sigue como antes. */
+function adr_catalogo(array $ADR, string $tipo) {
+    static $cache = [];
+    if (array_key_exists($tipo, $cache)) return $cache[$tipo];
+    $f = dirname($ADR['datos']) . '/catalogos/' . basename($tipo) . '.json';
+    $x = is_file($f) ? json_decode((string)file_get_contents($f), true) : null;
+    return $cache[$tipo] = is_array($x) ? $x : null;
+}
+
+/** La biblioteca «Para cuando lo necesites»: las herramientas que el
+ *  catálogo marca con `abierta: true`, por id. Por si el catálogo se
+ *  equivoca, aquí no entra nunca el plan de seguridad ni nada con
+ *  `riesgo`, ni una de «una vez» que no sea para leer: abrirla desde la
+ *  biblioteca la daría por entregada. */
+function adr_biblioteca(array $ADR): array {
+    $out = [];
+    foreach (adr_catalogo($ADR, 'herramientas') ?? [] as $d) {
+        if (!is_array($d) || ($d['abierta'] ?? false) !== true || !is_string($d['id'] ?? null)) continue;
+        if ($d['id'] === 'plan-seguridad' || !empty($d['riesgo']) || empty($d['bloques'])) continue;
+        if (!in_array($d['tipo'] ?? '', ['rellenable', 'lectura'], true)) continue;
+        if (($d['tipo'] ?? '') !== 'lectura' && adr_modo_para($d) === 'una') continue;
+        $out[$d['id']] = $d;
+    }
+    return $out;
+}
+
+/** Para «Tu evolución»: el nombre que ve el paciente de cada prueba
+ *  (`titulo_paciente`), por su nombre técnico. Solo presentación. */
+function adr_titulos_paciente(array $ADR): array {
+    $out = [];
+    foreach (adr_catalogo($ADR, 'instrumentos') ?? [] as $d) {
+        if (is_array($d) && is_string($d['instrumento'] ?? null) && is_string($d['titulo_paciente'] ?? null)) {
+            $out[$d['instrumento']] = mb_substr($d['titulo_paciente'], 0, 80);
+        }
+    }
+    return $out;
+}
