@@ -1149,10 +1149,12 @@ case 'conocido': {
     adr_json(['error' => 'acción no válida'], 400);
 }
 
-/* Lo que el Mac recoge de «¿Cómo me conociste?». Sin `cod`, a propósito:
-   para contar por dónde llega la gente no hace falta saber quién, y lo
-   que no sale de aquí no hay que borrarlo allí. Se confirma con
-   `recogido`, como cualquier sobre, y se purga a los mismos 30 días. */
+/* Lo que el Mac recoge de «¿Cómo me conociste?». Sin `cod` en claro, a
+   propósito: las respuestas de antes del 04-11 (tarde) son anónimas y así
+   se quedan. Las de ahora llevan `cod_web` DENTRO del sobre sellado
+   (`identificada: true`): de quién es lo sabe el Mac al abrirlo, no esta
+   lista. Se confirma con `recogido`, como cualquier sobre, y se purga a
+   los mismos 30 días. */
 case 'conocidos': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $q = $db->query("SELECT id, cifrado, creado FROM sobres

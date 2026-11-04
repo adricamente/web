@@ -167,7 +167,11 @@ $cuerpo .= <<<'HTML'
          solo para el lector de pantalla. -->
     <section class="caja conocido" id="c-conocido" aria-labelledby="t-conocido" hidden>
       <h2 id="t-conocido"><svg class="cn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.4"/></svg>¿Cómo me conociste?</h2>
-      <p class="apunte" id="cn-para">Me sirve para saber por dónde llega la gente. No cambia nada de tu terapia.
+      <!-- 04-11 (tarde): la respuesta va unida a su cuenta, y se dice ANTES
+           de contestar. «Ficha» es la administrativa, no la historia
+           clínica: el texto no puede dar a entender lo contrario. -->
+      <p class="apunte" id="cn-para">Me sirve para saber por dónde llega la gente. <strong>Lo apunto en tu ficha, con tu nombre.</strong>
+        No tiene nada que ver con tu tratamiento ni va a tu historia clínica. Si no quieres decirlo, marca «Prefiero no decirlo».
         <a href="https://adricamente.com/privacidad.html#conocido" target="_blank" rel="noopener">Cómo lo trato</a></p>
       <form id="f-conocido" novalidate>
         <fieldset>
@@ -2006,9 +2010,12 @@ async function cnEnviar() {
      `pregunta`: conocido-v2 desde el 04-11 (rótulos cortos, «Prefiero no
      decirlo» como opción, canal `no_dice`, que cuenta como respuesta, y
      sin «Ahora no»): los recuentos de la v1 y de la v2 no se mezclan sin
-     darse cuenta. Ni cod_web ni hora: para contar no hacen falta. */
+     darse cuenta. Desde el 04-11 (tarde), con `identificada: true` y
+     `cod_web`: el Mac la apunta en la ficha de esa persona (la tarjeta
+     lo dice antes de contestar, y privacidad.html, apartado f). El
+     código va DENTRO del sobre sellado: el servidor no lo lee. Sin hora. */
   const cifrado = sellarHaciaElMac({
-    v: 1, tipo: 'conocido', pregunta: 'conocido-v2', origen: 'cuenta',
+    v: 1, tipo: 'conocido', pregunta: 'conocido-v2', identificada: true, cod_web: miCod, origen: 'cuenta',
     canales: marcadas.map(x => x.value),
     rotulos: marcadas.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
     otro: $('cn-otro').checked ? otro : null,
