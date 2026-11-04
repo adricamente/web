@@ -157,6 +157,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [El vaso del estrés](https://adricamente.com/herramientas/vaso-del-estres/)
 - [Conversación difícil, en cuatro pasos](https://adricamente.com/herramientas/conversacion-dificil/)
 - [Mi red](https://adricamente.com/herramientas/mi-red/)
+- [Una carta que no se envía](https://adricamente.com/herramientas/carta-que-no-se-envia/)
 - [Pilla el sesgo](https://adricamente.com/herramientas/sesgos/)
 - [Mi plan para la exposición](https://adricamente.com/herramientas/plan-exposicion/)
 - [Glosario de psicología](https://adricamente.com/glosario/)
