@@ -755,38 +755,41 @@ h3{font-weight:700}
 .rueda-dialogo .rd-cab{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-16px;background:#fff;padding:4px 0 8px;z-index:1}
 .rueda-dialogo h2{margin:0;font-size:20px}
 /* --- «¿Cómo me conociste?» (03-11; 04-11: obligatoria) --------------
-   Una caja propia, no un renglón con raya como las tareas: desde el
-   04-11, blanca y con el borde de la marca (ver más abajo), porque hay
-   que contestarla. Las casillas, con el mismo .opcion de los cuestionarios y 44 px de
-   alto para el dedo; a dos columnas cuando caben, para que abierta no
-   ocupe dos pantallas en el ordenador. */
-/* 04-11: obligatoria y arriba. Destacada como el consentimiento (borde
-   del color de la marca, título grande), no como un aviso chillón. */
-.caja.conocido{background:var(--surface);border:2px solid var(--accent);box-shadow:var(--shadow);padding:18px 18px 14px;margin:0 0 22px}
-.caja.conocido > h2{margin:0 0 6px;font-size:1.65rem;color:var(--accent-3)}
-.caja.conocido .apunte{margin:0 0 10px}
-.caja.conocido fieldset{border:0;padding:0;margin:4px 0 0;min-width:0}
-.caja.conocido legend{font-size:15px;color:var(--ink-2);padding:0;margin:0 0 6px}
-.cn-opciones{display:grid;grid-template-columns:1fr;gap:2px}
-.cn-opciones .opcion{font-weight:400;font-size:16px;line-height:1.3;margin:0;min-height:44px;padding:8px 8px}
-.cn-opciones .opcion:hover{background:var(--surface-2)}
+   Arriba de Inicio y hasta contestarla. Llamativa pero no chillona:
+   fondo y borde del color de la marca, título grande con su icono.
+   Las casillas, con el mismo .opcion de los cuestionarios y 44 px de
+   alto para el dedo, a dos columnas también en el móvil: con los rótulos
+   cortos, la tarjeta entera cabe en una pantalla (unos 600 px a 390). */
+.caja.conocido{background:var(--accent-soft);border:2px solid var(--accent);padding:16px 14px 12px;margin:0 0 22px}
+.caja.conocido > h2{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:1.5rem;color:var(--accent-3)}
+.cn-ico{flex:none;width:26px;height:26px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.caja.conocido .apunte{margin:0 0 8px;color:var(--ink)}
+.caja.conocido fieldset{border:0;padding:0;margin:2px 0 0;min-width:0}
+.caja.conocido legend{font-size:15px;color:var(--ink-2);padding:0;margin:0 0 4px}
+.cn-opciones{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px}
+.cn-opciones .opcion{font-weight:400;font-size:15.5px;line-height:1.25;margin:0;min-height:44px;padding:6px 6px;gap:9px}
+.cn-opciones .opcion:hover{background:var(--surface)}
+.cn-opciones .cn-otro{grid-column:1 / -1}
 .cn-otro{flex-wrap:wrap;cursor:default}
-.cn-otro > label{margin:0;font-weight:400;font-size:16px;cursor:pointer}
+.cn-otro > label{margin:0;font-weight:400;font-size:15.5px;cursor:pointer}
 /* height:auto: .opcion input le pondría los 19 px de la casilla. */
-.cn-otro input[type=text]{flex:1 1 12rem;min-width:0;width:auto;height:auto;padding:8px 11px;accent-color:auto}
+.cn-otro input[type=text]{flex:1 1 10rem;min-width:0;width:auto;height:auto;padding:7px 10px;accent-color:auto;background:var(--surface)}
+/* «Prefiero no decirlo», la última y separada: es otra clase de
+   respuesta, y quita las demás. */
+.cn-opciones .cn-nodice{grid-column:1 / -1;border-top:1px solid var(--borde-campo);margin-top:4px;padding-top:10px;border-radius:0}
 @media (min-width:640px){
-  .cn-opciones{grid-template-columns:1fr 1fr;column-gap:14px}
-  .cn-opciones .cn-otro{grid-column:1 / -1}
+  .caja.conocido{padding:18px 18px 14px}
+  .cn-opciones{column-gap:14px}
 }
-.cn-botones{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:12px 0 0}
+.cn-botones{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:10px 0 0}
 .cn-botones .boton{padding:11px 20px}
-.cn-estado{margin:8px 0 0}
+.cn-estado{margin:8px 0 0;color:var(--error)}
 .cn-estado:empty{margin:0}
 .caja.conocido .nota{margin:6px 0 2px}
 #cn-gracias:focus{outline:none}
 /* --- «Tenla siempre a mano» (03-11) --------------------------------
-   La misma nota gris que «¿Cómo me conociste?» (las dos no salen nunca
-   en la misma visita), arriba del todo y más corta. Los iconos van en
+   Una nota gris (no sale nunca en la misma visita que «¿Cómo me
+   conociste?»), arriba del todo y corta. Los iconos van en
    línea con el texto, del color del texto, para que se reconozcan en la
    barra del navegador. */
 .caja.instalar{background:var(--surface-2);border-color:transparent;padding:16px 18px 12px;margin:0 0 22px}
@@ -1063,10 +1066,6 @@ h3{font-weight:700}
 #tareas > .fila.primero{background:var(--accent-soft);border-left:4px solid var(--accent);padding-left:10px}
 .sello.espera{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line-strong);white-space:normal;text-align:center}
 
-/* «Prefiero no decirlo», separada de los canales: es otra clase de
-   respuesta (y quita las demás). En dos columnas, a todo el ancho. */
-.cn-opciones .cn-ninguno{grid-column:1 / -1;border-top:1px solid var(--line);margin-top:4px;padding-top:12px}
-.cn-botones .boton:disabled{opacity:.55;cursor:not-allowed}
 
 /* --- Para qué es cada prueba (04-11) ---------------------------------- */
 .para-que{font-size:17px;color:var(--ink);margin:-4px 0 14px}
