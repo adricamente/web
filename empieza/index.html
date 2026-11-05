@@ -46,7 +46,7 @@
         href="/fuentes/source-sans-3-latin-600-normal.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/source-sans-3-latin-700-normal.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=79">
+  <link rel="stylesheet" href="/estilos.min.css?v=83">
   <style>
   /* Lo propio de /empieza/. Va aquí y no en estilos.css porque solo lo
      usa esta página (como las cajas de la newsletter): así no hay que
@@ -150,7 +150,7 @@
       <img class="em-foto" src="/fotos/adrian-sobremi-240.webp" srcset="/fotos/adrian-sobremi-240.webp 240w, /fotos/adrian-sobremi-300.webp 300w, /fotos/adrian-sobremi.webp 460w" sizes="(min-width: 760px) 132px, 96px" width="240" height="300" loading="eager" fetchpriority="high" decoding="async" alt="Adrián Cuñat, psicólogo, de frente, con polo verde, sonriendo">
       <p><strong>Adrián Cuñat Andrés</strong>Psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.</p>
     </div>
-    <p class="em-cta" style="margin:0"><a class="boton grande" onclick="window.medir&&window.medir('clic_reserva_arriba')"
+    <p class="em-cta" style="margin:0"><a data-umami-event="cita" data-umami-event-sitio="arriba" class="boton grande" onclick="window.medir&&window.medir('clic_reserva_arriba')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=arriba">Elegir día y hora</a></p>
     <p class="apunte em-bajo">Se abre mi calendario: eliges un hueco y te llega el enlace por correo.</p>
     <details class="ll" id="te-llamo">
@@ -190,13 +190,13 @@
           <label class="acepto"><input id="ll-privacidad" name="privacidad" value="1" type="checkbox" required aria-describedby="ll-privacidad-err"><span>He leído la información básica: el responsable es Adrián Cuñat Andrés. Uso tu nombre y tu teléfono solo para llamarte o escribirte por esta cita. Me llegan por correo (Google) y los borro al reservar o, como mucho, a los 30 días. Puedes acceder a ellos, corregirlos o borrarlos escribiendo a hola@adricamente.com. <a href="/privacidad.html#te-llamo" target="_blank" rel="noopener">Más en privacidad</a>.</span></label>
           <p class="ll-err" id="ll-privacidad-err" hidden></p>
           <p class="ll-enviar"><button class="boton" type="submit">Enviar mi teléfono</button></p>
-          <p class="ll-nota">¿Prefieres escribir tú? <a href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20vengo%20de%20Instagram.%20Quiero%20reservar%20la%20media%20hora%20gratis." target="_blank" rel="noopener" onclick="window.medir&&window.medir('clic_whatsapp_empieza')">Escríbeme por WhatsApp</a>. Si estás en peligro ahora mismo, no esperes a que te llame: <a href="tel:024">024</a> o <a href="tel:112">112</a>.</p>
+          <p class="ll-nota">¿Prefieres escribir tú? <a data-umami-event="whatsapp" data-umami-event-sitio="contenido" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20vengo%20de%20Instagram.%20Quiero%20reservar%20la%20media%20hora%20gratis." target="_blank" rel="noopener" onclick="window.medir&&window.medir('clic_whatsapp_empieza')">Escríbeme por WhatsApp</a>. Si estás en peligro ahora mismo, no esperes a que te llame: <a href="tel:024">024</a> o <a href="tel:112">112</a>.</p>
         </form>
         <div class="ll-hecho" id="ll-hecho" tabindex="-1" hidden>
           <p class="ll-hecho-t"><strong>Recibido, gracias.</strong></p>
           <p>Te llamo o te escribo por WhatsApp en uno o dos días laborables desde el <strong class="ll-num">611 70 21 19</strong>. Guárdalo para reconocerlo cuando suene.</p>
           <p>Si prefieres no esperar, puedes elegir tú el día y la hora ahora. Si reservas tú, ya no hace falta que te llame: lo veré en el calendario.</p>
-          <p class="ll-enviar"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_tras_llamada')"
+          <p class="ll-enviar"><a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_tras_llamada')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=tras_llamada">Elegir día y hora</a></p>
           <p class="ll-nota">Si mientras esperas estás en peligro, no esperes: <a href="tel:024">024</a> o <a href="tel:112">112</a>.</p>
         </div>
@@ -247,7 +247,7 @@
   </ol>
     </div>
   </div>
-  <p class="em-cta-medio"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_tras_pasos')"
+  <p class="em-cta-medio"><a data-umami-event="cita" data-umami-event-sitio="mitad" class="boton" onclick="window.medir&&window.medir('clic_reserva_tras_pasos')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=tras_pasos">Elegir día y hora</a></p>
   </section>
 
@@ -289,7 +289,7 @@
          (la «media de 66 € en Doctoralia» que se propuso no tiene fuente
          en la web, así que no va). -->
     <p class="comparativa">Un psicólogo que pasa consulta online por su cuenta suele cobrar entre 60 y 70&nbsp;€ (perfiles de Doctoralia en Madrid y Valencia, octubre de 2026), y las plataformas grandes, entre 39 y 55&nbsp;€. <strong>Cobro menos porque estoy en prácticas supervisadas</strong>, y subirá cuando termine el máster.</p>
-    <p style="margin:0"><a class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
+    <p style="margin:0"><a data-umami-event="cita" data-umami-event-sitio="mitad" class="boton" onclick="window.medir&&window.medir('clic_reserva_medio')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=medio">Elegir día y hora</a></p>
   </div>
   </div>
@@ -347,7 +347,7 @@
     <h2>¿Buscamos un hueco?</h2>
     <p>Treinta minutos por videollamada. <strong>La media hora no se paga.</strong></p>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_final')"
+      <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_final')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=instagram&amp;utm_medium=historia&amp;utm_campaign=empieza&amp;utm_content=final">Elegir día y hora</a>
     </p>
     <p class="tranquiliza">O, si lo prefieres, <a href="#te-llamo">déjame tu teléfono y te llamo o te escribo</a>.</p>

@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=79">
+  <link rel="stylesheet" href="/estilos.min.css?v=83">
 
 
   <script type="application/ld+json">
@@ -243,7 +243,7 @@
      cuando la cabecera de verdad ya no se ve. -->
 <aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
-  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+  <a data-umami-event="cita" data-umami-event-sitio="barra" class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
      href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=barra" target="_blank" rel="noopener">Media hora gratis</a>
 </aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
@@ -289,11 +289,11 @@
       <a href="/guias/">Guías</a>
         <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
            onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
-        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+        <a data-umami-event="cita" data-umami-event-sitio="menu" class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
            href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=menu" target="_blank" rel="noopener">Reservar media hora gratis</a>
       </nav>
     </details>
-    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+    <a data-umami-event="cita" data-umami-event-sitio="cabecera" class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
@@ -594,7 +594,7 @@
       <li>Eliges un hueco libre del calendario</li>
     </ul>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta_guia')"
+      <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta_guia')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=cinta_guia" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>

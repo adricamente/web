@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=79">
+  <link rel="stylesheet" href="/estilos.min.css?v=83">
 
 
   <script type="application/ld+json">
@@ -122,7 +122,8 @@
      cuando la cabecera de verdad ya no se ve. -->
 <aside class="barra-cita" aria-label="Reservar">
   <a class="marca-mini" href="/">adricamente</a>
-  <a class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
+  <!-- cv:wa --><a data-umami-event="whatsapp" data-umami-event-sitio="barra" class="wa" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener" aria-label="Escribirme por WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.3 20.7l4.4-1.1A8.8 8.8 0 1 0 12 3.2z"/><path fill="currentColor" d="M9.1 7.6c.3 0 .6 0 .8.5l.9 2.1c.1.3 0 .5-.1.7l-.6.7c.6 1.2 1.6 2.2 2.8 2.8l.7-.6c.2-.2.5-.2.7-.1l2.1.9c.4.2.5.5.5.8-.1 1.3-1.2 2.1-2.4 2-3.6-.4-6.7-3.5-7.1-7.1-.1-1.2.7-2.3 1.7-2.4z"/></svg></a><!-- /cv:wa -->
+  <a data-umami-event="cita" data-umami-event-sitio="barra" class="cita" onclick="window.medir&&window.medir('clic_reserva_barra')"
      href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=herramienta&amp;utm_content=barra" target="_blank" rel="noopener">Media hora gratis</a>
 </aside>
 <!-- La cabecera sale del contenedor de lectura y tiene el suyo, fijo.
@@ -168,11 +169,11 @@
       <a href="/guias/">Guías</a>
         <a class="pacientes-menu" href="https://cuenta.adricamente.com/"
            onclick="window.medir&&window.medir('clic_area_pacientes_menu')"><svg class="ico-pac" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="8" cy="5.2" r="2.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M2.6 14.2c.6-2.9 2.8-4.5 5.4-4.5s4.8 1.6 5.4 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Área de pacientes</a>
-        <a class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
+        <a data-umami-event="cita" data-umami-event-sitio="menu" class="cita-menu" onclick="window.medir&&window.medir('clic_reserva_menu')"
            href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=herramienta&amp;utm_content=menu" target="_blank" rel="noopener">Reservar media hora gratis</a>
       </nav>
     </details>
-    <a class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
+    <a data-umami-event="cita" data-umami-event-sitio="cabecera" class="cita" onclick="window.medir&&window.medir('clic_reserva_cabecera')"
        href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=herramienta&amp;utm_content=cabecera" target="_blank" rel="noopener">Reservar media hora gratis</a>
   </header>
   </div>
@@ -189,18 +190,19 @@
   <p class="grande">Ponerle nombre exacto a lo que sientes es el primer paso para
   saber qué necesitas. <strong>Pulsa una familia y luego la palabra que mejor encaje.</strong> Con teclado: Tab para entrar en la rueda y flechas para moverte por ella.</p>
 
-  <div class="rueda-caja">
+  <div class="rueda-caja" data-imprimible>
     <svg class="rueda" id="rueda" viewBox="-210 -210 420 420" role="group"
          aria-label="Rueda de las emociones: ocho familias en el centro y, hacia fuera, sus palabras de suave a intensa"></svg>
   </div>
-  <p class="rueda-ley">En el centro, la familia. Hacia fuera, cada vez más intensa: suave, media e intensa.</p>
+  <p class="rueda-ley" data-imprimible>En el centro, la familia. Hacia fuera, cada vez más intensa: suave, media e intensa.</p>
   <ul class="rueda-familias" id="familias" aria-label="Las ocho familias"></ul>
 
-  <section class="caja rueda-ficha" id="ficha" aria-live="polite">
+  <section class="caja rueda-ficha" id="ficha" data-imprimible aria-live="polite">
     <h2>Elige una emoción</h2>
     <p class="nivel">Empieza por la familia que más se parece a lo que sientes.</p>
   </section>
   <p class="apunte">Lo que pulses se queda en tu pantalla: no se guarda ni se envía a ningún sitio.</p>
+<p class="imprime-fila"><button type="button" class="imprime" data-cv-imprime>Guárdatelo en PDF o imprímelo</button></p>
 
 <!-- en-cuenta --><p class="apunte en-cuenta">Si estás en terapia conmigo, también la tienes en <a href="/tu-cuenta/">tu cuenta</a>, con el mismo nombre, cuando la trabajamos: a mano mientras rellenas tus registros. Aquí no sale de tu navegador.</p><!-- /en-cuenta -->
   <h2>Cómo usarla</h2>
@@ -254,7 +256,7 @@
     <h2>Si quieres ponerle nombre conmigo</h2>
     <p>Treinta minutos para contarme qué te pasa. Sales sabiendo qué haría yo con ello, y si no es lo mío, <strong>te oriento a dónde ir</strong>.</p>
     <p>
-      <a class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
+      <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=herramienta&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a>
     </p>
     <p class="tranquiliza">Treinta minutos, gratis y sin compromiso. No hace falta tarjeta.</p>
@@ -427,7 +429,8 @@ function pintaRueda(svg, D, alElegir) {
     <div class="nl-cuerpo">
       <p class="nl-t" id="nl-t-herramienta-final">Una idea útil a la semana, en tu correo</p>
       <p>Lees una guía entera de noche y al día siguiente no recuerdas qué ibas a probar. Por eso, de una en una: <strong>te llega un correo a la semana</strong>, con una idea y algo pequeño que probar esa semana. Al confirmar tu correo, cuatro hojas en PDF para guardar. No te voy a preguntar nada de lo que te pasa.</p>
-      <form method="POST" target="nl-destino-herramienta-final" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw==">
+      <form method="POST" target="nl-destino-herramienta-final" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw=="
+            data-umami-event="newsletter" data-umami-event-sitio="herramienta">
         <div class="nl-campos nl-campos--uno">
           <div><label class="campo" for="nl-correo-herramienta-final">Tu correo</label>
           <input type="email" id="nl-correo-herramienta-final" name="EMAIL" autocomplete="email" required></div>
@@ -653,6 +656,15 @@ function pintaRueda(svg, D, alElegir) {
 (function(){
   var cajas=document.querySelectorAll('.nl[data-ubic]'); if(!cajas.length) return;
   function m(e){try{window.medir&&window.medir(e)}catch(_){}}
+  /* 05-11: el evento «newsletter» de Umami sale de los data-umami-event del
+     <form>, pero lo manda este guion en el submit y no Umami en el clic:
+     Umami solo escucha clics en enlaces y botones, y en el botón contaría
+     también los intentos que el navegador para por un correo mal escrito.
+     El submit solo llega cuando el formulario es válido. */
+  function um(f){try{var n=f.getAttribute('data-umami-event'),d={};
+    if(!n||!window.umami||!window.umami.track) return;
+    Array.prototype.forEach.call(f.attributes,function(a){var k=/^data-umami-event-(.+)$/.exec(a.name); if(k) d[k[1]]=a.value;});
+    window.umami.track(n,d);}catch(_){}}
   var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){
     es.forEach(function(en){ if(en.isIntersecting){ m('nl_visto_'+en.target.getAttribute('data-ubic')); io.unobserve(en.target); } });
   },{threshold:0.3}):null;
@@ -666,7 +678,7 @@ function pintaRueda(svg, D, alElegir) {
         'Al pulsarlo te llevo a las cuatro hojas. Si en unos minutos no lo ves, mira en promociones o en spam.</p>';
       c.querySelector('.nl-t').focus(); }
     d.addEventListener('load',function(){ if(env) ok(); });
-    f.addEventListener('submit',function(ev){ if(f.elements['email_address_check'].value!==''){ev.preventDefault();return;} env=true; setTimeout(ok,6000); });
+    f.addEventListener('submit',function(ev){ if(f.elements['email_address_check'].value!==''){ev.preventDefault();return;} env=true; um(f); setTimeout(ok,6000); });
   });
   var tras=document.querySelector('.nl[data-ubic="herramienta_pdf"]');
   if(tras) document.addEventListener('adri:pdf',function(){
@@ -677,5 +689,22 @@ function pintaRueda(svg, D, alElegir) {
 })();
 </script>
 <!-- /nl-js -->
+<!-- cv-imprime -->
+<noscript><style>.imprime,.imprime-fila{display:none}</style></noscript>
+<script>
+/* «Guárdatelo en PDF o imprímelo» (05-11). Lo que has escrito no sale de
+   aquí: lo imprime tu navegador, o lo guarda en PDF si eliges «Guardar como
+   PDF» en el diálogo. .imprimiendo hace que en el papel solo quede la
+   herramienta; se quita al cerrar el diálogo. */
+(function(){
+  var h=document.documentElement;
+  function fuera(){h.classList.remove('imprimiendo');}
+  window.addEventListener('afterprint',fuera);
+  Array.prototype.forEach.call(document.querySelectorAll('[data-cv-imprime]'),function(b){
+    b.addEventListener('click',function(){h.classList.add('imprimiendo');window.print();setTimeout(fuera,1000);});
+  });
+})();
+</script>
+<!-- /cv-imprime -->
 </body>
 </html>

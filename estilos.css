@@ -562,6 +562,43 @@ p strong, li strong, dd strong, .tarjeta strong{
      Ahora o está o no está, y entra en 0,3 s. Sin guion no sale. */
   .barra-cita{transition:transform .3s var(--entra),visibility .3s}
   .barra-cita.asoma{transform:none;visibility:visible}
+  /* 05-11: WhatsApp al lado de la reserva, para quien prefiere preguntar
+     antes de reservar. Es la acción secundaria, así que va de contorno
+     (la regla de 1.b) y solo con el icono: con texto, a 320 px no cabe
+     en una línea y la barra volvería a medir 84. El nombre lo lleva el
+     aria-label. Va pegada a la reserva (margin-left:auto) y no en medio
+     de la barra, que es donde la dejaría el space-between.
+     El relleno lateral respeta la muesca del iPhone en horizontal; sin
+     viewport-fit=cover los env() valen 0 y se queda en los 16 px. */
+  .barra-cita{
+    padding-left:max(16px,env(safe-area-inset-left));
+    padding-right:max(16px,env(safe-area-inset-right));
+    padding-top:calc(6px + env(safe-area-inset-top));
+  }
+  .barra-cita .wa{
+    margin-left:auto;flex:0 0 auto;
+    display:inline-flex;align-items:center;justify-content:center;
+    width:44px;height:44px;border-radius:var(--r-s);
+    border:1.5px solid var(--accent-borde);background:var(--bg);color:var(--accent-2);
+  }
+  .barra-cita .wa svg{width:22px;height:22px}
+  .barra-cita .wa + .cita{margin-left:-4px}
+  /* A 320, con los rellenos y huecos de siempre, la marca, el icono y la
+     reserva piden 343 px (medido). Con doce de lado, la marca a 15 px, la
+     reserva con diez de relleno, huecos de 8 y el icono a 40 de ancho
+     (el alto sigue en 44) quedan 8 px libres, para una fuente de reserva
+     algo más ancha que Archivo. */
+  @media (max-width:359px){
+    .barra-cita{
+      gap:8px;
+      padding-left:max(12px,env(safe-area-inset-left));
+      padding-right:max(12px,env(safe-area-inset-right));
+    }
+    .barra-cita .marca-mini{font-size:15px}
+    .barra-cita .wa{width:40px}
+    .barra-cita .wa + .cita{margin-left:0}
+    .barra-cita .cita{padding:0 10px}
+  }
 }
 .cabecera .marca{margin:0;flex:0 0 auto;margin-right:auto}
 
@@ -3794,6 +3831,26 @@ main h1 + p strong,main h1 ~ .grande strong,main .entrada strong{
 .esc-acc{display:flex;gap:6px}
 .esc-acc button{min-height:40px;padding:6px 12px;font-size:.9rem}
 @media print{.herr button,.esc-nuevo,.cinta,.cabecera,.franja-cabecera,.barra-cita,footer{display:none!important}.herr{border:0;padding:0}}
+/* 05-11: «Guárdatelo en PDF o imprímelo» en las herramientas que no hacen
+   su propio PDF (conversion.py). Al pulsarlo, el guion pone .imprimiendo en
+   el <html> y en el papel solo queda el título y lo marcado con
+   data-imprimible: sin el artículo, las preguntas ni la caja de correo.
+   Con Ctrl+P sin pasar por el botón sale la página entera, pero sin lo que
+   no se lee en papel. Lo de dentro de cada herramienta que no tiene sentido
+   impreso (el campo de escribir, el rato con su reloj, los avisos) va
+   abajo. Las .apunte ya no salen en papel por la regla general de
+   impresión, la que quita también el fondo crema. */
+@media print{
+  .nl,.saltar,.barra-lectura,.progreso,.salir-flotante,.imprime-fila,.acceso-pacientes{display:none!important}
+  html.imprimiendo main > :not(h1):not([data-imprimible]){display:none!important}
+  html.imprimiendo .cs-solo-js,html.imprimiendo #preo > label,html.imprimiendo #p-texto,
+  html.imprimiendo .preo-rato,html.imprimiendo .herr-guarda,html.imprimiendo .herr-cuenta,
+  html.imprimiendo .rueda-ampliar{display:none!important}
+}
+/* Fuera de .herr (en la rueda) el botón es el mismo que el de dentro. */
+.imprime-fila{margin:12px 0 22px}
+.imprime-fila .imprime{font:inherit;font-size:.98rem;min-height:44px;padding:8px 16px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink)}
 
 /* Glosario (27-10) */
 .glosario{max-width:var(--medida);margin:0 0 18px}
