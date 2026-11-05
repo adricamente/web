@@ -3615,6 +3615,19 @@ function pintaBloques(def, valores, modo, desactivar) {
     } else if (b.t === 'campos') {
       const fila = el('div', 'campos-fila');
       b.campos.forEach(k => {
+        /* `solo_papel` (04-11): «Nombre», «Semana del», «Fecha» de la
+           cabecera de papel. En la cuenta no se enseñan (cada apunte ya
+           lleva su fecha y la cuenta sabe quién es); en el PDF, sí. Al
+           rellenar va oculto con lo que ya tuviera, para que al Mac le
+           siga llegando igual y no se pise; en la copia enviada, nada. */
+        if (k.solo_papel === true && (form || copia)) {
+          if (form) {
+            const h = document.createElement('input'); h.type = 'hidden';
+            h.dataset.campo = k.id; h.value = valores[k.id] || '';
+            raiz.appendChild(h);
+          }
+          return;
+        }
         const p = pista(k);
         let caja;
         if (vivo(p)) caja = control(p, { clave: 'campo', id: k.id, valor: valores[k.id] || '', rotulo: k.rotulo });
@@ -3627,7 +3640,7 @@ function pintaBloques(def, valores, modo, desactivar) {
         caja.style.flex = ancho + ' 1 ' + Math.max(8, ancho * 1.6) + 'rem';
         fila.appendChild(caja);
       });
-      destino.appendChild(fila);
+      if (fila.children.length) destino.appendChild(fila);
     } else if (b.t === 'nota') {
       destino.appendChild(conIcono(parrafo(b, 'nota-h'), 'info'));
     } else if (b.t === 'advertencia') {
@@ -4201,7 +4214,11 @@ function boton(texto, clase, accion) {
   return b;
 }
 function esAcordadoB(b) { return b.t === 'nota' && /^\s*lo que acordamos/i.test(b.negrita || ''); }
-function esCabecera(b) { return b.t === 'campos' && (b.campos || []).every(k => CABECERA.includes(k.id)); }
+function esCabecera(b) { return b.t === 'campos' && (b.campos || []).every(k => CABECERA.includes(k.id) || k.solo_papel === true); }
+/* Lo que se rellena en la cuenta: sin los campos solo de papel. */
+function tieneCamposCuenta(bloques) {
+  return bloques.some(b => b.t === 'campos' ? (b.campos || []).some(k => k.solo_papel !== true) : tieneCampos([b]));
+}
 function tieneCampos(bloques) { return bloques.some(b => b.t === 'campos' || (b.t === 'apartado' && b.id) || b.t === 'tabla' || b.t === 'firma'); }
 function tablaPrincipal(def) { return (def.bloques || []).find(b => b.t === 'tabla') || null; }
 function colsFijas(b) {
@@ -4400,11 +4417,16 @@ function partesRegistro() {
   const i = def.bloques.indexOf(b);
   const antes = def.bloques.slice(0, i).filter(x => !esCabecera(x));
   const despues = def.bloques.slice(i + 1).filter(x => x.t !== 'fuente');
-  const camposDespues = tieneCampos(despues);
+  /* 04-11: si lo de después de los apuntes solo tiene campos de papel, no
+     es «Lo demás de la ficha» (una sección con nada que rellenar y un
+     «Guardar» que no guarda nada): va con «Cómo se rellena». */
+  const camposDespues = tieneCamposCuenta(despues);
+  const sinPapel = (x) => !(x.t === 'campos' && (x.campos || []).every(k => k.solo_papel === true));
   return {
     acordado: antes.filter(esAcordadoB),
-    como: antes.filter(x => !esAcordadoB(x) && !tieneCampos([x])).concat(camposDespues ? [] : despues),
-    resto: antes.filter(x => tieneCampos([x])).concat(camposDespues ? despues : []),
+    como: antes.filter(x => !esAcordadoB(x) && !tieneCamposCuenta([x]) && sinPapel(x))
+      .concat(camposDespues ? [] : despues.filter(sinPapel)),
+    resto: antes.filter(x => tieneCamposCuenta([x])).concat(camposDespues ? despues : []),
     fuente: def.bloques.filter(x => x.t === 'fuente'),
   };
 }
