@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=83">
+  <link rel="stylesheet" href="/estilos.min.css?v=84">
 
 
   <script type="application/ld+json">
@@ -336,6 +336,15 @@
     es gratuito y atiende las 24 horas.</p>
   </div>
 
+<!-- ed:elige -->
+<div class="ed-elige">
+  <p class="ed-elige-t"><strong>Antes de empezar, elige cómo</strong></p>
+  <ul class="ed-ops">
+    <li><a class="ed-op" href="#carta"><span class="ed-op-t">Hazla aquí</span><span class="ed-op-d">En esta página. Lo que escribes no sale de tu navegador.</span></a></li>
+    <li><a class="ed-op" href="/hojas/editables/carta-que-no-se-envia.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa"><span class="ed-op-t">Descárgala en PDF editable</span><span class="ed-op-d">En blanco, para rellenarla en el ordenador o en el móvil sin la web. 3 páginas, 65 kB.</span></a></li>
+  </ul>
+</div>
+<!-- /ed:elige -->
   <div class="herr" id="carta">
     <h2 id="ct-h1">1. Antes de empezar</h2>
     <label for="ct-para">¿A quién va? Su nombre, o como le llamabas (opcional)</label>
@@ -431,8 +440,12 @@
     <h2 id="ct-h5">5. Guárdalo, si quieres</h2>
     <div class="ct-solo-js">
       <p class="ct-recordar"><label><input type="checkbox" id="ct-incluir" checked>Incluir lo que he escrito en el PDF</label></p>
-      <p class="ct-botones"><button type="button" class="principal" id="ct-pdf">Descargar en PDF</button>
+      <p class="ct-botones"><button type="button" class="principal" id="ct-pdf">Guardar lo que has escrito</button>
       <button type="button" id="ct-borrar">Borrar todo</button></p>
+<!-- ed:fila -->
+<p class="ed-fila"><a class="ed-boton" href="/hojas/editables/carta-que-no-se-envia.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa">Descargar PDF editable (en blanco)</a></p>
+<p class="apunte ed-dos">«Guardar lo que has escrito» hace un PDF con lo que has puesto aquí, en tu navegador. El editable va en blanco: se rellena en el ordenador o en el móvil, sin la web.</p>
+<!-- /ed:fila -->
       <p class="ct-recordar"><label><input type="checkbox" id="ct-rec-carta">Recordar la carta en este navegador</label></p>
       <p class="ct-recordar"><label><input type="checkbox" id="ct-rec-fechas">Recordar las fechas en este navegador</label></p>
       <p class="ct-ayuda">Apagadas, no se guarda nada: si cierras la pestaña sin descargarlo, se pierde. Encendidas, se

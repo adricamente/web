@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=83">
+  <link rel="stylesheet" href="/estilos.min.css?v=84">
 
 
   <script type="application/ld+json">
@@ -332,6 +332,15 @@
   </div>
   <button type="button" class="salir-flotante" onclick="location.replace('https://www.google.com/')">Salir rápido</button>
 
+<!-- ed:elige -->
+<div class="ed-elige">
+  <p class="ed-elige-t"><strong>Antes de empezar, elige cómo</strong></p>
+  <ul class="ed-ops">
+    <li><a class="ed-op" href="#conversacion"><span class="ed-op-t">Hazla aquí</span><span class="ed-op-d">En esta página. Lo que escribes no sale de tu navegador.</span></a></li>
+    <li><a class="ed-op" href="/hojas/editables/conversacion-dificil.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa"><span class="ed-op-t">Descárgala en PDF editable</span><span class="ed-op-d">En blanco, para rellenarla en el ordenador o en el móvil sin la web. 2 páginas, 50 kB.</span></a></li>
+  </ul>
+</div>
+<!-- /ed:elige -->
   <div class="herr" id="conversacion">
     <section class="cv-antes" id="antes" aria-labelledby="cv-h0">
       <h2 id="cv-h0" tabindex="-1">Antes de empezar</h2>
@@ -448,8 +457,12 @@
       </div>
       <p class="oculto" id="cv-voz" aria-live="polite" aria-atomic="true"></p>
       <p class="cv-botones"><button type="button" id="cv-alta">Léelo en voz alta</button>
-      <button type="button" class="principal" id="cv-pdf">Descargar en PDF</button>
+      <button type="button" class="principal" id="cv-pdf">Guardar lo que has escrito</button>
       <button type="button" id="cv-borrar">Borrar todo</button></p>
+<!-- ed:fila -->
+<p class="ed-fila"><a class="ed-boton" href="/hojas/editables/conversacion-dificil.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa">Descargar PDF editable (en blanco)</a></p>
+<p class="apunte ed-dos">«Guardar lo que has escrito» hace un PDF con lo que has puesto aquí, en tu navegador. El editable va en blanco: se rellena en el ordenador o en el móvil, sin la web.</p>
+<!-- /ed:fila -->
       <p class="apunte">No se guarda nada, ni en este navegador: si cierras la pestaña, se pierde. Si lo quieres
       conservar, descárgalo.</p>
       <p class="herr-cuenta" id="cv-estado" aria-live="polite"></p>

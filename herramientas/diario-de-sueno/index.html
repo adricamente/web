@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=83">
+  <link rel="stylesheet" href="/estilos.min.css?v=84">
 
 
   <script type="application/ld+json">
@@ -272,6 +272,15 @@
   <p class="grande">Apunta cada mañana cómo dormiste, durante <strong>una o dos semanas</strong>. Es lo primero que
   piden las guías clínicas para entender un insomnio, y ver el patrón ya ayuda. Se guarda solo en este navegador: si compartes el dispositivo, quien lo use podrá verlo, así que bórralo al terminar o usa una ventana privada.</p>
 
+<!-- ed:elige -->
+<div class="ed-elige">
+  <p class="ed-elige-t"><strong>Antes de empezar, elige cómo</strong></p>
+  <ul class="ed-ops">
+    <li><a class="ed-op" href="#sueno"><span class="ed-op-t">Hazla aquí</span><span class="ed-op-d">En esta página. Lo que escribes no sale de tu navegador.</span></a></li>
+    <li><a class="ed-op" href="/hojas/editables/diario-de-sueno.pdf" download target="_blank" rel="noopener" data-ed-abre><span class="ed-op-t">Descárgala en PDF editable</span><span class="ed-op-d">En blanco, para rellenarla en el ordenador o en el móvil sin la web. 2 páginas, 118 kB.</span></a></li>
+  </ul>
+</div>
+<!-- /ed:elige -->
   <div class="herr" id="sueno">
     <fieldset>
       <legend>Anoche</legend>
@@ -293,7 +302,11 @@
       <tbody></tbody>
     </table></div>
     <div id="s-resumen"></div>
-    <p><button type="button" id="s-imprimir">Descargar en PDF</button> <button type="button" id="s-borrar">Borrar todo</button></p>
+    <p><button type="button" id="s-imprimir">Guardar lo que has escrito</button> <button type="button" id="s-borrar">Borrar todo</button></p>
+<!-- ed:fila -->
+<p class="ed-fila"><a class="ed-boton" href="/hojas/editables/diario-de-sueno.pdf" download target="_blank" rel="noopener" data-ed-abre>Descargar PDF editable (en blanco)</a></p>
+<p class="apunte ed-dos">«Guardar lo que has escrito» hace un PDF con lo que has puesto aquí, en tu navegador. El editable va en blanco: se rellena en el ordenador o en el móvil, sin la web.</p>
+<!-- /ed:fila -->
     <noscript><style>.herr-guarda{display:none}</style></noscript>
     <p class="apunte herr-guarda">Se guarda solo en este navegador. Si usas un ordenador compartido, bórralo al terminar.</p>
   </div>
@@ -470,7 +483,46 @@
   pinta();
 })();
 </script>
-  </main>
+  <!-- ed:caja -->
+<dialog class="ed-caja" id="ed-caja" aria-labelledby="ed-t">
+  <div class="ed-dentro">
+    <button type="button" class="ed-cierra" data-ed-cierra>Cerrar</button>
+    <div data-ed-paso="1">
+      <h2 class="ed-t" id="ed-t">Te la descargas ahora y, si quieres, te escribo una vez a la semana</h2>
+      <p>La hoja se descarga igual con correo o sin él. Si te apuntas, <strong>te llega un correo a la semana</strong>, con una idea y algo pequeño que probar, y al confirmar tu correo, cuatro hojas en PDF más. No te voy a preguntar nada de lo que te pasa.</p>
+      <form method="POST" target="nl-destino-pdf-editable" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw=="
+            data-umami-event="newsletter" data-umami-event-sitio="pdf_editable">
+        <div class="nl-campos nl-campos--uno">
+          <div><label class="campo" for="nl-correo-pdf-editable">Tu correo</label>
+          <input type="email" id="nl-correo-pdf-editable" name="EMAIL" autocomplete="email" required></div>
+        </div>
+        <input type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+        <input type="hidden" name="locale" value="es">
+        <input type="hidden" name="html_type" value="simple">
+        <label class="acepto">
+          <input type="checkbox" name="OPT_IN" value="1" required>
+          <span>Acepto recibir la newsletter de adricamente y, a veces, cómo pedir cita. Me doy de baja de un clic. He leído la
+          <a href="/privacidad.html">información sobre protección de datos</a>.</span>
+        </label>
+        <p class="apunte nl-nota" style="margin-top:0">Responsable: Adrián Cuñat Andrés. Para qué: mandarte la newsletter y, alguna vez, información sobre las sesiones. Lo gestiona Brevo, que cuenta qué correos se abren y en qué enlaces se pincha. Puedes acceder a tus datos, corregirlos o borrarlos: <a href="/privacidad.html">privacidad</a>.</p>
+        <button class="boton" type="submit">Apuntarme y descargarla</button>
+        <p class="apunte nl-nota">Sin el clic del correo de confirmación no te escribo. No es un canal de ayuda: si estás mal ahora mismo, <a href="tel:024">024</a> o <a href="tel:112">112</a>.</p>
+      </form>
+      <p class="ed-sin"><a href="/hojas/editables/diario-de-sueno.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="sin_suscripcion">Descargarla sin suscribirme</a></p>
+    </div>
+    <div data-ed-paso="2" hidden>
+      <p class="ed-t" id="ed-t2" tabindex="-1">Tu PDF se está descargando</p>
+      <p>Mira también tu correo: te he mandado un enlace para confirmar que eres tú. Sin ese clic no te escribo. Si en unos minutos no lo ves, mira en promociones o en spam.</p>
+      <p>Si la descarga no ha empezado, <a href="/hojas/editables/diario-de-sueno.pdf" download target="_blank" rel="noopener">descárgala aquí</a>.</p>
+      <p><button type="button" class="boton" data-ed-cierra>Volver a la herramienta</button></p>
+    </div>
+    <a hidden tabindex="-1" data-ed-suscrito href="/hojas/editables/diario-de-sueno.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="suscrito">Descarga</a>
+    <iframe name="nl-destino-pdf-editable" title="Envío del formulario" aria-hidden="true" tabindex="-1"
+            style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
+  </div>
+</dialog>
+<!-- /ed:caja -->
+</main>
 
   <footer>
     <div class="pie-columnas">
@@ -706,5 +758,62 @@
 })();
 </script>
 <!-- /nl-js -->
+<!-- ed-js -->
+<script>
+/* El cuadro del PDF editable (05-11, editables.py). Solo se abre al pulsar
+   uno de los enlaces del editable; sin <dialog> en el navegador, el enlace
+   descarga sin más. Lo que la persona haya escrito en la herramienta no se
+   toca: el PDF es una plantilla en blanco. */
+(function(){
+  var d=document.getElementById('ed-caja');
+  if(!d||typeof d.showModal!=='function') return;
+  var f=d.querySelector('form'), correo=f.querySelector('input[type="email"]'),
+      p1=d.querySelector('[data-ed-paso="1"]'), p2=d.querySelector('[data-ed-paso="2"]'),
+      suscrito=d.querySelector('[data-ed-suscrito]'), quien=null;
+  function m(e){try{window.medir&&window.medir(e)}catch(_){}}
+  /* El evento «newsletter» sale del <form> en el submit, como en las cajas
+     (newsletter.py): en el clic contaría también los correos mal escritos. */
+  function um(f){try{var n=f.getAttribute('data-umami-event'),x={};
+    if(!n||!window.umami||!window.umami.track) return;
+    Array.prototype.forEach.call(f.attributes,function(a){var k=/^data-umami-event-(.+)$/.exec(a.name); if(k) x[k[1]]=a.value;});
+    window.umami.track(n,x);}catch(_){}}
+  function enfocables(){return Array.prototype.filter.call(d.querySelectorAll('a[href],button,input,select,textarea'),
+    function(e){return !e.disabled&&e.tabIndex>=0&&e.getClientRects().length>0;});}
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ed-abre]'),function(a){
+    a.addEventListener('click',function(e){
+      if(e.ctrlKey||e.metaKey||e.shiftKey||e.altKey) return;   /* otra pestaña o «guardar enlace»: sin cuadro */
+      e.preventDefault(); quien=a;
+      p1.hidden=false; p2.hidden=true; d.setAttribute('aria-labelledby','ed-t');
+      d.showModal(); correo.focus();
+    });
+  });
+  /* El modal ya deja inerte el resto de la página; esto además hace que Tab
+     dé la vuelta dentro del cuadro en vez de salir a la barra del navegador. */
+  d.addEventListener('keydown',function(e){
+    if(e.key!=='Tab') return;
+    var l=enfocables(); if(!l.length) return;
+    var a=l[0], z=l[l.length-1], y=document.activeElement;
+    if(e.shiftKey&&(y===a||!d.contains(y))){e.preventDefault();z.focus();}
+    else if(!e.shiftKey&&(y===z||!d.contains(y))){e.preventDefault();a.focus();}
+  });
+  /* Esc lo cierra el propio <dialog>; al cerrar, el foco vuelve al enlace. */
+  d.addEventListener('close',function(){ if(quien) quien.focus(); });
+  d.addEventListener('click',function(e){ if(e.target===d) d.close(); });   /* clic en el fondo */
+  Array.prototype.forEach.call(d.querySelectorAll('[data-ed-cierra]'),function(b){b.addEventListener('click',function(){d.close();});});
+  d.querySelector('[data-umami-event-sitio="sin_suscripcion"]').addEventListener('click',function(){ setTimeout(function(){d.close();},0); });
+  f.addEventListener('submit',function(e){
+    if(f.elements['email_address_check'].value!==''){e.preventDefault();return;}
+    um(f); m('alta_newsletter_pdf_editable');
+    /* Después de que el envío a Brevo haya salido (el formulario tiene que
+       seguir en la página mientras tanto): descarga, y el aviso del correo. */
+    setTimeout(function(){
+      suscrito.click();
+      p1.hidden=true; p2.hidden=false; d.setAttribute('aria-labelledby','ed-t2');
+      document.getElementById('ed-t2').focus();
+    },0);
+  });
+})();
+</script>
+<!-- /ed-js -->
 </body>
 </html>

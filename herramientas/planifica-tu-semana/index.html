@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=83">
+  <link rel="stylesheet" href="/estilos.min.css?v=84">
 
 
   <script type="application/ld+json">
@@ -343,6 +343,15 @@
   muchas veces lo difícil no es hacer las cosas, sino empezarlas. Esto te ayuda con las dos: elegir y arrancar. Quince
   minutos el domingo y uno cada mañana. Lo que escribas no sale de tu navegador.</p>
 
+<!-- ed:elige -->
+<div class="ed-elige">
+  <p class="ed-elige-t"><strong>Antes de empezar, elige cómo</strong></p>
+  <ul class="ed-ops">
+    <li><a class="ed-op" href="#semana"><span class="ed-op-t">Hazla aquí</span><span class="ed-op-d">En esta página. Lo que escribes no sale de tu navegador.</span></a></li>
+    <li><a class="ed-op" href="/hojas/editables/planifica-tu-semana.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa"><span class="ed-op-t">Descárgala en PDF editable</span><span class="ed-op-d">En blanco, para rellenarla en el ordenador o en el móvil sin la web. 3 páginas, 62 kB.</span></a></li>
+  </ul>
+</div>
+<!-- /ed:elige -->
   <div class="herr" id="semana">
     <div class="hs-solo-js hs-recordar">
       <p class="hs-casilla"><label><input type="checkbox" id="ps-rec" data-ng>Recordar lo que escribo en este navegador</label></p>
@@ -482,8 +491,12 @@
     energía. Al llegar a casa cansada o cansado, primero desconecta un rato y después revisa el día siguiente, nunca al
     revés.</p>
     <div class="hs-solo-js">
-      <p class="hs-botones"><button type="button" class="principal" id="ps-pdf">Descargar en PDF</button>
+      <p class="hs-botones"><button type="button" class="principal" id="ps-pdf">Guardar lo que has escrito</button>
       <button type="button" id="ps-borrar">Borrar todo</button></p>
+<!-- ed:fila -->
+<p class="ed-fila"><a class="ed-boton" href="/hojas/editables/planifica-tu-semana.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa">Descargar PDF editable (en blanco)</a></p>
+<p class="apunte ed-dos">«Guardar lo que has escrito» hace un PDF con lo que has puesto aquí, en tu navegador. El editable va en blanco: se rellena en el ordenador o en el móvil, sin la web.</p>
+<!-- /ed:fila -->
     </div>
     <noscript><p>Sin JavaScript no se guarda nada ni hay PDF: puedes rellenarlo aquí e imprimir la página.</p></noscript>
     <p class="herr-cuenta" id="ps-estado" aria-live="polite"></p>

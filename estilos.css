@@ -4755,3 +4755,43 @@ main{counter-reset:is fs}
       (la cara está al 56 % del alto del corte apaisado). Abajo del todo
       se ve la cara entera y la cabeza del perro. */
 @media (min-width:760px){figure[data-f="p-videollamada-sofa"] .foto-amb{object-position:50% 92%}}
+
+/* === PDF editables (05-11, editables.py) ===============================
+   La elección de arriba («Hazla aquí» o el PDF), el enlace de abajo y el
+   cuadro de la newsletter que se abre al pulsarlo. Todo con las variables
+   de :root. El cuadro solo existe abierto (un <dialog> cerrado no pinta
+   nada), así que no mueve la página: CLS 0. */
+.ed-elige{margin:18px 0 22px}
+.ed-elige-t{margin:0 0 8px}
+.ed-ops{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+@media (min-width:640px){.ed-ops{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ed-ops li{margin:0}
+.ed-op{display:flex;flex-direction:column;gap:4px;height:100%;box-sizing:border-box;padding:14px 16px;
+  border:1.5px solid var(--accent-borde);border-radius:var(--r-m);background:var(--surface);color:var(--ink);text-decoration:none}
+.ed-op:hover{border-color:var(--accent-2);background:var(--accent-soft);color:var(--ink)}
+/* Subrayado en el título de cada opción: es un enlace y tiene que parecerlo
+   sin depender solo del color. */
+.ed-op-t{font-weight:700;color:var(--accent-2);text-decoration:underline;text-underline-offset:3px}
+.ed-op-d{font-size:.95rem;color:var(--ink-2)}
+.ed-fila{margin:12px 0 4px}
+.ed-boton{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;padding:8px 16px;border-radius:999px;
+  border:1.5px solid var(--accent-borde);background:var(--surface);color:var(--ink);font-weight:600;text-decoration:none}
+.ed-boton:hover{border-color:var(--accent-2);color:var(--accent-3)}
+.ed-dos{margin:4px 0 14px}
+.ed-caja{width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 32px);box-sizing:border-box;padding:0;overflow:auto;
+  border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);color:var(--ink);
+  box-shadow:0 12px 40px color-mix(in srgb,var(--ink) 30%,transparent)}
+.ed-caja::backdrop{background:color-mix(in srgb,var(--ink) 55%,transparent)}
+.ed-dentro{position:relative;padding:20px 20px 18px}
+/* El sitio de la derecha es para «Cerrar», que va encima del titular. */
+.ed-caja .ed-t{font-family:var(--estrecha);font-weight:800;font-size:1.35rem;line-height:1.15;margin:0 0 10px;padding-right:84px;color:var(--ink)}
+.ed-caja .ed-t:focus{outline:none}
+.ed-caja p{margin:0 0 12px}
+.ed-caja .nl-campos{grid-template-columns:minmax(0,1fr)}
+.ed-caja .nl-nota{font-size:14px;margin:12px 0 0}
+.ed-cierra{position:absolute;top:12px;right:12px;min-height:44px;min-width:44px;padding:6px 14px;font:inherit;font-size:.95rem;
+  border:1.5px solid var(--accent-borde);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer}
+.ed-cierra:hover{border-color:var(--accent-2)}
+.ed-caja .ed-sin{margin:16px 0 0;font-size:.98rem}
+.ed-sin a{color:var(--ink-2);display:inline-block;padding-block:10px;margin-block:-10px}
+@media print{.ed-elige,.ed-fila,.ed-dos,.ed-caja{display:none!important}}

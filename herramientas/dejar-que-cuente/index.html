@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=83">
+  <link rel="stylesheet" href="/estilos.min.css?v=84">
 
 
   <script type="application/ld+json">
@@ -334,6 +334,15 @@
   <p>Si todavía no lo apuntas, empieza por <a href="/herramientas/lo-que-haces-bien/">lo que haces bien también
   cuenta</a>: es el paso de antes.</p>
 
+<!-- ed:elige -->
+<div class="ed-elige">
+  <p class="ed-elige-t"><strong>Antes de empezar, elige cómo</strong></p>
+  <ul class="ed-ops">
+    <li><a class="ed-op" href="#cuente"><span class="ed-op-t">Hazla aquí</span><span class="ed-op-d">En esta página. Lo que escribes no sale de tu navegador.</span></a></li>
+    <li><a class="ed-op" href="/hojas/editables/dejar-que-cuente.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa"><span class="ed-op-t">Descárgala en PDF editable</span><span class="ed-op-d">En blanco, para rellenarla en el ordenador o en el móvil sin la web. 5 páginas, 76 kB.</span></a></li>
+  </ul>
+</div>
+<!-- /ed:elige -->
   <div class="herr" id="cuente">
     <div class="hs-solo-js hs-recordar">
       <p class="hs-casilla"><label><input type="checkbox" id="dq-rec" data-ng>Recordar lo que escribo en este navegador</label></p>
@@ -530,8 +539,12 @@
     <p class="hs-ayuda" id="dq-balance-ay">Mirando todo lo apuntado, ¿qué dice esto de mí como persona, no solo por lo que hago?</p>
     <textarea id="dq-balance" rows="3" maxlength="800" aria-describedby="dq-balance-ay"></textarea>
     <div class="hs-solo-js">
-      <p class="hs-botones"><button type="button" class="principal" id="dq-pdf">Descargar en PDF</button>
+      <p class="hs-botones"><button type="button" class="principal" id="dq-pdf">Guardar lo que has escrito</button>
       <button type="button" id="dq-borrar">Borrar todo</button></p>
+<!-- ed:fila -->
+<p class="ed-fila"><a class="ed-boton" href="/hojas/editables/dejar-que-cuente.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="directa">Descargar PDF editable (en blanco)</a></p>
+<p class="apunte ed-dos">«Guardar lo que has escrito» hace un PDF con lo que has puesto aquí, en tu navegador. El editable va en blanco: se rellena en el ordenador o en el móvil, sin la web.</p>
+<!-- /ed:fila -->
     </div>
     <noscript><p>Sin JavaScript no se guarda nada ni hay PDF: puedes rellenarlo aquí e imprimir la página.</p></noscript>
     <p class="herr-cuenta" id="dq-estado" aria-live="polite"></p>
