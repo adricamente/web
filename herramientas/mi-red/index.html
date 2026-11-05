@@ -63,7 +63,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=84">
+  <link rel="stylesheet" href="/estilos.min.css?v=85">
 
 
   <script type="application/ld+json">
@@ -812,8 +812,9 @@
   <div class="ed-dentro">
     <button type="button" class="ed-cierra" data-ed-cierra>Cerrar</button>
     <div data-ed-paso="1">
-      <h2 class="ed-t" id="ed-t">Te la descargas ahora y, si quieres, te escribo una vez a la semana</h2>
-      <p>La hoja se descarga igual con correo o sin él. Si te apuntas, <strong>te llega un correo a la semana</strong>, con una idea y algo pequeño que probar, y al confirmar tu correo, cuatro hojas en PDF más. No te voy a preguntar nada de lo que te pasa.</p>
+      <h2 class="ed-t" id="ed-t">La plantilla en PDF, a cambio de apuntarte a la newsletter</h2>
+      <p><strong>Para descargarla te apuntas a la newsletter</strong>: un correo a la semana, con una idea y algo pequeño que probar, y al confirmar tu correo, cuatro hojas en PDF más. No te voy a preguntar nada de lo que te pasa, y te das de baja con un clic cuando quieras.</p>
+      <p class="apunte">Si prefieres no dejar tu correo, la herramienta se hace gratis aquí en la web, sin dar ningún dato.</p>
       <form method="POST" target="nl-destino-pdf-editable" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw=="
             data-umami-event="newsletter" data-umami-event-sitio="pdf_editable">
         <div class="nl-campos nl-campos--uno">
@@ -832,7 +833,7 @@
         <button class="boton" type="submit">Apuntarme y descargarla</button>
         <p class="apunte nl-nota">Sin el clic del correo de confirmación no te escribo. No es un canal de ayuda: si estás mal ahora mismo, <a href="tel:024">024</a> o <a href="tel:112">112</a>.</p>
       </form>
-      <p class="ed-sin"><a href="/hojas/editables/mi-red.pdf" download target="_blank" rel="noopener" data-umami-event="pdf" data-umami-event-sitio="sin_suscripcion">Descargarla sin suscribirme</a></p>
+      <p class="ed-sin"><button type="button" class="ed-enlace" data-ed-cierra data-ed-web data-umami-event="pdf_no" data-umami-event-sitio="web">Prefiero hacerla aquí en la web</button></p>
     </div>
     <div data-ed-paso="2" hidden>
       <p class="ed-t" id="ed-t2" tabindex="-1">Tu PDF se está descargando</p>
@@ -1124,7 +1125,12 @@
   d.addEventListener('close',function(){ if(quien) quien.focus(); });
   d.addEventListener('click',function(e){ if(e.target===d) d.close(); });   /* clic en el fondo */
   Array.prototype.forEach.call(d.querySelectorAll('[data-ed-cierra]'),function(b){b.addEventListener('click',function(){d.close();});});
-  d.querySelector('[data-umami-event-sitio="sin_suscripcion"]').addEventListener('click',function(){ setTimeout(function(){d.close();},0); });
+  /* «Prefiero hacerla aquí»: cierra y lleva a la herramienta, sin descarga. */
+  var web=d.querySelector('[data-ed-web]');
+  if(web) web.addEventListener('click',function(){
+    var op=document.querySelector('a.ed-op[href^="#"]'), h=op&&document.getElementById(op.getAttribute('href').slice(1));
+    if(!h) return; quien=null;
+    setTimeout(function(){ h.scrollIntoView({block:'start'}); if(!h.hasAttribute('tabindex')) h.setAttribute('tabindex','-1'); h.focus({preventScroll:true}); },0); });
   f.addEventListener('submit',function(e){
     if(f.elements['email_address_check'].value!==''){e.preventDefault();return;}
     um(f); m('alta_newsletter_pdf_editable');

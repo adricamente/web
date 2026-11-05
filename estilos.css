@@ -4794,4 +4794,6 @@ main{counter-reset:is fs}
 .ed-cierra:hover{border-color:var(--accent-2)}
 .ed-caja .ed-sin{margin:16px 0 0;font-size:.98rem}
 .ed-sin a{color:var(--ink-2);display:inline-block;padding-block:10px;margin-block:-10px}
+.ed-sin .ed-enlace{background:none;border:0;font:inherit;color:var(--ink-2);text-decoration:underline;text-underline-offset:.2em;cursor:pointer;padding:10px 0;margin-block:-10px}
+.ed-sin .ed-enlace:focus-visible{outline:3px solid var(--accent-2);outline-offset:3px}
 @media print{.ed-elige,.ed-fila,.ed-dos,.ed-caja{display:none!important}}
