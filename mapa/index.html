@@ -6,29 +6,51 @@
 <!-- ============================================================
      adricamente.com/mapa — el ejercicio de seis pasos
      ------------------------------------------------------------
+     Es una de las cinco páginas de mano: ningún generador la escribe.
+     La retocan las pasadas de genera_todo.sh (utm.py, pie.py,
+     en_tu_cuenta.py, conversion.py, genera_og.py, sitemap.py), así que
+     lo que ellas buscan tiene que seguir aquí: el medir('clic_reserva_…')
+     delante de cada enlace a Cal.com, el medir('clic_whatsapp_…') de los
+     de WhatsApp (conversion.py, SITIO_WA), el pie de columnas y el botón
+     «Volver a hacerlo con otra cosa» con el cierre de su fila detrás.
+
+     OJO: en los comentarios de esta página no se escriben etiquetas
+     literales (la de abrir el pie, la de abrir el contenido principal,
+     la del título). Las pasadas las buscan con expresiones regulares y
+     no distinguen un comentario: el 06-11 un comentario que nombraba la
+     etiqueta del pie hizo que pie.py se comiera media página.
+
      Todo ocurre en el navegador de la persona: las respuestas NO se
-     envían a ningún sitio. Eso no es solo una promesa de la página,
-     es cómo está construida — no hay ni una línea que mande las
-     respuestas fuera. Por eso esta web no trata datos de salud y nos
-     ahorramos el artículo 9 del RGPD.
+     envían a ningún sitio. No es solo una promesa de la página, es
+     cómo está construida: no hay ni una línea que mande las respuestas
+     fuera, y los eventos de Umami son nombres fijos, sin contenido. Por
+     eso esta web no trata datos de salud y nos ahorramos el artículo 9
+     del RGPD.
 
-     Desde septiembre de 2026 las respuestas se recuerdan en el
-     propio navegador y se pueden descargar. Eso no cambia nada de lo
-     anterior: el almacenamiento local tampoco sale del dispositivo,
-     y el correo del formulario de Brevo NO se guarda nunca junto a
-     las respuestas.
+     Desde septiembre de 2026 las respuestas se recuerdan en el propio
+     navegador (localStorage, clave adr.mapa) y se pueden descargar. Eso
+     no cambia lo anterior: el almacenamiento local no sale del
+     dispositivo, y el nombre y el correo del formulario de Brevo NO se
+     guardan nunca junto a las respuestas.
 
-     Sin menú y sin pie a propósito: quien está contestando a la
-     quinta pregunta no necesita siete enlaces invitándole a irse.
+     Sin menú a propósito: quien está contestando a la quinta pregunta
+     no necesita siete enlaces invitándole a irse. El pie sí está (lo
+     pone pie.py): es donde la LSSI pide el aviso legal y la privacidad.
+
+     06-11, SEO: la explicación (qué son las conductas de evitación, por
+     qué se repiten, preguntas frecuentes y fuentes) va en #sobre, fuera
+     de los pasos, y solo se ve en la portada del ejercicio: es lo que
+     lee quien llega desde un buscador, y en mitad de las preguntas
+     estorbaría. Sin JavaScript se ve siempre.
      ============================================================ -->
   <meta name="google-site-verification" content="QsWPtcz9C0l45_fvW-h_N2F1InAgqYTg665nqtlvfdA">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Qué estoy evitando: ejercicio guiado gratis | adricamente</title>
-  <meta name="description" content="Seis preguntas para ver, en diez minutos, qué estás evitando, qué alivio te da hacerlo y qué te está costando. Gratis y sin registro.">
+  <title>Conductas de evitación: ¿qué estás evitando? | adricamente</title>
+  <meta name="description" content="Qué son las conductas de evitación, por qué alivian y luego cuestan, y un ejercicio gratis de seis preguntas para ver las tuyas. No sale de tu navegador.">
 
-  <meta property="og:title" content="Qué estoy evitando: ejercicio guiado gratis | adricamente">
-  <meta property="og:description" content="Seis preguntas para ver, en diez minutos, qué estás evitando, qué alivio te da hacerlo y qué te está costando. Gratis y sin registro.">
+  <meta property="og:title" content="Conductas de evitación: ¿qué estás evitando? | adricamente">
+  <meta property="og:description" content="Qué son las conductas de evitación, por qué alivian y luego cuestan, y un ejercicio gratis de seis preguntas para ver las tuyas. No sale de tu navegador.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://adricamente.com/mapa/">
   <link rel="canonical" href="https://adricamente.com/mapa/">
@@ -43,7 +65,7 @@
   <meta property="og:image" content="https://adricamente.com/og/mapa.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="El mapa de lo que evitas. Adrián Cuñat Andrés, psicólogo colegiado nº CM03836.">
+  <meta property="og:image:alt" content="Conductas de evitación: el mapa de lo que evitas. Adrián Cuñat Andrés, psicólogo colegiado nº CM03836.">
   <meta property="og:site_name" content="adricamente">
   <meta property="og:locale" content="es_ES">
   <meta name="twitter:card" content="summary_large_image">
@@ -87,6 +109,58 @@
   <link rel="stylesheet" href="/estilos.min.css?v=85">
 
 
+  <!-- El autor, con la misma fórmula y los mismos datos que el
+       WebApplication de las demás herramientas (genera_herramientas*.py). -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "El mapa de lo que evitas",
+  "url": "https://adricamente.com/mapa/",
+  "description": "Ejercicio gratis de seis preguntas para ver tus conductas de evitación: qué esquivas, qué alivio te da hacerlo y qué te está costando. No puntúa ni diagnostica, y lo que escribes no sale de tu navegador.",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Cualquiera (navegador)",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  },
+  "inLanguage": "es-ES",
+  "author": {
+    "@type": "Person",
+    "name": "Adrián Cuñat Andrés",
+    "url": "https://adricamente.com/sobre-mi/",
+    "jobTitle": "Psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos",
+    "description": "Psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.",
+    "identifier": "Colegio Oficial de Psicología de Castilla-La Mancha, nº CM03836",
+    "image": "https://adricamente.com/fotos/adrian-retrato.webp",
+    "memberOf": {
+      "@type": "Organization",
+      "name": "Colegio Oficial de Psicología de Castilla-La Mancha",
+      "url": "https://www.copclm.com/"
+    },
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Universidad Nacional de Educación a Distancia (UNED)",
+      "url": "https://www.uned.es/"
+    },
+    "affiliation": {
+      "@type": "MedicalClinic",
+      "name": "Neurococos",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Gandía",
+        "addressCountry": "ES"
+      }
+    },
+    "sameAs": [
+      "https://www.instagram.com/adricamente",
+      "https://www.tiktok.com/@adricamente",
+      "https://www.youtube.com/@adricamente"
+    ]
+  }
+}
+  </script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -101,8 +175,64 @@
     {
       "@type": "ListItem",
       "position": 2,
+      "name": "Herramientas",
+      "item": "https://adricamente.com/herramientas/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
       "name": "El mapa de lo que evitas",
       "item": "https://adricamente.com/mapa/"
+    }
+  ]
+}
+  </script>
+  <!-- Las mismas cinco preguntas, con el mismo texto, que el bloque
+       visible de #preguntas. Si cambia una, cambian las dos. -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Qué es una conducta de evitación?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Lo que haces, o dejas de hacer, para no encontrarte con algo que te resulta desagradable: aplazarlo, cancelarlo, distraerte o ir con una protección. Alivia en el momento y, cuando se repite, suele mantener o agrandar lo que evitas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Es malo evitar?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No siempre. Apartarte de un peligro real es sensato, y descansar también. Se vuelve un problema cuando se mantiene aunque te salga caro, no te sirva o te vaya quitando cosas que te importan."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué es la evitación experiencial?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No querer quedarte en contacto con lo que notas por dentro (sensaciones, emociones, pensamientos o recuerdos) y hacer cosas para cambiarlo o para no pasar por lo que lo provoca. El concepto viene de la terapia de aceptación y compromiso."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿La procrastinación es una forma de evitación?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Muchas veces, sí. La investigación la relaciona con quitarse un malestar a corto plazo: aplazas para no sentir lo que sientes al ponerte, y el coste lo pagas más tarde."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿El mapa es un test? ¿Me da un diagnóstico?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. No puntúa, no compara y no diagnostica: te devuelve con tus palabras lo que has descrito. Lo que escribes se guarda solo en tu navegador, no se envía a ningún sitio y lo borras con un botón."
+      }
     }
   ]
 }
@@ -115,9 +245,21 @@
   .paso{display:none}
   .paso.activo{display:block}
 
+  /* El título de la página va fuera de los pasos para que haya un h1
+     visible en cada pantalla, no solo en la portada (axe:
+     page-has-heading-one, medido paso a paso). Mientras se contesta
+     encoge a una línea de contexto: a tamaño de portada empujaba la
+     pregunta media pantalla abajo en el móvil. Solo cambia al pulsar,
+     así que no cuenta como desplazamiento de diseño. */
+  main.en-pasos > h1{
+    font-family:Archivo,"Helvetica Neue",sans-serif;font-weight:700;
+    font-size:15px;line-height:1.35;letter-spacing:-.005em;
+    color:var(--ink-2);margin:0 0 14px;
+  }
+
   .contador{
     font-family:Archivo,"Helvetica Neue",sans-serif;
-    font-size:13px;letter-spacing:-.005em;
+    font-size:13px;letter-spacing:-.005em;line-height:1.4;
     color:var(--ink-2);margin:0 0 6px;font-weight:700;
   }
   .barra{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin:0 0 30px}
@@ -173,7 +315,16 @@
   /* usa el rojo de la paleta, no uno suelto; y ya no hay tema
      oscuro que anular */
   .aviso.mal{color:var(--error)}
-  
+
+  /* La explicación de la portada. Separada del ejercicio por una
+     línea, para que se lea como «y si quieres saber más», no como
+     parte de las preguntas. */
+  .mapa-sobre{margin:56px 0 8px;padding-top:34px;border-top:1px solid var(--line)}
+  .mapa-sobre h2{margin-top:38px}
+  .mapa-sobre h2:first-child{margin-top:0}
+  .mapa-sobre ul{padding-left:1.2em}
+  .mapa-sobre li{margin:0 0 8px}
+
   </style>
 </head>
 
@@ -182,7 +333,7 @@
 <div class="barra-lectura" aria-hidden="true"></div>
 <div class="contenedor" style="padding-block:32px 0">
 
-  <!-- La marca va dentro de un <header> y no suelta en el
+  <!-- La marca va dentro de una cabecera y no suelta en el
        contenedor. Suelta era exactamente lo que hacía la versión
        escrita a mano de /mapa/, y arrastraba un incumplimiento de
        axe —regla `region`: contenido fuera de toda zona con
@@ -203,23 +354,29 @@
        ni que había cambiado de pregunta, ni cuál era. -->
   <p id="paso-vivo" role="status" aria-live="polite" class="solo-lectores"></p>
 
+  <h1 id="titulo-mapa">Conductas de evitación: el mapa de lo que evitas</h1>
+
   <!-- ===== PASO 0 · portada ================================== -->
   <div class="paso activo" id="p0">
-    <h1>El mapa de lo que evitas</h1>
     <p class="grande">
-      Seis preguntas para ver, en diez minutos, qué estás esquivando,
+      Seis preguntas para ver, en unos diez minutos, qué estás esquivando,
       qué te alivia hacerlo y qué te está costando de verdad.
     </p>
     <ul class="datos">
       <li>6 preguntas</li>
       <li>~10 minutos</li>
-      <li>No sale de tu móvil</li>
+      <li>No sale de tu navegador</li>
     </ul>
     <p class="apunte">
-      No es un test ni te va a dar un diagnóstico. Es el mismo análisis
-      que hacemos en las sesiones de evaluación, hecho por ti. Al final te
-      queda una frase que describe tu propio patrón, y suele incomodar
-      un poco.
+      No es un test: no puntúa y no te va a dar un diagnóstico. Es el mismo
+      análisis que hacemos en las sesiones de evaluación, hecho por ti. Al
+      final te queda una frase que describe tu propio patrón, y suele
+      incomodar un poco.
+    </p>
+    <p class="apunte">
+      Lo que escribes se queda guardado en este navegador, para que no lo
+      pierdas si cierras la página, y no se envía a ningún sitio. Lo borras
+      con un botón cuando quieras.
     </p>
     <p class="apunte">
       Tampoco sustituye a pedir ayuda. <strong>Si ahora mismo lo estás pasando muy mal</strong>,
@@ -231,7 +388,9 @@
     <p class="apunte" id="hay-guardado" hidden style="margin-top:18px">
       <span id="hay-guardado-texto"></span>
       <button type="button" class="boton-texto" id="seguir-guardado">Ver lo que tenía</button>
+      <button type="button" class="boton-texto" id="borrar-guardado">Borrar lo que escribí</button>
     </p>
+    <p class="apunte" id="borrado-ok" hidden style="margin-top:18px">Borrado. En este navegador ya no queda nada del mapa.</p>
   </div>
 
   <!-- ===== PASO 1 ============================================ -->
@@ -368,7 +527,11 @@
 
   <!-- ===== PASO 7 · el resultado ============================= -->
   <div class="paso" id="p7">
-    <p class="contador">Tu mapa</p>
+    <!-- Encabezado de segundo nivel y no párrafo: es el de la pantalla,
+         y al que va el foco al llegar. Con un párrafo el foco caía en el
+         primer h3, debajo del resultado, y el lector de pantalla se
+         saltaba el mapa. -->
+    <h2 class="contador">Tu mapa</h2>
     <div class="barra" role="progressbar" aria-label="Progreso del mapa" aria-valuemin="0" aria-valuemax="6" aria-valuenow="6"><i style="width:100%"></i></div>
 
     <div class="resultado">
@@ -394,6 +557,25 @@
       </p>
     </div>
 
+    <!-- Guardar va junto al resultado (06-11): es lo primero que se
+         quiere hacer con él. Antes había dos botones de PDF que hacían
+         lo mismo, uno aquí y otro en la caja de lo guardado. -->
+    <div class="navegacion" style="margin-bottom:18px">
+      <button class="boton-texto" type="button" id="guardar">Descargar mi mapa en PDF</button>
+      <button class="boton-texto" type="button" id="copiar">Copiar mi mapa</button>
+      <button class="boton-texto" type="button" data-ir="1">Volver a hacerlo con otra cosa</button>
+    </div>
+<!-- en-cuenta --><p class="apunte en-cuenta">Si estás en terapia conmigo, también la tienes en <a href="/tu-cuenta/">tu cuenta</a>, como el registro A-R-C (antes, respuesta y consecuencia), cuando la trabajamos: allí lo que apuntas me llega antes de la sesión y lo vemos juntos. Aquí no sale de tu navegador.</p><!-- /en-cuenta -->
+
+    <div class="guardado" id="memoria-mapa" hidden style="margin-bottom:30px">
+      <p class="apunte"><span id="memoria-texto"></span> Si usas un ordenador o un móvil compartido, bórralo al terminar.
+        <strong>Tu correo no se guarda nunca junto a las respuestas.</strong></p>
+      <p>
+        <button type="button" class="enlace-boton" id="olvidar-mapa">Borrar lo que he escrito</button>
+      </p>
+      <p class="apunte"><button type="button" class="enlace-boton" id="exportar-mapa-json">Descargarlo en formato de datos (.json)</button>, por si te lo pide tu psicólogo.</p>
+    </div>
+
     <div class="lectura">
       <h3>Lo que estás viendo tiene nombre</h3>
       <p>Se llama <strong>evitación, y no es falta de voluntad</strong>. Es justo lo contrario: es un aprendizaje que funciona <em>demasiado</em> bien. Cada vez que evitas, el malestar baja de verdad, y tu cerebro registra que la jugada salió bien. Por eso la repites sin decidirlo.</p>
@@ -414,7 +596,10 @@
     </div>
 
     <!-- Reserva junto al resultado (28-10): es la página que más convierte
-         y el botón estaba cinco pantallas más abajo, tras el formulario. -->
+         y el botón estaba cinco pantallas más abajo, tras el formulario.
+         06-11: con WhatsApp al lado, para quien prefiere preguntar antes
+         de reservar. El texto prellenado es el de la cinta y la barra: no
+         dice nada de la salud de nadie, ni de qué página viene. -->
     <aside class="llamada-media" id="reserva-mapa" aria-label="Media hora gratis para hablarlo">
       <img src="/fotos/adrian-avatar.webp" width="64" height="64" loading="lazy" decoding="async" alt="">
       <div>
@@ -422,31 +607,10 @@
         <p>En la media hora no tienes que explicarlo desde cero: me cuentas esta misma escena, qué te tocaba y qué hiciste en su lugar, y te digo qué veo y qué haría con ello. <strong>No tienes que decidir nada ese día.</strong></p>
         <p class="acciones-media"><a data-umami-event="cita" data-umami-event-sitio="herramienta" class="boton" onclick="window.medir&&window.medir('clic_reserva_mapa_resultado')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=herramienta&amp;utm_content=mapa_resultado" target="_blank" rel="noopener">Reservar media hora gratis</a>
         <span>Por videollamada y sin tarjeta.</span></p>
+        <p>¿Prefieres preguntar algo antes? <a data-umami-event="whatsapp" data-umami-event-sitio="herramienta" onclick="window.medir&&window.medir('clic_whatsapp_mapa_resultado')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No hace falta que me cuentes tu mapa: con la duda basta.</p>
         <p class="otra-puerta-media">Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos. Es online: no tienes que ir a ningún sitio.</p>
       </div>
     </aside>
-
-    <div class="navegacion" style="margin-bottom:18px">
-      <button class="boton-texto" type="button" id="guardar">Descargar mi mapa en PDF</button>
-      <button class="boton-texto" type="button" id="copiar">Copiar mi mapa</button>
-      <button class="boton-texto" type="button" data-ir="1">Volver a hacerlo con otra cosa</button>
-    </div>
-<!-- en-cuenta --><p class="apunte en-cuenta">Si estás en terapia conmigo, también la tienes en <a href="/tu-cuenta/">tu cuenta</a>, como el registro A-R-C (antes, respuesta y consecuencia), cuando la trabajamos: allí lo que apuntas me llega antes de la sesión y lo vemos juntos. Aquí no sale de tu navegador.</p><!-- /en-cuenta -->
-
-    <div class="guardado" id="memoria-mapa" hidden style="margin-bottom:30px">
-      <p class="apunte" id="memoria-texto"></p>
-      <p>
-        <button type="button" class="boton secundario" id="exportar-mapa">Descargar en PDF para traerlo</button>
-        <button type="button" class="enlace-boton" id="olvidar-mapa">Borrar mis respuestas</button>
-      </p>
-      <p class="apunte"><button type="button" class="enlace-boton" id="exportar-mapa-json">O en formato de datos (.json)</button>, por si te lo pide tu psicólogo.</p>
-      <p class="apunte">
-        Lo de arriba te lo llevas para leerlo. Esto otro es el mismo mapa
-        en un archivo, por si acabas reservando y quieres traerlo: si te apetece
-        traerlo a las sesiones, nos sirve de punto de partida.
-        <strong>Tu correo no se guarda nunca junto a las respuestas.</strong>
-      </p>
-    </div>
 
     <!-- ===== Captura de correo ==============================
          CONECTADO a la lista «Mapa · evitación» de Brevo.
@@ -456,6 +620,10 @@
          aquí otra vez — es lo único que se rompería.
          Los name= de los campos (NOMBRE y EMAIL) tienen que
          coincidir exactamente con los atributos de Brevo.
+         06-11: como los de newsletter.py, rel="noreferrer" (Brevo no
+         tiene por qué saber desde qué página se apunta nadie) y el
+         evento «newsletter» de Umami, con el sitio y sin el tema, que
+         manda el guion en el submit.
          ====================================================== -->
     <div class="caja" id="bloque-correo">
       <h3>Los días siguientes</h3>
@@ -473,8 +641,9 @@
            El iframe tiene que estar FUERA de aquí: este bloque se
            reemplaza al enviar, y si el iframe viviera dentro, se
            destruiría a mitad del envío y el correo no llegaría. -->
-      <form id="form-correo" method="POST" target="destino_brevo"
+      <form id="form-correo" method="POST" target="destino_brevo" rel="noreferrer"
             action="https://d6a8aed2.sibforms.com/serve/MUIFAFcdEKuH2fb0V225fhqAI7tCaDecOxxwEC5q85cfSeHymMQCE14uo-Nl5SooYhutgK4dzIC2OstuFeifPAD4Y0VhC0EoBmzLlFfFiwC__5W82hbOqQ-twqnrg87BJ5I4Qq2m0ICpvgH1IZ4QqTjDcKbfEYkUoieAbX7U_EjehxNADTtVJqu7ARifIFPkNKOHMfdVZkjeo-3xvQ=="
+            data-umami-event="newsletter" data-umami-event-sitio="herramienta"
             style="margin-top:16px">
         <div style="margin-bottom:12px">
           <label class="campo" for="nombre">Tu nombre</label>
@@ -528,10 +697,15 @@
       </p>
     </div>
 
+    <!-- 06-11: decía «Este es el primero de los tres», de cuando había
+         tres herramientas. Ahora son muchas más; aquí van las dos que
+         siguen a este análisis en consulta. -->
     <p class="apunte" style="margin-top:22px">
-      Este es el primero de <a href="/herramientas/">los tres</a>. Ahora
-      que lo tienes, <a href="/la-cuenta/">la cuenta</a> te dice cuántas
-      veces ha pasado ya lo que acabas de desmontar.
+      Si quieres seguir: <a href="/registro/">la hoja de registro</a> te
+      ayuda a verlo durante una semana y no solo en una escena, y
+      <a href="/la-cuenta/">la cuenta</a> te dice cuántas veces ha pasado ya
+      lo que acabas de desmontar. Hay más en <a href="/herramientas/">las
+      herramientas</a>.
     </p>
 
     <!-- ===== Reserva ======================================== -->
@@ -556,7 +730,128 @@
         <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_mapa_final')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=herramienta&amp;utm_content=mapa_final"
            target="_blank" rel="noopener">Reservar media hora gratis</a>
       </p>
+      <p class="apunte" style="margin-top:14px"><a href="/primera-sesion/">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
+      <p class="apunte">¿Prefieres preguntar algo antes? <a data-umami-event="whatsapp" data-umami-event-sitio="final" onclick="window.medir&&window.medir('clic_whatsapp_mapa_final')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
     </div>
+  </div>
+
+  <!-- ===== La explicación (06-11) ==============================
+       Para quien llega desde un buscador. Fuera de los pasos y solo en
+       la portada del ejercicio (mostrar() le pone hidden en los demás);
+       sin JavaScript se queda a la vista. Las citas son de lo leído en
+       la fuente, no de memoria: CUN (definición), Hayes y otros, 1996
+       (evitación experiencial y su alivio inmediato) y Sirois y Pychyl,
+       2013 (procrastinación y ánimo a corto plazo). -->
+  <div class="mapa-sobre" id="sobre">
+    <h2 id="que-son">Qué son las conductas de evitación</h2>
+    <p>Una conducta de evitación es lo que haces, o dejas de hacer, para no
+    encontrarte con algo que te resulta desagradable. El diccionario médico
+    de la Clínica Universidad de Navarra la define como una conducta
+    aprendida que impide la aparición de algo que se vive como aversivo (1).
+    Dicho sin tecnicismos: algo que te ahorra un mal rato ahora.</p>
+    <p>Casi nunca tiene pinta de evitación. Tiene pinta de esto:</p>
+    <ul>
+      <li>Dejarlo para mañana, o para cuando tengas la cabeza más despejada.</li>
+      <li>Ponerte con otra cosa «útil»: ordenar, contestar correos, limpiar.</li>
+      <li>Coger el móvil justo cuando toca empezar.</li>
+      <li>Cancelar a última hora, o decir que sí a otro plan para no tener que ir.</li>
+      <li>Ir, pero con una protección: con alguien al lado, con el móvil en la
+      mano, por la ruta de siempre. Son las
+      <a href="/glosario/#conducta-de-seguridad">conductas de seguridad</a>, y
+      cuentan igual.</li>
+    </ul>
+
+    <h2 id="por-que">Por qué evito las cosas, aunque me cuesten</h2>
+    <p>Porque funciona. En el momento, evitar alivia de verdad: el malestar
+    baja, o al menos dejas de mirarlo de frente. Hayes y su equipo, en el
+    artículo que puso nombre a la evitación experiencial, lo explican así:
+    sus efectos inmediatos suelen ser positivos, y por eso parece que
+    funciona incluso cuando no funciona (2).</p>
+    <p>El coste llega después y a plazos: lo que no haces se hace más grande,
+    nunca llegas a comprobar que podías, y la lista de cosas que esquivas
+    crece. Lo cuento con más calma en
+    <a href="/blog/por-que-lo-repites/">por qué lo repites aunque sepas que te perjudica</a>,
+    <a href="/blog/por-que-el-miedo-crece-si-lo-evitas/">por qué el miedo crece cuando lo evitas</a> y
+    <a href="/blog/la-factura-que-no-ves/">la factura que no ves</a>.</p>
+
+    <h2 id="evitacion-experiencial">Evitación experiencial: cuando lo que evitas es lo que sientes</h2>
+    <p>Muchas veces no evitas la tarea, ni la llamada, ni la cena: evitas lo
+    que notas al acercarte a ellas. A eso se le llama evitación experiencial:
+    no estar dispuesto a quedarte en contacto con ciertas experiencias
+    internas (sensaciones del cuerpo, emociones, pensamientos, recuerdos) y
+    hacer cosas para cambiarlas o para no pasar por las situaciones que las
+    traen (2).</p>
+    <p>No toda evitación es un problema, y los mismos autores lo dejan claro:
+    lo que les preocupa es la que se mantiene aunque salga cara, no sirva o
+    te vaya deformando la vida (2). Apartarte de un peligro real es sensato,
+    y descansar también. Lo que mira este ejercicio es lo otro, que es el
+    terreno de la <a href="/guias/terapia-de-aceptacion-y-compromiso/">terapia
+    de aceptación y compromiso</a>.</p>
+
+    <h2 id="procrastinar">Procrastinar también puede ser evitar</h2>
+    <p>Aplazar no siempre es mala organización. Sirois y Pychyl, en una
+    revisión de 2013, sostienen que la procrastinación tiene mucho que ver
+    con reparar el estado de ánimo a corto plazo, y que sus consecuencias
+    las suele pagar tu yo del futuro (3). Por eso una agenda mejor no suele
+    bastar: lo difícil no es el horario, es lo que sientes al ponerte.</p>
+    <p>Si es tu caso, sigue por <a href="/guias/dejar-de-procrastinar/">cómo
+    dejar de procrastinar</a> o, si te lo estás preguntando,
+    <a href="/guias/tdah-o-procrastinacion/">si es TDAH o procrastinación</a>.
+    En <a href="/areas/procrastinacion/">terapia para la procrastinación y el
+    bloqueo</a> cuento cómo lo trabajo en consulta.</p>
+
+    <h2 id="despues">Cuando ya sabes qué evitas</h2>
+    <p>El mapa te deja una frase. Lo que viene después es practicar lo
+    contrario, poco a poco:</p>
+    <ul>
+      <li><a href="/registro/">La hoja de registro</a>: apuntar durante una
+      semana cada vez que pasa, para ver el patrón entero y no solo una escena.</li>
+      <li><a href="/herramientas/escalera/">La escalera de exposición</a>: si lo
+      que evitas es una situación que te da miedo, ordenar los pasos de menos
+      a más.</li>
+      <li><a href="/herramientas/plan-exposicion/">Mi plan para la exposición</a>:
+      preparar uno de esos pasos, con lo que esperas que pase y la protección
+      que vas a soltar.</li>
+      <li><a href="/guias/sesgos-cognitivos/">Los sesgos cognitivos</a>: si lo
+      que aparece justo antes es un «no vas a ser capaz», revisar ese
+      pensamiento.</li>
+      <li><a href="/guias/ansiedad/">La guía de la ansiedad</a>: si lo que
+      notas antes de ponerte es, sobre todo, ansiedad.</li>
+    </ul>
+    <p>Y si prefieres mirarlo con alguien, la primera media hora es gratis y
+    por videollamada: <a href="/primera-sesion/">qué pasa en ella</a>.</p>
+
+    <h2 id="preguntas">Preguntas frecuentes</h2>
+    <div class="faq">
+      <details>
+        <summary>¿Qué es una conducta de evitación?</summary>
+        <p>Lo que haces, o dejas de hacer, para no encontrarte con algo que te resulta desagradable: aplazarlo, cancelarlo, distraerte o ir con una protección. Alivia en el momento y, cuando se repite, suele mantener o agrandar lo que evitas.</p>
+      </details>
+      <details>
+        <summary>¿Es malo evitar?</summary>
+        <p>No siempre. Apartarte de un peligro real es sensato, y descansar también. Se vuelve un problema cuando se mantiene aunque te salga caro, no te sirva o te vaya quitando cosas que te importan.</p>
+      </details>
+      <details>
+        <summary>¿Qué es la evitación experiencial?</summary>
+        <p>No querer quedarte en contacto con lo que notas por dentro (sensaciones, emociones, pensamientos o recuerdos) y hacer cosas para cambiarlo o para no pasar por lo que lo provoca. El concepto viene de la terapia de aceptación y compromiso.</p>
+      </details>
+      <details>
+        <summary>¿La procrastinación es una forma de evitación?</summary>
+        <p>Muchas veces, sí. La investigación la relaciona con quitarse un malestar a corto plazo: aplazas para no sentir lo que sientes al ponerte, y el coste lo pagas más tarde.</p>
+      </details>
+      <details>
+        <summary>¿El mapa es un test? ¿Me da un diagnóstico?</summary>
+        <p>No. No puntúa, no compara y no diagnostica: te devuelve con tus palabras lo que has descrito. Lo que escribes se guarda solo en tu navegador, no se envía a ningún sitio y lo borras con un botón.</p>
+      </details>
+    </div>
+
+    <h2 id="fuentes">Fuentes</h2>
+    <ol class="fuentes">
+      <li>Clínica Universidad de Navarra. «Evitación». <em>Diccionario médico</em>. https://www.cun.es/diccionario-medico/terminos/evitacion</li>
+      <li>Hayes, S. C., Wilson, K. G., Gifford, E. V., Follette, V. M. y Strosahl, K. (1996). Experiential avoidance and behavioral disorders: a functional dimensional approach to diagnosis and treatment. <em>Journal of Consulting and Clinical Psychology</em>, 64(6), 1152-1168.</li>
+      <li>Sirois, F. y Pychyl, T. (2013). Procrastination and the priority of short-term mood regulation: consequences for future self. <em>Social and Personality Psychology Compass</em>, 7(2), 115-127. https://doi.org/10.1111/spc3.12011</li>
+    </ol>
+  </div>
 
   </main>
   <footer>
@@ -622,7 +917,7 @@
           aria-hidden="true" tabindex="-1"
           style="position:absolute;width:0;height:0;border:0;left:-9999px"></iframe>
 
-  
+
 </div>
 
 <script>
@@ -711,11 +1006,16 @@
 (function(){
   "use strict";
 
-  // Aquí viven las respuestas mientras la persona navega.
-  // Es una variable normal: cuando se cierra la pestaña, se va.
+  // Aquí viven las respuestas mientras la persona navega. Lo que hace
+  // que sigan ahí al cerrar la pestaña es el guion de abajo («El mapa
+  // se acuerda»), que las copia al almacenamiento local y las vuelve a
+  // poner al abrir; este objeto solo es la copia de trabajo.
   var datos = {situacion:"", emocion:"", conducta:"", alivio:"", coste:"", paso:""};
 
   var pasos = [].slice.call(document.querySelectorAll('.paso'));
+  var principal = document.getElementById('principal');
+  var titulo = document.getElementById('titulo-mapa');
+  var sobre = document.getElementById('sobre');
 
   var medidos = {};  // cada evento se cuenta una vez por visita
   function unaVez(evento){
@@ -728,16 +1028,29 @@
 
   function mostrar(n){
     pasos.forEach(function(p, i){ p.classList.toggle('activo', i === n); });
+    // La explicación de la portada, solo en la portada; el título,
+    // pequeño mientras se contesta (ver los estilos de la cabeza).
+    principal.classList.toggle('en-pasos', n > 0);
+    if (sobre) sobre.hidden = n !== 0;
     window.scrollTo(0, 0);
-    // El foco va al encabezado del paso nuevo. tabindex="-1" lo hace
-    // enfocable por programa sin meterlo en el recorrido del tabulador.
-    var act = pasos[n], h = act && act.querySelector('h1,h2,h3');
+    // El foco va al encabezado del paso nuevo, o al título en la
+    // portada. tabindex="-1" lo hace enfocable por programa sin meterlo
+    // en el recorrido del tabulador.
+    var act = pasos[n], h = n === 0 ? titulo : (act && act.querySelector('h2,h3'));
     if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); }
     if (vivo) vivo.textContent = (n >= 1 && n <= 6)
       ? 'Paso ' + n + ' de 6'
       : (n === 7 ? 'Tu mapa está listo' : '');
     if (n === 1) unaVez('mapa_inicio');
     if (n === 7){ pintar(); unaVez('mapa_fin'); }
+  }
+  // Para el guion de la memoria («Ver lo que tenía» y «Borrar»), que
+  // así no tiene que pulsar botones escondidos para moverse.
+  window.mapaIr = mostrar;
+
+  function chipMarcado(clave){
+    var m = document.querySelector('[data-grupo="'+clave+'"] .opcion[aria-pressed="true"]');
+    return m ? m.textContent.trim() : '';
   }
 
   // --- Botones de opción -------------------------------------
@@ -760,14 +1073,18 @@
   });
 
   // --- Campos de texto libre ---------------------------------
-  // Si escriben, mandan ellos: se desmarca la opción elegida.
+  // Si escriben, mandan ellos: se desmarca la opción elegida. Si
+  // vacían el campo, la respuesta se vacía también: antes se quedaba
+  // la última que escribieron y salía en el mapa aunque ya no estuviera.
   document.querySelectorAll('[data-libre]').forEach(function(campo){
     campo.addEventListener('input', function(){
-      var clave = campo.dataset.libre;
-      if (campo.value.trim()){
-        datos[clave] = campo.value.trim();
+      var clave = campo.dataset.libre, v = campo.value.trim();
+      if (v){
+        datos[clave] = v;
         var lista = document.querySelector('[data-grupo="'+clave+'"]');
         if (lista) lista.querySelectorAll('.opcion').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
+      } else {
+        datos[clave] = chipMarcado(clave);
       }
     });
   });
@@ -786,6 +1103,22 @@
     var b = ev.target.closest('[data-ir]');
     if (!b) return;
     mostrar(parseInt(b.dataset.ir, 10));
+  });
+
+  // --- Borrar (lo pide el guion de la memoria) ----------------
+  // Deja el ejercicio como recién abierto: campos, opciones, radios,
+  // esta copia de trabajo y el mapa ya pintado. Antes «Borrar» solo
+  // vaciaba el almacenamiento y los campos de texto: las opciones
+  // seguían marcadas, el mapa seguía en pantalla y volvía a guardarse
+  // al tocar cualquier cosa.
+  document.addEventListener('mapa:borrar', function(){
+    for (var k in datos) datos[k] = '';
+    document.querySelectorAll('[data-libre]').forEach(function(c){ c.value = ''; });
+    document.querySelectorAll('.opcion').forEach(function(o){ o.setAttribute('aria-pressed','false'); });
+    document.querySelectorAll('#grupo-alivio input').forEach(function(r){ r.checked = false; });
+    document.querySelectorAll('#grupo-alivio .radio').forEach(function(l){ l.classList.remove('elegido'); });
+    ['r1','r2','r3','r4','r5'].forEach(function(id){ document.getElementById(id).textContent = ''; });
+    mostrar(0);
   });
 
   // --- Construcción del mapa ---------------------------------
@@ -831,9 +1164,9 @@
   }
 
   // --- El texto del mapa -------------------------------------
-  // Lo arman igual el botón de copiar y el de guardar, así que
-  // vive en una sola función. Si se cambia la redacción, cambia
-  // en los dos sitios a la vez.
+  // Lo arman igual el botón de copiar y el PDF, así que vive en una
+  // sola función. Si se cambia la redacción, cambia en los dos sitios
+  // a la vez.
   function textoDelMapa(){
     var a = ALIVIO[datos.alivio] || {frase:'cambia'};
     return 'MI MAPA\n\n' +
@@ -843,17 +1176,12 @@
       'MI SIGUIENTE PASO: ' + (datos.paso || '—') + '\n\n— adricamente.com';
   }
 
-  // --- Guardar como archivo ----------------------------------
-  // Se construye en el propio navegador con un Blob y se descarga
-  // desde ahí. No pasa por ningún servidor: es literalmente el
-  // mismo texto que ya está en pantalla, guardado en un archivo.
-  // Por eso se puede seguir prometiendo que el mapa no sale de
-  // su dispositivo, que es lo que hace que la gente lo rellene
-  // diciendo la verdad.
   // --- Descargar en PDF (28-10) -------------------------------
   // Se hace en el propio navegador con /pdf.js: el mismo texto que ya
   // está en pantalla, con el estilo de los documentos de adricamente.
-  // No pasa por ningún servidor.
+  // No pasa por ningún servidor. Por eso se puede seguir prometiendo
+  // que el mapa no sale de su dispositivo, que es lo que hace que la
+  // gente lo rellene diciendo la verdad.
   function pdfDelMapa(){
     if(!window.adriPDF) return false;
     var a = ALIVIO[datos.alivio] || {frase:'cambia', refuerzo:''};
@@ -878,7 +1206,6 @@
       ]
     });
   }
-  window.pdfDelMapa = pdfDelMapa;
 
   document.getElementById('guardar').addEventListener('click', function(){
     var boton = this, ok = pdfDelMapa();
@@ -910,6 +1237,14 @@
   var destino = document.getElementById('destino_brevo');
   var enviando = false;   // ¿hay un envío en marcha?
   var yaMostrado = false; // para no pintar el mensaje dos veces
+
+  // El evento «newsletter» de Umami, desde los data-umami-event del
+  // formulario, igual que en las cajas de newsletter.py: en el submit,
+  // que solo llega con el formulario válido, y no en el clic del botón.
+  function um(f){try{var n=f.getAttribute('data-umami-event'),d={};
+    if(!n||!window.umami||!window.umami.track) return;
+    Array.prototype.forEach.call(f.attributes,function(a){var k=/^data-umami-event-(.+)$/.exec(a.name); if(k) d[k[1]]=a.value;});
+    window.umami.track(n,d);}catch(_){}}
 
   function mostrarHecho(){
     if (yaMostrado) return;
@@ -945,6 +1280,7 @@
     // se envíe de verdad. Como su target es el iframe invisible,
     // la página no se mueve y el mapa no se pierde.
     enviando = true;
+    um(form);
     aviso.textContent = 'Un momento…';
     aviso.className = 'aviso';
 
@@ -957,9 +1293,10 @@
 </script>
 <script>
 // ── El mapa se acuerda ────────────────────────────────────────────
-// Seis respuestas escritas a mano que hasta hoy desaparecian de un F5.
-// Quien volvia al dia siguiente no volvia a lo suyo: volvia a la
-// pagina en blanco.
+// Seis respuestas escritas a mano que hasta septiembre desaparecian de
+// un F5. Quien volvia al dia siguiente no volvia a lo suyo: volvia a la
+// pagina en blanco. Adrian (06-11): «que si escriben texto no se borre
+// tras cerrar».
 //
 // Sigue sin salir un byte del dispositivo, que es lo que permite que
 // esta web no trate datos de salud. El almacenamiento local tampoco
@@ -972,9 +1309,14 @@
   // ser compartido.
   var CAMPOS = [['c1','situacion'], ['c2','emocion'], ['c3','conducta'],
                 ['c5','coste'], ['c6','paso']];
+  // En el orden de los pasos: el 4 es el de los radios (alivio).
+  var ORDEN = ['situacion', 'emocion', 'conducta', 'alivio', 'coste', 'paso'];
 
   var caja  = document.getElementById('memoria-mapa');
   var texto = document.getElementById('memoria-texto');
+  var aviso = document.getElementById('hay-guardado');
+  var frase = document.getElementById('hay-guardado-texto');
+  var borradoOk = document.getElementById('borrado-ok');
   if(!caja || !window.memoria || !window.memoria.hay()) return;
 
   function alivio(){
@@ -1036,55 +1378,69 @@
     }
   }
 
-  function dilo(n){
-    texto.textContent = n === 0
-      ? 'Lo que escribas se queda guardado en este navegador.'
-      : (n === 6 ? 'Mapa completo, guardado en este navegador.'
-                 : n + ' de 6 respuestas guardadas en este navegador.');
+  function dilo(n, fallo){
+    texto.textContent = fallo
+      ? 'Este navegador no deja guardar: descarga o copia tu mapa antes de cerrar la página.'
+      : (n === 0 ? 'Lo que escribas se queda guardado en este navegador.'
+        : (n === 6 ? 'Tu mapa está guardado en este navegador: si cierras la página, sigue aquí cuando vuelvas.'
+                   : n + ' de 6 respuestas guardadas en este navegador.'));
+  }
+
+  // Recordar las respuestas no basta: al recargar, el ejercicio
+  // vuelve al paso cero y quien escribio seis respuestas ayer no ve
+  // ninguna senal de que siguen ahi. Esto lo dice en la primera
+  // pantalla, que es donde esta mirando, con el boton de seguir y el
+  // de borrar al lado.
+  function avisoPortada(n){
+    if(!aviso || !frase) return;
+    aviso.hidden = n === 0;
+    if(n > 0){
+      borradoOk.hidden = true;
+      frase.textContent = n === 6
+        ? 'Ya hiciste el mapa en este navegador y sigue guardado. '
+        : 'Lo dejaste a medias en este navegador, con ' + n + ' de 6 respuestas. ';
+    }
   }
 
   caja.hidden = false;
   var previo = window.memoria.lee('mapa');
-  if(previo){ pinta(previo); dilo(lleno(previo)); } else { dilo(0); }
+  if(previo){ pinta(previo); }
+  var n0 = lleno(lee());
+  dilo(n0);
+  avisoPortada(n0);
 
-  // Recordar las respuestas no basta: al recargar, el ejercicio
-  // vuelve al paso cero y quien escribio seis respuestas ayer no ve
-  // ninguna senal de que siguen ahi. Tendria que volver a pulsar
-  // seis veces para llegar a su propio mapa, y no lo va a hacer.
-  //
-  // Esto lo dice en la primera pantalla, que es donde esta mirando.
-  var n0 = lleno(previo || {});
-  if(n0 > 0){
-    var aviso = document.getElementById('hay-guardado');
-    var frase = document.getElementById('hay-guardado-texto');
-    if(aviso && frase){
-      frase.textContent = n0 === 6
-        ? 'Ya hiciste el mapa en este navegador y sigue guardado. '
-        : 'Lo dejaste a medias en este navegador, con ' + n0 + ' de 6 respuestas. ';
-      aviso.hidden = false;
-      document.getElementById('seguir-guardado').addEventListener('click', function(){
-        // Al mapa entero si esta completo; si no, al primer hueco.
-        if(n0 === 6){ document.querySelector('[data-ir="7"]').click(); return; }
-        var orden = ['c1','c2','c3',null,'c5','c6'];
-        for(var i = 0; i < orden.length; i++){
-          var id = orden[i];
-          var vacio = id ? !document.getElementById(id).value.trim()
-                         : !document.querySelector('input[name=alivio]:checked');
-          if(vacio){ document.querySelector('[data-ir="' + (i + 1) + '"]').click(); return; }
-        }
-      });
+  document.getElementById('seguir-guardado').addEventListener('click', function(){
+    // Al mapa entero si esta completo; si no, al primer hueco. Mira lo
+    // que hay ahora en pantalla (campos y opciones), no solo el texto:
+    // antes una respuesta elegida con un boton contaba como hueco.
+    var d = lee();
+    if(lleno(d) === 6){ window.mapaIr(7); return; }
+    for(var i = 0; i < ORDEN.length; i++){
+      if(!d[ORDEN[i]]){ window.mapaIr(i + 1); return; }
     }
-  }
+  });
 
-  var espera;
+  // Se guarda poco despues de cada cambio, y de inmediato al cerrar o
+  // esconder la pestaña: con solo la espera, quien escribia y cerraba
+  // en ese medio segundo perdia lo ultimo. Si no queda nada escrito,
+  // no se deja nada guardado.
+  var espera = null;
+  function guardaYa(){
+    clearTimeout(espera); espera = null;
+    var d = lee(), n = lleno(d), ok = true;
+    if(n === 0) window.memoria.olvida('mapa');
+    else ok = window.memoria.guarda('mapa', d);
+    dilo(n, !ok);
+    avisoPortada(n);
+  }
   function recuerda(){
     clearTimeout(espera);
-    espera = setTimeout(function(){
-      var d = lee();
-      window.memoria.guarda('mapa', d);
-      dilo(lleno(d));
-    }, 600);
+    espera = setTimeout(guardaYa, 400);
   }
+  window.addEventListener('pagehide', function(){ if(espera) guardaYa(); });
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'hidden' && espera) guardaYa();
+  });
 
   CAMPOS.forEach(function(par){
     var el = document.getElementById(par[0]);
@@ -1097,29 +1453,28 @@
     document.querySelectorAll('input[name=alivio]'),
     function(r){ r.addEventListener('change', recuerda); });
 
-  document.getElementById('exportar-mapa').addEventListener('click', function(){
-    var ok = window.pdfDelMapa ? window.pdfDelMapa() : false;
-    this.textContent = ok ? 'Descargado' : 'No se pudo descargar';
-    var b = this;
-    setTimeout(function(){ b.textContent = 'Descargar en PDF para traerlo'; }, 2500);
-    if(window.medir) window.medir('mapa_exportado');
-  });
   document.getElementById('exportar-mapa-json').addEventListener('click', function(){
     window.memoria.exporta('mapa-de-lo-que-evitas', 1, lee());
   });
 
-  document.getElementById('olvidar-mapa').addEventListener('click', function(){
-    if(!window.confirm('Se borran las seis respuestas de este navegador. No se puede deshacer.')) return;
+  // Borrar, desde la portada o desde el mapa. Vacia el almacenamiento y
+  // le pide al ejercicio que se deje como recien abierto (mapa:borrar);
+  // luego lo dice en la portada, que es adonde vuelve.
+  function borra(){
+    if(!window.confirm('Se borra todo lo que has escrito en el mapa, en este navegador. No se puede deshacer.')) return;
+    clearTimeout(espera); espera = null;
     window.memoria.olvida('mapa');
-    CAMPOS.forEach(function(par){
-      var el = document.getElementById(par[0]);
-      if(el) el.value = '';
-    });
-    Array.prototype.forEach.call(
-      document.querySelectorAll('input[name=alivio]'),
-      function(r){ r.checked = false; });
+    document.dispatchEvent(new Event('mapa:borrar'));
     dilo(0);
-  });
+    avisoPortada(0);
+    borradoOk.hidden = false;
+    // El aviso visible no lo lee nadie si el foco está en el título:
+    // se dice también por la zona viva de los pasos.
+    var vivo = document.getElementById('paso-vivo');
+    if(vivo) vivo.textContent = borradoOk.textContent;
+  }
+  document.getElementById('olvidar-mapa').addEventListener('click', borra);
+  document.getElementById('borrar-guardado').addEventListener('click', borra);
 })();
 </script>
 </body>

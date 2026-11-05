@@ -148,7 +148,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 
 ## Herramientas gratis (sin registro; nada sale del navegador)
 
-- [El mapa de lo que evitas](https://adricamente.com/mapa/)
+- [El mapa de lo que evitas](https://adricamente.com/mapa/): qué son las conductas de evitación y un ejercicio de seis preguntas para ver las tuyas
 - [La hoja de registro](https://adricamente.com/registro/)
 - [La cuenta que no haces](https://adricamente.com/la-cuenta/)
 - [La rueda de las emociones](https://adricamente.com/herramientas/rueda-de-las-emociones/)
