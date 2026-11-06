@@ -183,7 +183,10 @@ $cuerpo .= <<<'HTML'
             <label class="opcion"><input type="checkbox" name="cn" value="instagram"> Instagram</label>
             <label class="opcion"><input type="checkbox" name="cn" value="tiktok"> TikTok</label>
             <label class="opcion"><input type="checkbox" name="cn" value="youtube"> YouTube</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="google"> Google</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="google"> Google (búsqueda)</label>
+            <!-- 06-11: «google_ia» e «ia», claves nuevas para quien llega preguntando al modo IA de Google o a ChatGPT. -->
+            <label class="opcion"><input type="checkbox" name="cn" value="google_ia"> Google (modo IA)</label>
+            <label class="opcion"><input type="checkbox" name="cn" value="ia"> ChatGPT u otra IA</label>
             <label class="opcion"><input type="checkbox" name="cn" value="web"> La web adricamente.com</label>
             <label class="opcion"><input type="checkbox" name="cn" value="doctoralia"> Doctoralia</label>
             <label class="opcion"><input type="checkbox" name="cn" value="neurococos"> El centro Neurococos</label>
