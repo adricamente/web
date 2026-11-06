@@ -301,7 +301,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/calle-borrosa-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/cama-manana-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/planta-ventana-a1400.webp</image:loc></image:image>
@@ -1266,10 +1266,10 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/es-peligroso-un-ataque-de-ansiedad/</loc>
-    <lastmod>2026-11-05</lastmod>
-    <image:image><image:loc>https://adricamente.com/fotos/a/banco-sol-a900.webp</image:loc></image:image>
-    <image:image><image:loc>https://adricamente.com/fotos/a/lago-calma-v480.webp</image:loc></image:image>
-    <image:image><image:loc>https://adricamente.com/fotos/a/libro-ventana-v480.webp</image:loc></image:image>
+    <lastmod>2026-11-07</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/barca-amanecer-a900.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/calle-mojada-a900.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/puede-un-psicologo-contar-lo-que-le-cuentas/</loc>
@@ -1373,5 +1373,12 @@
     <image:image><image:loc>https://adricamente.com/fotos/a/lago-niebla-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/cafe-ventana-v480.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/como-dejar-de-pensar-en-alguien/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/p-movil-noche-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-campo-v480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manos-tazas-a1400.webp</image:loc></image:image>
   </url>
 </urlset>
