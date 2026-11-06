@@ -51,7 +51,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/areas/estado-de-animo/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-06</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-sofa-manta-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-parque-risa-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/adrian-primera.webp</image:loc></image:image>
@@ -399,7 +399,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/no-tengo-ganas-de-nada/</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-06</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/cama-manana-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/banco-niebla-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/manta-amarilla-a1400.webp</image:loc></image:image>
@@ -448,7 +448,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad-generalizada/</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-06</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-a900.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a900.webp</image:loc></image:image>
@@ -753,7 +753,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/ansiedad/</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-06</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/ventana-noche-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/movil-cama-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-v480.webp</image:loc></image:image>
@@ -772,7 +772,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/distimia/</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-06</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/ventana-campo-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/bosque-camino-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/lluvia-cortina-v480.webp</image:loc></image:image>
@@ -1012,7 +1012,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/mareos-por-ansiedad/</loc>
-    <lastmod>2026-11-05</lastmod>
+    <lastmod>2026-11-06</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-chico-calle-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/zapatillas-escalera-a900.webp</image:loc></image:image>
@@ -1352,5 +1352,26 @@
     <image:image><image:loc>https://adricamente.com/fotos/a/p-sofa-manta-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a900.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/ansiedad-y-depresion/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/p-sofa-taza-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a900.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/manta-amarilla-a1400.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/hormigueo-por-ansiedad/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cafe-ventana-a900.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lago-calma-a800.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/ventana-campo-a1400.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/nudo-en-la-garganta-por-ansiedad/</loc>
+    <lastmod>2026-11-06</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lago-niebla-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/bosque-niebla-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/cafe-ventana-v480.webp</image:loc></image:image>
   </url>
 </urlset>
