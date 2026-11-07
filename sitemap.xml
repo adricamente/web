@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://adricamente.com/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/adrian-retrato.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-movil-noche-c1080.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-escritorio-lampara-c1080.webp</image:loc></image:image>
@@ -16,7 +16,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/terapia-online/</loc>
-    <lastmod>2026-11-03</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/adrian-sesion.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-portatil-cama-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/cuenta/inicio-2x.webp</image:loc></image:image>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/primera-sesion/</loc>
-    <lastmod>2026-11-06</lastmod>
+    <lastmod>2026-11-07</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/adrian-sobremi.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-videollamada-sofa-c1080.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-sofa-taza-c1080.webp</image:loc></image:image>
@@ -1449,5 +1449,12 @@
     <lastmod>2026-11-07</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-ventana-hombre-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/dudas-sobre-ir-al-psicologo/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-blancas-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a900.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
   </url>
 </urlset>
