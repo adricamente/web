@@ -1538,8 +1538,8 @@
     <loc>https://adricamente.com/guias/sentirse-peor-despues-del-psicologo/</loc>
     <lastmod>2026-11-07</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/cortinas-luz-a900.webp</image:loc></image:image>
-    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-a800.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/pies-puerta-a900.webp</image:loc></image:image>
   </url>
   <url>
     <loc>https://adricamente.com/guias/terapia-de-grupo-o-individual/</loc>
@@ -1568,5 +1568,12 @@
     <image:image><image:loc>https://adricamente.com/fotos/a/puerta-patio-a900.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/ventana-campo-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/barca-amanecer-a900.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/cansancio-despues-de-terapia/</loc>
+    <lastmod>2026-11-07</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/puerta-patio-a900.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lectura-lampara-a900.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/taza-humo-a900.webp</image:loc></image:image>
   </url>
 </urlset>
