@@ -31,7 +31,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Psicólogo online para la dependencia emocional](https://adricamente.com/areas/pareja-y-relaciones/dependencia-emocional/): terapia individual, por qué no es un diagnóstico y cuándo va antes la seguridad (016, 028, 112).
 - [Psicólogo online para opositores](https://adricamente.com/psicologo-para-opositores/): el desgaste de opositar en terapia, precio en quincenal y lo que la terapia no hace (no promete plaza ni da técnicas de estudio).
 - [Psicólogo online para estudiantes](https://adricamente.com/psicologo-online-para-estudiantes/): primero los servicios gratuitos de las universidades, y cuándo encaja una terapia fuera; solo mayores de 18.
-- [Psicólogo sin lista de espera](https://adricamente.com/psicologo-sin-lista-de-espera/): cuánto se espera en la pública, con fuentes, cómo ver los huecos reales aquí y qué hacer si es urgente (024, 112).
+- [Psicólogo sin lista de espera](https://adricamente.com/psicologo-sin-lista-de-espera/): ahora mismo sin lista de espera (reserva directa, con los huecos reales en el calendario), cuánto se espera en la pública, con fuentes, y qué hacer si es urgente (024, 112).
 - [Psicólogo para hombres, online](https://adricamente.com/psicologo-para-hombres/): terapia online para hombres adultos en España; por qué no hay una especialidad, dos datos oficiales y cómo es por videollamada.
 - [Psicólogo online para fobias](https://adricamente.com/areas/ansiedad/fobias/): qué parte del tratamiento de una fobia (volar, conducir, sangre, vomitar) se hace por videollamada y qué parte no.
 - [Psicólogo online para la ansiedad generalizada](https://adricamente.com/areas/ansiedad/ansiedad-generalizada/): por qué la terapia no consiste en tranquilizar y cómo se trabaja la preocupación.
@@ -44,6 +44,10 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Psicólogo para sanitarios](https://adricamente.com/psicologo-para-sanitarios/): médicos, residentes y enfermeras; el PAIME y los programas de enfermería primero, y quién custodia la historia.
 - [Psicólogo para docentes](https://adricamente.com/psicologo-para-docentes/): lo gratuito, el curso como calendario y qué cubre MUFACE en psicoterapia.
 - [Psicólogo para autónomos](https://adricamente.com/psicologo-para-autonomos/): quincenal y sin bonos, la baja del autónomo en corto y lo que no es asesoría fiscal.
+- [Terapia para el insomnio (TCC-I)](https://adricamente.com/terapia-para-el-insomnio/): la terapia cognitivo-conductual para el insomnio por videollamada, primera línea según las guías europea, del ACP y de la AASM; cuándo va antes el médico (apneas, piernas inquietas, somnolencia al conducir).
+- [Psicólogo para madres y padres primerizos](https://adricamente.com/psicologo-para-madres-y-padres-primerizos/): la sesión es para el adulto; depresión y ansiedad después del parto, también en padres; la psicosis posparto es urgencia (112).
+- [Psicólogo online por la tarde](https://adricamente.com/psicologo-online-por-la-tarde/): sesiones por la mañana o por la tarde, de lunes a viernes, sin fines de semana; permisos del convenio y el portátil del trabajo.
+- [Psicólogo online para la agorafobia](https://adricamente.com/areas/ansiedad/agorafobia/): empezar por videollamada desde casa y acabar fuera, con exposición gradual; en qué se diferencia de los ataques de pánico.
 - [La salud mental en España, en cifras](https://adricamente.com/salud-mental-en-cifras/): datos oficiales recientes, cada uno con su fuente.
 - [Ayuda urgente](https://adricamente.com/ayuda-urgente/): teléfonos de ayuda en España (112, 024, 016, 028, ANAR) y qué atiende cada uno.
 - [Cómo escribo las guías](https://adricamente.com/como-escribo-las-guias/): fuentes, revisión, lo que no se publica y cómo avisar de un error.
