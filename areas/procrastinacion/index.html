@@ -686,5 +686,30 @@
     pinta();
   })();
 </script>
+<!-- md-js -->
+<script>
+/* Medición sin datos (medicion.py, 09-11): ni lo que se escribe ni el tema;
+   la página ya la dice la URL. */
+(function(){
+  var cola=[],vueltas=0;
+  function tr(e,d){try{if(window.umami&&window.umami.track){window.umami.track(e,d);return;}}catch(_){return;}
+    if(cola.push([e,d])===1)espera();}
+  function espera(){setTimeout(function(){
+    if(window.umami&&window.umami.track){var c=cola;cola=[];c.forEach(function(x){try{window.umami.track(x[0],x[1]);}catch(_){}});}
+    else if(++vueltas<20)espera();else cola=[];},500);}
+  /* Lectura: 25, 50, 75 y 90 % del <main>, cada uno una vez. */
+  (function(){
+    var m=document.querySelector('main'),quedan=[25,50,75,90],t=0;
+    if(!m)return;
+    function mira(){t=0;var r=m.getBoundingClientRect();if(r.height<=0)return;
+      var f=(innerHeight-r.top)/r.height*100;
+      quedan=quedan.filter(function(p){if(f>=p){tr('lectura',{pct:p});return false;}return true;});
+      if(!quedan.length)removeEventListener('scroll',al);}
+    function al(){if(!t)t=setTimeout(mira,250);}
+    addEventListener('scroll',al,{passive:true});
+  })();
+})();
+</script>
+<!-- /md-js -->
 </body>
 </html>

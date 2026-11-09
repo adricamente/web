@@ -921,5 +921,41 @@
     pinta();
   })();
 </script>
+<!-- md-js -->
+<script>
+/* Medición sin datos (medicion.py, 09-11): ni lo que se escribe ni el tema;
+   la página ya la dice la URL. */
+(function(){
+  var cola=[],vueltas=0;
+  function tr(e,d){try{if(window.umami&&window.umami.track){window.umami.track(e,d);return;}}catch(_){return;}
+    if(cola.push([e,d])===1)espera();}
+  function espera(){setTimeout(function(){
+    if(window.umami&&window.umami.track){var c=cola;cola=[];c.forEach(function(x){try{window.umami.track(x[0],x[1]);}catch(_){}});}
+    else if(++vueltas<20)espera();else cola=[];},500);}
+  /* Herramienta: la primera interacción y el primer guardar, imprimir o terminar. */
+  (function(H){
+    var ini=false,fin=false,EV=['click','input','change','keydown'];
+    function dentro(t){return t&&t.closest&&t.closest(H.zona)&&!t.closest('a[href],.nl,.ed-elige,.ed-fila,form[data-umami-event]');}
+    function empieza(e){
+      if(ini||!dentro(e.target))return;
+      if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;
+      if(e.type==='click'&&!e.target.closest('button,input,select,textarea,label,summary,svg,[role],[tabindex]'))return;
+      ini=true;tr('herr_inicio');
+      EV.forEach(function(k){document.removeEventListener(k,empieza,true);});}
+    EV.forEach(function(k){document.addEventListener(k,empieza,true);});
+    function acaba(como){if(fin)return;fin=true;tr('herr_fin',{como:como});}
+    document.addEventListener('adri:pdf',function(){acaba('pdf');});
+    addEventListener('beforeprint',function(){acaba('imprimir');});
+    var F=H.fin,o=F&&document.querySelector(F.sel);
+    if(o&&'MutationObserver' in window){
+      var mo=new MutationObserver(function(){
+        var ok=F.txt?o.textContent.trim()===F.txt:(F.visible?!o.hidden:o.classList.contains(F.clase));
+        if(ok){mo.disconnect();acaba('final');}});
+      mo.observe(o,{attributes:true,childList:true,characterData:true,subtree:true});
+    }
+  })({"zona":"#conversacion"});
+})();
+</script>
+<!-- /md-js -->
 </body>
 </html>

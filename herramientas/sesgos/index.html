@@ -1098,7 +1098,7 @@
   if(!d||typeof d.showModal!=='function') return;
   var f=d.querySelector('form'), correo=f.querySelector('input[type="email"]'),
       p1=d.querySelector('[data-ed-paso="1"]'), p2=d.querySelector('[data-ed-paso="2"]'),
-      suscrito=d.querySelector('[data-ed-suscrito]'), quien=null;
+      suscrito=d.querySelector('[data-ed-suscrito]'), quien=null, visto=false;
   function m(e){try{window.medir&&window.medir(e)}catch(_){}}
   /* El evento «newsletter» sale del <form> en el submit, como en las cajas
      (newsletter.py): en el clic contaría también los correos mal escritos. */
@@ -1114,6 +1114,9 @@
       e.preventDefault(); quien=a;
       p1.hidden=false; p2.hidden=true; d.setAttribute('aria-labelledby','ed-t');
       d.showModal(); correo.focus();
+      /* 09-11: el primer paso del embudo de este formulario, como el
+         nl_visto_* de las cajas (newsletter.py): una vez por página. */
+      if(!visto){ visto=true; m('nl_visto_pdf_editable'); }
     });
   });
   /* El modal ya deja inerte el resto de la página; esto además hace que Tab
@@ -1149,5 +1152,61 @@
 })();
 </script>
 <!-- /ed-js -->
+<!-- md-js -->
+<script>
+/* Medición sin datos (medicion.py, 09-11): ni lo que se escribe ni el tema;
+   la página ya la dice la URL. */
+(function(){
+  var cola=[],vueltas=0;
+  function tr(e,d){try{if(window.umami&&window.umami.track){window.umami.track(e,d);return;}}catch(_){return;}
+    if(cola.push([e,d])===1)espera();}
+  function espera(){setTimeout(function(){
+    if(window.umami&&window.umami.track){var c=cola;cola=[];c.forEach(function(x){try{window.umami.track(x[0],x[1]);}catch(_){}});}
+    else if(++vueltas<20)espera();else cola=[];},500);}
+  /* Embudo de la newsletter: foco en el correo y envíos bloqueados. Nunca el valor. */
+  (function(){
+    var tab=0;
+    document.addEventListener('keydown',function(e){if(e.key==='Tab')tab=Date.now();},true);
+    Array.prototype.forEach.call(document.querySelectorAll('form[data-umami-event="newsletter"]'),function(f){
+      var sitio=f.getAttribute('data-umami-event-sitio')||'',c=f.querySelector('input[type="email"]'),foco=false,dado={},pend=null;
+      function enfoca(){if(foco)return;foco=true;tr('nl_foco',{sitio:sitio});}
+      if(c){
+        c.addEventListener('pointerdown',enfoca);c.addEventListener('input',enfoca);
+        c.addEventListener('focus',function(){if(Date.now()-tab<600)enfoca();});
+        if(c.labels)Array.prototype.forEach.call(c.labels,function(l){l.addEventListener('click',enfoca);});
+      }
+      f.addEventListener('invalid',function(e){
+        var k=e.target.type==='email'?'correo':(e.target.type==='checkbox'?'casilla':'otro');
+        if(!pend){pend={};setTimeout(function(){
+          var m=pend.correo&&pend.casilla?'correo_y_casilla':(pend.correo?'correo':(pend.casilla?'casilla':'otro'));
+          pend=null;if(dado[m])return;dado[m]=true;tr('nl_error',{sitio:sitio,motivo:m});},0);}
+        pend[k]=true;},true);
+    });
+  })();
+  /* Herramienta: la primera interacción y el primer guardar, imprimir o terminar. */
+  (function(H){
+    var ini=false,fin=false,EV=['click','input','change','keydown'];
+    function dentro(t){return t&&t.closest&&t.closest(H.zona)&&!t.closest('a[href],.nl,.ed-elige,.ed-fila,form[data-umami-event]');}
+    function empieza(e){
+      if(ini||!dentro(e.target))return;
+      if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;
+      if(e.type==='click'&&!e.target.closest('button,input,select,textarea,label,summary,svg,[role],[tabindex]'))return;
+      ini=true;tr('herr_inicio');
+      EV.forEach(function(k){document.removeEventListener(k,empieza,true);});}
+    EV.forEach(function(k){document.addEventListener(k,empieza,true);});
+    function acaba(como){if(fin)return;fin=true;tr('herr_fin',{como:como});}
+    document.addEventListener('adri:pdf',function(){acaba('pdf');});
+    addEventListener('beforeprint',function(){acaba('imprimir');});
+    var F=H.fin,o=F&&document.querySelector(F.sel);
+    if(o&&'MutationObserver' in window){
+      var mo=new MutationObserver(function(){
+        var ok=F.txt?o.textContent.trim()===F.txt:(F.visible?!o.hidden:o.classList.contains(F.clase));
+        if(ok){mo.disconnect();acaba('final');}});
+      mo.observe(o,{attributes:true,childList:true,characterData:true,subtree:true});
+    }
+  })({"zona":"#sesgos"});
+})();
+</script>
+<!-- /md-js -->
 </body>
 </html>
