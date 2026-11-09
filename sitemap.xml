@@ -301,7 +301,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/guias/</loc>
-    <lastmod>2026-11-07</lastmod>
+    <lastmod>2026-11-09</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/calle-borrosa-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/cama-manana-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/planta-ventana-a1400.webp</image:loc></image:image>
@@ -1768,5 +1768,19 @@
     <lastmod>2026-11-09</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/manos-tazas-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/estres-de-minorias-personas-trans/</loc>
+    <lastmod>2026-11-09</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/tejados-ciudad-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-v480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a800.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/guias/nombre-y-pronombres-persona-trans/</loc>
+    <lastmod>2026-11-09</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-blancas-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-v480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-a800.webp</image:loc></image:image>
   </url>
 </urlset>
