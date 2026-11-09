@@ -36,7 +36,8 @@
 
   <!-- Umami: medición sin cookies y sin datos personales. Por eso
        esta web no necesita banner de consentimiento. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
+  <script>/* md2: sin identificadores de clic de anuncios en lo que se manda a Umami */window.adriSinClics=function(t,p){try{var K=['fbclid','gclid','gbraid','wbraid','msclkid'];function l(x){if(typeof x!=='string'||x.indexOf('?')<0)return x;var u=new URL(x,location.href),c=0;if(u.host!==location.host)return x;K.forEach(function(k){if(u.searchParams.has(k)){u.searchParams.delete(k);c=1;}});if(!c)return x;return /^[a-z]+:/i.test(x)?u.href:u.pathname+u.search+u.hash;}if(p&&typeof p==='object'){if(p.url)p.url=l(p.url);if(p.referrer)p.referrer=l(p.referrer);}}catch(e){}return p;};</script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true" data-do-not-track="true" data-before-send="adriSinClics"></script>
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
@@ -450,6 +451,7 @@
       <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=herramienta&amp;utm_content=cinta" target="_blank" rel="noopener"><span class="ab-a">Reservar media hora gratis</span><span class="ab-b">Cuéntame qué te pasa</span></a>
     </p>
+    <p class="apunte residencia">Atiendo solo a personas mayores de 18 años que viven en España.</p>
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a data-umami-event="whatsapp" data-umami-event-sitio="final" onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>

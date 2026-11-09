@@ -153,13 +153,12 @@ $cuerpo .= <<<'HTML'
       <p><button class="boton" type="button" id="ci-abrir">Leer y firmar</button></p>
     </section>
 
-    <!-- «¿Cómo me conociste?» (03-11; obligatoria desde el 04-11, lo pide
-         Adrián). Una tarjeta del panel, no una tarea: no cuenta en el
-         globo ni en ningún correo. Arriba, destacada, y siempre ahí hasta
-         contestarla: sin «Ahora no» ni forma de cerrarla. Contestar es
-         obligatorio, decir el canal no: «Prefiero no decirlo» es una
-         opción más de la lista (la última, exclusiva) y se envía como
-         `no_dice`. No bloquea nada del panel (la línea del 024/112 y el
+    <!-- «¿Cómo me conociste?» (03-11). Una tarjeta del panel, no una
+         tarea: no cuenta en el globo ni en ningún correo. Arriba,
+         destacada, y ahí hasta contestarla: sin «Ahora no». Opcional
+         (revisión legal del 09-11, privacidad f): decir el canal no hace
+         falta, «Prefiero no decirlo» es una opción más de la lista (la
+         última, exclusiva) y se envía como `no_dice`. No bloquea nada del panel (la línea del 024/112 y el
          plan de seguridad siguen encima). Va después del consentimiento
          (que la esconde mientras falte); «Tenla siempre a mano» espera
          a la visita siguiente.
@@ -171,7 +170,7 @@ $cuerpo .= <<<'HTML'
            de contestar. «Ficha» es la administrativa, no la historia
            clínica: el texto no puede dar a entender lo contrario. -->
       <p class="apunte" id="cn-para">Me sirve para saber por dónde llega la gente. <strong>Lo apunto en tu ficha, con tu nombre.</strong>
-        No tiene nada que ver con tu tratamiento ni va a tu historia clínica. Si no quieres decirlo, marca «Prefiero no decirlo».
+        No tiene nada que ver con tu tratamiento ni va a tu historia clínica. Es opcional.
         <a href="https://adricamente.com/privacidad.html#conocido" target="_blank" rel="noopener">Cómo lo trato</a></p>
       <form id="f-conocido" novalidate>
         <fieldset>
@@ -206,18 +205,31 @@ $cuerpo .= <<<'HTML'
             <label class="opcion cn-nodice"><input type="checkbox" name="cn" value="no_dice" id="cn-nodice"> Prefiero no decirlo</label>
           </div>
         </fieldset>
-        <!-- 09-11: «¿Qué casi te frenó…?», en la misma tarjeta y en el mismo
-             sobre (campo `freno`), pero OPCIONAL: «Enviar» no mira si está
-             contestada, y vacía va como freno: null. Por qué aquí: es la
-             misma persona y el mismo momento, y una segunda tarjeta sería
-             una segunda pregunta en otra visita. Las mismas reglas que la
-             de arriba: «Otro» con texto corto que marca su casilla al
-             escribir, y dos respuestas exclusivas, «Nada, lo tenía claro» y
-             «Prefiero no decirlo». A una columna en el móvil: los rótulos
-             son frases, y a dos se partían en tres renglones. -->
-        <fieldset class="cn-freno">
-          <legend><span class="cn-freno-t">¿Qué casi te frenó para pedir la primera sesión?</span>
-            <span class="cn-freno-p">Opcional. Puedes marcar varias.</span></legend>
+        <p class="cn-botones">
+          <button class="boton" type="submit" id="cn-enviar">Enviar</button>
+        </p>
+      </form>
+      <p class="apunte cn-estado" id="cn-estado" role="alert"></p>
+      <div class="nota bien" id="cn-gracias" tabindex="-1" hidden><p id="cn-gracias-t"></p></div>
+    </section>
+
+    <!-- «¿Qué casi te frenó…?» (09-11). Su propia tarjeta, debajo, y su
+         propio «Enviar» (revisión legal: cada pregunta, su consentimiento y
+         su «Prefiero no decirlo»). Llega SIN cuenta: la acción `freno` de
+         api.php la guarda en la tabla `frenos` sin cod y sin fecha, y el
+         servidor solo apunta que esta cuenta ya contestó (freno_cerrado,
+         el día). Por eso no tiene «Otro» con texto: un texto libre podría
+         decir quién es. Opcional como la de arriba: se queda hasta que se
+         contesta, y «Prefiero no decirlo» la cierra sin mandar nada. A
+         una columna en el móvil: los rótulos son frases. -->
+    <section class="caja conocido freno" id="c-freno" aria-labelledby="t-freno" hidden>
+      <h2 id="t-freno"><svg class="cn-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1 .8-1 1.5v.6"/><circle cx="12" cy="17" r=".6"/></svg>¿Qué casi te frenó para pedir la primera sesión?</h2>
+      <p class="apunte" id="fr-para">Me sirve para saber qué hace dudar a la gente antes de pedir cita. <strong>Llega sin tu nombre ni tu cuenta:</strong>
+        se suma a un recuento y se descarta, así que ni yo sé qué has contestado. Es opcional: si no quieres decirlo, marca «Prefiero no decirlo».
+        <a href="https://adricamente.com/privacidad.html#conocido" target="_blank" rel="noopener">Cómo lo trato</a></p>
+      <form id="f-freno" novalidate>
+        <fieldset>
+          <legend><span class="oculto-visual">¿Qué casi te frenó para pedir la primera sesión? </span>Puedes marcar varias.</legend>
           <div class="cn-opciones cn-opciones--frases">
             <label class="opcion"><input type="checkbox" name="fr" value="precio"> El precio</label>
             <label class="opcion"><input type="checkbox" name="fr" value="para_tanto"> No sabía si lo mío era para tanto</label>
@@ -225,22 +237,17 @@ $cuerpo .= <<<'HTML'
             <label class="opcion"><input type="checkbox" name="fr" value="online"> Desconfianza de la terapia online</label>
             <label class="opcion"><input type="checkbox" name="fr" value="practicas"> Que esté en prácticas o no conocerme</label>
             <label class="opcion"><input type="checkbox" name="fr" value="horario"> El horario</label>
-            <div class="opcion cn-otro">
-              <input type="checkbox" name="fr" value="otro" id="fr-otro">
-              <label for="fr-otro">Otro:</label>
-              <label for="fr-otro-t" class="oculto-visual">Otro motivo: escribe cuál</label>
-              <input type="text" id="fr-otro-t" maxlength="120" autocomplete="off">
-            </div>
+            <label class="opcion"><input type="checkbox" name="fr" value="otro"> Otro</label>
             <label class="opcion cn-nodice"><input type="checkbox" name="fr" value="nada" id="fr-nada"> Nada, lo tenía claro</label>
             <label class="opcion cn-ancha"><input type="checkbox" name="fr" value="no_dice" id="fr-nodice"> Prefiero no decirlo</label>
           </div>
         </fieldset>
         <p class="cn-botones">
-          <button class="boton" type="submit" id="cn-enviar">Enviar</button>
+          <button class="boton" type="submit" id="fr-enviar">Enviar</button>
         </p>
       </form>
-      <p class="apunte cn-estado" id="cn-estado" role="alert"></p>
-      <div class="nota bien" id="cn-gracias" tabindex="-1" hidden><p id="cn-gracias-t"></p></div>
+      <p class="apunte cn-estado" id="fr-estado" role="alert"></p>
+      <div class="nota bien" id="fr-gracias" tabindex="-1" hidden><p id="fr-gracias-t"></p></div>
     </section>
 
     <!-- «Tenla siempre a mano» (03-11): añadir la cuenta a la pantalla de
@@ -943,6 +950,7 @@ async function panel() {
      aviso de instalar: uno cada vez, en ese orden. Mientras falte el
      consentimiento, ninguna otra pregunta. */
   pintaConocido(CIP.falta ? null : r.j.conocido);
+  pintaFreno(CIP.falta ? null : r.j.freno);
   pintaInstalar(r.j.instalar);
 
   /* Lo caducado no se enseña ni se cuenta: un número que no baja
@@ -1794,7 +1802,8 @@ function ahoraLocal() {
 let BIP = null;          /* el beforeinstallprompt guardado, si llega */
 let INSTALAR = null;     /* lo que dijo el servidor en la última vuelta */
 let CN_PENDIENTE = false; /* «¿Cómo me conociste?» a la vista, sin contestar */
-let CN_VISTO = false;     /* ha salido en esta visita: este aviso espera a la siguiente */
+let FR_PENDIENTE = false; /* «¿Qué casi te frenó…?» a la vista, sin contestar (09-11) */
+let CN_VISTO = false;     /* ha salido alguna de las dos en esta visita: este aviso espera a la siguiente */
 let IN_CERRADO = false;  /* lo ha cerrado en esta visita */
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -1906,7 +1915,7 @@ function pintaInstalar(s) {
   }
   const caja = $('c-instalar');
   const toca = sugerir && s.mostrar && !s.instalada && (d.ios || d.android) && !enLaApp() && !IN_CERRADO
-    && !CN_PENDIENTE && !CN_VISTO && !CIP.falta;
+    && !CN_PENDIENTE && !FR_PENDIENTE && !CN_VISTO && !CIP.falta;
   if (!toca) { if (!IN_CERRADO) caja.hidden = true; return; }
   const a = pasosInstalar(d);
   $('in-cuerpo').innerHTML = a.html + (d.ios ? IN_CLAVE : '') + IN_OTROS;
@@ -2002,37 +2011,50 @@ function pintaConocido(c) {
   $('cn-estado').textContent = '';
   caja.hidden = false;
 }
+/* «¿Qué casi te frenó…?» (09-11): lo mismo, con su propia tarjeta. Sale
+   aunque «¿Cómo me conociste?» ya esté contestada (quien la contestó antes
+   del 09-11 solo ve esta). */
+function pintaFreno(c) {
+  const caja = $('c-freno');
+  FR_PENDIENTE = !!(c && c.mostrar && macPublica);
+  if (FR_PENDIENTE) CN_VISTO = true;
+  if (!FR_PENDIENTE) { if ($('fr-gracias').hidden) caja.hidden = true; return; }
+  if (!caja.hidden) return;
+  $('f-freno').reset();
+  $('f-freno').hidden = false;
+  $('fr-para').hidden = false;
+  $('fr-gracias').hidden = true;
+  $('fr-estado').textContent = '';
+  caja.hidden = false;
+}
 /* Las respuestas exclusivas: «Prefiero no decirlo» en las dos preguntas
-   y, en la del freno (09-11), también «Nada, lo tenía claro». Marcar una
-   quita las demás de SU pregunta y vacía su «Otro»; marcar otra la quita
-   a ella. */
-const CN_EXCLUSIVAS = { cn: ['no_dice'], fr: ['nada', 'no_dice'] };
-const CN_OTRO_T = { cn: 'cn-otro-t', fr: 'fr-otro-t' };
-$('f-conocido').addEventListener('change', (ev) => {
-  const t = ev.target;
-  const excl = t && CN_EXCLUSIVAS[t.name];
-  if (excl && t.checked) {
-    const del = document.querySelectorAll('#f-conocido input[name=' + t.name + ']');
-    if (excl.includes(t.value)) {
-      del.forEach(x => { if (x !== t) x.checked = false; });
-      $(CN_OTRO_T[t.name]).value = '';
-    } else del.forEach(x => { if (excl.includes(x.value)) x.checked = false; });
-  }
-  $('cn-estado').textContent = '';
-});
-/* Quien escribe en «Otro» quiere decir «otro»: no le hacemos marcar la
-   casilla además. Borrar el texto no la desmarca (puede estar corrigiendo). */
-[['cn-otro-t', 'cn-otro', 'cn'], ['fr-otro-t', 'fr-otro', 'fr']].forEach(([texto, casilla, nombre]) => {
-  $(texto).addEventListener('input', () => {
-    if ($(texto).value.trim() && !$(casilla).checked) {
-      $(casilla).checked = true;
-      document.querySelectorAll('#f-conocido input[name=' + nombre + ']').forEach(x => {
-        if (CN_EXCLUSIVAS[nombre].includes(x.value)) x.checked = false;
-      });
+   y, en la del freno, también «Nada, lo tenía claro». Marcar una quita
+   las demás de su pregunta (y vacía el «Otro» de conocido); marcar otra
+   la quita a ella. */
+[['f-conocido', 'cn', ['no_dice'], 'cn-estado'], ['f-freno', 'fr', ['nada', 'no_dice'], 'fr-estado']].forEach(([form, nombre, excl, estado]) => {
+  $(form).addEventListener('change', (ev) => {
+    const t = ev.target;
+    if (t && t.name === nombre && t.checked) {
+      const del = document.querySelectorAll('#' + form + ' input[name=' + nombre + ']');
+      if (excl.includes(t.value)) {
+        del.forEach(x => { if (x !== t) x.checked = false; });
+        if (nombre === 'cn') $('cn-otro-t').value = '';
+      } else del.forEach(x => { if (excl.includes(x.value)) x.checked = false; });
     }
+    $(estado).textContent = '';
   });
 });
+/* Quien escribe en «Otro» quiere decir «otro»: no le hacemos marcar la
+   casilla además. Borrar el texto no la desmarca (puede estar corrigiendo).
+   Solo en conocido: el freno no tiene texto. */
+$('cn-otro-t').addEventListener('input', () => {
+  if ($('cn-otro-t').value.trim() && !$('cn-otro').checked) {
+    $('cn-otro').checked = true;
+    $('cn-nodice').checked = false;
+  }
+});
 $('f-conocido').addEventListener('submit', (ev) => { ev.preventDefault(); cnEnviar(); });
+$('f-freno').addEventListener('submit', (ev) => { ev.preventDefault(); frEnviar(); });
 
 async function cnEnviar() {
   const est = $('cn-estado');
@@ -2059,26 +2081,13 @@ async function cnEnviar() {
      darse cuenta. Desde el 04-11 (tarde), con `identificada: true` y
      `cod_web`: el Mac la apunta en la ficha de esa persona (la tarjeta
      lo dice antes de contestar, y privacidad.html, apartado f). El
-     código va DENTRO del sobre sellado: el servidor no lo lee. Sin hora. */
-  /* 09-11: `freno`, la segunda pregunta, opcional y en el mismo sobre.
-     Sin marcar nada, freno: null, y se envía igual: no bloquea. «Otro»
-     marcado sin texto tampoco bloquea aquí (cuenta como «otro», con
-     otro: null): pararle el envío por una pregunta opcional sería
-     hacerla obligatoria. Claves fijas para contar, como `canales`, y
-     su versión propia (freno-v1) por si un día cambian las opciones. */
-  const frenos = [...document.querySelectorAll('#f-conocido input[name=fr]:checked')];
-  const frOtro = $('fr-otro-t').value.trim().slice(0, 120);
+     código va DENTRO del sobre sellado: el servidor no lo lee. Sin hora.
+     El freno NO va aquí (revisión legal del 09-11): ver frEnviar. */
   const cifrado = sellarHaciaElMac({
     v: 1, tipo: 'conocido', pregunta: 'conocido-v2', identificada: true, cod_web: miCod, origen: 'cuenta',
     canales: marcadas.map(x => x.value),
     rotulos: marcadas.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
     otro: $('cn-otro').checked ? otro : null,
-    freno: frenos.length ? {
-      pregunta: 'freno-v1',
-      motivos: frenos.map(x => x.value),
-      rotulos: frenos.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
-      otro: $('fr-otro').checked && frOtro ? frOtro : null,
-    } : null,
     dia: new Date().toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }),
   }, macPublica);
   $('cn-enviar').disabled = true;
@@ -2099,6 +2108,47 @@ async function cnEnviar() {
        error suelto en la consola). Lo mismo que un !r.ok. */
     est.textContent = 'No se ha podido guardar. Inténtalo otra vez.';
   } finally { $('cn-enviar').disabled = false; }
+}
+
+/* El freno (09-11, revisión legal). Lo que va en el sobre: las claves
+   marcadas y el trimestre, que es lo único que el Mac necesita para el
+   recuento (por trimestre). Nada más: ni cod_web, ni el día, ni rótulos,
+   ni texto. «Prefiero no decirlo» no manda sobre: ha dicho que no, y un
+   sobre «no quiso» sería mandar algo igual; solo cierra la pregunta. */
+async function frEnviar() {
+  const est = $('fr-estado');
+  const marcadas = [...document.querySelectorAll('#f-freno input[name=fr]:checked')];
+  if (!marcadas.length) {
+    est.textContent = 'Marca al menos una opción. Si prefieres no decirlo, marca «Prefiero no decirlo».';
+    $('f-freno').querySelector('input[name=fr]').focus();
+    return;
+  }
+  const noDice = marcadas.some(x => x.value === 'no_dice');
+  let cuerpo = { accion: 'no_decir' };
+  if (!noDice) {
+    const hoy = new Date().toLocaleDateString('sv', { timeZone: 'Europe/Madrid' });
+    const trimestre = hoy.slice(0, 4) + '-T' + (Math.floor((+hoy.slice(5, 7) - 1) / 3) + 1);
+    cuerpo = { accion: 'enviar', cifrado: sellarHaciaElMac({
+      v: 1, tipo: 'freno', pregunta: 'freno-v1', trimestre,
+      motivos: marcadas.map(x => x.value),
+    }, macPublica) };
+  }
+  $('fr-enviar').disabled = true;
+  est.textContent = '';
+  try {
+    const r = await api('freno', cuerpo);
+    if (!r.ok) { est.textContent = 'No se ha podido guardar. Inténtalo otra vez.'; return; }
+    $('f-freno').hidden = true;
+    $('fr-para').hidden = true;
+    $('fr-gracias-t').textContent = noDice
+      ? 'Gracias. No te lo vuelvo a preguntar.'
+      : 'Gracias. Me ha llegado sin tu nombre: solo cuenta en el recuento. No te lo vuelvo a preguntar.';
+    $('fr-gracias').hidden = false;
+    $('fr-gracias').focus();
+    FR_PENDIENTE = false;
+  } catch (e) {
+    est.textContent = 'No se ha podido guardar. Inténtalo otra vez.';
+  } finally { $('fr-enviar').disabled = false; }
 }
 
 /* Actualizar SIN recargar. Recargar tiraría la clave de memoria y

@@ -33,7 +33,8 @@
 
   <!-- Umami. Sin cookies y sin datos personales, así que no hace
        falta banner de consentimiento ni tocar cookies.html. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
+  <script>/* md2: sin identificadores de clic de anuncios en lo que se manda a Umami */window.adriSinClics=function(t,p){try{var K=['fbclid','gclid','gbraid','wbraid','msclkid'];function l(x){if(typeof x!=='string'||x.indexOf('?')<0)return x;var u=new URL(x,location.href),c=0;if(u.host!==location.host)return x;K.forEach(function(k){if(u.searchParams.has(k)){u.searchParams.delete(k);c=1;}});if(!c)return x;return /^[a-z]+:/i.test(x)?u.href:u.pathname+u.search+u.hash;}if(p&&typeof p==='object'){if(p.url)p.url=l(p.url);if(p.referrer)p.referrer=l(p.referrer);}}catch(e){}return p;};</script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true" data-do-not-track="true" data-before-send="adriSinClics"></script>
 
   <!-- Medición. Hoy no sale nada de aquí: la función solo da nombre
        a los cuatro momentos del embudo. El día que contrates un
@@ -76,7 +77,7 @@
   <main id="principal">
 
   <h1>Política de cookies</h1>
-  <p class="apunte">Última actualización: noviembre de 2026</p>
+  <p class="apunte">Última actualización: 9 de noviembre de 2026</p>
 
   <h2>1. Qué son las cookies</h2>
   <p>
@@ -106,23 +107,35 @@
     legítimo en saber qué páginas se leen (art. 6.1.f del RGPD), y
     puedes oponerte escribiéndome.
   </p>
-  <!-- 09-11: lo que mide medicion.py (rueda/). Si cambia lo que se mide,
-       cambia esto. -->
+  <!-- 09-11: lo que miden medicion.py y medicion2.py (rueda/), con el
+       texto aprobado por la revisión legal del 09-11. Si cambia lo que se
+       mide, cambia esto. -->
   <p>
     Además de las visitas, Umami cuenta algunos gestos dentro de la
     página: <strong>cuánto se lee</strong> (al pasar de la cuarta parte,
     la mitad, tres cuartos y casi el final), <strong>si se usa un
     formulario</strong> (si se pulsa el campo del correo, si el envío se
-    para porque falta algo y si se envía) y si se empieza o se termina una
-    herramienta. Lo hace sin cookies y sin identificar a nadie, y
-    <strong>nunca recoge lo que escribes</strong>: solo que ha pasado.
+    para porque falta algo y si se envía), si se empieza o se termina una
+    herramienta, si contestas «Sí» o «No» a «¿Te ha servido?» al final de
+    una guía o de un artículo, cuántas búsquedas en el índice de guías no encuentran nada
+    (sin lo que escribiste), qué versión del texto de un botón se ha
+    mostrado (se elige al azar cada vez que se carga la página y no se
+    guarda) y cuánto tarda la página en cargarse y en responder. Lo hace
+    sin cookies y sin identificar a nadie, y <strong>nunca recoge lo que
+    escribes</strong>: solo que ha pasado.
   </p>
   <p>
-    Como no almacena ni consulta nada en tu equipo, esta web
-    <strong>no necesita pedirte consentimiento de cookies</strong>: el
-    artículo 22.2 de la LSSI se refiere a los dispositivos de
-    almacenamiento y recuperación de datos en el terminal del usuario,
-    y Umami no usa ninguno.
+    Como no guarda nada en tu equipo, esta web <strong>no te pide
+    consentimiento de cookies</strong> (artículo 22.2 de la LSSI). Lo único
+    que el guion de Umami mira es si en ese navegador existe una marca
+    llamada «umami.disabled», que solo pongo yo en los míos para no contar
+    mis propias visitas; en el tuyo no existe y no se crea.
+  </p>
+  <p>
+    Si tu navegador tiene activado «No rastrear», Umami no te cuenta. Y si
+    llegas desde un anuncio, los identificadores de clic que el anuncio
+    añade a la dirección (fbclid, gclid y parecidos) se quitan de la
+    dirección antes de contar la visita.
   </p>
   <p>
     <strong>Cookies de terceros.</strong> Al pulsar el botón de

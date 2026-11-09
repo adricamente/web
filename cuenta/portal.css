@@ -335,6 +335,11 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,
 
 /* Que un ancla no deje el título debajo de la barra fija de arriba. */
 #v-panel [id]{scroll-margin-top:70px}
+/* 09-11: lo mismo con el foco. «Enviar» sin marcar nada lleva el foco a
+   la primera casilla; si estaba por encima de la pantalla, el navegador
+   la dejaba justo debajo de la barra, tapada a medias (axe: target-size,
+   y WCAG 2.4.11). Con la tarjeta del freno debajo pasa más. */
+#v-panel :is(input,select,textarea,button){scroll-margin-top:70px}
 
 /* La copia firmada, a papel o a PDF: solo el documento. */
 @media print{
@@ -759,9 +764,8 @@ h3{font-weight:700}
    fondo y borde del color de la marca, título grande con su icono.
    Las casillas, con el mismo .opcion de los cuestionarios y 44 px de
    alto para el dedo, a dos columnas también en el móvil: con los rótulos
-   cortos, la pregunta entera cabe en una pantalla (unos 600 px a 390).
-   Desde el 09-11 lleva debajo la del freno, opcional: la tarjeta entera
-   ya no cabe en una pantalla, la primera pregunta sí. */
+   cortos, la tarjeta entera cabe en una pantalla (unos 600 px a 390).
+   Desde el 09-11, la del freno va en otra tarjeta, debajo. */
 .caja.conocido{background:var(--accent-soft);border:2px solid var(--accent);padding:16px 14px 12px;margin:0 0 22px}
 .caja.conocido > h2{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:1.5rem;color:var(--accent-3)}
 .cn-ico{flex:none;width:26px;height:26px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -779,16 +783,12 @@ h3{font-weight:700}
 /* «Prefiero no decirlo», la última y separada: es otra clase de
    respuesta, y quita las demás. */
 .cn-opciones .cn-nodice{grid-column:1 / -1;border-top:1px solid var(--borde-campo);margin-top:4px;padding-top:10px;border-radius:0}
-/* «¿Qué casi te frenó…?» (09-11), debajo y en la misma tarjeta: una raya
-   la separa y la leyenda hace de título, más pequeño que el de la
-   tarjeta porque es la segunda pregunta y no otra tarjeta. Los rótulos
-   son frases: a una columna en el móvil, a dos desde 640 px. */
-.caja.conocido .cn-freno{margin-top:12px;padding-top:10px;border-top:1px solid var(--borde-campo)}
-/* float: una <legend> se monta encima del borde de su fieldset y se
-   comía la raya; flotando, se queda debajo como un párrafo más. */
-.caja.conocido .cn-freno legend{float:left;width:100%;margin:0 0 6px}
-.cn-freno .cn-opciones{clear:both}
-.cn-freno-t{display:block;font-weight:700;font-size:17px;color:var(--accent-3);line-height:1.3}
+/* «¿Qué casi te frenó…?» (09-11), su propia tarjeta debajo, con el mismo
+   aspecto (revisión legal: cada pregunta, su «Enviar»). El título es una
+   frase entera: un punto más pequeño para que no ocupe cuatro renglones
+   a 320 px. Los rótulos son frases: a una columna en el móvil, a dos
+   desde 640 px. */
+.caja.conocido.freno > h2{font-size:1.25rem;line-height:1.25;align-items:flex-start}
 .cn-opciones--frases{grid-template-columns:1fr}
 .cn-opciones .cn-ancha{grid-column:1 / -1}
 @media (min-width:640px){

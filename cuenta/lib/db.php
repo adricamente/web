@@ -194,6 +194,12 @@ function adr_db(array $ADR): PDO {
                «conocido»: el servidor no sabe qué ha marcado. */
             'conocido_cerrado' => 'TEXT',
             'conocido_luego'   => 'TEXT',
+            /* 09-11: «¿Qué casi te frenó…?». Solo el DÍA en que la cerró
+               (contestada o «Prefiero no decirlo»), para no volver a
+               preguntar. Lo que contestó NO está unido a la cuenta: va a
+               `frenos`, sin cod. Un día y no la hora: con la hora, el
+               único freno que llegó a esa hora diría de quién es. */
+            'freno_cerrado'    => 'TEXT',
             /* 03-11: el aviso «Tenla siempre a mano» (añadir la cuenta a
                la pantalla de inicio). En el servidor y no en el navegador
                porque en iPhone la app de la pantalla de inicio no comparte
@@ -278,6 +284,19 @@ function adr_db(array $ADR): PDO {
         ok     INTEGER NOT NULL DEFAULT 1
       )');
     $pdo->exec('CREATE INDEX IF NOT EXISTS i_accesos ON accesos(quien, cuando)');
+
+/* 09-11 (revisión legal): «¿Qué casi te frenó…?», SIN cuenta. Ni cod,
+       ni fecha, ni un id que crezca: el id es aleatorio y la tabla es
+       WITHOUT ROWID, así que el orden en disco tampoco dice cuál llegó
+       antes (con un autoincremento, el freno n.º 7 se cruzaría con la
+       séptima cuenta que lo cerró). El Mac lo recoge con `frenos`, lo
+       suma al recuento y lo borra con `frenos_recogidos`. Lo que no se
+       recoge se borra a los 30 días (adr_frenos_caducados, abajo). */
+    $pdo->exec('
+      CREATE TABLE IF NOT EXISTS frenos (
+        id      TEXT PRIMARY KEY,
+        cifrado BLOB NOT NULL
+      ) WITHOUT ROWID');
 
 $pdo->exec('
       CREATE TABLE IF NOT EXISTS ajustes (
@@ -404,6 +423,23 @@ function adr_freno(PDO $db, string $clave, int $tope = 10, int $ventana = 900): 
 
 function adr_freno_limpia(PDO $db, string $clave): void {
     $db->prepare('DELETE FROM intentos WHERE clave = ?')->execute([$clave]);
+}
+
+/* 09-11: los frenos que nadie ha recogido en 30 días, fuera. Las filas no
+   llevan fecha (ver la tabla `frenos`): lo único que se apunta es el día
+   en que la cola, vacía, recibió el primero (ajustes «frenos_desde»).
+   Pasados 30 días desde ese día se borra la cola ENTERA, también lo que
+   llegó después: se pierde algún freno, a cambio de no guardar cuándo
+   llegó cada uno. Con el Mac recogiendo, la cola está casi siempre vacía. */
+function adr_frenos_caducados(PDO $db): void {
+    $d = $db->query("SELECT valor FROM ajustes WHERE clave = 'frenos_desde'")->fetch();
+    if (!$d) return;
+    $limite = (new DateTimeImmutable(adr_hoy(), new DateTimeZone('Europe/Madrid')))->modify('-30 days')->format('Y-m-d');
+    $vacia = !$db->query('SELECT 1 FROM frenos LIMIT 1')->fetch();
+    if ($vacia || $d['valor'] <= $limite) {
+        $db->exec('DELETE FROM frenos');
+        $db->exec("DELETE FROM ajustes WHERE clave = 'frenos_desde'");
+    }
 }
 
 /** Un papel de un solo uso. Devuelve el papel; guarda su huella. */

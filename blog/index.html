@@ -36,7 +36,8 @@
 
   <!-- Umami: medición sin cookies y sin datos personales. Por eso
        esta web no necesita banner de consentimiento. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
+  <script>/* md2: sin identificadores de clic de anuncios en lo que se manda a Umami */window.adriSinClics=function(t,p){try{var K=['fbclid','gclid','gbraid','wbraid','msclkid'];function l(x){if(typeof x!=='string'||x.indexOf('?')<0)return x;var u=new URL(x,location.href),c=0;if(u.host!==location.host)return x;K.forEach(function(k){if(u.searchParams.has(k)){u.searchParams.delete(k);c=1;}});if(!c)return x;return /^[a-z]+:/i.test(x)?u.href:u.pathname+u.search+u.hash;}if(p&&typeof p==='object'){if(p.url)p.url=l(p.url);if(p.referrer)p.referrer=l(p.referrer);}}catch(e){}return p;};</script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true" data-do-not-track="true" data-before-send="adriSinClics"></script>
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
@@ -1328,6 +1329,7 @@
       <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=blog&amp;utm_content=cinta" target="_blank" rel="noopener"><span class="ab-a">Reservar media hora gratis</span><span class="ab-b">Cuéntame qué te pasa</span></a>
     </p>
+    <p class="apunte residencia">Atiendo solo a personas mayores de 18 años que viven en España.</p>
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a data-umami-event="whatsapp" data-umami-event-sitio="final" onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
@@ -1346,6 +1348,13 @@
       f.hidden = !vis; var h = f.previousElementSibling; while (h && h.tagName !== 'H2' && h.tagName !== 'DIV') { h.hidden = !vis; h = h.previousElementSibling; } if (h && h.tagName === 'H2') h.hidden = !vis;
     });
     cuenta.innerHTML = !v ? '' : n ? n + (n === 1 ? ' artículo' : ' artículos') : 'Ningún artículo con esa palabra. Prueba en <a href="/guias/">las guías</a> o en el <a href="/glosario/">glosario</a>.';
+    /* 09-11 (revisión legal): si lo escrito habla de hacerse daño, el aviso del 024 y el 112 va
+       lo primero y destacado, haya o no resultados. Solo en la página: no se manda nada (ni a
+       Umami ni a ningún sitio). El estilo, en línea porque solo lo usan estos dos buscadores y
+       así no hay que subir estilos.min.css?v= en todas. */
+    var riesgo = /suicid|morir|matarme|autolesi/.test(v);
+    cuenta.style.cssText = riesgo ? 'border-left:4px solid var(--accent);background:var(--accent-soft);color:var(--ink);padding:10px 12px;border-radius:var(--r-s)' : '';
+    if (riesgo) cuenta.innerHTML = '<strong>Si lo estás pasando muy mal ahora, llama al <a href="tel:024">024</a> (gratuito, 24 horas) o al <a href="tel:112">112</a>, o mira <a href="/ayuda-urgente/">ayuda urgente</a>.</strong>' + (n ? ' ' + cuenta.innerHTML : '');
   });
 })();
 </script>
@@ -1669,17 +1678,6 @@
       if(!e.isIntersecting)return;io.unobserve(e.target);
       tr('cta_visto',{'var':v,sitio:e.target.getAttribute('data-umami-event-sitio')||''});});},{threshold:.5});
     Array.prototype.forEach.call(document.querySelectorAll('a .ab-a'),function(s){io.observe(s.parentNode);});
-  })();
-  /* Búsqueda sin resultado: solo la longitud, por tramos. Una vez por término y carga. */
-  (function(){
-    var q=document.querySelector('.buscador input[type="search"]');if(!q)return;
-    var t=0,dados={};
-    function mira(){
-      var s=q.value.trim().toLowerCase();if(!s||dados[s])return;
-      if(document.querySelector('main .filas .tarjeta:not([hidden])'))return;
-      dados[s]=1;var n=s.length;
-      tr('busqueda_vacia',{largo:n<=3?'1-3':(n<=10?'4-10':'11+')});}
-    q.addEventListener('input',function(){clearTimeout(t);t=setTimeout(mira,1200);});
   })();
 })();
 </script>

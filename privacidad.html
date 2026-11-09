@@ -32,7 +32,8 @@
 
   <!-- Umami. Sin cookies y sin datos personales, así que no hace
        falta banner de consentimiento ni tocar cookies.html. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
+  <script>/* md2: sin identificadores de clic de anuncios en lo que se manda a Umami */window.adriSinClics=function(t,p){try{var K=['fbclid','gclid','gbraid','wbraid','msclkid'];function l(x){if(typeof x!=='string'||x.indexOf('?')<0)return x;var u=new URL(x,location.href),c=0;if(u.host!==location.host)return x;K.forEach(function(k){if(u.searchParams.has(k)){u.searchParams.delete(k);c=1;}});if(!c)return x;return /^[a-z]+:/i.test(x)?u.href:u.pathname+u.search+u.hash;}if(p&&typeof p==='object'){if(p.url)p.url=l(p.url);if(p.referrer)p.referrer=l(p.referrer);}}catch(e){}return p;};</script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true" data-do-not-track="true" data-before-send="adriSinClics"></script>
 
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
@@ -72,7 +73,7 @@
   <main id="principal">
 
   <h1>Política de privacidad</h1>
-  <p class="apunte">Última actualización: noviembre de 2026</p>
+  <p class="apunte">Última actualización: 9 de noviembre de 2026</p>
 
   <h2>1. Quién trata tus datos</h2>
   <p>
@@ -209,53 +210,81 @@
     hola@adricamente.com).
   </p>
 
-  <!-- 03-11; 04-11: obligatoria de contestar, con «Prefiero no decirlo»
-       entre las opciones; 04-11 (tarde): la respuesta va unida a tu cuenta
-       (pregunta conocido-v2 con `identificada`). Lo que dice aquí lo hacen
-       cuenta/index.php (la tarjeta), cuenta/api.php (`conocido`,
-       `conocidos`) y el Mac: si cambia uno, cambia el otro. -->
-  <h3 id="conocido">f) La pregunta «¿Cómo me conociste?» de tu cuenta de paciente</h3>
+  <!-- 03-11; 04-11 (tarde): «¿Cómo me conociste?» unida a la cuenta
+       (conocido-v2 con `identificada`). 09-11 (revisión legal): las dos
+       preguntas, opcionales y cada una con su «Prefiero no decirlo»;
+       «¿Qué casi te frenó?» llega sin cuenta (acción `freno`, tabla
+       `frenos`, sin cod ni fecha) y el Mac la suma y la descarta. Lo que
+       dice aquí lo hacen cuenta/index.php (las tarjetas), cuenta/api.php
+       (`conocido`, `conocidos`, `freno`, `frenos`, `frenos_recogidos`) y
+       el Mac: si cambia uno, cambia el otro. «30 días después de que
+       llegue a mi ordenador»: api.php borra el sobre de «¿Cómo me
+       conociste?» 30 días después de que el Mac lo recoge (`recogido`), y
+       el del freno en cuanto lo recoge (`frenos_recogidos`), o a los 30
+       días si nadie lo recoge. -->
+  <h3 id="conocido">f) Las preguntas «¿Cómo me conociste?» y «¿Qué casi te frenó?» de tu cuenta de paciente</h3>
   <p>
-    En tu cuenta te pregunto una vez por dónde me conociste (Instagram,
-    Google, una recomendación…). La pregunta se queda en tu cuenta hasta
-    que la contestas, pero <strong>decir por dónde me conociste es
-    opcional</strong>: «Prefiero no decirlo» es una de las respuestas.
+    En tu cuenta te hago, una sola vez, dos preguntas: por dónde me
+    conociste (Instagram, Facebook, Google, una recomendación…) y qué casi
+    te frenó para pedir la primera sesión (el precio, no saber si lo tuyo
+    era para tanto, miedo o vergüenza, desconfiar de la terapia online, que
+    esté en prácticas o no conocerme, el horario…). Las preguntas se quedan
+    en tu cuenta hasta que las contestas, pero <strong>las dos son
+    opcionales</strong> y cada una tiene su propio «Prefiero no decirlo».
     Contestes lo que contestes, no cambia nada de tu terapia.
   </p>
   <p>
-    <strong>Qué guardo y con quién va:</strong> los canales que marques y
-    lo que escribas en «Otro», <strong>unidos a tu cuenta</strong>, en tu
-    ficha administrativa de paciente. Si eliges «Prefiero no decirlo»,
-    solo queda apuntado eso: que preferiste no decirlo. <strong>No forma
-    parte de tu historia clínica</strong> ni de tu tratamiento.
+    <strong>Qué guardo y con quién va.</strong> De «¿Cómo me conociste?»:
+    los canales que marques y lo que escribas en «Otro», <strong>unidos a
+    tu cuenta</strong>, en tu ficha administrativa de paciente. Si eliges
+    «Prefiero no decirlo», solo queda apuntado eso. De «¿Qué casi te
+    frenó?»: <strong>nada unido a ti</strong>. Lo que marcas llega sin tu
+    nombre ni tu cuenta, se suma a un recuento y se descarta; no tiene
+    casilla para escribir, para que no tengas que contar nada más. Así, ni
+    siquiera yo, que soy quien te atiende, sé qué contestaste.
+    <strong>Ninguna de las dos forma parte de tu historia clínica</strong>
+    ni de tu tratamiento.
   </p>
   <p>
-    <strong>Para qué:</strong> saber por dónde me llegan los pacientes, y
-    cuáles de esos caminos acaban en una terapia que sigue, para decidir
-    dónde tiene sentido estar. No lo uso para nada más, ni para mandarte
-    publicidad, y no se lo doy a nadie. <strong>Responsable:</strong>
-    Adrián Cuñat Andrés, con los datos del apartado 1.
-    <strong>Base jurídica:</strong> como quien contesta está en
-    tratamiento, tu consentimiento explícito (arts. 6.1.a y 9.2.a del
-    RGPD), que das al marcar las casillas y pulsar «Enviar». No darlo
+    <strong>Para qué:</strong> saber por dónde me llegan los pacientes y
+    cuáles de esos caminos acaban en una terapia que sigue, y saber qué hace
+    dudar a la gente antes de pedir cita, para explicarlo mejor. No lo uso
+    para nada más, ni para mandarte publicidad, y no se lo doy a nadie.
+    <strong>Responsable:</strong> Adrián Cuñat Andrés, con los datos del
+    apartado 1. <strong>Base jurídica:</strong> como quien contesta está en
+    tratamiento, y alguna respuesta dice algo de cómo te sentías, tu
+    consentimiento explícito (arts. 6.1.a y 9.2.a del RGPD), que das por
+    separado en cada pregunta al marcar y pulsar «Enviar». No darlo
     («Prefiero no decirlo») no tiene ninguna consecuencia.
   </p>
   <p>
     <strong>Cómo viaja y cuánto se guarda:</strong> lo que contestas sale
     <strong>cifrado desde tu dispositivo</strong> hacia mi ordenador; el
     servidor no puede leerlo y borra su copia cifrada 30 días después de
-    que llegue. En mi ordenador se guarda <strong>mientras dure nuestra
-    relación profesional</strong>, y después se borra (como mucho 14 días después si cierras la cuenta). No va a las copias de seguridad. Además, tu respuesta se suma a un <strong>recuento sin nombre</strong> (cuántas personas llegaron por cada canal, por mes), que se guarda siempre: no lleva tu nombre, ni tu cuenta, ni lo que escribas en «Otro», así que no permite saber quién eres. El servidor guarda
-    además, mientras tengas la cuenta, la fecha en que contestaste, y no
-    qué contestaste: sirve solo para no volver a preguntarte.
-    <strong>Puedes pedir que lo borre</strong>, o retirar tu
-    consentimiento, cuando quieras, en hola@adricamente.com: lo borro de
-    tu ficha. Encargado: Hostinger (alojamiento).
+    que llegue a mi ordenador. En mi ordenador, tu respuesta a «¿Cómo me
+    conociste?» se guarda <strong>mientras dure nuestra relación
+    profesional</strong>, y después se borra (como mucho 14 días después si
+    cierras la cuenta); la de «¿Qué casi te frenó?» se borra en cuanto se
+    suma al recuento. Ninguna va a las copias de seguridad. Los
+    <strong>recuentos sin nombre</strong> (cuántas personas llegaron por
+    cada canal, por mes, y cuántas marcaron cada motivo, por trimestre) se
+    guardan siempre: no llevan tu nombre, ni tu cuenta, ni lo que escribas
+    en «Otro», y si alguna vez publico alguno, solo con cifras de cinco
+    personas o más. El servidor guarda además, mientras tengas la cuenta,
+    la fecha en que contestaste cada pregunta, y no qué contestaste: sirve
+    solo para no volver a preguntarte.
   </p>
   <p>
-    Las respuestas que se enviaron con la versión anterior de la pregunta
-    (hasta el 4 de noviembre de 2026) se sumaron a un recuento sin nombre:
-    esas no se unen a nadie.
+    <strong>Puedes pedir que lo borre</strong>, o retirar tu
+    consentimiento, cuando quieras, en hola@adricamente.com: borro de tu
+    ficha tu respuesta a «¿Cómo me conociste?». La de «¿Qué casi te
+    frenó?» ya no está unida a ti, así que no puedo localizarla: solo existe
+    como un número dentro del recuento. Encargado: Hostinger (alojamiento).
+  </p>
+  <p>
+    Las respuestas que se enviaron con la versión anterior de «¿Cómo me
+    conociste?» (hasta el 4 de noviembre de 2026) se sumaron a un recuento
+    sin nombre: esas no se unen a nadie.
   </p>
 
   <h2>3. Servicios psicológicos</h2>
@@ -280,6 +309,10 @@
     sanitaria, el art. 9.2.h: tratamiento necesario para la prestación
     de asistencia por profesional sujeto a secreto profesional.
     Cal.com actúa aquí como encargado del tratamiento.
+    Con las reservas hago además recuentos sin nombre (cuántas primeras
+    consultas se reservan, cuántas se hacen o no, y cuántas pasan a sesión,
+    por canal) para saber qué funciona. Esos recuentos no llevan tu nombre,
+    tu correo ni la fecha de tu cita.
   </p>
   <p>
     <strong>Lo que surge dentro de la sesión</strong> —lo que me
@@ -331,9 +364,9 @@
         mostrar» o que ya la has añadido) y cuántas veces has entrado,
         para no repetírtelo. Añadirla no guarda nada de tu cuenta en el
         móvil: sin conexión solo se ve una página genérica.</li>
-    <li><strong>«¿Cómo me conociste?»:</strong> esa pregunta no es
-        parte de la asistencia. La trato yo, como explico en el
-        <a href="#conocido">apartado f)</a>.</li>
+    <li><strong>«¿Cómo me conociste?» y «¿Qué casi te frenó?»:</strong>
+        esas preguntas no son parte de la asistencia. Las trato yo, como
+        explico en el <a href="#conocido">apartado f)</a>.</li>
     <li><strong>Tus derechos</strong>, en el centro:
         <a href="mailto:clinicaneurococos@gmail.com">clinicaneurococos@gmail.com</a>.</li>
   </ul>
@@ -356,8 +389,9 @@
     <li><strong>Google Ireland Limited</strong> (Google Workspace) — la videollamada de las
         sesiones y el correo de hola@adricamente.com, desde el que salen los correos a pacientes.</li>
     <li><strong>Umami</strong> — estadísticas de visitas y de uso de la web: qué páginas
-        se ven, cuánto se lee de cada una y si se usan sus formularios y
-        herramientas. Sin cookies, sin identificar a nadie y sin guardar lo que
+        se ven, cuánto se lee de cada una, cuánto tardan en cargar, si se usan
+        sus formularios, su buscador y sus herramientas, y si una guía te ha
+        servido. Sin cookies, sin identificar a nadie y sin guardar lo que
         escribes; procesa de forma temporal la IP y el navegador para contar
         visitantes distintos.</li>
   </ul>

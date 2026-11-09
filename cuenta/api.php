@@ -302,14 +302,15 @@ require_once __DIR__ . '/lib/herramientas.php';
    eran unas 1.500 filas al día que no decían nada y tapaban lo que sí. */
 const ADR_RUTINA = ['recoger', 'recogido', 'claves', 'panel_mac', 'registro',
                     'firmas', 'pendientes', 'estado', 'por_reenviar', 'estado_pagos', 'estado_correo',
-                    'correos_pendientes', 'conocidos'];
+                    'correos_pendientes', 'conocidos', 'frenos'];
 if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
     adr_apunta($db, 'mac', $a);
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-04a';
-const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos', 'instalar', 'instalar_no',
+const ADR_VERSION = '2026-11-09a';
+const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
+                             'instalar', 'instalar_no',
                              'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
 
 switch ($a) {
@@ -574,7 +575,7 @@ case 'mios': {
        la necesita, y el navegador no la tiene guardada en ningún sitio
        —lo que guarda es la privada envuelta—. No es un secreto: es
        pública, y sale de la misma cuenta que acaba de autenticarse. */
-    $p = $db->prepare('SELECT publica, publica_v, conocido_cerrado, conocido_luego,
+    $p = $db->prepare('SELECT publica, publica_v, conocido_cerrado, conocido_luego, freno_cerrado,
                               instalar_entradas, instalar_estado, instalar_no FROM pacientes WHERE cod = ?');
     $p->execute([$cod]);
     $f = $p->fetch();
@@ -738,6 +739,9 @@ case 'mios': {
                  «Ahora no» de antes la vuelve a ver ya (`conocido_luego`
                  se queda, pero ya no cuenta). */
               'conocido' => ['mostrar' => $f['conocido_cerrado'] === null],
+              /* 09-11: «¿Qué casi te frenó…?», su propia tarjeta, también
+                 a quien ya contestó la de arriba. */
+              'freno' => ['mostrar' => $f['freno_cerrado'] === null],
               /* El aviso de la pantalla de inicio (03-11). El servidor
                  solo dice si TOCA; si este dispositivo lo admite, si es un
                  móvil y si ya está instalada lo mira el navegador, y no se
@@ -1115,9 +1119,10 @@ case 'conocido': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
     $acc = (string)($in['accion'] ?? '');
-    /* 04-11: obligatoria. Ya no hay «Ahora no» ni «Prefiero no decirlo»
-       sin sobre: «Prefiero no decirlo» es una opción de la lista y llega
-       como canal `ninguno` dentro del sobre, como cualquier respuesta. */
+    /* 04-11: sin «Ahora no» ni «Prefiero no decirlo» sin sobre:
+       «Prefiero no decirlo» es una opción de la lista y llega como canal
+       `no_dice` dentro del sobre, como cualquier respuesta. Opcional
+       (revisión legal del 09-11): decir el canal no hace falta. */
     if ($acc !== 'enviar') adr_json(['error' => 'acción no válida: se contesta con «enviar» (también «Prefiero no decirlo»)'], 400);
     if (!adr_freno($db, 'conocido:' . $cod, 10, 3600)) adr_json(['error' => 'despacio'], 429);
     $q = $db->prepare('SELECT conocido_cerrado, conocido_luego FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
@@ -1129,10 +1134,8 @@ case 'conocido': {
     if ($f['conocido_cerrado'] !== null) adr_json(['ok' => true, 'ya' => true, 'otra_vez' => false]);
     $cierra = $db->prepare('UPDATE pacientes SET conocido_cerrado = ? WHERE cod = ?');
     if ($acc === 'enviar') {
-        /* Las quince casillas de «¿Cómo me conociste?», las nueve del
-           freno (09-11, opcional, en el mismo sobre) y dos «otro» de 120
-           caracteres no llegan a 2 kB sellados (medido: 1.376 bytes con todo
-           marcado); 8 kB es margen, no invitación. */
+        /* Quince casillas y un «otro» de 120 caracteres no llegan a 2 kB
+           sellados; 8 kB es margen, no invitación. */
         $cifrado = adr_deb64($in['cifrado'] ?? null);
         if (!$cifrado || strlen($cifrado) > 8192) adr_json(['error' => 'respuesta no válida'], 400);
         $db->beginTransaction();
@@ -1169,6 +1172,73 @@ case 'conocidos': {
                   WHERE activado IS NOT NULL AND cod <> 'hoja'")->fetchColumn(),
               'cerradas' => (int)$db->query("SELECT COUNT(*) FROM pacientes
                   WHERE conocido_cerrado IS NOT NULL AND cod <> 'hoja'")->fetchColumn()]);
+}
+
+/* --- «¿Qué casi te frenó…?» (09-11, revisión legal) -----------------
+   La respuesta NO se une a la cuenta. Lo único que se guarda de la cuenta
+   es el día en que la cerró (freno_cerrado), para no volver a preguntar.
+   Lo marcado va sellado al Mac y entra en `frenos` sin cod, sin fecha y
+   con un id aleatorio (ver la tabla en lib/db.php). Sin adr_freno(): su
+   «freno:cod» con la hora en `intentos` sería justo el cruce que se
+   quiere evitar, y no hace falta, porque solo se puede cerrar una vez.
+   «Prefiero no decirlo» (no_decir) cierra sin guardar nada más. */
+case 'freno': {
+    $cod = adr_sesion($ADR['secreto']);
+    if (!$cod) adr_json(['error' => 'entra primero'], 401);
+    $acc = (string)($in['accion'] ?? '');
+    if (!in_array($acc, ['enviar', 'no_decir'], true)) adr_json(['error' => 'acción no válida: «enviar» o «no_decir»'], 400);
+    $q = $db->prepare('SELECT freno_cerrado FROM pacientes WHERE cod = ? AND activado IS NOT NULL');
+    $q->execute([$cod]);
+    $f = $q->fetch();
+    if (!$f) adr_json(['error' => 'no existe'], 404);
+    if ($f['freno_cerrado'] !== null) adr_json(['ok' => true, 'ya' => true]);
+    $cifrado = null;
+    if ($acc === 'enviar') {
+        /* Nueve casillas sin texto: unos 250 bytes sellados. */
+        $cifrado = adr_deb64($in['cifrado'] ?? null);
+        if (!$cifrado || strlen($cifrado) > 2048) adr_json(['error' => 'respuesta no válida'], 400);
+    }
+    adr_frenos_caducados($db);
+    $db->beginTransaction();
+    try {
+        if ($cifrado !== null) {
+            $db->prepare('INSERT INTO frenos (id, cifrado) VALUES (?, ?)')->execute([bin2hex(random_bytes(16)), $cifrado]);
+            $db->prepare("INSERT OR IGNORE INTO ajustes (clave, valor, puesto) VALUES ('frenos_desde', ?, ?)")
+               ->execute([adr_hoy(), adr_hoy()]);
+        }
+        $db->prepare('UPDATE pacientes SET freno_cerrado = ? WHERE cod = ?')->execute([adr_hoy(), $cod]);
+        $db->commit();
+    } catch (Throwable $e) {
+        $db->rollBack();
+        adr_json(['error' => 'no se ha podido guardar'], 500);
+    }
+    adr_json(['ok' => true]);
+}
+
+/* Lo que el Mac recoge del freno: id (aleatorio) y sobre. Nada más: ni
+   fecha, ni cuenta, ni cuántas cuentas lo han cerrado. */
+case 'frenos': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    adr_frenos_caducados($db);
+    $q = $db->query('SELECT id, cifrado FROM frenos ORDER BY id LIMIT 500');
+    adr_json(['frenos' => array_map(fn($x) => ['id' => (string)$x['id'], 'cifrado' => adr_b64($x['cifrado'])], $q->fetchAll())]);
+}
+
+/* El Mac ya los ha sumado: se BORRAN en el acto. No hay margen de días
+   como en `recogido`: lo sumado vive en el recuento, y el sobre no lo
+   necesita nadie más. */
+case 'frenos_recogidos': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $ids = array_values(array_filter(array_map('strval', (array)($in['ids'] ?? [])), fn($x) => preg_match('/^[0-9a-f]{32}$/', $x)));
+    $n = 0;
+    if ($ids) {
+        $marcas = implode(',', array_fill(0, count($ids), '?'));
+        $b = $db->prepare("DELETE FROM frenos WHERE id IN ($marcas)");
+        $b->execute($ids);
+        $n = $b->rowCount();
+    }
+    adr_frenos_caducados($db);
+    adr_json(['ok' => true, 'borrados' => $n]);
 }
 
 /* --- Lo que hace el Mac ---------------------------------------------- */
@@ -2153,6 +2223,7 @@ case 'latido': {
        Antes solo pasaban cuando el Mac recogía; con el cron, aunque el Mac
        esté apagado. Nada de esto lee contenido: no necesita la clave. */
     try { adr_vencen($db, $ADR); adr_recuerda($db, $ADR); adr_limpia_altas($db); } catch (Throwable $e) {}
+    try { adr_frenos_caducados($db); } catch (Throwable $e) {}   /* 09-11 */
     try { adr_recordatorios($db, $ADR); adr_resumen_dia($db, $ADR); } catch (Throwable $e) {}
     try { require_once __DIR__ . '/lib/pagos.php'; adr_visperas($db, $ADR); } catch (Throwable $e) {}
     adr_json(['ok' => true]);

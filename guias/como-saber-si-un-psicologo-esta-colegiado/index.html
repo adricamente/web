@@ -7,7 +7,7 @@
 
   <title>Cómo saber si un psicólogo está colegiado | adricamente</title>
 <!-- md2-head -->
-<style>.util{display:flex;flex-wrap:wrap;align-items:center;gap:4px 18px;margin:28px 0;padding:12px 16px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-m)}.util-t{margin:0;font-weight:700;color:var(--ink)}.util-fila{display:flex;align-items:center;gap:10px;min-height:48px;margin:0}.util .boton.secundario{width:auto;min-width:76px;min-height:44px;padding:9px 18px;line-height:1.2}.util-gracias{color:var(--ink-2)}.ab-b{display:none}html[data-ab=b] .ab-a{display:none}html[data-ab=b] .ab-b{display:inline}</style>
+<style>.util{margin:28px 0;padding:12px 16px;background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-m)}.util-t{margin:0 0 4px;font-weight:700;color:var(--ink)}.util-fila{display:flex;align-items:center;gap:10px;min-height:48px;margin:0}.util .boton.secundario{width:auto;min-width:76px;min-height:44px;padding:9px 18px;line-height:1.2}.util-gracias{color:var(--ink-2)}.ab-b{display:none}html[data-ab=b] .ab-a{display:none}html[data-ab=b] .ab-b{display:inline}</style>
 <noscript><style>.util{display:none}</style></noscript>
 <script>document.documentElement.setAttribute('data-ab',Math.random()<.5?'b':'a');</script>
 <!-- /md2-head -->
@@ -37,7 +37,8 @@
 
   <!-- Umami: medición sin cookies y sin datos personales. Por eso
        esta web no necesita banner de consentimiento. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
+  <script>/* md2: sin identificadores de clic de anuncios en lo que se manda a Umami */window.adriSinClics=function(t,p){try{var K=['fbclid','gclid','gbraid','wbraid','msclkid'];function l(x){if(typeof x!=='string'||x.indexOf('?')<0)return x;var u=new URL(x,location.href),c=0;if(u.host!==location.host)return x;K.forEach(function(k){if(u.searchParams.has(k)){u.searchParams.delete(k);c=1;}});if(!c)return x;return /^[a-z]+:/i.test(x)?u.href:u.pathname+u.search+u.hash;}if(p&&typeof p==='object'){if(p.url)p.url=l(p.url);if(p.referrer)p.referrer=l(p.referrer);}}catch(e){}return p;};</script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true" data-do-not-track="true" data-before-send="adriSinClics"></script>
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
@@ -526,6 +527,7 @@
       <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta_guia')"
          href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=guia&amp;utm_content=cinta_guia" target="_blank" rel="noopener"><span class="ab-a">Reservar media hora gratis</span><span class="ab-b">Cuéntame qué te pasa</span></a>
     </p>
+    <p class="apunte residencia">Atiendo solo a personas mayores de 18 años que viven en España.</p>
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a data-umami-event="whatsapp" data-umami-event-sitio="final" onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
   </section>
@@ -563,6 +565,7 @@
   <div class="util" role="group" aria-labelledby="util-t">
     <p class="util-t" id="util-t">¿Te ha servido?</p>
     <p class="util-fila"><button type="button" class="boton secundario" data-v="si">Sí</button><button type="button" class="boton secundario" data-v="no">No</button><span class="util-gracias" aria-live="polite"></span></p>
+    <template class="util-no">Siento que no. Si lo estás pasando mal ahora, llama al <a href="tel:024">024</a> (gratis, 24 horas) o al <a href="tel:112">112</a>. Y si quieres hablarlo, <a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_util')">la primera media hora es gratis</a>.</template>
   </div>
 <!-- /util -->
   <div class="faq fuentes-plegadas">
@@ -1192,9 +1195,10 @@
     var hecho=false;
     u.addEventListener('click',function(e){
       var b=e.target.closest&&e.target.closest('button[data-v]');if(!b||hecho)return;
-      hecho=true;tr('util',{v:b.getAttribute('data-v')});
+      var v=b.getAttribute('data-v'),g=u.querySelector('.util-gracias'),t=u.querySelector('template.util-no');
+      hecho=true;tr('util',{v:v});
       Array.prototype.forEach.call(u.querySelectorAll('button[data-v]'),function(x){x.parentNode.removeChild(x);});
-      u.querySelector('.util-gracias').textContent='Gracias.';});
+      if(v==='no'&&t&&t.content)g.appendChild(t.content.cloneNode(true));else g.textContent='Gracias.';});
   })();
   /* Prueba A/B de la reserva: var en cada «cita» y «cta_visto», una vez por enlace. */
   (function(){
