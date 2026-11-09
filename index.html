@@ -21,6 +21,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Psicólogo online colegiado: ansiedad, ánimo y autoestima</title>
+<!-- md2-head -->
+<style>.ab-b{display:none}html[data-ab=b] .ab-a{display:none}html[data-ab=b] .ab-b{display:inline}</style>
+<script>document.documentElement.setAttribute('data-ab',Math.random()<.5?'b':'a');</script>
+<!-- /md2-head -->
   <meta name="description" content="Terapia online con psicólogo colegiado para la ansiedad, el ánimo bajo y la autoestima. Sesiones de 50 a 60 minutos, 30 €; la primera media hora, gratis.">
 
   <meta property="og:title" content="Psicólogo online colegiado: ansiedad, ánimo y autoestima">
@@ -46,7 +50,7 @@
 
   <!-- Umami: medición sin cookies y sin datos personales. Por eso
        esta web no necesita banner de consentimiento. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
@@ -526,7 +530,7 @@
     tiempo que casi nada te hace ilusión. Desde fuera, nadie lo diría.</p>
     <p class="precio-linea">Sesiones de entre 50 y 60 minutos por videollamada, a 30&nbsp;€.
     <strong>La primera media hora es gratis.</strong></p>
-    <p class="acciones"><a data-umami-event="cita" data-umami-event-sitio="arriba" class="boton grande" onclick="window.medir&&window.medir('clic_reserva_portada')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=portada" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
+    <p class="acciones"><a data-umami-event="cita" data-umami-event-sitio="arriba" class="boton grande" onclick="window.medir&&window.medir('clic_reserva_portada')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=portada" target="_blank" rel="noopener"><span class="ab-a">Reservar media hora gratis</span><span class="ab-b">Cuéntame qué te pasa</span></a></p>
     <p class="tranquila">Sin tarjeta y sin compromiso. Se abre el calendario y eliges un hueco libre.</p>
     <p class="credencial">Adrián Cuñat Andrés, psicólogo colegiado nº CM03836, cursando el Máster en Psicología General Sanitaria, en prácticas supervisadas en el centro sanitario Neurococos.</p>
     <p class="otra-puerta">¿Prefieres empezar por tu cuenta? Prueba <a onclick="window.medir&&window.medir('clic_mapa_portada')" href="/mapa/">el mapa de lo que evitas</a>: diez minutos, sin registro.</p>
@@ -825,7 +829,7 @@
 <!-- /pv:cierre --><h2>El siguiente paso son treinta minutos</h2>
     <p class="entrada">Me cuentas qué te trae y sales sabiendo qué haría yo
     con ello. <strong>No tienes que decidir nada ese día.</strong></p>
-    <p class="acciones"><a data-umami-event="cita" data-umami-event-sitio="final" class="boton grande" onclick="window.medir&&window.medir('clic_reserva_cinta')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a></p>
+    <p class="acciones"><a data-umami-event="cita" data-umami-event-sitio="final" class="boton grande" onclick="window.medir&&window.medir('clic_reserva_cinta')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=portada&amp;utm_content=cinta" target="_blank" rel="noopener"><span class="ab-a">Reservar media hora gratis</span><span class="ab-b">Cuéntame qué te pasa</span></a></p>
     <p class="tranquila">Online, para residentes en España, en el centro
     sanitario Neurococos.</p>
 <!-- pv:cierre-fin -->
@@ -1170,5 +1174,29 @@
 })();
 </script>
 <!-- /md-js -->
+<!-- md2-js -->
+<script>
+/* Medición sin datos, segunda parte (medicion2.py, 09-11): ni lo que se escribe
+   ni el tema; nada en el navegador. */
+(function(){
+  var cola=[],vueltas=0;
+  function tr(e,d){try{if(window.umami&&window.umami.track){window.umami.track(e,d);return;}}catch(_){return;}
+    if(cola.push([e,d])===1)espera();}
+  function espera(){setTimeout(function(){
+    if(window.umami&&window.umami.track){var c=cola;cola=[];c.forEach(function(x){try{window.umami.track(x[0],x[1]);}catch(_){}});}
+    else if(++vueltas<20)espera();else cola=[];},500);}
+  /* Prueba A/B de la reserva: var en cada «cita» y «cta_visto», una vez por enlace. */
+  (function(){
+    var v=document.documentElement.getAttribute('data-ab');if(v!=='a'&&v!=='b')return;
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-umami-event="cita"]'),function(a){a.setAttribute('data-umami-event-var',v);});
+    if(!('IntersectionObserver' in window))return;
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting)return;io.unobserve(e.target);
+      tr('cta_visto',{'var':v,sitio:e.target.getAttribute('data-umami-event-sitio')||''});});},{threshold:.5});
+    Array.prototype.forEach.call(document.querySelectorAll('a .ab-a'),function(s){io.observe(s.parentNode);});
+  })();
+})();
+</script>
+<!-- /md2-js -->
 </body>
 </html>

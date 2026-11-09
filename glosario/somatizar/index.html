@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Somatizar: qué significa y qué no | adricamente</title>
+<!-- md2-head -->
+<style>.ab-b{display:none}html[data-ab=b] .ab-a{display:none}html[data-ab=b] .ab-b{display:inline}</style>
+<script>document.documentElement.setAttribute('data-ab',Math.random()<.5?'b':'a');</script>
+<!-- /md2-head -->
   <meta name="description" content="Somatizar no es «inventárselo». Qué quiere decir, por qué el cuerpo responde a la ansiedad con síntomas reales y por qué antes hay que descartar lo físico.">
 
   <meta property="og:title" content="Somatizar: qué significa y qué no | adricamente">
@@ -32,7 +36,7 @@
 
   <!-- Umami: medición sin cookies y sin datos personales. Por eso
        esta web no necesita banner de consentimiento. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
@@ -370,7 +374,7 @@
     </ul>
     <p>
       <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta_glosario')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=cinta_glosario" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=cinta_glosario" target="_blank" rel="noopener"><span class="ab-a">Reservar media hora gratis</span><span class="ab-b">Cuéntame qué te pasa</span></a>
     </p>
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a data-umami-event="whatsapp" data-umami-event-sitio="final" onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
@@ -590,5 +594,29 @@
     pinta();
   })();
 </script>
+<!-- md2-js -->
+<script>
+/* Medición sin datos, segunda parte (medicion2.py, 09-11): ni lo que se escribe
+   ni el tema; nada en el navegador. */
+(function(){
+  var cola=[],vueltas=0;
+  function tr(e,d){try{if(window.umami&&window.umami.track){window.umami.track(e,d);return;}}catch(_){return;}
+    if(cola.push([e,d])===1)espera();}
+  function espera(){setTimeout(function(){
+    if(window.umami&&window.umami.track){var c=cola;cola=[];c.forEach(function(x){try{window.umami.track(x[0],x[1]);}catch(_){}});}
+    else if(++vueltas<20)espera();else cola=[];},500);}
+  /* Prueba A/B de la reserva: var en cada «cita» y «cta_visto», una vez por enlace. */
+  (function(){
+    var v=document.documentElement.getAttribute('data-ab');if(v!=='a'&&v!=='b')return;
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-umami-event="cita"]'),function(a){a.setAttribute('data-umami-event-var',v);});
+    if(!('IntersectionObserver' in window))return;
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting)return;io.unobserve(e.target);
+      tr('cta_visto',{'var':v,sitio:e.target.getAttribute('data-umami-event-sitio')||''});});},{threshold:.5});
+    Array.prototype.forEach.call(document.querySelectorAll('a .ab-a'),function(s){io.observe(s.parentNode);});
+  })();
+})();
+</script>
+<!-- /md2-js -->
 </body>
 </html>

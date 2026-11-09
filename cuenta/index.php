@@ -181,6 +181,10 @@ $cuerpo .= <<<'HTML'
                (`value`) son las de siempre. -->
           <div class="cn-opciones">
             <label class="opcion"><input type="checkbox" name="cn" value="instagram"> Instagram</label>
+            <!-- 09-11: «facebook», clave nueva, junto a Instagram. Misma pregunta
+                 (conocido-v2), como google_ia e ia el 06-11: una clave más no
+                 cambia lo que significan las demás. -->
+            <label class="opcion"><input type="checkbox" name="cn" value="facebook"> Facebook</label>
             <label class="opcion"><input type="checkbox" name="cn" value="tiktok"> TikTok</label>
             <label class="opcion"><input type="checkbox" name="cn" value="youtube"> YouTube</label>
             <label class="opcion"><input type="checkbox" name="cn" value="google"> Google (búsqueda)</label>
@@ -200,6 +204,35 @@ $cuerpo .= <<<'HTML'
               <input type="text" id="cn-otro-t" maxlength="120" autocomplete="off">
             </div>
             <label class="opcion cn-nodice"><input type="checkbox" name="cn" value="no_dice" id="cn-nodice"> Prefiero no decirlo</label>
+          </div>
+        </fieldset>
+        <!-- 09-11: «¿Qué casi te frenó…?», en la misma tarjeta y en el mismo
+             sobre (campo `freno`), pero OPCIONAL: «Enviar» no mira si está
+             contestada, y vacía va como freno: null. Por qué aquí: es la
+             misma persona y el mismo momento, y una segunda tarjeta sería
+             una segunda pregunta en otra visita. Las mismas reglas que la
+             de arriba: «Otro» con texto corto que marca su casilla al
+             escribir, y dos respuestas exclusivas, «Nada, lo tenía claro» y
+             «Prefiero no decirlo». A una columna en el móvil: los rótulos
+             son frases, y a dos se partían en tres renglones. -->
+        <fieldset class="cn-freno">
+          <legend><span class="cn-freno-t">¿Qué casi te frenó para pedir la primera sesión?</span>
+            <span class="cn-freno-p">Opcional. Puedes marcar varias.</span></legend>
+          <div class="cn-opciones cn-opciones--frases">
+            <label class="opcion"><input type="checkbox" name="fr" value="precio"> El precio</label>
+            <label class="opcion"><input type="checkbox" name="fr" value="para_tanto"> No sabía si lo mío era para tanto</label>
+            <label class="opcion"><input type="checkbox" name="fr" value="miedo"> Miedo o vergüenza</label>
+            <label class="opcion"><input type="checkbox" name="fr" value="online"> Desconfianza de la terapia online</label>
+            <label class="opcion"><input type="checkbox" name="fr" value="practicas"> Que esté en prácticas o no conocerme</label>
+            <label class="opcion"><input type="checkbox" name="fr" value="horario"> El horario</label>
+            <div class="opcion cn-otro">
+              <input type="checkbox" name="fr" value="otro" id="fr-otro">
+              <label for="fr-otro">Otro:</label>
+              <label for="fr-otro-t" class="oculto-visual">Otro motivo: escribe cuál</label>
+              <input type="text" id="fr-otro-t" maxlength="120" autocomplete="off">
+            </div>
+            <label class="opcion cn-nodice"><input type="checkbox" name="fr" value="nada" id="fr-nada"> Nada, lo tenía claro</label>
+            <label class="opcion cn-ancha"><input type="checkbox" name="fr" value="no_dice" id="fr-nodice"> Prefiero no decirlo</label>
           </div>
         </fieldset>
         <p class="cn-botones">
@@ -1969,25 +2002,35 @@ function pintaConocido(c) {
   $('cn-estado').textContent = '';
   caja.hidden = false;
 }
-/* «Prefiero no decirlo» es exclusiva: marcarla quita las demás y vacía
-   «Otro»; marcar otra la quita a ella. */
+/* Las respuestas exclusivas: «Prefiero no decirlo» en las dos preguntas
+   y, en la del freno (09-11), también «Nada, lo tenía claro». Marcar una
+   quita las demás de SU pregunta y vacía su «Otro»; marcar otra la quita
+   a ella. */
+const CN_EXCLUSIVAS = { cn: ['no_dice'], fr: ['nada', 'no_dice'] };
+const CN_OTRO_T = { cn: 'cn-otro-t', fr: 'fr-otro-t' };
 $('f-conocido').addEventListener('change', (ev) => {
   const t = ev.target;
-  if (t && t.name === 'cn' && t.checked) {
-    if (t.value === 'no_dice') {
-      document.querySelectorAll('#f-conocido input[name=cn]').forEach(x => { if (x !== t) x.checked = false; });
-      $('cn-otro-t').value = '';
-    } else $('cn-nodice').checked = false;
+  const excl = t && CN_EXCLUSIVAS[t.name];
+  if (excl && t.checked) {
+    const del = document.querySelectorAll('#f-conocido input[name=' + t.name + ']');
+    if (excl.includes(t.value)) {
+      del.forEach(x => { if (x !== t) x.checked = false; });
+      $(CN_OTRO_T[t.name]).value = '';
+    } else del.forEach(x => { if (excl.includes(x.value)) x.checked = false; });
   }
   $('cn-estado').textContent = '';
 });
 /* Quien escribe en «Otro» quiere decir «otro»: no le hacemos marcar la
    casilla además. Borrar el texto no la desmarca (puede estar corrigiendo). */
-$('cn-otro-t').addEventListener('input', () => {
-  if ($('cn-otro-t').value.trim() && !$('cn-otro').checked) {
-    $('cn-otro').checked = true;
-    $('cn-nodice').checked = false;
-  }
+[['cn-otro-t', 'cn-otro', 'cn'], ['fr-otro-t', 'fr-otro', 'fr']].forEach(([texto, casilla, nombre]) => {
+  $(texto).addEventListener('input', () => {
+    if ($(texto).value.trim() && !$(casilla).checked) {
+      $(casilla).checked = true;
+      document.querySelectorAll('#f-conocido input[name=' + nombre + ']').forEach(x => {
+        if (CN_EXCLUSIVAS[nombre].includes(x.value)) x.checked = false;
+      });
+    }
+  });
 });
 $('f-conocido').addEventListener('submit', (ev) => { ev.preventDefault(); cnEnviar(); });
 
@@ -2017,11 +2060,25 @@ async function cnEnviar() {
      `cod_web`: el Mac la apunta en la ficha de esa persona (la tarjeta
      lo dice antes de contestar, y privacidad.html, apartado f). El
      código va DENTRO del sobre sellado: el servidor no lo lee. Sin hora. */
+  /* 09-11: `freno`, la segunda pregunta, opcional y en el mismo sobre.
+     Sin marcar nada, freno: null, y se envía igual: no bloquea. «Otro»
+     marcado sin texto tampoco bloquea aquí (cuenta como «otro», con
+     otro: null): pararle el envío por una pregunta opcional sería
+     hacerla obligatoria. Claves fijas para contar, como `canales`, y
+     su versión propia (freno-v1) por si un día cambian las opciones. */
+  const frenos = [...document.querySelectorAll('#f-conocido input[name=fr]:checked')];
+  const frOtro = $('fr-otro-t').value.trim().slice(0, 120);
   const cifrado = sellarHaciaElMac({
     v: 1, tipo: 'conocido', pregunta: 'conocido-v2', identificada: true, cod_web: miCod, origen: 'cuenta',
     canales: marcadas.map(x => x.value),
     rotulos: marcadas.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
     otro: $('cn-otro').checked ? otro : null,
+    freno: frenos.length ? {
+      pregunta: 'freno-v1',
+      motivos: frenos.map(x => x.value),
+      rotulos: frenos.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
+      otro: $('fr-otro').checked && frOtro ? frOtro : null,
+    } : null,
     dia: new Date().toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }),
   }, macPublica);
   $('cn-enviar').disabled = true;
@@ -2037,6 +2094,10 @@ async function cnEnviar() {
     $('cn-gracias').hidden = false;
     $('cn-gracias').focus();
     CN_PENDIENTE = false;
+  } catch (e) {
+    /* 09-11: sin red, fetch lanza y antes no se decía nada (y quedaba un
+       error suelto en la consola). Lo mismo que un !r.ok. */
+    est.textContent = 'No se ha podido guardar. Inténtalo otra vez.';
   } finally { $('cn-enviar').disabled = false; }
 }
 

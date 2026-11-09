@@ -1129,8 +1129,10 @@ case 'conocido': {
     if ($f['conocido_cerrado'] !== null) adr_json(['ok' => true, 'ya' => true, 'otra_vez' => false]);
     $cierra = $db->prepare('UPDATE pacientes SET conocido_cerrado = ? WHERE cod = ?');
     if ($acc === 'enviar') {
-        /* Once casillas y un «otro» de 120 caracteres no llegan a 2 kB
-           sellados; 8 kB es margen, no invitación. */
+        /* Las quince casillas de «¿Cómo me conociste?», las nueve del
+           freno (09-11, opcional, en el mismo sobre) y dos «otro» de 120
+           caracteres no llegan a 2 kB sellados (medido: 1.376 bytes con todo
+           marcado); 8 kB es margen, no invitación. */
         $cifrado = adr_deb64($in['cifrado'] ?? null);
         if (!$cifrado || strlen($cifrado) > 8192) adr_json(['error' => 'respuesta no válida'], 400);
         $db->beginTransaction();

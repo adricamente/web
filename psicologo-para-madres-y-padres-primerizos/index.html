@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Psicólogo online para madres y padres primerizos</title>
+<!-- md2-head -->
+<style>.ab-b{display:none}html[data-ab=b] .ab-a{display:none}html[data-ab=b] .ab-b{display:inline}</style>
+<script>document.documentElement.setAttribute('data-ab',Math.random()<.5?'b':'a');</script>
+<!-- /md2-head -->
   <meta name="description" content="Terapia por videollamada para madres y padres primerizos: la sesión es para ti, no para el bebé. Depresión y ansiedad tras el parto, y quién te ve antes.">
 
   <meta property="og:title" content="Psicólogo online para madres y padres primerizos">
@@ -32,7 +36,7 @@
 
   <!-- Umami: medición sin cookies y sin datos personales. Por eso
        esta web no necesita banner de consentimiento. -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97"></script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="d0a4fbec-c3f0-45bd-8e76-8a9463b67f97" data-performance="true"></script>
   <script>window.medir=function(e){try{
     if(window.plausible)window.plausible(e);
     if(window.umami&&window.umami.track)window.umami.track(e);
@@ -353,7 +357,7 @@
   <div class="caja">
     <p style="margin-bottom:0">No soy especialista en madres y padres primerizos: no existe esa especialidad. Lo que hago es aplicar terapias contextuales y cognitivo-conductuales a lo que te está pasando, teniendo en cuenta cómo es tu situación. No te prometo que el cansancio o la culpa se vayan, ni en cuánto tiempo. Te puedo ayudar a entender qué te está pasando y a trabajarlo.</p>
   </div>
-  <p class="apunte">Por videollamada, 30&nbsp;€ la sesión, semanal o cada quince días. <a data-umami-event="cita" data-umami-event-sitio="arriba" onclick="window.medir&&window.medir('clic_reserva_arriba')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=arriba" target="_blank" rel="noopener">La primera media hora es gratis</a> (<a href="/primera-sesion/">qué pasa en ella</a>).</p>
+  <p class="apunte">Por videollamada, 30&nbsp;€ la sesión, semanal o cada quince días. <a data-umami-event="cita" data-umami-event-sitio="arriba" onclick="window.medir&&window.medir('clic_reserva_arriba')" href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=arriba" target="_blank" rel="noopener"><span class="ab-a">La primera media hora es gratis</span><span class="ab-b">Cuéntame qué te pasa: 30 minutos gratis</span></a> (<a href="/primera-sesion/">qué pasa en ella</a>).</p>
   <figure class="foto cabecera-foto">
     <img class="foto-amb" src="/fotos/a/taza-ventana-a480.webp" srcset="/fotos/a/taza-ventana-a1400.webp 1400w, /fotos/a/taza-ventana-a1200.webp 1200w, /fotos/a/taza-ventana-a900.webp 900w, /fotos/a/taza-ventana-a800.webp 800w, /fotos/a/taza-ventana-a480.webp 480w" sizes="(min-width: 860px) 680px, 100vw" width="1200" height="675" alt="Una taza de té junto a una ventana luminosa" loading="eager" fetchpriority="high" decoding="async">
   </figure>
@@ -555,7 +559,7 @@
     </ul>
     <p>
       <a data-umami-event="cita" data-umami-event-sitio="final" class="boton" onclick="window.medir&&window.medir('clic_reserva_cinta')"
-         href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=cinta" target="_blank" rel="noopener">Reservar media hora gratis</a>
+         href="https://cal.com/adricamente/sesion-informativa-gratuita?utm_source=adricamente&amp;utm_medium=consulta&amp;utm_content=cinta" target="_blank" rel="noopener"><span class="ab-a">Reservar media hora gratis</span><span class="ab-b">Cuéntame qué te pasa</span></a>
     </p>
     <p class="tranquiliza cinta-otra"><a href="/primera-sesion/" onclick="window.medir&&window.medir('clic_primera_sesion_cinta')">Qué pasa exactamente en esos treinta minutos</a>: qué te pregunto, qué no y qué hacemos si te quedas en blanco.</p>
     <p class="tranquiliza cinta-otra">¿Prefieres preguntar algo antes? <a data-umami-event="whatsapp" data-umami-event-sitio="final" onclick="window.medir&&window.medir('clic_whatsapp_cinta')" href="https://wa.me/34611702119?text=Hola%20Adri%C3%A1n%2C%20te%20escribo%20desde%20la%20web." target="_blank" rel="noopener">Escríbeme por WhatsApp</a>. No es un canal de urgencias: si es urgente, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
@@ -842,5 +846,29 @@
 })();
 </script>
 <!-- /md-js -->
+<!-- md2-js -->
+<script>
+/* Medición sin datos, segunda parte (medicion2.py, 09-11): ni lo que se escribe
+   ni el tema; nada en el navegador. */
+(function(){
+  var cola=[],vueltas=0;
+  function tr(e,d){try{if(window.umami&&window.umami.track){window.umami.track(e,d);return;}}catch(_){return;}
+    if(cola.push([e,d])===1)espera();}
+  function espera(){setTimeout(function(){
+    if(window.umami&&window.umami.track){var c=cola;cola=[];c.forEach(function(x){try{window.umami.track(x[0],x[1]);}catch(_){}});}
+    else if(++vueltas<20)espera();else cola=[];},500);}
+  /* Prueba A/B de la reserva: var en cada «cita» y «cta_visto», una vez por enlace. */
+  (function(){
+    var v=document.documentElement.getAttribute('data-ab');if(v!=='a'&&v!=='b')return;
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-umami-event="cita"]'),function(a){a.setAttribute('data-umami-event-var',v);});
+    if(!('IntersectionObserver' in window))return;
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){
+      if(!e.isIntersecting)return;io.unobserve(e.target);
+      tr('cta_visto',{'var':v,sitio:e.target.getAttribute('data-umami-event-sitio')||''});});},{threshold:.5});
+    Array.prototype.forEach.call(document.querySelectorAll('a .ab-a'),function(s){io.observe(s.parentNode);});
+  })();
+})();
+</script>
+<!-- /md2-js -->
 </body>
 </html>
