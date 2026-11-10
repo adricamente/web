@@ -4797,3 +4797,13 @@ main{counter-reset:is fs}
 .ed-sin .ed-enlace{background:none;border:0;font:inherit;color:var(--ink-2);text-decoration:underline;text-underline-offset:.2em;cursor:pointer;padding:10px 0;margin-block:-10px}
 .ed-sin .ed-enlace:focus-visible{outline:3px solid var(--accent-2);outline-offset:3px}
 @media print{.ed-elige,.ed-fila,.ed-dos,.ed-caja{display:none!important}}
+/* «Con una frase basta…» (conversion.py, 10-11), debajo de «Escríbeme por
+   WhatsApp». Lleva la clase del párrafo de arriba, y con ella su letra y su
+   color; esto solo la pega a él, que es su continuación: 4px en vez del
+   margen de párrafo, y sin la raya de puntos que la llamada de las áreas pone
+   encima de .otra-puerta-media. Con un selector por sitio porque cada uno
+   fija el margen de arriba con dos clases (.cinta .cinta-otra, .llamada
+   .tranquiliza…). Sin :has() (navegadores de antes de 2023), el párrafo de
+   arriba conserva su margen de abajo y la línea queda algo más suelta. */
+p:has(+ .wa-frase){margin-bottom:4px}
+p.wa-frase,.cinta p.wa-frase,.llamada p.wa-frase,.llamada-media p.wa-frase{margin-top:4px;border-top:0;padding-top:0}
