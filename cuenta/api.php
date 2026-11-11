@@ -257,6 +257,38 @@ function adr_retira(PDO $db): void {
 }
 adr_retira($db);
 
+/* --- `asignar` con `sustituye` (11-11) -------------------------------
+   Para cambiar «Lo que acordamos» de una herramienta que ya tiene, sin
+   mandarle otra: antes, la única forma era asignarla de nuevo, y así salían
+   dos «caja para bajar la intensidad» en la misma cuenta, una con los
+   apuntes y otra con la nota buena.
+
+   `sustituye` es el id de la tarea (un número) o su título exacto. Tiene
+   que ser una herramienta de esa cuenta, sin quitar ni archivar, y la
+   MISMA herramienta (mismo id del catálogo): cambiar una cosa por otra
+   distinta sí es mandarle algo nuevo, y eso avisa. Con varias del mismo
+   título, la más reciente, que es la que ve arriba.
+   Devuelve la fila, o null si no se ha pedido sustituir nada. */
+function adr_sustituida(PDO $db, string $cod, array $in, string $herr): ?array {
+    if (!array_key_exists('sustituye', $in)) return null;
+    $s = $in['sustituye'];
+    $porId = is_int($s) || (is_string($s) && preg_match('/^\d{1,12}$/', $s));
+    $titulo = trim(preg_replace('/\s+/u', ' ', (string)$s));
+    if ($titulo === '') adr_json(['error' => 'sustituye vacío'], 400);
+    $q = $db->prepare("SELECT * FROM tareas WHERE cod = ? AND tipo = 'herramienta'
+                       AND (hecho IS NULL OR hecho <> 'retirada') AND " . ($porId ? 'id = ?' : 'titulo = ?') . "
+                       ORDER BY id DESC LIMIT 1");
+    $q->execute([$cod, $porId ? (int)$s : mb_substr($titulo, 0, 80, 'UTF-8')]);
+    $t = $q->fetch();
+    if (!$t) adr_json(['error' => 'no_encuentro_la_que_sustituye',
+                       'mensaje' => 'No tiene en su cuenta ninguna herramienta con ese id o ese título.'], 404);
+    if (adr_herr_id($t) !== $herr) {
+        adr_json(['error' => 'otra_herramienta', 'mensaje' => 'La que quieres sustituir es otra herramienta («'
+                  . adr_herr_id($t) . '»). Sustituir solo cambia la nota de la misma.'], 409);
+    }
+    return $t;
+}
+
 /* --- «Tenla siempre a mano» (03-11) ----------------------------------
    El aviso para añadir la cuenta a la pantalla de inicio del móvil. Sale
    la primera vez que entra; con «Ahora no», una vez más, dos entradas
@@ -308,8 +340,9 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-09a';
-const ADR_ACCIONES_NUEVAS = ['precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
+const ADR_VERSION = '2026-11-11a';
+const ADR_ACCIONES_NUEVAS = ['asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
+                             'precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
                              'instalar', 'instalar_no',
                              'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
 
@@ -526,7 +559,7 @@ case 'mios': {
                                  AND c.direccion = 2 ORDER BY c.id DESC LIMIT 1) AS copia_v
                        FROM sobres s
                        WHERE s.cod = ? AND s.direccion = 2
-                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia','historial','objetivos','pago')
+                         AND s.clase NOT IN ('progreso','mensaje','agenda','copia','historial','objetivos','pago','orden')
                        ORDER BY s.creado DESC, s.id DESC LIMIT 200");
     $q->execute([$cod]);
 
@@ -546,7 +579,7 @@ case 'mios': {
     $agenda = $ag->fetch() ?: null;
     /* Lo que hizo antes de tener cuenta (en papel, por correo…): una
        lista que publica el Mac, sellada y sin puntuaciones. Una y la
-       última, como el progreso. Se mezcla en «Lo que has completado». */
+       última, como el progreso. Se mezcla en «Hechas» (Mis tareas). */
     $hi = $db->prepare("SELECT id, para_v FROM sobres
                         WHERE cod = ? AND direccion = 2 AND clase = 'historial'
                         ORDER BY id DESC LIMIT 1");
@@ -558,6 +591,12 @@ case 'mios': {
                         ORDER BY id DESC LIMIT 1");
     $ob->execute([$cod]);
     $objetivos = $ob->fetch() ?: null;
+    /* 11-11: el orden de su cuenta (ver «orden» en `publicar`). */
+    $or = $db->prepare("SELECT id, para_v FROM sobres
+                        WHERE cod = ? AND direccion = 2 AND clase = 'orden'
+                        ORDER BY id DESC LIMIT 1");
+    $or->execute([$cod]);
+    $orden = $or->fetch() ?: null;
     /* Sus justificantes de pago. El servidor sabe CUÁNDO subió uno, no
        qué hay dentro: el justificante va sellado al Mac. Para que ella
        vea a qué sesión corresponde cada uno, se guarda además una copia
@@ -584,7 +623,7 @@ case 'mios': {
        pantalla es una pantalla que se dibuja a trozos. */
     /* Lo caducado no sale: ni se puede hacer a tiempo ni debe quedarse
        en el contador para siempre. «antes del 10» incluye el día 10. */
-    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen FROM tareas
+    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen, cifrado FROM tareas
                        WHERE cod = ? AND hecho IS NULL
                          AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)
                        ORDER BY id");
@@ -606,14 +645,18 @@ case 'mios': {
            pendiente (25-10; 30-10: cualquier lectura, también por id). */
         $x['lectura'] = adr_es_lectura($x);
         $x['rellenable'] = adr_rellenable($x);
-        unset($x['plantilla']);
+        /* 11-11: una huella del sobre de la herramienta (no de lo que dice),
+           para que la cuenta sepa si la nota ha cambiado (`sustituye`) sin
+           volver a abrirla cada vez. */
+        $x['cif'] = $x['cifrado'] !== null ? hash('crc32b', $x['cifrado']) : null;
+        unset($x['plantilla'], $x['cifrado']);
         $tareas[] = $x;
     }
     /* 17-10: las herramientas que viven después de empezarlas (un
        documento que se edita siempre, un registro de entradas), con lo
        justo para pintar la lista: cuántas entradas, de qué días, y su
        recordatorio si se lo ha puesto. */
-    $vv = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen FROM tareas
+    $vv = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen, cifrado FROM tareas
                         WHERE cod = ? AND tipo = 'herramienta' AND hecho IS NOT NULL AND hecho <> 'retirada'
                         ORDER BY id");
     $vv->execute([$cod]);
@@ -626,7 +669,8 @@ case 'mios': {
         $x['herr_id'] = adr_herr_id($x);
         $x['lectura'] = adr_es_lectura($x);
         $x['rellenable'] = adr_rellenable($x);
-        unset($x['plantilla']);
+        $x['cif'] = $x['cifrado'] !== null ? hash('crc32b', $x['cifrado']) : null;
+        unset($x['plantilla'], $x['cifrado']);
         if ($x['modo'] === 'una') continue;
         $vivas[] = $x;
     }
@@ -641,6 +685,16 @@ case 'mios': {
             $h = $db->prepare("SELECT 1 FROM entradas WHERE tarea = ? AND borrada = 0 AND fecha = ?");
             $h->execute([$x['id'], adr_hoy()]);
             $x['hoy'] = (bool)$h->fetch();
+            /* 11-11: la semana en curso (de lunes a hoy): qué días tienen
+               apunte y cuántos apuntes hay, para los puntos L-D y el «3
+               esta semana». Fechas, que el servidor ya tenía. */
+            $lunes = adr_madrid(adr_hoy())->modify('-' . ((int)adr_madrid(adr_hoy())->format('N') - 1) . ' days')->format('Y-m-d');
+            $s = $db->prepare("SELECT fecha, COUNT(*) AS n FROM entradas WHERE tarea = ? AND borrada = 0 AND fecha >= ?
+                               GROUP BY fecha ORDER BY fecha");
+            $s->execute([$x['id'], $lunes]);
+            $sem = $s->fetchAll();
+            $x['semana'] = array_column($sem, 'fecha');
+            $x['semana_n'] = array_sum(array_map('intval', array_column($sem, 'n')));
         }
     };
     foreach ($tareas as &$x) $marca_h($x);
@@ -653,7 +707,7 @@ case 'mios': {
                        WHERE cod = ? AND hecho IS NOT NULL AND hecho <> 'retirada'
                        ORDER BY hecho DESC LIMIT 80");
     $h->execute([$cod]);
-    /* Lo vivo y los registros no «se completan»: siguen en «Tus herramientas». */
+    /* Lo vivo y los registros no «se completan»: siguen en su apartado de «Mi espacio». */
     $hechas = array_slice(array_values(array_map(fn($x) => ['titulo' => $x['titulo'], 'tipo' => $x['tipo'], 'hecho' => $x['hecho'],
             'titulo_paciente' => (function ($pl) { $pl = json_decode((string)$pl, true);
                 return is_array($pl) && is_string($pl['titulo_paciente'] ?? null) ? mb_substr($pl['titulo_paciente'], 0, 80) : null; })($x['plantilla'])],
@@ -756,6 +810,23 @@ case 'mios': {
                                            'para_v' => (int)$historial['para_v']] : null,
               'objetivos' => $objetivos ? ['id' => (int)$objetivos['id'],
                                            'para_v' => (int)$objetivos['para_v']] : null,
+              'orden' => $orden ? ['id' => (int)$orden['id'], 'para_v' => (int)$orden['para_v']] : null,
+              /* 11-11: en qué apartado va cada herramienta (`seccion`) y cada
+                 cuánto se usa (`frecuencia`), con su «para qué», tal como lo
+                 dice el catálogo, que es texto público: todas, también las de
+                 la biblioteca que aún no ha abierto (son unos 3 kB). */
+              'catalogo_tareas' => (function () use ($ADR) {
+                  $out = [];
+                  foreach (adr_catalogo($ADR, 'herramientas') ?? [] as $d) {
+                      if (!is_array($d) || !is_string($d['id'] ?? null)) continue;
+                      $sec = in_array($d['seccion'] ?? null, ['herramientas', 'tareas'], true) ? $d['seccion'] : null;
+                      $fr = in_array($d['frecuencia'] ?? null, ['siempre_a_mano', 'cuando_lo_necesites', 'diaria',
+                                                               'cada_vez_que_ocurra', 'una_vez'], true) ? $d['frecuencia'] : null;
+                      $out[$d['id']] = ['seccion' => $sec, 'frecuencia' => $fr,
+                          'para_que' => is_string($d['para_que'] ?? null) ? mb_substr($d['para_que'], 0, 240) : null];
+                  }
+                  return (object)$out;
+              })(),
               'justificantes' => $ju->fetchAll(),
               'pagos' => (function () use ($db, $ADR, $cod) {
                   /* Sus citas de pago (de los últimos 90 días y los próximos 60),
@@ -1384,7 +1455,11 @@ case 'publicar': {
                       VALUES (?,2,'Copia firmada',?,?,?,'copia',?)")->execute([$cod, $cifrado, $para_v, adr_ahora(), $de]);
         adr_json(['ok' => true, 'copia_de' => $de]);
     }
-    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial', 'objetivos', 'pago'], true)) $clase = 'documento';
+    /* 11-11: «orden», cómo se ordena SU cuenta (qué tarea es para leer y de
+       qué sesión es cada una). Lo sabe el Mac (`.tareas_para_leer.json`) y
+       no el servidor: va sellado a su clave, y lo aplica su navegador al
+       pintar. Uno y el último, como el progreso, y sin aviso. */
+    if (!in_array($clase, ['sesion', 'documento', 'progreso', 'agenda', 'historial', 'objetivos', 'pago', 'orden'], true)) $clase = 'documento';
 
     /* Lo de antes del portal (pacientes que llevan meses): el Mac lo
        publica con `atrasado` y la fecha en que pasó de verdad. Así sale
@@ -1432,7 +1507,7 @@ case 'publicar': {
        nuevo — y se borra de verdad, porque el contenido que sustituye
        es el mismo dato desactualizado. */
     /* La agenda igual: la próxima sesión es una sola. */
-    if (in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago'], true)) {
+    if (in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago', 'orden'], true)) {
         $db->prepare("DELETE FROM sobres WHERE cod = ? AND direccion = 2 AND clase = ?")
            ->execute([$cod, $clase]);
     }
@@ -1452,7 +1527,7 @@ case 'publicar': {
     /* La gráfica no se avisa: se republica cada vez que él recoge algo
        y avisaría cada dos por tres de algo que el paciente no ha
        pedido. Lo demás sí. */
-    if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago'], true) && !$atrasado
+    if (!in_array($clase, ['progreso', 'agenda', 'historial', 'objetivos', 'pago', 'orden'], true) && !$atrasado
         && (($in['avisar'] ?? true) !== false)) adr_avisa($db, $ADR, $cod);
     adr_json(['ok' => true, 'sustituidos' => $sustituidos]);
 }
@@ -1624,7 +1699,7 @@ case 'enlace_clave': {
    consola: la medida va directa al Mac, sin pasar por aquí. Lo único
    que hace falta aquí es que el PHQ-9 que tenía pendiente en su cuenta
    deje de estarlo — si no, lo rellenaría otra vez esa noche. Queda como
-   hecho, con la fecha de hoy, en «Lo que has completado». */
+   hecho, con la fecha de hoy, en «Hechas». */
 case 'cerrar_tarea': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $cod = (string)($in['cod'] ?? '');
@@ -1682,12 +1757,122 @@ case 'consentimientos': {
    Desaparece de sus «Tareas». Solo lo que aún no ha hecho. */
 /* Quitar de su cuenta algo pendiente que se mandó por error (17-10).
    Cualquier tipo, solo si sigue sin hacer, y no se borra: queda como
-   «retirada» (no sale ni en pendientes ni en «Lo que has completado»). */
+   «retirada» (no sale ni en pendientes ni en «Hechas»). */
 case 'quitar_tarea': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
-    $q = $db->prepare("UPDATE tareas SET hecho = 'retirada' WHERE id = ? AND cod = ? AND hecho IS NULL");
+    /* 11-11: y nunca si tiene apuntes, aunque alguno se haya quedado sin
+       marcar como empezado: lo que ha escrito no se quita, se archiva. */
+    $q = $db->prepare("UPDATE tareas SET hecho = 'retirada' WHERE id = ? AND cod = ? AND hecho IS NULL
+                       AND NOT EXISTS (SELECT 1 FROM entradas e WHERE e.tarea = tareas.id AND e.borrada = 0)");
     $q->execute([(int)($in['id'] ?? 0), (string)($in['cod'] ?? '')]);
-    adr_json(['ok' => true, 'quitadas' => $q->rowCount()]);
+    $n = $q->rowCount();
+    $motivo = null;
+    if (!$n) {
+        $v = $db->prepare("SELECT hecho FROM tareas WHERE id = ? AND cod = ?");
+        $v->execute([(int)($in['id'] ?? 0), (string)($in['cod'] ?? '')]);
+        $f = $v->fetch();
+        $motivo = !$f ? 'no_existe' : ($f['hecho'] === 'retirada' ? 'ya_quitada' : 'tiene_apuntes');
+    }
+    adr_json(['ok' => true, 'quitadas' => $n, 'motivo' => $motivo]);
+}
+
+/* «Ya no la usa» (11-11). Sale de su cuenta como si se hubiera quitado,
+   pero sirve también para lo que ya tiene apuntes o algo escrito, que
+   `quitar_tarea` no toca: no se borra nada (ver `archivada` en lib/db.php).
+   El caso: una tarjeta diaria vieja, con apuntes, que ha sustituido otra
+   más corta. {cod, id}, y {deshacer: true} para devolverla tal como
+   estaba. No avisa a nadie. */
+case 'archivar': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $id = (int)($in['id'] ?? 0);
+    $cod = (string)($in['cod'] ?? '');
+    if (!empty($in['deshacer'])) {
+        $q = $db->prepare("UPDATE tareas SET hecho = archivada_hecho, archivada = NULL, archivada_hecho = NULL
+                           WHERE id = ? AND cod = ? AND hecho = 'retirada' AND archivada IS NOT NULL");
+        $q->execute([$id, $cod]);
+        adr_json(['ok' => true, 'devueltas' => $q->rowCount()]);
+    }
+    $q = $db->prepare("UPDATE tareas SET archivada_hecho = hecho, archivada = ?, hecho = 'retirada'
+                       WHERE id = ? AND cod = ? AND (hecho IS NULL OR hecho <> 'retirada')");
+    $q->execute([adr_ahora(), $id, $cod]);
+    adr_json(['ok' => true, 'archivadas' => $q->rowCount()]);
+}
+
+/* Unir dos copias de la misma herramienta (11-11): la consola lo ofrece
+   cuando una cuenta tiene dos veces la misma. {cod, de, en}: los apuntes
+   de `de` pasan a `en`, y lo escrito y el recordatorio también si `en` no
+   tiene los suyos (no se mezclan dos documentos: el servidor no puede
+   abrirlos, y elegir por ella no le toca). Después `de` queda archivada,
+   así que nada se borra. Todo va sellado igual que estaba: aquí solo se
+   cambia de qué tarea cuelga cada cosa. */
+case 'unir': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $q = $db->prepare("SELECT * FROM tareas WHERE id = ? AND cod = ? AND tipo = 'herramienta'
+                       AND (hecho IS NULL OR hecho <> 'retirada')");
+    $q->execute([(int)($in['de'] ?? 0), $cod]); $de = $q->fetch();
+    $q->execute([(int)($in['en'] ?? 0), $cod]); $en = $q->fetch();
+    if (!$de || !$en || (int)$de['id'] === (int)$en['id']) adr_json(['error' => 'hacen falta dos herramientas distintas de esa cuenta'], 404);
+    if (adr_herr_id($de) !== adr_herr_id($en)) adr_json(['error' => 'no son la misma herramienta'], 409);
+    if ((int)$de['para_v'] !== (int)$en['para_v'] && $de['borrador'] !== null && $en['borrador'] === null) {
+        adr_json(['error' => 'lo escrito está cerrado con otra clave: reséllalo antes de unir'], 409);
+    }
+    $ahora = adr_ahora();
+    $db->beginTransaction();
+    $m = $db->prepare('UPDATE entradas SET tarea = ? WHERE tarea = ? AND cod = ?
+                       AND uid NOT IN (SELECT uid FROM entradas WHERE tarea = ?)');
+    $m->execute([(int)$en['id'], (int)$de['id'], $cod, (int)$en['id']]);
+    $movidas = $m->rowCount();
+    $escrito = false;
+    if ($en['borrador'] === null && $de['borrador'] !== null) {
+        $db->prepare('UPDATE tareas SET borrador = ?, borrador_v = ?, actualizado = COALESCE(?, actualizado) WHERE id = ?')
+           ->execute([$de['borrador'], $de['borrador_v'], $de['actualizado'], (int)$en['id']]);
+        $escrito = true;
+    }
+    $db->prepare('INSERT OR IGNORE INTO recordatorios (cod, tarea, hora, ultimo)
+                  SELECT cod, ?, hora, ultimo FROM recordatorios WHERE cod = ? AND tarea = ?')
+       ->execute([(int)$en['id'], $cod, (int)$de['id']]);
+    $db->prepare('DELETE FROM recordatorios WHERE cod = ? AND tarea = ?')->execute([$cod, (int)$de['id']]);
+    /* Si la que se queda no estaba empezada y la otra sí, ahora lo está:
+       si no, una herramienta con apuntes saldría «por empezar». */
+    if ($en['hecho'] === null && ($movidas || $escrito)) {
+        $db->prepare('UPDATE tareas SET hecho = ?, actualizado = COALESCE(actualizado, ?) WHERE id = ?')
+           ->execute([$de['hecho'] ?? $ahora, $de['actualizado'] ?? $ahora, (int)$en['id']]);
+    }
+    $db->prepare("UPDATE tareas SET archivada_hecho = hecho, archivada = ?, hecho = 'retirada' WHERE id = ?")
+       ->execute([$ahora, (int)$de['id']]);
+    $db->commit();
+    adr_json(['ok' => true, 'apuntes_movidos' => $movidas, 'escrito_movido' => $escrito, 'archivada' => (int)$de['id']]);
+}
+
+/* Todo lo que tiene una cuenta, para la consola (11-11): lo pendiente, lo
+   empezado y lo archivado, con lo justo para pintarlo en los mismos tres
+   apartados que ve la persona. Lo que el servidor ya sabe y nada más:
+   títulos, id de herramienta, fechas y cuántos apuntes; nada de lo que
+   pone ninguno. `pendientes` sigue igual para quien ya lo usa. */
+case 'cuenta_de': {
+    if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
+    $cod = (string)($in['cod'] ?? '');
+    $q = $db->prepare("SELECT t.id, t.titulo, t.tipo, t.plantilla, t.modo, t.creado, t.caduca, t.hecho, t.actualizado,
+                              t.origen, t.archivada, t.borrador IS NOT NULL AS con_escrito,
+                              (SELECT COUNT(*) FROM entradas e WHERE e.tarea = t.id AND e.borrada = 0) AS apuntes,
+                              (SELECT MAX(fecha) FROM entradas e WHERE e.tarea = t.id AND e.borrada = 0) AS ultimo_apunte
+                       FROM tareas t WHERE t.cod = ? AND (t.hecho IS NULL OR t.hecho <> 'retirada' OR t.archivada IS NOT NULL)
+                       ORDER BY t.id");
+    $q->execute([$cod]);
+    $out = [];
+    foreach ($q->fetchAll() as $t) {
+        $modo = adr_modo_fila($t);
+        /* Lo de una vez ya entregado no está «en su cuenta»: está en lo recibido. */
+        if ($t['archivada'] === null && $modo === 'una' && $t['hecho'] !== null) continue;
+        $out[] = ['id' => (int)$t['id'], 'titulo' => $t['titulo'], 'tipo' => $t['tipo'] ?: 'cuestionario',
+                  'herramienta' => $t['tipo'] === 'herramienta' ? adr_herr_id($t) : null,
+                  'lectura' => adr_es_lectura($t), 'modo' => $modo, 'creado' => $t['creado'], 'caduca' => $t['caduca'],
+                  'empezada' => $t['hecho'] !== null && $t['hecho'] !== 'retirada', 'actualizado' => $t['actualizado'],
+                  'origen' => $t['origen'], 'archivada' => $t['archivada'], 'con_escrito' => (bool)$t['con_escrito'],
+                  'apuntes' => (int)$t['apuntes'], 'ultimo_apunte' => $t['ultimo_apunte']];
+    }
+    adr_json(['tareas' => $out]);
 }
 
 case 'anular_tarea': {
@@ -1923,6 +2108,10 @@ case 'asignar': {
                   'sin_activar' => $pac && $pac['activado'] === null], 404);
     }
 
+    if (array_key_exists('sustituye', $in) && ($in['tipo'] ?? '') !== 'herramienta') {
+        adr_json(['error' => 'sustituye solo vale para herramientas'], 400);
+    }
+
     /* Una HERRAMIENTA (plan de seguridad, autorregistro, guía) no es un
        cuestionario: no tiene ítems ni opciones, tiene bloques y campos.
        La valida a fondo la consola; aquí lo justo para no guardar algo
@@ -1945,6 +2134,16 @@ case 'asignar': {
         $modo = adr_modo_para($res, $in['modo'] ?? null);
         $res = ['id' => $res['id'], 'tipo' => $res['tipo'], 'titulo' => mb_substr((string)($res['titulo'] ?? ''), 0, 80),
                 'riesgo' => !empty($res['riesgo']), 'sellada' => true, 'modo' => $modo];
+        if ($sus = adr_sustituida($db, $cod, $in, $res['id'])) {
+            /* Lo que ya tenía (apuntes, lo escrito, su modo, cuándo se
+               mandó) se queda; cambia solo la definición sellada, que es
+               donde va «Lo que acordamos». Sin correo: no es nada nuevo. */
+            $res['modo'] = adr_modo_fila($sus);
+            $db->prepare('UPDATE tareas SET titulo = ?, plantilla = ?, cifrado = ?, para_v = ? WHERE id = ?')
+               ->execute([mb_substr($titulo ?: (string)$sus['titulo'], 0, 80, 'UTF-8'), json_encode($res, JSON_UNESCAPED_UNICODE),
+                          $cif, (int)$in['para_v'], (int)$sus['id']]);
+            adr_json(['ok' => true, 'id' => (int)$sus['id'], 'sellada' => true, 'sustituida' => (int)$sus['id']]);
+        }
         $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, cifrado, para_v, modo)
                       VALUES (?,?,?,?,?,'herramienta',?,?,?)")
            ->execute([$cod, mb_substr($titulo ?: 'Herramienta', 0, 80, 'UTF-8'), json_encode($res, JSON_UNESCAPED_UNICODE),
@@ -1958,6 +2157,12 @@ case 'asignar': {
             || !preg_match('/^[a-z0-9-]{2,60}$/', (string)($plantilla['id'] ?? ''))
             || !in_array($plantilla['tipo'] ?? '', ['rellenable', 'lectura'], true)) {
             adr_json(['error' => 'la herramienta no tiene una forma válida'], 400);
+        }
+        if ($sus = adr_sustituida($db, $cod, $in, (string)$plantilla['id'])) {
+            $db->prepare('UPDATE tareas SET titulo = ?, plantilla = ? WHERE id = ?')
+               ->execute([mb_substr($titulo ?: (string)$sus['titulo'], 0, 80, 'UTF-8'),
+                          json_encode($plantilla, JSON_UNESCAPED_UNICODE), (int)$sus['id']]);
+            adr_json(['ok' => true, 'id' => (int)$sus['id'], 'sustituida' => (int)$sus['id']]);
         }
         $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, modo)
                       VALUES (?,?,?,?,?,'herramienta',?)")

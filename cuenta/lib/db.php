@@ -178,6 +178,17 @@ function adr_db(array $ADR): PDO {
                             `entradas`. NULL = la de siempre según su id. */
             'modo'        => 'TEXT',
             'actualizado' => 'TEXT',
+            /* 11-11: «Ya no la usa» (`archivar`, desde la consola). Una
+               tarea archivada sale de la cuenta igual que una quitada
+               (hecho = 'retirada', así que ninguna consulta de la cuenta
+               ni del Mac la vuelve a ver), pero NO se borra nada: sus
+               apuntes y lo que tenía escrito siguen en la fila, y en el
+               Mac, que tiene su copia de cada uno. Se distingue de
+               «quitada por error» por `archivada` (cuándo), y en
+               `archivada_hecho` queda el `hecho` que tenía, para poder
+               deshacerlo sin perder si estaba empezada. */
+            'archivada'       => 'TEXT',
+            'archivada_hecho' => 'TEXT',
         ],
         'pacientes' => [
             /* Cuándo se le avisó por última vez de que tiene algo

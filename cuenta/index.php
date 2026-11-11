@@ -112,20 +112,21 @@ $cuerpo .= <<<'HTML'
   <span class="urgente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>¿En peligro ahora? <a href="tel:024">024</a> o <a href="tel:112">112</a></span>
 </p>
 
-<!-- El inicio, de arriba abajo en el orden en que se usa: la próxima
-     sesión, lo que hay que hacer antes, cómo va, las herramientas, lo
-     trabajado, y al final mensajes, documentos y ajustes. Móvil
-     primero: en una pantalla de 390 px, lo de arriba es lo que se ve. -->
+<!-- «Hoy», de arriba abajo en el orden en que se usa: lo que toca hoy,
+     la próxima sesión, una línea si hay un resumen nuevo, y las tarjetas
+     que llevan a los tres apartados de «Mi espacio» y a la evolución; al
+     final, pagos y ajustes. Móvil primero: en una pantalla de 390 px, lo
+     de arriba es lo que se ve. -->
 <section id="v-panel" class="vista" hidden>
-  <!-- Cuatro apartados, uno a la vez, como una aplicación: Inicio,
-       Tareas, Evolución y Mensajes. No son páginas distintas (una
+  <!-- Cuatro pestañas, una a la vez, como una aplicación: Hoy, Mi
+       espacio (#tareas), Evolución y Mensajes. No son páginas distintas (una
        página nueva tiraría la llave de la memoria): son pestañas, con
        su dirección propia (#tareas…), así que el botón de atrás del
        móvil funciona entre ellas. En el móvil van abajo; en el
        ordenador, arriba. -->
   <nav class="pestanas" id="pestanas" aria-label="Apartados de tu cuenta">
-    <a href="#inicio" data-p="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Inicio</span></a>
-    <a href="#tareas" data-p="tareas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>Tareas</span><b class="globo" id="globo-tareas" hidden></b></a>
+    <a href="#inicio" data-p="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Hoy</span></a>
+    <a href="#tareas" data-p="tareas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>Mi espacio</span><b class="globo" id="globo-tareas" hidden></b></a>
     <a href="#evolucion" data-p="evolucion"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M5 15l4-4 3 3 6-7"/></svg><span>Evolución</span></a>
     <a href="#mensajes" data-p="mensajes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg><span>Mensajes</span></a>
   </nav>
@@ -140,7 +141,7 @@ $cuerpo .= <<<'HTML'
 
   <!-- ============================ INICIO ============================ -->
   <div class="pestana" id="p-inicio" data-p="inicio">
-    <h1 id="hola">Tu espacio</h1>
+    <h1 id="hola">Hoy</h1>
 
     <!-- Lo primero: el consentimiento (04-11). Sale mientras falte (solo
          en cuentas activadas desde el 04-11; ver adr_ci_falta) y, hasta
@@ -291,9 +292,29 @@ $cuerpo .= <<<'HTML'
       <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </button>
 
-    <a class="tarjeta-ir" href="#tareas" id="ir-tareas">
-      <span class="t">Lo que te toca</span>
+    <!-- 11-11: «Hoy», como mucho tres cosas: lo que toca hoy (el
+         cuestionario de antes de la sesión, el apunte del día), la próxima
+         cita (la tarjeta de arriba) y el plan de seguridad si lo tiene. Lo
+         demás, en los tres apartados de «Mi espacio», con su tarjeta. -->
+    <section class="caja hoy" id="c-hoy" aria-labelledby="t-hoy" hidden>
+      <h2 id="t-hoy">Lo que toca hoy</h2>
+      <ul class="hoy-lista" id="hoy-lista"></ul>
+    </section>
+    <p class="aviso-linea" id="aviso-nuevo" hidden><a href="#lo-que-vimos" id="aviso-nuevo-a"></a></p>
+
+    <a class="tarjeta-ir" href="#mis-tareas" id="ir-tareas">
+      <span class="t">Mis tareas</span>
       <span class="resumen" id="resumen" role="status"></span>
+      <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+    <a class="tarjeta-ir" href="#mis-herramientas" id="ir-herramientas">
+      <span class="t">Mis herramientas</span>
+      <span class="resumen" id="resumen-herr">Lo que tienes siempre a mano.</span>
+      <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+    <a class="tarjeta-ir" href="#lo-que-vimos" id="ir-vimos">
+      <span class="t">Lo que vimos en sesión</span>
+      <span class="resumen" id="resumen-vimos">Los resúmenes de cada sesión y tus documentos.</span>
       <svg class="flecha" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
     </a>
 
@@ -313,18 +334,11 @@ $cuerpo .= <<<'HTML'
       <div id="pago-lista"></div>
     </section>
 
-    <section class="caja bloque" aria-labelledby="t-sesiones">
-      <h2 id="t-sesiones">Lo que hemos trabajado</h2>
-      <div id="sesiones" class="linea-tiempo"></div>
-    </section>
-
-    <section class="caja bloque" aria-labelledby="t-docs">
-      <h2 id="t-docs">Documentos</h2>
-      <div id="documentos"></div>
-    </section>
-
     <details class="caja" id="c-accesos">
-      <summary><strong>Ajustes y seguridad</strong></summary>
+      <!-- 11-11: con su h2 dentro: lo trabajado y los documentos se fueron a
+           «Mi espacio», y sin él el «Añadir a la pantalla de inicio» (h3)
+           colgaba directamente del h1. -->
+      <summary><h2 class="sum-h">Ajustes y seguridad</h2></summary>
       <p class="apunte">Las últimas entradas en tu cuenta. Si ves una que no
       reconoces, cambia la contraseña y escríbeme.</p>
       <ul id="accesos" class="accesos"></ul>
@@ -339,37 +353,58 @@ $cuerpo .= <<<'HTML'
     </details>
   </div>
 
-  <!-- ============================ TAREAS ============================ -->
+  <!-- ========================== MI ESPACIO ========================== -->
+  <!-- 11-11: tres apartados, porque mezclados en una lista eran cuatro cosas
+       distintas con la misma cara de «pendiente»:
+         Mis tareas         lo que pide hacer algo (y solo eso cuenta);
+         Mis herramientas   lo que se tiene a mano, sin estado ni «pendiente»;
+         Lo que vimos       los resúmenes, los documentos y los recordatorios
+                            de lo acordado, para leer.
+       Qué va en cada uno lo dice el catálogo (`seccion` y `frecuencia`) y,
+       para lo que solo sabe el Mac (qué tarea es para leer, de qué sesión
+       es), el «orden» sellado a su clave: lo aplica este navegador. La
+       pestaña conserva su dirección (#tareas). -->
   <div class="pestana" id="p-tareas" data-p="tareas" hidden>
-    <h1>Tareas</h1>
-    <section class="caja bloque" id="c-tareas" aria-labelledby="t-tareas">
-      <h2 id="t-tareas">Para antes de tu sesión</h2>
+    <h1>Mi espacio</h1>
+    <section class="caja bloque apartado" id="c-tareas" aria-labelledby="t-tareas">
+      <h2 tabindex="-1" id="t-tareas">Mis tareas <span class="cuenta" id="cuenta-tareas"></span></h2>
       <p class="apunte" id="resumen-tareas"></p>
-      <div class="progreso-barra" id="hecho-barra" hidden role="progressbar"
-           aria-label="Lo que has hecho de lo que te he mandado estas semanas">
-        <i id="hecho-barra-i" style="width:0%"></i>
-      </div>
       <div id="tareas"></div>
+      <!-- Lo hecho, plegado y abajo: nunca la lista entera arriba. -->
+      <details class="plegable" id="c-hechas" data-plegable="hechas">
+        <summary><span id="t-hechas">Hechas</span></summary>
+        <div id="hechas"></div>
+      </details>
     </section>
 
     <!-- Herramientas: lo que se rellena o se lee y se GUARDA (plan de
-         seguridad, autorregistros, guías). No son pruebas: no puntúan ni
-         salen en la gráfica, y lo enviado se queda aquí para volver a
-         abrirlo, que es justo cuando hace falta un plan de seguridad. -->
-    <section class="caja bloque" id="c-herramientas" aria-labelledby="t-herr">
-      <h2 id="t-herr">Tus herramientas</h2>
-      <div id="herramientas"></div>
+         seguridad, la caja para bajar la intensidad, la rueda). No son
+         pruebas ni tareas: no tienen estado, no puntúan y no se «completan».
+         El plan de seguridad, el primero, con el 024 y el 112 a la vista. -->
+    <section class="caja bloque apartado" id="c-herramientas" aria-labelledby="t-herr">
+      <h2 tabindex="-1" id="t-herr">Mis herramientas</h2>
+      <p class="apunte">Para tenerlas a mano. Ábrelas cuando las necesites: no hay nada que entregar.</p>
+      <div id="herr-zona">
+        <div id="herramientas"></div>
+        <!-- 04-11: «Para cuando lo necesites»: las pocas herramientas que el
+             catálogo marca `abierta`, para cualquier cuenta y sin asignarlas.
+             Las que ya te mandé salen arriba, no aquí otra vez. Plegada. -->
+        <details class="plegable" id="c-biblioteca" data-plegable="biblioteca" hidden>
+          <summary><span id="t-bib">Para cuando lo necesites</span></summary>
+          <p class="apunte">Herramientas que puedes abrir cuando quieras, sin esperar a que te las mande. Lo que apuntes me llega igual.</p>
+          <div id="biblioteca"></div>
+        </details>
+      </div>
     </section>
 
-    <!-- 04-11: «Para cuando lo necesites»: las pocas herramientas que el
-         catálogo marca `abierta` (la rueda, respirar, dormir, la guía),
-         para cualquier cuenta y sin asignarlas. Las que ya te mandé salen
-         donde ya las tienes, no aquí otra vez. No son pruebas: las
-         pruebas las elijo yo. -->
-    <section class="caja bloque" id="c-biblioteca" aria-labelledby="t-bib" hidden>
-      <h2 id="t-bib">Para cuando lo necesites</h2>
-      <p class="apunte">Herramientas que puedes abrir cuando quieras, sin esperar a que te las mande. Lo que apuntes me llega igual.</p>
-      <div id="biblioteca"></div>
+    <section class="caja bloque apartado" id="c-sesion" aria-labelledby="t-sesiones">
+      <h2 tabindex="-1" id="t-sesiones">Lo que vimos en sesión</h2>
+      <p class="apunte">Para leer: lo que nos llevamos de cada sesión y lo que acordamos. No hay nada que rellenar.</p>
+      <div id="vimos-zona">
+        <div id="sesiones" class="sesiones"></div>
+        <h3 class="sub-apartado" id="t-docs">Documentos</h3>
+        <div id="documentos"></div>
+      </div>
     </section>
 
     <!-- 04-11: «Me interesaría trabajar…»: dice un tema y lo hablamos en
@@ -378,11 +413,6 @@ $cuerpo .= <<<'HTML'
       <h2 id="t-temas">Me interesaría trabajar…</h2>
       <p class="apunte" id="temas-intro"></p>
       <p><button class="boton suave" type="button" id="b-temas">Elegir un tema</button></p>
-    </section>
-
-    <section class="caja bloque" id="c-hechas" aria-labelledby="t-hechas">
-      <h2 id="t-hechas">Lo que has completado</h2>
-      <div id="hechas"></div>
     </section>
   </div>
 
@@ -795,7 +825,16 @@ function falla(t) { $('mal-t').textContent = t; $('mal').hidden = false; }
    #mensajes). Cambiar de una a otra no recarga nada —la llave sigue en
    memoria— y el «atrás» del móvil vuelve a la anterior. */
 const PESTANAS = ['inicio', 'tareas', 'evolucion', 'mensajes'];
+/* 11-11: las tarjetas de «Hoy» llevan a un apartado de «Mi espacio»
+   (#mis-herramientas…): se abre la pestaña y se baja hasta él. */
+const APARTADOS = { 'mis-tareas': 'c-tareas', 'mis-herramientas': 'c-herramientas', 'lo-que-vimos': 'c-sesion' };
 function pestana(p) {
+  if (APARTADOS[p]) {
+    const destino = APARTADOS[p];
+    pestana('tareas');
+    requestAnimationFrame(() => { const x = $(destino); if (x) { x.scrollIntoView({ block: 'start' }); x.querySelector('h2').focus({ preventScroll: true }); } });
+    return;
+  }
   if (!PESTANAS.includes(p)) p = 'inicio';
   document.querySelectorAll('.pestana').forEach(x => { x.hidden = (x.dataset.p !== p); });
   document.querySelectorAll('#pestanas a').forEach(a => {
@@ -805,8 +844,9 @@ function pestana(p) {
 }
 window.addEventListener('hashchange', () => {
   if ($('v-panel').hidden) return;
-  pestana(location.hash.slice(1));
-  window.scrollTo(0, 0);
+  const h = location.hash.slice(1);
+  if (!APARTADOS[h]) window.scrollTo(0, 0);
+  pestana(h);
 });
 
 async function api(a, d) {
@@ -959,41 +999,46 @@ async function panel() {
   const todas = (r.j.tareas || []).filter(t => !t.caduca || String(t.caduca).slice(0, 10) >= hoy);
   const docs = r.j.documentos || [];
   const vivas = r.j.herramientas_vivas || [];
+  DOCS = docs;
+  SECC = r.j.catalogo_tareas || {};
+  ORDEN = await abreOrden(r.j.orden, r.j.v);
   HERR_FILAS = {};
   todas.concat(vivas).forEach(t => { HERR_FILAS[t.id] = t; });
   /* El plan de seguridad: el vivo si lo tiene; si no, el que mandó antes. */
-  const planT = todas.concat(vivas).find(t => t.herr_id === 'plan-seguridad');
+  const planT = todas.concat(vivas).filter(t => t.herr_id === 'plan-seguridad').sort((a, b) => b.id - a.id)[0];
   PLAN_TAREA = planT ? planT.id : null;
   if (PLAN_TAREA) { PLAN = null; $('b-plan').hidden = false; }
   else buscaPlan(docs.filter(d => d.clase === 'herramienta'), r.j.v);
-  /* Lo abierto desde la biblioteca sale en la biblioteca, no aquí. */
-  pintaHerramientas(todas.filter(t => t.tipo === 'herramienta' && t.origen !== 'biblioteca'),
-                    vivas.filter(t => t.origen !== 'biblioteca'),
-                    docs.filter(d => d.clase === 'herramienta'), r.j.v);
-  pintaBiblioteca(r.j.biblioteca || [], vivas);
-  pintaTemas(r.j.temas);
 
-  /* «Para antes de tu sesión»: lo pendiente, con cuánto lleva, y el
-     documento por firmar si lo hay. Lo de las herramientas va en su
-     caja; aquí se cuenta igual. */
-  const ts = todas.filter(t => t.tipo !== 'herramienta');
-  DOCS = docs;
+  /* Cada herramienta, a su apartado; las repetidas, juntas (una tarjeta). */
+  const herrs = todas.filter(t => t.tipo === 'herramienta').concat(vivas)
+    .filter(t => t.origen !== 'biblioteca');
+  const grupos = agrupa(herrs);
+  const deTareas = grupos.filter(g => g.ap === 'tareas');
+  const deHerr = grupos.filter(g => g.ap === 'herramientas');
+  const deLeer = grupos.filter(g => g.ap === 'leer');
+
+  /* Lo que hay que firmar, el consentimiento el primero (04-11). */
   const porFirmar = docs.filter(d => Number(d.requiere_firma) && Number(d.para_v) === Number(r.j.v)
                                      && (!d.firmado || faltanDatos(d)));
-  /* Lo que es para consultar (la rueda, una guía) está siempre a mano, no
-     pendiente (30-10: cualquier lectura, no solo la que ya era «vivo»). */
-  const n = todas.filter(t => !(t.tipo === 'herramienta' && t.lectura)).length + porFirmar.length;
-  $('resumen').textContent = n
-    ? (n === 1 ? 'Tienes una cosa pendiente.' : 'Tienes ' + n + ' cosas pendientes.')
-    : 'No tienes nada pendiente.';
-  $('resumen-tareas').textContent = n
-    ? 'Empieza por arriba. Cada cosa dice cuánto lleva.'
-    : 'No tienes nada pendiente. Cuando te mande algo, aparecerá aquí.';
+  porFirmar.sort((a, b) => Number(esConsentimiento(b.titulo)) - Number(esConsentimiento(a.titulo)));
+  const otras = todas.filter(t => t.tipo !== 'herramienta');
+  /* El contador: SOLO lo que pide algo hoy. Un cuestionario sin hacer, lo
+     que hay que firmar, un deber, lo de «una vez» sin hacer y la diaria
+     sin el apunte de hoy. Lo de «cada vez que ocurra» nunca: no hay nada
+     que completar. */
+  const n = porFirmar.length + otras.length
+    + deTareas.filter(g => g.fr === 'una_vez' || (g.fr === 'diaria' && !g.hoy)).length
+    + (CIP.falta && !CIP.id ? 1 : 0);
   $('globo-tareas').hidden = !n;
   $('globo-tareas').textContent = n ? String(n) : '';
+  $('cuenta-tareas').textContent = n ? '· ' + n + ' para hoy' : '';
+  $('resumen').textContent = n ? (n === 1 ? 'Una cosa para hoy.' : n + ' cosas para hoy.') : 'Nada para hoy.';
+  $('resumen-tareas').textContent = n
+    ? 'Empieza por arriba. Lo que no te dé tiempo, sigue aquí mañana.'
+    : (otras.length + deTareas.length ? 'Nada para hoy. Lo que se apunta cuando pasa algo sigue aquí.' : 'Cuando te mande algo, aparecerá aquí.');
+
   const ct = $('tareas'); ct.innerHTML = '';
-  /* El consentimiento, el primero (04-11). */
-  porFirmar.sort((a, b) => Number(esConsentimiento(b.titulo)) - Number(esConsentimiento(a.titulo)));
   if (CIP.falta && !CIP.id) {
     const f = fila('Consentimiento informado', 'Te llega aquí en unos minutos para leerlo y firmarlo. Lo demás espera hasta entonces.');
     f.classList.add('firmar', 'primero');
@@ -1014,12 +1059,15 @@ async function panel() {
     f.appendChild(b);
     ct.appendChild(f);
   });
-  ts.forEach(t => {
+  /* Los cuestionarios, arriba del todo, con lo que llevan. */
+  otras.sort((a, b) => Number(b.tipo === 'cuestionario') - Number(a.tipo === 'cuestionario'));
+  otras.forEach(t => {
     const esDeber = (t.tipo === 'deber');
     const esValorar = (t.tipo === 'objetivos');
-    const pie = [t.preguntas ? 'unos ' + Math.max(1, Math.round(t.preguntas * 10 / 60)) + ' min' : null,
+    const pie = [t.preguntas ? minutos(t.preguntas) : null,
                  t.caduca ? 'antes del ' + fecha(t.caduca) : null].filter(Boolean).join(' · ');
     const f = fila(t.titulo_paciente || t.titulo, pie || null);
+    f.dataset.buscar = t.titulo_paciente || t.titulo;
     if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); ct.appendChild(f); return; }
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button';
@@ -1028,84 +1076,487 @@ async function panel() {
     f.appendChild(b);
     ct.appendChild(f);
   });
-  /* La barra: lo hecho de lo que se ha mandado en las dos últimas
-     semanas. Sin rachas ni medallas: una barra y ya. */
-  const hechas = r.j.hechas || [];
-  const hace14 = new Date(Date.now() - 14 * 864e5).toISOString().slice(0, 10);
-  const recientes = hechas.filter(h => (h.hecho || '').slice(0, 10) >= hace14).length;
-  const total = recientes + todas.length;
-  $('hecho-barra').hidden = !(recientes && total);
-  if (recientes && total) {
-    $('hecho-barra-i').style.width = Math.round(100 * recientes / total) + '%';
-    $('hecho-barra').setAttribute('aria-valuenow', String(recientes));
-    $('hecho-barra').setAttribute('aria-valuemax', String(total));
-  }
-  pintaHechas(hechas, r.j.historial, r.j.v);
-  pintaObjetivos(r.j.objetivos, r.j.v);
+  /* Las herramientas que se hacen: primero lo de hoy y lo de una vez. */
+  const pesoFr = { diaria: 0, una_vez: 1, cada_vez_que_ocurra: 2 };
+  deTareas.sort((a, b) => (pesoFr[a.fr] ?? 3) - (pesoFr[b.fr] ?? 3)).forEach(g => ct.appendChild(filaTarea(g)));
+  if (!ct.children.length) ct.appendChild(vacio('Cuando te mande algo que hacer, aparecerá aquí.'));
 
-  /* Lo trabajado (sesiones) y los documentos */
-  let viejos = 0;
-  [['sesion', 'sesiones', 'Aquí irá apareciendo lo que nos llevamos de cada sesión.'],
-   ['documento', 'documentos', 'Todavía no hay documentos. Cuando te mande alguno, aparece aquí.']]
-  .forEach(([clase, caja, cuandoNoHay]) => {
-    const c = $(caja); c.innerHTML = '';
-    const mios = docs.filter(d => (d.clase || 'documento') === clase);
-    if (!mios.length) { c.appendChild(vacio(cuandoNoHay)); return; }
-    mios.forEach(d => {
-      /* Firmado con la copia ya vuelta a sellar: se abre por la copia
-         aunque el documento original tenga la clave vieja. */
-      const copiaOk = d.firmado && d.copia_id && Number(d.copia_v) === Number(r.j.v);
-      const caduco = Number(d.para_v) !== Number(r.j.v) && !copiaOk;
-      if (caduco) viejos++;
-      const f = fila(d.titulo || 'Documento', fecha(d.creado));
-      if (caduco) {
-        /* Un botón que no abre es peor que no tener botón: la persona
-           piensa que está roto y que ha perdido algo. Lo firmado sigue
-           constando como firmado, con su fecha. */
-        if (d.firmado) {
-          const ok = document.createElement('span');
-          ok.className = 'sello ok'; ok.textContent = 'firmado el ' + fecha(d.firmado);
-          const pie = f.querySelector('.texto p');
-          if (pie) pie.append(' ', ok); else f.appendChild(ok);
-        }
-        const e = document.createElement('span');
-        e.className = 'sello'; e.textContent = 'actualizando';
-        e.title = 'Tras el cambio de contraseña, en unos minutos vuelve a estar aquí.';
-        f.appendChild(e);
-      } else if (Number(d.requiere_firma) && !d.firmado) {
-        const e = document.createElement('span');
-        e.className = 'sello ojo'; e.textContent = 'sin firmar';
-        f.appendChild(e);
-        const b = document.createElement('button');
-        b.className = 'boton'; b.type = 'button'; b.textContent = 'Leer y firmar';
-        b.addEventListener('click', () => abrirFirma(d.id, d.titulo));
-        f.appendChild(b);
-      } else {
-        if (d.firmado) {
-          const e = document.createElement('span');
-          e.className = 'sello ok'; e.textContent = 'firmado';
-          e.title = 'Firmado el ' + fecha(d.firmado);
-          /* Junto a la fecha, no entre el título y el botón: en un móvil
-             empujaba «Abrir» a otra línea y cada fila salía distinta. */
-          const pie = f.querySelector('.texto p');
-          if (pie) pie.append(' ', e); else f.appendChild(e);
-        }
-        if (faltanDatos(d)) {
-          const b2 = document.createElement('button');
-          b2.className = 'boton'; b2.type = 'button'; b2.textContent = soloFrase(d) ? 'Revisar y firmar' : 'Completar datos';
-          b2.addEventListener('click', () => abrirFirma(d.id, d.titulo, true, soloFrase(d)));
-          f.appendChild(b2);
-        }
-        const b = document.createElement('button');
-        b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
-        b.addEventListener('click', () => abrir(d.id, d.titulo, clase, d));
-        f.appendChild(b);
-      }
-      c.appendChild(f);
-    });
-  });
+  pintaHerramientas(deHerr, docs.filter(d => d.clase === 'herramienta'), r.j.v);
+  pintaBiblioteca(r.j.biblioteca || [], vivas);
+  pintaTemas(r.j.temas);
+  pintaHechas(r.j.hechas || [], r.j.historial, r.j.v);
+  pintaObjetivos(r.j.objetivos, r.j.v);
+  const viejos = pintaVimos(docs, deLeer, r.j.v);
   $('reenviando').hidden = (viejos === 0);
+  pintaHoy(otras, deTareas);
+  ponBuscador('tareas', $('tareas'), 'Mis tareas');
+  ponBuscador('herr', $('herr-zona'), 'Mis herramientas');
+  ponBuscador('vimos', $('vimos-zona'), 'Lo que vimos en sesión');
+  completaNotas(grupos);
   pintaHilo(r.j.mensajes || [], r.j.v);
+}
+
+/* --- Los tres apartados (11-11) ------------------------------------------
+   Qué va en cada uno:
+     1. lo que el Mac dice en el «orden» sellado (leer, o su apartado);
+     2. si no, lo que dice el catálogo (`seccion` y `frecuencia`);
+     3. si el catálogo no lo dice (uno viejo): lo vivo y lo de leer, a
+        herramientas; lo demás, a tareas, «cada vez que ocurra». Y lo que
+        es para leer y no está en el catálogo, a «Lo que vimos».
+   Las repetidas (mismo id de herramienta) son UNA tarjeta: la más reciente
+   manda (su nota es la de arriba) y los apuntes de todas se ven juntos.
+   «Mi tarea de esta semana» (tarea-libre) no se junta: cada una es una
+   tarea distinta con el mismo molde. */
+let SECC = {}, ORDEN = {};
+async function abreOrden(meta, v) {
+  if (!meta || Number(meta.para_v) !== Number(v)) return {};
+  try {
+    const r = await api('abrir&id=' + encodeURIComponent(meta.id));
+    const d = r.ok && r.j.cifrado ? abrirDelMac(r.j.cifrado, miPublica, privada) : null;
+    return d && d.tareas && typeof d.tareas === 'object' ? d.tareas : {};
+  } catch (_) { return {}; }
+}
+const FRECUENCIAS = ['siempre_a_mano', 'cuando_lo_necesites', 'diaria', 'cada_vez_que_ocurra', 'una_vez'];
+function apartadoDe(t) {
+  const o = ORDEN[t.id] || {};
+  if (o.leer === true) return { ap: 'leer', fr: null };
+  const c = SECC[t.herr_id] || null;
+  let ap = ['tareas', 'herramientas'].includes(o.seccion) ? o.seccion : (c && c.seccion) || null;
+  let fr = FRECUENCIAS.includes(o.frecuencia) ? o.frecuencia : (c && c.frecuencia) || null;
+  if (!ap) {
+    /* Una lectura que el catálogo no conoce (hecha a medida) es para leer;
+       sin catálogo en el servidor, no se sabe, y va a herramientas. */
+    if (t.lectura && !c && Object.keys(SECC).length && t.herr_id !== RUEDA_ID) return { ap: 'leer', fr: null };
+    ap = (t.modo === 'vivo' || t.lectura) ? 'herramientas' : 'tareas';
+  }
+  if (ap === 'tareas') {
+    if (!['diaria', 'cada_vez_que_ocurra', 'una_vez'].includes(fr)) fr = t.modo === 'una' ? 'una_vez' : 'cada_vez_que_ocurra';
+    /* Una «diaria» que no es un registro no tiene «apunte de hoy»: se hace una vez. */
+    if (fr === 'diaria' && t.modo !== 'registro') fr = t.modo === 'una' ? 'una_vez' : 'cada_vez_que_ocurra';
+    if (fr === 'una_vez' && t.modo !== 'una') fr = 'cada_vez_que_ocurra';
+  }
+  return { ap, fr };
+}
+function agrupa(lista) {
+  const por = new Map();
+  lista.slice().sort((a, b) => b.id - a.id).forEach(t => {
+    const k = t.herr_id && t.herr_id !== 'tarea-libre' ? 'h:' + t.herr_id : 't:' + t.id;
+    if (!por.has(k)) por.set(k, []);
+    por.get(k).push(t);
+  });
+  return [...por.values()].map(ts => {
+    const t = ts[0];
+    const { ap, fr } = apartadoDe(t);
+    return { t, ts, ids: ts.map(x => x.id), otras: ts.slice(1).map(x => x.id), ap, fr,
+             titulo: t.titulo, para_que: (SECC[t.herr_id] || {}).para_que || null,
+             hoy: ts.some(x => x.hoy), semana: [...new Set(ts.flatMap(x => x.semana || []))].sort(),
+             semana_n: ts.reduce((s, x) => s + (x.semana_n || 0), 0) };
+  });
+}
+/* Los puntos de la semana, de lunes a domingo: lleno el día con apunte.
+   El texto, para quien no ve los puntos, dice qué días, no cuántos faltan. */
+const DIAS_INI = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+const DIAS_NOM = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+function puntosSemana(fechas) {
+  const s = el('span', 'semana-puntos');
+  const lun = lunesDe(hoyISO()), hechos = [];
+  for (let i = 0; i < 7; i++) {
+    const f = sumaDias(lun, i);
+    const p = el('i', 'p' + (fechas.includes(f) ? ' si' : '') + (f === hoyISO() ? ' hoy' : ''), DIAS_INI[i]);
+    p.setAttribute('aria-hidden', 'true');
+    s.appendChild(p);
+    if (fechas.includes(f)) hechos.push(DIAS_NOM[i]);
+  }
+  s.appendChild(el('span', 'solo-lector', hechos.length
+    ? 'Esta semana has apuntado el ' + (hechos.length > 1 ? hechos.slice(0, -1).join(', ') + ' y el ' + hechos[hechos.length - 1] : hechos[0]) + '.'
+    : 'Esta semana aún no hay apuntes.'));
+  return s;
+}
+function filaTarea(g) {
+  const t = g.t;
+  let pie = null, txt = 'Abrir';
+  if (g.fr === 'diaria') { pie = g.hoy ? 'Hoy: ✓ hecho' : 'Hoy: cuando puedas'; txt = g.hoy ? 'Ver' : 'Apuntar'; }
+  else if (g.fr === 'cada_vez_que_ocurra') {
+    pie = g.semana_n ? (g.semana_n === 1 ? '1 apunte esta semana' : g.semana_n + ' apuntes esta semana') : 'Cuando te pase, apúntalo aquí';
+    txt = 'Añadir apunte';
+  } else pie = t.caduca ? 'Cuando puedas, antes del ' + fecha(t.caduca) : 'Cuando puedas';
+  const f = fila(g.titulo, pie);
+  f.classList.add('fr-' + g.fr.replace(/_/g, '-'));
+  if (g.fr === 'diaria' && g.hoy) f.classList.add('hecha-hoy');
+  f.dataset.buscar = [g.titulo, g.para_que].filter(Boolean).join(' ');
+  f.dataset.grupo = g.ids.join(',');
+  if (g.fr === 'diaria') f.querySelector('.texto').appendChild(puntosSemana(g.semana));
+  if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); return f; }
+  const b = document.createElement('button');
+  b.className = 'boton'; b.type = 'button'; b.textContent = txt;
+  b.addEventListener('click', () => abrirHerramienta(t.id, g.otras));
+  f.appendChild(b);
+  return f;
+}
+
+/* «Lo que toca hoy», en el inicio: como mucho el cuestionario de antes
+   de la sesión, el apunte del día y el plan de seguridad. Nada más. */
+function pintaHoy(otras, deTareas) {
+  const ul = $('hoy-lista'); ul.innerHTML = '';
+  const li = (texto, accion, rotulo) => {
+    const x = el('li', 'hoy-cosa');
+    x.appendChild(el('span', 'hoy-t', texto));
+    const b = boton(rotulo, 'suave', accion);
+    x.appendChild(b); ul.appendChild(x);
+  };
+  const q = otras.find(t => t.tipo === 'cuestionario' && !(CIP.falta && t.rellenable));
+  if (q) li('Antes de tu sesión: ' + (q.titulo_paciente || q.titulo) + (q.preguntas ? ' (' + minutos(q.preguntas) + ')' : ''),
+            () => abrirTarea(q.id), 'Rellenar');
+  const d = deTareas.find(g => g.fr === 'diaria' && !g.hoy && !(CIP.falta && g.t.rellenable));
+  if (d) li('Tu apunte de hoy: ' + d.titulo, () => abrirHerramienta(d.t.id, d.otras), 'Apuntar');
+  if (PLAN_TAREA || PLAN) li('Tu plan de seguridad, siempre aquí', () => $('b-plan').click(), 'Abrir');
+  $('c-hoy').hidden = !ul.children.length;
+}
+
+/* «Mis herramientas»: título y para qué sirve. Sin estado. */
+function pintaHerramientas(grupos, copias, v) {
+  const c = $('herramientas'); c.innerHTML = '';
+  /* Las copias enviadas de algo que ahora vive (el plan de seguridad
+     de antes del 17-10) no salen aparte: están dentro. */
+  const vivos = new Set(grupos.flatMap(g => g.ts).filter(t => t.modo !== 'una').map(t => t.titulo));
+  copias = copias.filter(d => !vivos.has(d.titulo));
+  /* El plan de seguridad, el primero. */
+  grupos.sort((a, b) => Number(b.t.herr_id === 'plan-seguridad') - Number(a.t.herr_id === 'plan-seguridad'));
+  grupos.forEach(g => {
+    const t = g.t;
+    const f = fila(g.titulo, g.para_que || (t.lectura ? 'Para consultar cuando quieras' : null));
+    f.dataset.buscar = [g.titulo, g.para_que].filter(Boolean).join(' ');
+    f.dataset.grupo = g.ids.join(',');
+    if (t.herr_id === 'plan-seguridad') {
+      f.classList.add('plan');
+      const p = el('p', 'plan-urgente');
+      p.append('Si estás en peligro ahora: ');
+      const a1 = el('a', null, '024'); a1.href = 'tel:024';
+      const a2 = el('a', null, '112'); a2.href = 'tel:112';
+      p.append(a1, ' o ', a2, '.');
+      f.querySelector('.texto').appendChild(p);
+    }
+    if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); c.appendChild(f); return; }
+    const b = document.createElement('button');
+    b.className = 'boton'; b.type = 'button'; b.textContent = 'Abrir';
+    b.addEventListener('click', () => abrirHerramienta(t.id, g.otras));
+    f.appendChild(b); c.appendChild(f);
+  });
+  copias.forEach(d => {
+    const f = fila(d.titulo || 'Herramienta', 'La que me enviaste el ' + fecha(d.creado));
+    f.dataset.buscar = d.titulo || '';
+    if (Number(d.para_v) !== Number(v)) {
+      /* Se cerró con la llave de la contraseña anterior. Esta copia no
+         se puede reabrir; el Mac tiene la suya y me la puedes pedir. */
+      const e = document.createElement('span');
+      e.className = 'sello caduca'; e.textContent = 'pídemela';
+      e.title = 'Se guardó con tu contraseña anterior. Escríbeme y te la vuelvo a mandar.';
+      f.appendChild(e);
+    } else {
+      const b = document.createElement('button');
+      b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
+      b.addEventListener('click', () => abrirCopia(d.id));
+      f.appendChild(b);
+    }
+    c.appendChild(f);
+  });
+  if (!c.children.length) c.appendChild(vacio('Cuando te deje una herramienta, la tendrás aquí siempre a mano.'));
+  const nh = grupos.length;
+  $('resumen-herr').textContent = nh ? (nh === 1 ? 'Una, siempre a mano.' : nh + ', siempre a mano.') : 'Lo que tienes siempre a mano.';
+}
+
+/* La frase de cada tarjeta, cuando el catálogo no trae «para qué»: la
+   primera línea de «Lo que acordamos» (o el subtítulo). Va sellada a su
+   clave, así que se abre aquí, después de pintar, y se guarda en memoria
+   mientras dure la visita. En las repetidas, la de la más reciente:
+   «Lo último que acordamos: …». */
+const NOTAS = new Map();
+async function notaDe(t) {
+  /* `cif` es una huella del sobre (cambia si el Mac cambia la nota con
+     `sustituye`), no de lo que dice. */
+  const k = t.id + '@' + t.para_v + '@' + (t.cif || '');
+  if (NOTAS.has(k)) return NOTAS.get(k);
+  let out = null;
+  try {
+    const r = await api('tarea&id=' + encodeURIComponent(t.id));
+    if (r.ok && r.j.cifrado && Number(r.j.para_v) === Number(miV)) {
+      const def = abrirDelMac(r.j.cifrado, miPublica, privada) || {};
+      const ac = (def.bloques || []).find(esAcordadoB);
+      const linea = ac ? String(ac.texto || '').split(/\n|(?<=[.!?])\s+/).map(s => s.trim()).find(Boolean) : null;
+      out = { acordado: linea ? recorta(linea, 140) : null, subtitulo: def.subtitulo ? recorta(def.subtitulo, 140) : null };
+    }
+  } catch (_) {}
+  NOTAS.set(k, out);
+  return out;
+}
+/* Diez segundos por pregunta: «1 min» y no «unos 1 min». */
+function minutos(preguntas) { const m = Math.round(preguntas * 10 / 60); return m <= 1 ? '1 min' : 'unos ' + m + ' min'; }
+function recorta(s, n) { s = String(s).trim(); return s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s; }
+async function completaNotas(grupos) {
+  for (const g of grupos) {
+    if (g.ap === 'leer') continue;
+    const repetida = g.ts.length > 1;
+    if (g.para_que && !repetida) continue;
+    const n = await notaDe(g.t);
+    if (!n) continue;
+    const texto = n.acordado ? (repetida ? 'Lo último que acordamos: ' : '') + n.acordado : (!g.para_que ? n.subtitulo : null);
+    if (!texto) continue;
+    document.querySelectorAll('.fila[data-grupo="' + g.ids.join(',') + '"]').forEach(f => {
+      const tx = f.querySelector('.texto');
+      let p = tx.querySelector('p.nota-acordada');
+      if (!p) { p = el('p', 'nota-acordada'); tx.insertBefore(p, tx.querySelector('strong').nextSibling); }
+      p.textContent = texto;
+      f.dataset.buscar = [g.titulo, g.para_que, texto].filter(Boolean).join(' ');
+    });
+  }
+  ['tareas', 'herr'].forEach(k => { const b = BUSCA[k]; if (b) b.filtra(); });
+}
+
+/* «Lo que vimos en sesión»: los resúmenes, del más nuevo al más antiguo,
+   cada uno con los recordatorios de esa sesión; el último abierto y los
+   demás plegados. De qué sesión es un recordatorio lo dice el «orden» del
+   Mac (`sesion`); si no lo dice, va con el resumen más cercano en fecha
+   (hasta 4 días) y, si no hay ninguno, en «Otros recordatorios». */
+function numSesion(titulo) { const m = /sesi[oó]n\s*(?:n\.?º\s*)?(\d+)/i.exec(String(titulo || '')); return m ? Number(m[1]) : null; }
+function pintaVimos(docs, leer, v) {
+  let viejos = 0;
+  const cs = $('sesiones'); cs.innerHTML = '';
+  const ses = docs.filter(d => d.clase === 'sesion').sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
+  const grupos = ses.map(s => ({ s, n: numSesion(s.titulo), fecha: s.creado, leer: [] }));
+  const otros = [];
+  const dias = (a, b) => Math.abs(deISO(String(a).slice(0, 10)) - deISO(String(b).slice(0, 10))) / 864e5;
+  leer.forEach(g => {
+    const o = ORDEN[g.t.id] || {};
+    let dest = null;
+    if (Number.isInteger(o.sesion)) {
+      dest = grupos.find(x => x.n === o.sesion);
+      if (!dest) {
+        dest = { s: null, n: o.sesion, fecha: /^\d{4}-\d{2}-\d{2}/.test(String(o.fecha_sesion || '')) ? o.fecha_sesion : g.t.creado, leer: [] };
+        grupos.push(dest);
+      }
+    } else {
+      let mejor = null;
+      grupos.filter(x => x.s).forEach(x => { const d = dias(x.fecha, g.t.creado); if (d <= 4 && (!mejor || d < mejor.d)) mejor = { x, d }; });
+      dest = mejor ? mejor.x : null;
+    }
+    (dest ? dest.leer : otros).push(g);
+  });
+  grupos.sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+  const filaLeer = (g) => {
+    const f = fila(g.titulo, 'Para leer');
+    f.dataset.buscar = g.titulo;
+    const b = boton('Leer', '', () => abrirParaLeer(g.t.id));
+    f.appendChild(b);
+    return f;
+  };
+  const filaResumen = (d) => {
+    const copiaOk = d.firmado && d.copia_id && Number(d.copia_v) === Number(v);
+    /* El título de la sesión ya está en el grupo: aquí, qué es. */
+    const f = fila('Resumen de la sesión', 'Lo que nos llevamos · ' + fecha(d.creado));
+    f.dataset.buscar = (d.titulo || '') + ' resumen';
+    if (Number(d.para_v) !== Number(v) && !copiaOk) {
+      viejos++;
+      const e = el('span', 'sello', 'actualizando');
+      e.title = 'Tras el cambio de contraseña, en unos minutos vuelve a estar aquí.';
+      f.appendChild(e);
+    } else f.appendChild(boton('Leer', '', () => abrir(d.id, d.titulo, 'sesion', d)));
+    return f;
+  };
+  grupos.forEach((x, i) => {
+    const det = el('details', 'grupo-sesion');
+    det.dataset.plegable = 'sesion-' + (x.s ? x.s.id : 'n' + x.n);
+    det.open = i === 0;
+    const sm = el('summary');
+    sm.appendChild(el('span', 'gs-fecha', fecha(x.fecha)));
+    sm.appendChild(el('span', 'gs-t', x.s ? (x.s.titulo || 'Sesión') : 'Sesión ' + x.n));
+    if (x.leer.length) sm.appendChild(el('span', 'gs-n', x.leer.length === 1 ? '1 recordatorio' : x.leer.length + ' recordatorios'));
+    det.appendChild(sm);
+    const cuerpo = el('div', 'gs-cuerpo');
+    if (x.s) cuerpo.appendChild(filaResumen(x.s));
+    x.leer.forEach(g => cuerpo.appendChild(filaLeer(g)));
+    det.appendChild(cuerpo);
+    cs.appendChild(det);
+  });
+  if (otros.length) {
+    const det = el('details', 'grupo-sesion');
+    det.dataset.plegable = 'sesion-otros'; det.open = !grupos.length;
+    const sm = el('summary'); sm.appendChild(el('span', 'gs-t', 'Otros recordatorios')); det.appendChild(sm);
+    const cuerpo = el('div', 'gs-cuerpo');
+    otros.forEach(g => cuerpo.appendChild(filaLeer(g)));
+    det.appendChild(cuerpo); cs.appendChild(det);
+  }
+  if (!cs.children.length) cs.appendChild(vacio('Aquí irá apareciendo lo que nos llevamos de cada sesión.'));
+
+  /* Los documentos, como antes. */
+  const c = $('documentos'); c.innerHTML = '';
+  const mios = docs.filter(d => (d.clase || 'documento') === 'documento');
+  if (!mios.length) c.appendChild(vacio('Todavía no hay documentos. Cuando te mande alguno, aparece aquí.'));
+  mios.forEach(d => {
+    /* Firmado con la copia ya vuelta a sellar: se abre por la copia
+       aunque el documento original tenga la clave vieja. */
+    const copiaOk = d.firmado && d.copia_id && Number(d.copia_v) === Number(v);
+    const caduco = Number(d.para_v) !== Number(v) && !copiaOk;
+    if (caduco) viejos++;
+    const f = fila(d.titulo || 'Documento', fecha(d.creado));
+    f.dataset.buscar = d.titulo || 'Documento';
+    if (caduco) {
+      /* Un botón que no abre es peor que no tener botón: la persona
+         piensa que está roto y que ha perdido algo. Lo firmado sigue
+         constando como firmado, con su fecha. */
+      if (d.firmado) {
+        const ok = document.createElement('span');
+        ok.className = 'sello ok'; ok.textContent = 'firmado el ' + fecha(d.firmado);
+        const pie = f.querySelector('.texto p');
+        if (pie) pie.append(' ', ok); else f.appendChild(ok);
+      }
+      const e = document.createElement('span');
+      e.className = 'sello'; e.textContent = 'actualizando';
+      e.title = 'Tras el cambio de contraseña, en unos minutos vuelve a estar aquí.';
+      f.appendChild(e);
+    } else if (Number(d.requiere_firma) && !d.firmado) {
+      const e = document.createElement('span');
+      e.className = 'sello ojo'; e.textContent = 'sin firmar';
+      f.appendChild(e);
+      const b = document.createElement('button');
+      b.className = 'boton'; b.type = 'button'; b.textContent = 'Leer y firmar';
+      b.addEventListener('click', () => abrirFirma(d.id, d.titulo));
+      f.appendChild(b);
+    } else {
+      if (d.firmado) {
+        const e = document.createElement('span');
+        e.className = 'sello ok'; e.textContent = 'firmado';
+        e.title = 'Firmado el ' + fecha(d.firmado);
+        /* Junto a la fecha, no entre el título y el botón: en un móvil
+           empujaba «Abrir» a otra línea y cada fila salía distinta. */
+        const pie = f.querySelector('.texto p');
+        if (pie) pie.append(' ', e); else f.appendChild(e);
+      }
+      if (faltanDatos(d)) {
+        const b2 = document.createElement('button');
+        b2.className = 'boton'; b2.type = 'button'; b2.textContent = soloFrase(d) ? 'Revisar y firmar' : 'Completar datos';
+        b2.addEventListener('click', () => abrirFirma(d.id, d.titulo, true, soloFrase(d)));
+        f.appendChild(b2);
+      }
+      const b = document.createElement('button');
+      b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
+      b.addEventListener('click', () => abrir(d.id, d.titulo, 'documento', d));
+      f.appendChild(b);
+    }
+    c.appendChild(f);
+  });
+  const nr = ses.length, nd = mios.length;
+  $('resumen-vimos').textContent = (nr || nd)
+    ? [nr ? (nr === 1 ? '1 resumen' : nr + ' resúmenes') : null, nd ? (nd === 1 ? '1 documento' : nd + ' documentos') : null,
+       leer.length ? (leer.length === 1 ? '1 recordatorio' : leer.length + ' recordatorios') : null].filter(Boolean).join(', ') + '.'
+    : 'Los resúmenes de cada sesión y tus documentos.';
+  /* Una línea, no una lista, cuando hay un resumen nuevo (de los últimos
+     cuatro días). */
+  const nuevo = ses[0] && dias(ses[0].creado, hoyISO()) <= 4 && Number(ses[0].para_v) === Number(v) ? ses[0] : null;
+  $('aviso-nuevo').hidden = !nuevo;
+  if (nuevo) $('aviso-nuevo-a').textContent = 'Tienes un resumen nuevo: ' + (nuevo.titulo || 'tu última sesión') + ' (' + fecha(nuevo.creado) + ').';
+  aplicaPlegables();
+  return viejos;
+}
+
+/* Un recordatorio de lo acordado se lee, no se rellena: solo lo que se
+   lee de su ficha (lo acordado, las notas, el texto), sin casillas. */
+const BLOQUES_LEER = ['nota', 'texto', 'lista', 'advertencia', 'titulo', 'tabla_lectura'];
+async function abrirParaLeer(id) {
+  const r = await api('tarea&id=' + encodeURIComponent(id));
+  if (!r.ok || r.j.tipo !== 'herramienta') { await panel(); return; }
+  let def = r.j.plantilla || {};
+  if (r.j.cifrado) {
+    let abierta = null;
+    if (Number(r.j.para_v) === Number(miV)) { try { abierta = abrirDelMac(r.j.cifrado, miPublica, privada); } catch (_) {} }
+    if (!abierta) { $('panel-estado').textContent = 'Se está actualizando. En unos minutos lo tienes.'; return; }
+    def = abierta;
+  }
+  if (r.j.titulo) def = Object.assign({}, def, { titulo: r.j.titulo });
+  const leer = Object.assign({}, def, { tipo: 'lectura', bloques: (def.bloques || []).filter(b => BLOQUES_LEER.includes(b.t)) });
+  HERR = { tarea: null, def: leer, soloLeer: true };
+  montaHerramienta(leer, {}, true, 'Para leer');
+}
+
+/* --- Los plegables recuerdan si estaban abiertos -------------------------
+   Solo eso, y solo en esta pestaña del navegador (sessionStorage): ni un
+   título ni nada de lo que pone. Si el almacenamiento no está, se pliegan
+   y despliegan igual; solo no se recuerda. */
+function aplicaPlegables() {
+  document.querySelectorAll('#v-panel details[data-plegable]').forEach(d => {
+    let x = null;
+    try { x = sessionStorage.getItem('adr.plegable.' + d.dataset.plegable); } catch (_) {}
+    if (x === '1') d.open = true; else if (x === '0') d.open = false;
+    if (!d.dataset.oye) {
+      d.dataset.oye = '1';
+      d.addEventListener('toggle', () => {
+        if (d.dataset.buscando) return;
+        try { sessionStorage.setItem('adr.plegable.' + d.dataset.plegable, d.open ? '1' : '0'); } catch (_) {}
+      });
+    }
+  });
+}
+
+/* --- Listas largas: ventana con scroll y buscador ------------------------
+   Con más de 6 cosas, la lista va en una ventana de altura fija con su
+   propio scroll y, encima, un buscador: título, para qué sirve y nota, sin
+   distinguir tildes ni mayúsculas, mientras se escribe, con «×» para
+   limpiar y «3 de 12». Con 6 o menos, ni ventana ni buscador: una lista
+   corta se lee entera. Lo escrito se queda al repintar (Actualizar). */
+const BUSCA = {};
+const sinTildes = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+function ponBuscador(clave, zona, nombre) {
+  const items = [...zona.querySelectorAll('[data-buscar]')];
+  let b = BUSCA[clave];
+  if (items.length <= 6) {
+    if (b) { b.caja.remove(); delete BUSCA[clave]; }
+    zona.classList.remove('con-ventana'); zona.removeAttribute('tabindex'); zona.removeAttribute('role'); zona.removeAttribute('aria-label');
+    items.forEach(x => { x.hidden = false; });
+    return;
+  }
+  if (!b) {
+    const caja = el('div', 'buscador');
+    const id = 'bus-' + clave;
+    const lab = el('label', null, 'Buscar en ' + nombre.charAt(0).toLowerCase() + nombre.slice(1)); lab.htmlFor = id;
+    const fila = el('div', 'buscador-fila');
+    const inp = document.createElement('input'); inp.type = 'search'; inp.id = id; inp.autocomplete = 'off';
+    inp.setAttribute('enterkeyhint', 'search');
+    const x = el('button', 'buscador-x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Borrar la búsqueda'); x.hidden = true;
+    const cuenta = el('span', 'buscador-cuenta'); cuenta.setAttribute('role', 'status');
+    fila.append(inp, x);
+    caja.append(lab, fila, cuenta);
+    zona.parentNode.insertBefore(caja, zona);
+    b = BUSCA[clave] = { caja, inp, x, cuenta, zona };
+    inp.addEventListener('input', () => b.filtra());
+    x.addEventListener('click', () => { inp.value = ''; b.filtra(); inp.focus(); });
+  }
+  /* Lo que se acaba de pintar manda: si había una búsqueda a medias, el
+     estado «de antes» de cada grupo se vuelve a tomar del repintado. */
+  zona.querySelectorAll('details[data-buscando]').forEach(d => { delete d.dataset.buscando; });
+  zona.classList.add('con-ventana');
+  /* Con su propio nombre: el del apartado ya lo lleva la sección. */
+  zona.tabIndex = 0; zona.setAttribute('role', 'region'); zona.setAttribute('aria-label', 'Lista: ' + nombre);
+  b.filtra = () => {
+    const q = sinTildes(b.inp.value).trim();
+    const todos = [...zona.querySelectorAll('[data-buscar]')];
+    let n = 0;
+    todos.forEach(it => { const si = !q || sinTildes(it.dataset.buscar).includes(q); it.hidden = !si; if (si) n++; });
+    /* Un grupo (una sesión, la biblioteca) se abre si tiene algo que
+       coincide y se esconde si no tiene nada; sin buscar, como estaba. */
+    zona.querySelectorAll('details').forEach(d => {
+      const hay = [...d.querySelectorAll('[data-buscar]')];
+      if (!hay.length) return;
+      if (q) {
+        if (!d.dataset.buscando) { d.dataset.buscando = '1'; d.dataset.antes = d.open ? '1' : '0'; d.dataset.oculto = d.hidden ? '1' : '0'; }
+        d.hidden = !hay.some(x => !x.hidden); d.open = !d.hidden;
+      } else if (d.dataset.buscando) {
+        d.hidden = d.dataset.oculto === '1'; d.open = d.dataset.antes === '1';
+        delete d.dataset.buscando;
+      }
+    });
+    b.x.hidden = !b.inp.value;
+    b.cuenta.textContent = q ? (n ? n + ' de ' + todos.length : 'Nada con «' + b.inp.value.trim() + '»') : todos.length + ' en total';
+  };
+  b.filtra();
 }
 
 /* Lo completado: qué y cuándo, sin puntuación. La puntuación está en
@@ -1132,12 +1583,13 @@ async function pintaHechas(hs, meta, v) {
   }
   todo.sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
   c.innerHTML = '';
-  if (!todo.length) {
-    c.appendChild(vacio('Aquí irá quedando lo que vayas haciendo, con su fecha.'));
-    return;
-  }
-  todo.slice(0, 40).forEach(h => c.appendChild(
+  /* 11-11: plegado, abajo de «Mis tareas», con cuántas hay. */
+  const lista = todo.slice(0, 40);
+  $('t-hechas').textContent = 'Hechas · ' + lista.length;
+  $('c-hechas').hidden = !lista.length;
+  lista.forEach(h => c.appendChild(
     fila(h.titulo, (h.firma ? 'Firmado el ' : 'Hecho el ') + fecha(h.fecha))));
+  aplicaPlegables();
 }
 
 /* --- Mis objetivos -----------------------------------------------------
@@ -1313,7 +1765,7 @@ async function pintaAgenda(meta, v) {
   if (RELOJ_AG) { clearInterval(RELOJ_AG); RELOJ_AG = null; }
   AGENDA = null;
   caja.hidden = true;
-  $('hola').textContent = 'Tu espacio';
+  $('hola').textContent = 'Hoy';
   if (!meta || Number(meta.para_v) !== Number(v)) return;
   const r = await api('abrir&id=' + encodeURIComponent(meta.id));
   if (!r.ok || !r.j.cifrado) return;
@@ -3129,6 +3581,7 @@ $('t-form').addEventListener('submit', async (ev) => {
    queda en «Mis herramientas»: un plan de seguridad que desaparece al
    enviarlo no sirve el día que hace falta. */
 let HERR = null;   // {tarea, def, soloLeer}
+let OTRAS = [];    // las copias más antiguas de la herramienta abierta (11-11)
 
 /* --- «Para cuando lo necesites» (04-11) ---------------------------------
    Las herramientas `abierta` del catálogo. La primera vez que se abre una,
@@ -3140,11 +3593,11 @@ function pintaBiblioteca(lista, vivas) {
   const suyas = lista.filter(b => !b.asignada);
   BIB_TAREAS = new Set(suyas.filter(b => b.tarea).map(b => b.tarea));
   $('c-biblioteca').hidden = !suyas.length;
+  $('t-bib').textContent = 'Para cuando lo necesites · ' + suyas.length;
   suyas.forEach(b => {
-    const viva = b.tarea ? vivas.find(t => t.id === b.tarea) : null;
-    const pie = [b.para_que, viva && viva.modo === 'registro' && viva.entradas ? 'Último apunte: ' + fecha(viva.ultima) : null]
-      .filter(Boolean).join(' · ');
-    const f = fila(b.titulo, pie || null);
+    /* 11-11: sin «último apunte»: en «Mis herramientas» nada lleva estado. */
+    const f = fila(b.titulo, b.para_que || null);
+    f.dataset.buscar = [b.titulo, b.para_que].filter(Boolean).join(' ');
     if (CIP.falta && !b.lectura) { f.appendChild(esperaCI()); c.appendChild(f); return; }
     const bt = document.createElement('button');
     bt.className = 'boton'; bt.type = 'button'; bt.textContent = 'Abrir';
@@ -3229,48 +3682,6 @@ $('i-form').addEventListener('submit', async (ev) => {
     $('i-hecho').hidden = false; $('i-hecho').focus();
   } finally { $('i-enviar').disabled = false; }
 });
-
-function pintaHerramientas(pendientes, vivas, copias, v) {
-  const c = $('herramientas'); c.innerHTML = '';
-  /* Las copias enviadas de algo que ahora vive (el plan de seguridad
-     de antes del 17-10) no salen aparte: están dentro. */
-  const vivos = new Set(pendientes.concat(vivas).filter(t => t.modo !== 'una').map(t => t.titulo));
-  copias = copias.filter(d => !vivos.has(d.titulo));
-  $('c-herramientas').hidden = !(pendientes.length || vivas.length || copias.length);
-  const pie = (t) => {
-    if (t.modo === 'registro') return t.hoy ? 'Registro · hoy: apuntado ✓'
-      : (t.entradas ? 'Registro · último apunte: ' + fecha(t.ultima) : 'Registro · aún sin apuntes');
-    if (t.lectura) return 'Siempre a mano · para consultar';
-    if (t.modo === 'vivo') return t.actualizado ? 'Siempre a mano · cambiado el ' + fecha(t.actualizado) : 'Siempre a mano · por empezar';
-    return t.caduca ? ('antes del ' + fecha(t.caduca)) : 'Pendiente';
-  };
-  pendientes.concat(vivas).forEach(t => {
-    const f = fila(t.titulo, pie(t));
-    if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); c.appendChild(f); return; }
-    const b = document.createElement('button');
-    b.className = 'boton'; b.type = 'button';
-    b.textContent = (t.modo === 'registro' && !t.hoy) ? 'Apuntar' : 'Abrir';
-    b.addEventListener('click', () => abrirHerramienta(t.id));
-    f.appendChild(b); c.appendChild(f);
-  });
-  copias.forEach(d => {
-    const f = fila(d.titulo || 'Herramienta', 'Enviada el ' + fecha(d.creado));
-    if (Number(d.para_v) !== Number(v)) {
-      /* Se cerró con la llave de la contraseña anterior. Esta copia no
-         se puede reabrir; el Mac tiene la suya y me la puedes pedir. */
-      const e = document.createElement('span');
-      e.className = 'sello caduca'; e.textContent = 'pídemela';
-      e.title = 'Se guardó con tu contraseña anterior. Escríbeme y te la vuelvo a mandar.';
-      f.appendChild(e);
-    } else {
-      const b = document.createElement('button');
-      b.className = 'boton suave'; b.type = 'button'; b.textContent = 'Abrir';
-      b.addEventListener('click', () => abrirCopia(d.id));
-      f.appendChild(b);
-    }
-    c.appendChild(f);
-  });
-}
 
 /* Los id de campo de una tabla: `{tabla}.{fila}.{columna}`. Las filas
    fijas van primero (1, 2…) y las libres siguen la numeración. */
@@ -3915,7 +4326,11 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   ajustaAltos(cuerpo);
 }
 
-async function abrirHerramienta(id) {
+/* `otras`: las copias más antiguas de la misma herramienta (11-11). Se
+   abre la más reciente (su nota manda); de las otras se traen sus apuntes
+   y, si la reciente aún no tiene nada escrito, lo que escribió en ellas. */
+async function abrirHerramienta(id, otras) {
+  OTRAS = (otras || []).filter(x => x !== id);
   const r = await api('tarea&id=' + encodeURIComponent(id));
   if (!r.ok || r.j.tipo !== 'herramienta') { await panel(); return; }
   /* Sellada (17-10): la definición viaja cifrada a SU clave. */
@@ -4395,7 +4810,8 @@ async function copiaAntigua(titulo) {
 }
 
 async function abrirViva(r, def) {
-  HERR = { tarea: r.j.id, def, soloLeer: false, modo: r.j.modo, recordar: (HERR_FILAS[r.j.id] || {}).recordar || null };
+  HERR = { tarea: r.j.id, def, soloLeer: false, modo: r.j.modo, recordar: (HERR_FILAS[r.j.id] || {}).recordar || null,
+           otras: OTRAS.slice() };
   let guardado = null;
   if (r.j.borrador) {
     if (Number(r.j.borrador_v) !== Number(miV)) {
@@ -4405,6 +4821,14 @@ async function abrirViva(r, def) {
     try { guardado = abrirDelMac(r.j.borrador, miPublica, privada); } catch (_) {}
   }
   if (!guardado && r.j.empezada === false) guardado = null;
+  /* Repetida: lo escrito en la copia anterior, si en ésta aún no hay nada. */
+  for (const o of HERR.otras) {
+    if (guardado) break;
+    const x = await api('tarea&id=' + encodeURIComponent(o));
+    if (x.ok && x.j.borrador && Number(x.j.borrador_v) === Number(miV)) {
+      try { guardado = abrirDelMac(x.j.borrador, miPublica, privada); } catch (_) {}
+    }
+  }
   if (!guardado) guardado = await copiaAntigua(r.j.titulo);
   let valores = (guardado && (guardado.campos || {})) || {};
   if (def.tipo === 'lectura') {
@@ -4473,9 +4897,7 @@ async function compruebaCambios() {
     av.appendChild(bs);
     $('h-cuerpo').prepend(av);
   } else if (HERR.modo === 'registro') {
-    const r = await api('entradas&id=' + encodeURIComponent(HERR.tarea));
-    if (!r.ok) return;
-    const f = firmaEntradas(r.j.entradas || []);
+    const f = firmaEntradas(await entradasDe());
     if (f === HERR.firmaEntradas) return;
     if (document.getElementById('reg-fecha')) {
       HERR.firmaEntradas = f;
@@ -4511,19 +4933,31 @@ async function montaRegistro(msg) {
     montaVivo(v, HERR.actualizado);
     return;
   }
-  const r = await api('entradas&id=' + encodeURIComponent(HERR.tarea));
+  const crudas = await entradasDe();
   const ents = []; let viejas = 0;
-  ((r.ok && r.j.entradas) || []).forEach(e => {
+  crudas.forEach(e => {
     if (Number(e.para_v) !== Number(miV)) { viejas++; return; }
     try {
       const c = abrirDelMac(e.cifrado, miPublica, privada);
-      ents.push({ uid: e.uid, fecha: e.fecha, fila: c.fila || {}, creado: e.creado });
+      ents.push({ uid: e.uid, fecha: e.fecha, fila: c.fila || {}, creado: e.creado, tarea: e.tarea });
     } catch (_) { viejas++; }
   });
   HERR.entradas = ents; HERR.viejas = viejas;
-  HERR.firmaEntradas = firmaEntradas((r.ok && r.j.entradas) || []);
+  HERR.firmaEntradas = firmaEntradas(crudas);
   pintaRegistro(msg);
   vigila();
+}
+
+/* Los apuntes de la herramienta abierta y de sus copias anteriores, cada
+   uno con la tarea de la que cuelga: corregir o quitar un apunte viejo va
+   a SU tarea; lo nuevo, a la más reciente. */
+async function entradasDe() {
+  const out = [];
+  for (const id of [HERR.tarea].concat(HERR.otras || [])) {
+    const r = await api('entradas&id=' + encodeURIComponent(id));
+    ((r.ok && r.j.entradas) || []).forEach(e => out.push(Object.assign({}, e, { tarea: id })));
+  }
+  return out;
 }
 
 function partesRegistro() {
@@ -5052,12 +5486,12 @@ function editaEntrada(e) {
   window.scrollTo(0, 0);
 }
 
-function sobreEntrada(uid, fecha, fila, borrada) {
+function sobreEntrada(uid, fecha, fila, borrada, tarea) {
   const b = HERR.principal;
   const n = esDiario(b) ? diaSemana(fecha) + 1 : 1;
   const campos = {};
   Object.keys(fila || {}).forEach(k => { campos[b.id + '.' + n + '.' + k] = fila[k]; });
-  return conBiblioteca({ herramienta: HERR.def.id, tarea: HERR.tarea, modo: 'registro', entrada: { uid, fecha, borrada: !!borrada },
+  return conBiblioteca({ herramienta: HERR.def.id, tarea: tarea || HERR.tarea, modo: 'registro', entrada: { uid, fecha, borrada: !!borrada },
            tabla: b.id, fila: fila || {}, campos, semana: lunesDe(fecha),
            completado_en: ahoraLocal(), origen: 'cuenta', cod_web: miCod });
 }
@@ -5068,22 +5502,22 @@ async function guardaEntrada(e) {
   if (!fecha || fecha > hoyISO()) { est.textContent = 'Elige un día de hoy hacia atrás.'; return; }
   const fila = filaDelEditor();
   if (!Object.values(fila).some(v => v.trim())) { est.textContent = 'Escribe algo antes de guardar.'; return; }
-  let uid = e.uid;
-  if (!uid && esDiario(HERR.principal)) { const ex = HERR.entradas.find(x => x.fecha === fecha); if (ex) uid = ex.uid; }
+  let uid = e.uid, tarea = e.tarea || HERR.tarea;
+  if (!uid && esDiario(HERR.principal)) { const ex = HERR.entradas.find(x => x.fecha === fecha); if (ex) { uid = ex.uid; tarea = ex.tarea || tarea; } }
   uid = uid || uidNuevo();
   const copia = { fecha, fila, guardado: new Date().toISOString() };
-  const r = await api('entrada', { id: HERR.tarea, uid, fecha,
-    cifrado: sellarHaciaElMac(sobreEntrada(uid, fecha, fila, false), macPublica),
+  const r = await api('entrada', { id: tarea, uid, fecha,
+    cifrado: sellarHaciaElMac(sobreEntrada(uid, fecha, fila, false, tarea), macPublica),
     copia: sellarHaciaElMac(copia, miPublica) });
   if (!r.ok) { est.textContent = r.j.error === 'despacio' ? 'Demasiados cambios seguidos: espera un poco. Lo escrito sigue aquí.' : 'No se ha podido guardar. Inténtalo otra vez: lo escrito sigue aquí.'; return; }
   borraLocal(claveApunte());
-  HERR.entradas = HERR.entradas.filter(x => x.uid !== uid).concat([{ uid, fecha, fila, creado: new Date().toISOString() }]);
+  HERR.entradas = HERR.entradas.filter(x => x.uid !== uid).concat([{ uid, fecha, fila, creado: new Date().toISOString(), tarea }]);
   pintaRegistro(fecha === hoyISO() ? '✓ Guardado. Lo de hoy, apuntado.' : '✓ Guardado: ' + diaLargo(fecha).toLowerCase() + '.');
 }
 
 async function quitaEntrada(e) {
-  const r = await api('entrada', { id: HERR.tarea, uid: e.uid, fecha: e.fecha, borrar: true,
-    cifrado: sellarHaciaElMac(sobreEntrada(e.uid, e.fecha, null, true), macPublica) });
+  const r = await api('entrada', { id: e.tarea || HERR.tarea, uid: e.uid, fecha: e.fecha, borrar: true,
+    cifrado: sellarHaciaElMac(sobreEntrada(e.uid, e.fecha, null, true, e.tarea), macPublica) });
   if (!r.ok) { $('reg-estado').textContent = 'No se ha podido quitar. Inténtalo otra vez.'; return; }
   borraLocal(claveApunte());
   HERR.entradas = HERR.entradas.filter(x => x.uid !== e.uid);

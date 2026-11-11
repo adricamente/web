@@ -43,7 +43,7 @@ function adr_modo_valido($m): ?string {
    en el globo, en la víspera y en «Antes de la sesión». Adrián: «la rueda
    no se rellena; es para que la conozcan. Es una herramienta, no una
    tarea». Desde hoy TODA herramienta de `tipo: "lectura"` es «vivo»
-   (siempre a mano, en «Tus herramientas») y no cuenta como pendiente en
+   (siempre a mano, en «Mis herramientas» desde el 11-11) y no cuenta como pendiente en
    ningún sitio. Vale también para lo ya asignado: se decide al leer la
    fila, no al guardarla.
    ADR_SIEMPRE_A_MANO cubre la rueda por su id aunque una asignación vieja
