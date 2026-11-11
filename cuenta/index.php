@@ -673,7 +673,8 @@ $cuerpo .= <<<'HTML'
       <button class="enlace-boton" id="t-luego" type="button">Seguir en otro momento</button>
     </p>
     <p class="apunte" id="t-estado" role="status">Lo que vas marcando se
-    queda en este dispositivo hasta que envíes. No sale de aquí sin cifrar.</p>
+    queda en esta página hasta que envíes; si la cierras o sales, se pierde.
+    No sale de aquí sin cifrar.</p>
     <!-- El aviso de derechos que exige la licencia de algunos
          instrumentos (el CORE-10: CC BY-NC-ND). Lo trae la plantilla;
          sin él, ese cuestionario no se puede usar. -->
@@ -735,7 +736,7 @@ $cuerpo .= <<<'HTML'
       <button class="enlace-boton" id="h-volver" type="button">← Volver</button>
     </p>
     <p class="apunte" id="h-estado" role="status"></p>
-    <!-- Dónde está ya lo escrito (04-11): «en este dispositivo», «en tu
+    <!-- Dónde está ya lo escrito (04-11): «sin guardar todavía», «en tu
          cuenta». Cambia como mucho una vez por minuto: no se anuncia en
          cada tecla. -->
     <p class="apunte guardado-h" id="h-guardado" aria-live="polite"></p>
@@ -1048,8 +1049,10 @@ async function panel() {
      que hay que firmar, un deber, lo de «una vez» sin hacer y la diaria
      sin el apunte de hoy. Lo de «cada vez que ocurra» nunca: no hay nada
      que completar. */
+  /* 11-11, noche: una diaria que lleva más de 8 semanas sin usarse
+     (inactiva) ya no cuenta para hoy. */
   const n = porFirmar.length + otras.length
-    + deTareas.filter(g => g.fr === 'una_vez' || (g.fr === 'diaria' && !g.hoy)).length
+    + deTareas.filter(g => g.fr === 'una_vez' || (g.fr === 'diaria' && !g.hoy && !g.inactiva)).length
     + (CIP.falta && !CIP.id ? 1 : 0);
   $('globo-tareas').hidden = !n;
   $('globo-tareas').textContent = n ? String(n) : '';
@@ -1103,7 +1106,8 @@ async function panel() {
      Lo que cuenta para hoy va siempre arriba: si se plegara, el globo
      diría «3 para hoy» y no se verían. */
   porTipos(ct, deTareas.sort((a, b) => (pesoFr[a.fr] ?? 3) - (pesoFr[b.fr] ?? 3)).map(g => ({
-    f: filaTarea(g), tipo: grupoDe(g.t), rec: recienteDe(g.ts), cuenta: g.fr === 'una_vez' || (g.fr === 'diaria' && !g.hoy) })),
+    f: filaTarea(g), tipo: grupoDe(g.t), rec: recienteDe(g.ts), inactiva: g.inactiva,
+    cuenta: g.fr === 'una_vez' || (g.fr === 'diaria' && !g.hoy && !g.inactiva) })),
     'tareas', 5);
   if (!ct.children.length) ct.appendChild(vacio('Cuando te mande algo que hacer, aparecerá aquí.'));
 
@@ -1175,7 +1179,7 @@ function agrupa(lista) {
   return [...por.values()].map(ts => {
     const t = ts[0];
     const { ap, fr } = apartadoDe(t);
-    return { t, ts, ids: ts.map(x => x.id), otras: ts.slice(1).map(x => x.id), ap, fr,
+    return { t, ts, ids: ts.map(x => x.id), otras: ts.slice(1).map(x => x.id), ap, fr, inactiva: inactiva(t, ts, fr),
              titulo: t.titulo, para_que: (SECC[t.herr_id] || {}).para_que || null,
              hoy: ts.some(x => x.hoy), semana: [...new Set(ts.flatMap(x => x.semana || []))].sort(),
              semana_n: ts.reduce((s, x) => s + (x.semana_n || 0), 0) };
@@ -1203,6 +1207,17 @@ function puntosSemana(fechas) {
 function filaTarea(g) {
   const t = g.t;
   let pie = null, txt = 'Abrir';
+  /* Inactiva: sin «Hoy: cuando puedas» ni círculo por rellenar, y sin
+     ninguna marca de «abandonada»: está ahí por si quiere retomarla. */
+  if (g.inactiva) {
+    const f = fila(g.titulo, 'Para cuando quieras retomarla');
+    f.classList.add('fr-cada-vez-que-ocurra');
+    f.dataset.buscar = [g.titulo, g.para_que].filter(Boolean).join(' ');
+    f.dataset.grupo = g.ids.join(',');
+    if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); return f; }
+    f.appendChild(boton(g.fr === 'diaria' ? 'Apuntar' : 'Añadir apunte', '', () => abrirHerramienta(t.id, g.otras)));
+    return f;
+  }
   if (g.fr === 'diaria') { pie = g.hoy ? 'Hoy: ✓ hecho' : 'Hoy: cuando puedas'; txt = g.hoy ? 'Ver' : 'Apuntar'; }
   else if (g.fr === 'cada_vez_que_ocurra') {
     pie = g.semana_n ? (g.semana_n === 1 ? '1 apunte esta semana' : g.semana_n + ' apuntes esta semana') : 'Cuando te pase, apúntalo aquí';
@@ -1239,18 +1254,33 @@ const GRUPOS_HERR = [['calma', 'Calma y momentos difíciles'], ['pensamientos', 
 const NOMBRE_GRUPO = Object.fromEntries(GRUPOS_HERR);
 const UMBRAL_TIPOS = 8, DIAS_AHORA = 35;
 function grupoDe(t) { const g = (SECC[t.herr_id] || {}).grupo; return NOMBRE_GRUPO[g] ? g : 'otras'; }
-/* El último movimiento: cuándo se mandó, se cambió o se apuntó algo. */
+/* El último movimiento: cuándo se mandó, se cambió (Adrián o ella) o se
+   apuntó algo. */
 function recienteDe(ts) {
-  return ts.flatMap(x => [x.creado, x.actualizado, x.ultima]).filter(Boolean)
+  return ts.flatMap(x => [x.creado, x.actualizado, x.cambiada, x.ultima]).filter(Boolean)
     .map(s => String(s).slice(0, 10)).sort().pop() || '';
+}
+/* 11-11, noche (Adrián): una diaria o de «cada vez que ocurra» sin apuntes
+   ni cambios en más de 8 semanas es inactiva: deja de contar para hoy y
+   para el globo, sale de lo de ahora y va a su grupo por tipo. Se calcula
+   siempre con las fechas, sin guardar nada: en cuanto apunta algo, o
+   Adrián se la vuelve a mandar o la cambia, vuelve sola. El plan de
+   seguridad y lo que es para leer, nunca. */
+const SEMANAS_INACTIVA = 8;
+function inactiva(t, ts, fr) {
+  if (!['diaria', 'cada_vez_que_ocurra'].includes(fr) || t.herr_id === 'plan-seguridad' || t.lectura) return false;
+  const r = recienteDe(ts);
+  return !!r && r < sumaDias(hoyISO(), -7 * SEMANAS_INACTIVA);
 }
 function porTipos(zona, items, clave, maxAhora) {
   items.forEach(x => { x.f.dataset.tipo = x.tipo; });
-  if (items.length <= UMBRAL_TIPOS) { items.forEach(x => zona.appendChild(x.f)); return; }
+  /* Con 8 o menos, la lista de siempre; las inactivas, aun así, a su grupo. */
+  if (items.length <= UMBRAL_TIPOS && !items.some(x => x.inactiva)) { items.forEach(x => zona.appendChild(x.f)); return; }
   const desde = sumaDias(hoyISO(), -DIAS_AHORA);
   const fijas = items.filter(x => x.cuenta);
-  const recientes = items.filter(x => !x.cuenta && x.rec >= desde).sort((a, b) => b.rec.localeCompare(a.rec));
-  const ahora = fijas.concat(recientes.slice(0, Math.max(0, maxAhora - fijas.length)));
+  const recientes = items.filter(x => !x.cuenta && !x.inactiva && (items.length <= UMBRAL_TIPOS || x.rec >= desde))
+    .sort((a, b) => b.rec.localeCompare(a.rec));
+  const ahora = fijas.concat(items.length <= UMBRAL_TIPOS ? recientes : recientes.slice(0, Math.max(0, maxAhora - fijas.length)));
   ahora.forEach(x => zona.appendChild(x.f));
   const resto = items.filter(x => !ahora.includes(x));
   if (!resto.length) return;
@@ -1307,7 +1337,7 @@ function pintaHoy(otras, deTareas) {
   const q = otras.find(t => t.tipo === 'cuestionario' && !(CIP.falta && t.rellenable));
   if (q) li('Antes de tu sesión: ' + (q.titulo_paciente || q.titulo) + (q.preguntas ? ' (' + minutos(q.preguntas) + ')' : ''),
             () => abrirTarea(q.id), 'Rellenar');
-  const d = deTareas.find(g => g.fr === 'diaria' && !g.hoy && !(CIP.falta && g.t.rellenable));
+  const d = deTareas.find(g => g.fr === 'diaria' && !g.hoy && !g.inactiva && !(CIP.falta && g.t.rellenable));
   if (d) li('Tu apunte de hoy: ' + d.titulo, () => abrirHerramienta(d.t.id, d.otras), 'Apuntar');
   if (PLAN_TAREA || PLAN) li('Tu plan de seguridad, siempre aquí', () => $('b-plan').click(), 'Abrir');
   $('c-hoy').hidden = !ul.children.length;
@@ -3549,8 +3579,8 @@ async function abrirTarea(id) {
   $('v-tarea').insertBefore(aux, $('t-form'));
 
   $('t-form').hidden = false;
-  $('t-estado').textContent = 'Lo que vas marcando se queda en este ' +
-    'dispositivo hasta que envíes. No sale de aquí sin cifrar.';
+  $('t-estado').textContent = 'Lo que vas marcando se queda en esta página ' +
+    'hasta que envíes; si la cierras o sales, se pierde. No sale de aquí sin cifrar.';
 
   const cont = $('t-items'); cont.innerHTML = '';
   const inicioBloque = {};
@@ -3743,19 +3773,18 @@ function repintar() {
   aux.hidden = !toca;
 }
 
-/* Lo contestado a medias se queda en ESTE dispositivo y sin cifrar,
-   porque no sale. Mandar un borrador al servidor sería contenido
-   clínico en claro, que es justo lo que este diseño existe para
-   evitar. Se borra al entregar. */
+/* Lo contestado a medias se queda en la memoria de esta página, y solo
+   ahí (11-11, noche, Adrián: nada en el navegador; al salir hay que volver
+   a poner la contraseña, así que lo guardado no servía y se quedaba en un
+   dispositivo que puede ser compartido). Mandarlo al servidor sería
+   contenido clínico en claro. Se borra al entregar. */
 function laClave() { return 'adr.parcial.' + TAREA.id; }
-function guardar() {
-  try { localStorage.setItem(laClave(), JSON.stringify(respuestas())); } catch (_) {}
-}
+function guardar() { ponLocal(laClave(), respuestas()); }
 function recuperar() {
   try {
-    const s = localStorage.getItem(laClave());
+    const s = leeLocal(laClave());
     if (!s) return;
-    JSON.parse(s).forEach(r => {
+    s.forEach(r => {
       const el = document.querySelector(
         'input[name=i' + r.item + '][value="' + r.valor + '"]');
       if (el) { el.checked = true; return; }
@@ -3820,7 +3849,7 @@ $('t-form').addEventListener('submit', async (ev) => {
     const cifrado = sellarHaciaElMac(sobre, macPublica);
     const r = await api('entregar', { id: TAREA.id, cifrado });
     if (!r.ok) { $('t-estado').textContent = 'No se ha podido enviar. Inténtalo otra vez.'; return; }
-    try { localStorage.removeItem(laClave()); } catch (_) {}
+    borraLocal(laClave());
     $('t-form').hidden = true;
     $('t-estado').textContent = '';
     await panel();
@@ -4587,7 +4616,7 @@ function montaHerramienta(def, valores, soloLeer, etiqueta) {
   $('h-guardar').hidden = soloLeer || lectura || !HERR || !HERR.tarea;
   $('h-leido').hidden = !(lectura && !soloLeer) || !!def.rueda || (HERR && HERR.modo === 'vivo');
   $('h-estado').textContent = (soloLeer || lectura) ? '' :
-    'Puedes rellenarla poco a poco: se guarda sola mientras escribes, en este dispositivo y cifrada en tu cuenta, y la retomas desde cualquier sitio. Cuando esté completa, «Enviar».';
+    'Puedes rellenarla poco a poco: se guarda sola mientras escribes, cifrada en tu cuenta, y la retomas desde cualquier sitio. Cuando esté completa, «Enviar».';
   $('h-guardado').textContent = '';
   ver('v-herr');
   ajustaAltos(cuerpo);
@@ -4628,10 +4657,10 @@ async function abrirHerramienta(id, otras) {
   /* 17-10: lo que vive (un documento que se edita siempre, un registro). */
   if (r.j.modo === 'vivo' || r.j.modo === 'registro') { await abrirViva(r, def); return; }
   HERR = { tarea: r.j.id, def, soloLeer: false };
-  /* Lo guardado a medias: lo más reciente entre este dispositivo y lo
-     guardado en la cuenta (sellado a su clave). */
+  /* Lo guardado a medias: lo más reciente entre lo escrito en esta página
+     (en memoria) y lo guardado en la cuenta (sellado a su clave). */
   let local = null, remoto = null;
-  try { local = JSON.parse(localStorage.getItem(claveHerr()) || 'null'); } catch (_) {}
+  local = leeLocal(claveHerr());
   if (r.j.borrador && Number(r.j.borrador_v) === Number(miV)) {
     try { remoto = abrirDelMac(r.j.borrador, miPublica, privada); } catch (_) {}
   }
@@ -4651,26 +4680,33 @@ async function abrirCopia(id) {
     'Enviada el ' + fecha(d.completado_en));
 }
 
-/* --- Que no se pierda lo escrito (04-11) --------------------------------
-   · De una vez: en cada cambio, a este dispositivo; y a los pocos segundos,
-     sellado a SU clave, a la cuenta (guardar_borrador), sin pulsar nada.
-     Así sigue al salir y volver, y desde otro móvil. Como mucho una
-     subida cada 45 s (80 por hora): el portal frena los borradores a
-     120 por hora, y así siempre le queda margen a «Guardar y seguir
-     otro día».
-   · Vivo: a este dispositivo en cada cambio. A la cuenta va al pulsar
+/* --- Que no se pierda lo escrito (04-11; 11-11, noche) ---------------------
+   · De una vez: en cada cambio, a la memoria de esta página; y a los pocos
+     segundos, sellado a SU clave, a la cuenta (guardar_borrador), sin
+     pulsar nada. Así sigue al salir y volver, y desde otro móvil. Como
+     mucho una subida cada 45 s (80 por hora): el portal frena los
+     borradores a 120 por hora, y así siempre le queda margen a «Guardar
+     y seguir otro día».
+   · Vivo: a la memoria en cada cambio. A la cuenta va al pulsar
      «Guardar», porque guardar ahí es mandarle a Adrián una versión, y
      una versión por tecla no le sirve a nadie.
    · Registro: el apunte que se está escribiendo y «Lo demás de la
-     ficha», a este dispositivo; el apunte llega a la cuenta al guardarlo.
-   Lo de este dispositivo se queda al salir de la cuenta: salir borra la
-   llave, no lo escrito. */
+     ficha», a la memoria; el apunte llega a la cuenta al guardarlo.
+   11-11, noche (Adrián): nada de esto se guarda ya en el navegador
+   (localStorage). Al salir hay que volver a poner la contraseña, así que
+   lo guardado en el dispositivo no se podía usar sin ella y solo se
+   quedaba ahí, en un móvil que puede ser compartido. Lo escrito a medias
+   vive en MEMORIA mientras la página está abierta; al cerrarla o salir,
+   se pierde lo que no se guardó en la cuenta. */
+const MEMORIA = new Map();
+/* Lo que dejaron en el navegador las versiones anteriores, fuera al cargar. */
+try { Object.keys(localStorage).filter(k => /^adr\.(parcial|herr)\./.test(k)).forEach(k => localStorage.removeItem(k)); } catch (_) {}
 const SUBIDA = { pendiente: null, reloj: null, ultima: 0 };
 function horaCorta() { return new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Madrid' }); }
 function avisoGuardado(t) { const x = t + ' · ' + horaCorta(); if ($('h-guardado').textContent !== x) $('h-guardado').textContent = x; }
-function leeLocal(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (_) { return null; } }
-function ponLocal(k, x) { try { localStorage.setItem(k, JSON.stringify(x)); return true; } catch (_) { return false; } }
-function borraLocal(k) { try { localStorage.removeItem(k); } catch (_) {} }
+function leeLocal(k) { try { return JSON.parse(MEMORIA.get(k) || 'null'); } catch (_) { return null; } }
+function ponLocal(k, x) { MEMORIA.set(k, JSON.stringify(x)); return true; }
+function borraLocal(k) { MEMORIA.delete(k); }
 function programaSubida(tarea, x) {
   /* Lo que se sube es lo de ESTE momento y a ESTA tarea: si cuando salta
      el reloj ya está en otra herramienta, no se mezcla. */
@@ -4686,7 +4722,7 @@ async function subeBorrador() {
   SUBIDA.ultima = Date.now();
   const r = await api('guardar_borrador', { id: p.tarea, cifrado: sellarHaciaElMac(p.x, miPublica) });
   if (HERR && HERR.tarea === p.tarea && !HERR.soloLeer) {
-    if (r.ok) avisoGuardado('Guardado en tu cuenta y en este dispositivo');
+    if (r.ok) avisoGuardado('Guardado en tu cuenta');
     else if (r.j.error === 'despacio') programaSubida(p.tarea, p.x);
   }
 }
@@ -4696,8 +4732,8 @@ $('h-cuerpo').addEventListener('input', (ev) => {
   if (HERR.modo === 'registro' && !HERR.sinTabla) { guardaLocalRegistro(ev.target); return; }
   const x = { campos: camposDelForm(), guardado: new Date().toISOString() };
   const ok = ponLocal(claveHerr(), x);
-  if (HERR.modo === 'vivo' || HERR.sinTabla) { if (ok) avisoGuardado('Guardado en este dispositivo; pulsa «Guardar» para que llegue a tu cuenta'); return; }
-  if (ok) avisoGuardado('Guardado en este dispositivo');
+  if (HERR.modo === 'vivo' || HERR.sinTabla) { if (ok) avisoGuardado('Sin guardar todavía: pulsa «Guardar» para que llegue a tu cuenta'); return; }
+  if (ok) avisoGuardado('Se guarda en tu cuenta en unos segundos');
   programaSubida(HERR.tarea, x);
 });
 $('h-guardar').addEventListener('click', async () => {
@@ -4706,9 +4742,9 @@ $('h-guardar').addEventListener('click', async () => {
   $('h-guardar').disabled = true;
   try {
     const x = { campos: camposDelForm(), guardado: new Date().toISOString() };
-    try { localStorage.setItem(claveHerr(), JSON.stringify(x)); } catch (_) {}
+    ponLocal(claveHerr(), x);
     const r = await api('guardar_borrador', { id: HERR.tarea, cifrado: sellarHaciaElMac(x, miPublica) });
-    if (!r.ok) { $('h-estado').textContent = 'No se ha podido guardar en tu cuenta; se queda en este dispositivo.'; return; }
+    if (!r.ok) { $('h-estado').textContent = 'No se ha podido guardar en tu cuenta. Lo escrito sigue aquí mientras no cierres esta página: inténtalo otra vez.'; return; }
     await panel();
     $('panel-estado').textContent = 'Guardada. La retomas cuando quieras desde «Tareas».';
   } finally { $('h-guardar').disabled = false; }
@@ -4742,7 +4778,7 @@ $('h-form').addEventListener('submit', async (ev) => {
     const copia = sellarHaciaElMac({ def: HERR.def, campos, completado_en: momento }, miPublica);
     const r = await api('entregar', { id: HERR.tarea, cifrado, copia });
     if (!r.ok) { $('h-estado').textContent = 'No se ha podido enviar. Inténtalo otra vez.'; return; }
-    try { localStorage.removeItem(claveHerr()); } catch (_) {}
+    borraLocal(claveHerr());
     const def = HERR.def;
     HERR = { tarea: null, def, soloLeer: true, valores: campos };
     montaHerramienta(def, campos, true, 'Enviada');
@@ -5105,8 +5141,7 @@ async function abrirViva(r, def) {
     return;
   }
   if (HERR.modo === 'vivo') {
-    let local = null;
-    try { local = JSON.parse(localStorage.getItem(claveHerr()) || 'null'); } catch (_) {}
+    const local = leeLocal(claveHerr());
     if (local && (!guardado || (local.guardado || '') > (guardado.guardado || ''))) valores = local.campos || {};
     montaVivo(valores, r.j.actualizado);
   } else {
@@ -5185,7 +5220,7 @@ async function guardarVivo() {
   const r = await api('guardar_vivo', { id: HERR.tarea, cifrado: sellarHaciaElMac(sobre, macPublica),
                                        copia: sellarHaciaElMac(copia, miPublica) });
   if (!r.ok) return null;
-  try { localStorage.removeItem(claveHerr()); } catch (_) {}
+  borraLocal(claveHerr());
   return { guardado: r.j.guardado, campos };
 }
 
@@ -5433,7 +5468,7 @@ function graficasRegistro() {
   return caja.children.length ? caja : null;
 }
 
-/* El apunte a medias y «Lo demás de la ficha», en este dispositivo. */
+/* El apunte a medias y «Lo demás de la ficha», en la memoria de esta página. */
 function claveApunte() { return claveHerr() + '.apunte'; }
 function claveResto() { return claveHerr() + '.resto'; }
 function filaDelEditor() {
@@ -5448,13 +5483,13 @@ function guardaLocalRegistro(t) {
     document.querySelectorAll('#h-cuerpo .reg-resto [data-campo]').forEach(c => { campos[c.dataset.campo] = c.value; });
     if (ponLocal(claveResto(), { campos, guardado: new Date().toISOString() })) {
       const est = document.querySelector('.reg-resto .reg-resto-estado');
-      if (est) est.textContent = 'Guardado en este dispositivo · ' + horaCorta() + '. Pulsa «Guardar» para que llegue a tu cuenta.';
+      if (est) est.textContent = 'Sin guardar todavía · ' + horaCorta() + '. Pulsa «Guardar» para que llegue a tu cuenta.';
     }
   } else if (t.closest('.reg-editor') && HERR.editando) {
     const fi = $('reg-fecha');
     if (ponLocal(claveApunte(), { uid: HERR.editando.uid, fecha: fi ? fi.value : hoyISO(), fila: filaDelEditor(),
                                   base: HERR.editando.base, guardado: new Date().toISOString() })) {
-      avisoGuardado('A medias, guardado en este dispositivo. Pulsa «Guardar» para apuntarlo');
+      avisoGuardado('A medias: pulsa «Guardar» para apuntarlo');
     }
   }
 }
@@ -5627,7 +5662,7 @@ function pintaRegistro(msg) {
 
   /* Lo de la ficha que no es un apunte («Esta semana usé mi plan…»,
      «Mi frase»): se guarda como un documento vivo. Lo escrito sin
-     guardar, de este dispositivo, si es más nuevo que lo de la cuenta. */
+     guardar, de esta página (en memoria), si es más nuevo que lo de la cuenta. */
   if (P.resto.length) {
     const sec = el('section', 'reg-resto');
     sec.setAttribute('aria-labelledby', 'reg-resto-t');
@@ -5665,7 +5700,7 @@ function editaEntrada(e) {
   /* Un día, un apunte: si ese día ya tiene, se abre ése. */
   if (!e.uid && diario) { const ex = HERR.entradas.find(x => x.fecha === e.fecha); if (ex) e = Object.assign({}, ex, { otroDia: e.otroDia, medias: e.medias }); }
   const hoy = hoyISO(), ayer = sumaDias(hoy, -1);
-  /* Lo que dejó a medias en este dispositivo para este mismo apunte. */
+  /* Lo que dejó a medias en esta página para este mismo apunte. */
   const d = leeLocal(claveApunte());
   const suyo = d && (e.medias || (e.uid ? d.uid === e.uid : (!d.uid && d.fecha === (e.fecha || hoy))));
   const fila = suyo ? (d.fila || {}) : (e.fila || {});
@@ -5674,7 +5709,7 @@ function editaEntrada(e) {
   const c = $('h-cuerpo'); c.innerHTML = '';
   const f = el('div', 'herr reg-editor');
   f.appendChild(el('h2', 'titulo-h', e.uid ? 'Corregir un apunte' : (diario ? 'Apuntar el día' : 'Nuevo apunte')));
-  if (suyo) f.appendChild(el('p', 'nota info', 'Recuperado lo que dejaste a medias. Revísalo y pulsa «Guardar».'));
+  if (suyo) f.appendChild(el('p', 'nota info', 'Aquí está lo que dejaste a medias hace un momento. Revísalo y pulsa «Guardar».'));
   /* De qué día es (04-11): «Hoy · Ayer · Otro día» a un toque. Se
      rellena a menudo al día siguiente, y antes eso era buscar un enlace
      y un calendario. */

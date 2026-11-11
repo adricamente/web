@@ -189,6 +189,12 @@ function adr_db(array $ADR): PDO {
                deshacerlo sin perder si estaba empezada. */
             'archivada'       => 'TEXT',
             'archivada_hecho' => 'TEXT',
+            /* 11-11, noche: cuándo cambió Adrián la nota de una herramienta
+               (`asignar` con `sustituye`). Una fecha, como `creado`: sirve
+               para que una diaria que llevaba meses sin usarse vuelva a ser
+               «de ahora» cuando él la cambia (ver inactiva() en index.php).
+               No dice nada de lo que pone. */
+            'cambiada'        => 'TEXT',
         ],
         'pacientes' => [
             /* Cuándo se le avisó por última vez de que tiene algo

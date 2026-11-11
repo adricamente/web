@@ -340,8 +340,8 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-11d';
-const ADR_ACCIONES_NUEVAS = ['catalogo:grupo', 'mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
+const ADR_VERSION = '2026-11-11e';
+const ADR_ACCIONES_NUEVAS = ['tareas:cambiada', 'catalogo:grupo', 'mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
                              'precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
                              'instalar', 'instalar_no',
                              'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
@@ -643,7 +643,7 @@ case 'mios': {
        pantalla es una pantalla que se dibuja a trozos. */
     /* Lo caducado no sale: ni se puede hacer a tiempo ni debe quedarse
        en el contador para siempre. «antes del 10» incluye el día 10. */
-    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen, cifrado FROM tareas
+    $t = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, cambiada, origen, cifrado FROM tareas
                        WHERE cod = ? AND hecho IS NULL
                          AND (caduca IS NULL OR caduca = '' OR substr(caduca, 1, 10) >= ?)
                        ORDER BY id");
@@ -676,7 +676,7 @@ case 'mios': {
        documento que se edita siempre, un registro de entradas), con lo
        justo para pintar la lista: cuántas entradas, de qué días, y su
        recordatorio si se lo ha puesto. */
-    $vv = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, origen, cifrado FROM tareas
+    $vv = $db->prepare("SELECT id, titulo, creado, caduca, tipo, para_v, plantilla, modo, hecho, actualizado, cambiada, origen, cifrado FROM tareas
                         WHERE cod = ? AND tipo = 'herramienta' AND hecho IS NOT NULL AND hecho <> 'retirada'
                         ORDER BY id");
     $vv->execute([$cod]);
@@ -1886,7 +1886,7 @@ case 'unir': {
 case 'cuenta_de': {
     if (!adr_es_el_mac($ADR)) adr_json(['error' => 'no'], 403);
     $cod = (string)($in['cod'] ?? '');
-    $q = $db->prepare("SELECT t.id, t.titulo, t.tipo, t.plantilla, t.modo, t.creado, t.caduca, t.hecho, t.actualizado,
+    $q = $db->prepare("SELECT t.id, t.titulo, t.tipo, t.plantilla, t.modo, t.creado, t.caduca, t.hecho, t.actualizado, t.cambiada,
                               t.origen, t.archivada, t.borrador IS NOT NULL AS con_escrito,
                               (SELECT COUNT(*) FROM entradas e WHERE e.tarea = t.id AND e.borrada = 0) AS apuntes,
                               (SELECT MAX(fecha) FROM entradas e WHERE e.tarea = t.id AND e.borrada = 0) AS ultimo_apunte
@@ -1902,6 +1902,7 @@ case 'cuenta_de': {
                   'herramienta' => $t['tipo'] === 'herramienta' ? adr_herr_id($t) : null,
                   'lectura' => adr_es_lectura($t), 'modo' => $modo, 'creado' => $t['creado'], 'caduca' => $t['caduca'],
                   'empezada' => $t['hecho'] !== null && $t['hecho'] !== 'retirada', 'actualizado' => $t['actualizado'],
+                  'cambiada' => $t['cambiada'],
                   'origen' => $t['origen'], 'archivada' => $t['archivada'], 'con_escrito' => (bool)$t['con_escrito'],
                   'apuntes' => (int)$t['apuntes'], 'ultimo_apunte' => $t['ultimo_apunte']];
     }
@@ -2172,9 +2173,12 @@ case 'asignar': {
                mandó) se queda; cambia solo la definición sellada, que es
                donde va «Lo que acordamos». Sin correo: no es nada nuevo. */
             $res['modo'] = adr_modo_fila($sus);
-            $db->prepare('UPDATE tareas SET titulo = ?, plantilla = ?, cifrado = ?, para_v = ? WHERE id = ?')
+            /* 11-11, noche: y cuándo se cambió (`cambiada`): una herramienta
+               que él cambia vuelve a ser «de ahora» aunque llevara meses
+               sin usarse. */
+            $db->prepare('UPDATE tareas SET titulo = ?, plantilla = ?, cifrado = ?, para_v = ?, cambiada = ? WHERE id = ?')
                ->execute([mb_substr($titulo ?: (string)$sus['titulo'], 0, 80, 'UTF-8'), json_encode($res, JSON_UNESCAPED_UNICODE),
-                          $cif, (int)$in['para_v'], (int)$sus['id']]);
+                          $cif, (int)$in['para_v'], adr_ahora(), (int)$sus['id']]);
             adr_json(['ok' => true, 'id' => (int)$sus['id'], 'sellada' => true, 'sustituida' => (int)$sus['id']]);
         }
         $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, cifrado, para_v, modo)
@@ -2192,9 +2196,9 @@ case 'asignar': {
             adr_json(['error' => 'la herramienta no tiene una forma válida'], 400);
         }
         if ($sus = adr_sustituida($db, $cod, $in, (string)$plantilla['id'])) {
-            $db->prepare('UPDATE tareas SET titulo = ?, plantilla = ? WHERE id = ?')
+            $db->prepare('UPDATE tareas SET titulo = ?, plantilla = ?, cambiada = ? WHERE id = ?')
                ->execute([mb_substr($titulo ?: (string)$sus['titulo'], 0, 80, 'UTF-8'),
-                          json_encode($plantilla, JSON_UNESCAPED_UNICODE), (int)$sus['id']]);
+                          json_encode($plantilla, JSON_UNESCAPED_UNICODE), adr_ahora(), (int)$sus['id']]);
             adr_json(['ok' => true, 'id' => (int)$sus['id'], 'sustituida' => (int)$sus['id']]);
         }
         $db->prepare("INSERT INTO tareas (cod, titulo, plantilla, creado, caduca, tipo, modo)
