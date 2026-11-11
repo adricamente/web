@@ -1099,7 +1099,12 @@ async function panel() {
   });
   /* Las herramientas que se hacen: primero lo de hoy y lo de una vez. */
   const pesoFr = { diaria: 0, una_vez: 1, cada_vez_que_ocurra: 2 };
-  deTareas.sort((a, b) => (pesoFr[a.fr] ?? 3) - (pesoFr[b.fr] ?? 3)).forEach(g => ct.appendChild(filaTarea(g)));
+  /* 11-11, noche: con muchas, arriba lo de ahora y lo demás por tipo (porTipos).
+     Lo que cuenta para hoy va siempre arriba: si se plegara, el globo
+     diría «3 para hoy» y no se verían. */
+  porTipos(ct, deTareas.sort((a, b) => (pesoFr[a.fr] ?? 3) - (pesoFr[b.fr] ?? 3)).map(g => ({
+    f: filaTarea(g), tipo: grupoDe(g.t), rec: recienteDe(g.ts), cuenta: g.fr === 'una_vez' || (g.fr === 'diaria' && !g.hoy) })),
+    'tareas', 5);
   if (!ct.children.length) ct.appendChild(vacio('Cuando te mande algo que hacer, aparecerá aquí.'));
 
   pintaHerramientas(deHerr, docs.filter(d => d.clase === 'herramienta'), r.j.v);
@@ -1113,6 +1118,8 @@ async function panel() {
   ponBuscador('tareas', $('tareas'), 'Mis tareas');
   ponBuscador('herr', $('herr-zona'), 'Mis herramientas');
   ponBuscador('vimos', $('vimos-zona'), 'Lo que vimos en sesión');
+  ponChips('tareas', $('tareas'), 'Mis tareas');
+  ponChips('herr', $('herr-zona'), 'Mis herramientas');
   completaNotas(grupos);
   pintaHilo(r.j.mensajes || [], r.j.v);
 }
@@ -1215,6 +1222,78 @@ function filaTarea(g) {
   return f;
 }
 
+/* --- Por tipo (11-11, noche) -------------------------------------------------------
+   Con más de 8 tarjetas en un apartado (un paciente que lleva dos años
+   puede tener 30), la lista se ordena así:
+     arriba, lo de ahora: lo que cuenta para hoy y lo que se le mandó o ha
+       usado (un apunte, un cambio) en las últimas 5 semanas, como mucho 5
+       en «Mis tareas» y 4 en «Mis herramientas», lo más reciente primero;
+     debajo, lo demás, en un plegable por tipo con su contador
+       («Calma y momentos difíciles · 4»).
+   El tipo lo dice el catálogo (`grupo`; mientras no lo traiga, la tabla
+   provisional de api.php). Los nombres de los tipos son de andar por casa:
+   ninguna etiqueta clínica. Con 8 o menos, la lista de siempre. */
+const GRUPOS_HERR = [['calma', 'Calma y momentos difíciles'], ['pensamientos', 'Pensamientos'], ['emociones', 'Emociones'],
+  ['afrontar', 'Afrontar lo que cuesta'], ['dia', 'Día a día'], ['descanso', 'Descanso'], ['rumbo', 'Lo que me importa'],
+  ['otras', 'Otras']];
+const NOMBRE_GRUPO = Object.fromEntries(GRUPOS_HERR);
+const UMBRAL_TIPOS = 8, DIAS_AHORA = 35;
+function grupoDe(t) { const g = (SECC[t.herr_id] || {}).grupo; return NOMBRE_GRUPO[g] ? g : 'otras'; }
+/* El último movimiento: cuándo se mandó, se cambió o se apuntó algo. */
+function recienteDe(ts) {
+  return ts.flatMap(x => [x.creado, x.actualizado, x.ultima]).filter(Boolean)
+    .map(s => String(s).slice(0, 10)).sort().pop() || '';
+}
+function porTipos(zona, items, clave, maxAhora) {
+  items.forEach(x => { x.f.dataset.tipo = x.tipo; });
+  if (items.length <= UMBRAL_TIPOS) { items.forEach(x => zona.appendChild(x.f)); return; }
+  const desde = sumaDias(hoyISO(), -DIAS_AHORA);
+  const fijas = items.filter(x => x.cuenta);
+  const recientes = items.filter(x => !x.cuenta && x.rec >= desde).sort((a, b) => b.rec.localeCompare(a.rec));
+  const ahora = fijas.concat(recientes.slice(0, Math.max(0, maxAhora - fijas.length)));
+  ahora.forEach(x => zona.appendChild(x.f));
+  const resto = items.filter(x => !ahora.includes(x));
+  if (!resto.length) return;
+  zona.appendChild(el('h3', 'sub-apartado por-tipo', ahora.length ? 'Lo demás, por tipo' : 'Por tipo'));
+  GRUPOS_HERR.forEach(([k, nombre]) => {
+    const xs = resto.filter(x => x.tipo === k).sort((a, b) => b.rec.localeCompare(a.rec));
+    if (!xs.length) return;
+    const d = el('details', 'plegable grupo-tipo'); d.dataset.plegable = clave + '-tipo-' + k; d.dataset.tipo = k;
+    const s = el('summary'); s.append(el('span', null, nombre), el('span', 'gs-n', '· ' + xs.length)); d.appendChild(s);
+    const cuerpo = el('div', 'gs-cuerpo'); xs.forEach(x => cuerpo.appendChild(x.f)); d.appendChild(cuerpo);
+    zona.appendChild(d);
+  });
+}
+/* Los chips de tipo, junto al buscador: «Todos» y uno por tipo que haya.
+   Lo que no tiene tipo (el plan de seguridad, los cuestionarios, lo que
+   hay que firmar) no se esconde nunca. El elegido vive en memoria. */
+function ponChips(clave, zona, nombre) {
+  const b = BUSCA[clave];
+  if (b && b.chips) { b.chips.remove(); b.chips = null; }
+  const presentes = new Set([...zona.querySelectorAll('[data-buscar][data-tipo]')].map(x => x.dataset.tipo));
+  if (!b || !zona.querySelector('details.grupo-tipo') || presentes.size < 2) {
+    zona.querySelectorAll('[data-fuera]').forEach(x => { delete x.dataset.fuera; });
+    if (b) { b.tipo = 'todos'; b.filtra(); }
+    return;
+  }
+  if (!b.tipo || (b.tipo !== 'todos' && !presentes.has(b.tipo))) b.tipo = 'todos';
+  const g = el('div', 'filtros'); g.setAttribute('role', 'group'); g.setAttribute('aria-label', 'Filtrar ' + nombre.charAt(0).toLowerCase() + nombre.slice(1) + ' por tipo');
+  const aplica = () => {
+    zona.querySelectorAll('[data-buscar]').forEach(x => {
+      if (b.tipo !== 'todos' && x.dataset.tipo && x.dataset.tipo !== b.tipo) x.dataset.fuera = '1'; else delete x.dataset.fuera;
+    });
+    g.querySelectorAll('.filtro').forEach(o => o.setAttribute('aria-pressed', String(o.dataset.v === b.tipo)));
+    b.filtra();
+  };
+  [['todos', 'Todos']].concat(GRUPOS_HERR.filter(([k]) => presentes.has(k))).forEach(([k, n]) => {
+    const c = el('button', 'filtro', n); c.type = 'button'; c.dataset.v = k;
+    c.addEventListener('click', () => { b.tipo = k; aplica(); });
+    g.appendChild(c);
+  });
+  b.caja.insertBefore(g, b.cuenta); b.chips = g;
+  aplica();
+}
+
 /* «Lo que toca hoy», en el inicio: como mucho el cuestionario de antes
    de la sesión, el apunte del día y el plan de seguridad. Nada más. */
 function pintaHoy(otras, deTareas) {
@@ -1241,8 +1320,10 @@ function pintaHerramientas(grupos, copias, v) {
      de antes del 17-10) no salen aparte: están dentro. */
   const vivos = new Set(grupos.flatMap(g => g.ts).filter(t => t.modo !== 'una').map(t => t.titulo));
   copias = copias.filter(d => !vivos.has(d.titulo));
-  /* El plan de seguridad, el primero. */
+  /* El plan de seguridad, el primero, y fuera de los grupos: siempre a la
+     vista, filtre lo que filtre. */
   grupos.sort((a, b) => Number(b.t.herr_id === 'plan-seguridad') - Number(a.t.herr_id === 'plan-seguridad'));
+  const items = [];
   grupos.forEach(g => {
     const t = g.t;
     const f = fila(g.titulo, g.para_que || (t.lectura ? 'Para consultar cuando quieras' : null));
@@ -1257,11 +1338,13 @@ function pintaHerramientas(grupos, copias, v) {
       p.append(a1, ' o ', a2, '.');
       f.querySelector('.texto').appendChild(p);
     }
-    if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); c.appendChild(f); return; }
+    const it = { f, tipo: t.herr_id === 'plan-seguridad' ? null : grupoDe(t), rec: recienteDe(g.ts), cuenta: false };
+    items.push(it);
+    if (CIP.falta && t.rellenable) { f.appendChild(esperaCI()); return; }
     const b = document.createElement('button');
     b.className = 'boton'; b.type = 'button'; b.textContent = 'Abrir';
     b.addEventListener('click', () => abrirHerramienta(t.id, g.otras));
-    f.appendChild(b); c.appendChild(f);
+    f.appendChild(b);
   });
   copias.forEach(d => {
     const f = fila(d.titulo || 'Herramienta', 'La que me enviaste el ' + fecha(d.creado));
@@ -1279,8 +1362,10 @@ function pintaHerramientas(grupos, copias, v) {
       b.addEventListener('click', () => abrirCopia(d.id));
       f.appendChild(b);
     }
-    c.appendChild(f);
+    items.push({ f, tipo: 'otras', rec: String(d.creado || '').slice(0, 10), cuenta: false });
   });
+  items.filter(x => !x.tipo).forEach(x => c.appendChild(x.f));
+  porTipos(c, items.filter(x => x.tipo), 'herr', 4);
   if (!c.children.length) c.appendChild(vacio('Cuando te deje una herramienta, la tendrás aquí siempre a mano.'));
   const nh = grupos.length;
   $('resumen-herr').textContent = nh ? (nh === 1 ? 'Una, siempre a mano.' : nh + ', siempre a mano.') : 'Lo que tienes siempre a mano.';
@@ -1383,6 +1468,7 @@ function pintaVimos(docs, leer, v) {
     } else f.appendChild(boton('Leer', '', () => abrir(d.id, d.titulo, 'sesion', d)));
     return f;
   };
+  const dets = [];
   grupos.forEach((x, i) => {
     const det = el('details', 'grupo-sesion');
     det.dataset.plegable = 'sesion-' + (x.s ? x.s.id : 'n' + x.n);
@@ -1396,8 +1482,26 @@ function pintaVimos(docs, leer, v) {
     if (x.s) cuerpo.appendChild(filaResumen(x.s));
     x.leer.forEach(g => cuerpo.appendChild(filaLeer(g)));
     det.appendChild(cuerpo);
-    cs.appendChild(det);
+    dets.push([x, det]);
   });
+  /* 11-11, noche: con más de 8 sesiones (dos años son unas 50), por trimestres,
+     plegados, el último abierto y dentro su última sesión abierta. El
+     buscador abre el trimestre y la sesión que coincidan. */
+  if (dets.length > UMBRAL_TIPOS) {
+    const TRIM = ['Enero a marzo', 'Abril a junio', 'Julio a septiembre', 'Octubre a diciembre'];
+    const trims = new Map();
+    dets.forEach(([x, det]) => {
+      const f = String(x.fecha || '').slice(0, 10), y = f.slice(0, 4), q = Math.floor((Number(f.slice(5, 7)) - 1) / 3);
+      const k = /^\d{4}$/.test(y) && q >= 0 ? y + '-' + (q + 1) : 'sin-fecha';
+      if (!trims.has(k)) trims.set(k, { et: k === 'sin-fecha' ? 'Sin fecha' : TRIM[q] + ' de ' + y, ds: [] });
+      trims.get(k).ds.push(det);
+    });
+    [...trims.entries()].forEach(([k, t], i) => {
+      const d = el('details', 'plegable grupo-trim'); d.dataset.plegable = 'trim-' + k; d.open = i === 0;
+      const s = el('summary'); s.append(el('span', null, t.et), el('span', 'gs-n', '· ' + t.ds.length + (t.ds.length === 1 ? ' sesión' : ' sesiones')));
+      d.appendChild(s); t.ds.forEach(x => d.appendChild(x)); cs.appendChild(d);
+    });
+  } else dets.forEach(([, det]) => cs.appendChild(det));
   if (otros.length) {
     const det = el('details', 'grupo-sesion');
     det.dataset.plegable = 'sesion-otros'; det.open = !grupos.length;
@@ -1562,22 +1666,29 @@ function ponBuscador(clave, zona, nombre) {
     const q = sinTildes(b.inp.value).trim();
     const todos = [...zona.querySelectorAll('[data-buscar]')];
     let n = 0;
-    todos.forEach(it => { const si = !q || sinTildes(it.dataset.buscar).includes(q); it.hidden = !si; if (si) n++; });
-    /* Un grupo (una sesión, la biblioteca) se abre si tiene algo que
-       coincide y se esconde si no tiene nada; sin buscar, como estaba. */
+    /* 11-11, noche: lo que esconde un chip de tipo (`data-fuera`) cuenta como
+       escondido para el buscador, y al revés. */
+    todos.forEach(it => { const si = !it.dataset.fuera && (!q || sinTildes(it.dataset.buscar).includes(q)); it.hidden = !si; if (si) n++; });
+    const filtrando = !!q || todos.some(x => x.dataset.fuera);
+    /* Un grupo (una sesión, la biblioteca, un tipo) se abre si tiene algo
+       que coincide y se esconde si no tiene nada; sin buscar, como estaba.
+       Con un chip solo, se abre el grupo de ese tipo. */
     zona.querySelectorAll('details').forEach(d => {
       const hay = [...d.querySelectorAll('[data-buscar]')];
       if (!hay.length) return;
-      if (q) {
+      if (filtrando) {
         if (!d.dataset.buscando) { d.dataset.buscando = '1'; d.dataset.antes = d.open ? '1' : '0'; d.dataset.oculto = d.hidden ? '1' : '0'; }
-        d.hidden = !hay.some(x => !x.hidden); d.open = !d.hidden;
+        d.hidden = !hay.some(x => !x.hidden);
+        if (q || d.classList.contains('grupo-tipo')) d.open = !d.hidden;
       } else if (d.dataset.buscando) {
         d.hidden = d.dataset.oculto === '1'; d.open = d.dataset.antes === '1';
         delete d.dataset.buscando;
       }
     });
     b.x.hidden = !b.inp.value;
-    b.cuenta.textContent = q ? (n ? n + ' de ' + todos.length : 'Nada con «' + b.inp.value.trim() + '»') : todos.length + ' en total';
+    b.cuenta.textContent = filtrando ? (n ? n + ' de ' + todos.length : (q ? 'Nada con «' + b.inp.value.trim() + '»' : 'Nada de ese tipo'))
+      : todos.length + ' en total';
+    zona.querySelectorAll('h3.por-tipo').forEach(h => { h.hidden = !!q && ![...zona.querySelectorAll('details.grupo-tipo')].some(d => !d.hidden); });
     altoVentana(zona);
   };
   b.filtra();
@@ -3002,7 +3113,7 @@ function svgSerie(m, ancho) {
      punto cae dentro, todavía no se puede decir que haya cambiado; si
      sale, sí. Se ve sin leer el párrafo. */
   if (pts.length > 1 && m.cambio_fiable != null && Number(m.cambio_fiable) > 0) {
-    const a0 = Number(pts[0].valor), cf = Number(m.cambio_fiable);
+    const a0 = Number(m._a0 != null ? m._a0 : pts[0].valor), cf = Number(m.cambio_fiable);
     const arriba = y(Math.min(maxv, a0 + cf)), abajo = y(Math.max(minv, a0 - cf));
     const z = document.createElementNS(NS, 'rect');
     z.setAttribute('x', izq); z.setAttribute('y', arriba.toFixed(1));
@@ -3177,11 +3288,45 @@ window.addEventListener('resize', () => {
   clearTimeout(RESIZE);
   RESIZE = setTimeout(() => { if (SERIES && !$('v-panel').hidden) dibujaSeries(); }, 250);
 });
+/* 11-11, noche: «Tu evolución», ordenada para quien lleva dos años y tiene
+   decenas de medidas. Se le enseña lo mismo que antes —nombre, qué mide,
+   hacia dónde es mejor, la última cifra con su escala y su fecha, la línea,
+   el corte orientativo, la zona de ruido, todas sus medidas y la lectura—,
+   solo que en otro orden:
+     arriba, una tarjeta por cuestionario: la última cifra, su fecha, cuánto
+       ha cambiado respecto a la anterior (dicho como hecho, sin juzgar: si
+       es mejor o peor lo dice la lectura, con el cambio fiable delante) y
+       la línea pequeña;
+     el periodo de las gráficas (3 meses, 6 meses, 1 año, todo; «todo» de
+       entrada, como antes, y sin guardarlo en ningún sitio);
+     debajo, el detalle de cada uno, plegado, con su gráfica y sus medidas
+       en una tabla con scroll propio.
+   La lectura y «desde el principio» se calculan siempre con la serie
+   entera: el periodo cambia lo que se dibuja, no lo que se dice. */
+let PERIODO = 'todo';
+const PERIODOS = [['3m', '3 meses', 91], ['6m', '6 meses', 183], ['1a', '1 año', 365], ['todo', 'Todo', null]];
+let DETALLES = [];
+const validos = (m) => (m.puntos || []).filter(p => p && p.valor != null && p.valor !== '');
+function enPeriodo(pts) {
+  const d = (PERIODOS.find(x => x[0] === PERIODO) || [])[2];
+  if (!d) return pts;
+  const desde = sumaDias(hoyISO(), -d);
+  return pts.filter(p => String(p.fecha || '').slice(0, 10) >= desde);
+}
+function frenteAnterior(pts) {
+  if (pts.length < 2) return 'Tu primera medida';
+  const a = pts[pts.length - 2], A = Number(a.valor), Z = Number(pts[pts.length - 1].valor);
+  if (A === Z) return 'Igual que la anterior (' + dia(a.fecha) + ')';
+  const d = Math.abs(Z - A);
+  return cifra(d) + (d === 1 ? ' punto ' : ' puntos ') + (Z < A ? 'menos' : 'más') + ' que la anterior (' + dia(a.fecha) + ')';
+}
+const slugPrueba = (m) => sinTildes(m.instrumento || 'x').replace(/[^a-z0-9]+/g, '-');
 function dibujaSeries() {
   const dentro = $('progreso');
   const resumenEv = $('resumen-evolucion');
   const series = SERIES || [];
   dentro.innerHTML = '';
+  DETALLES = [];
   /* En el inicio, una línea: la última medida de cada uno, dicha de
      forma que no se pueda leer «GAD-72»: «GAD-7: 2 sobre 21». */
   const lineas = series.map(m => { const u = ultimaDe(m);
@@ -3203,26 +3348,56 @@ function dibujaSeries() {
     dentro.appendChild(vacio('Todavía no hay medidas que dibujar. Aparecerán cuando rellenes tus cuestionarios.'));
     return;
   }
+  dentro.appendChild(el('h2', 'ev-h', 'Tus cuestionarios'));
+  /* Las tarjetas: pulsar una abre su detalle y baja hasta él. */
+  const tarjetas = el('div', 'ev-tarjetas');
+  dentro.appendChild(tarjetas);
+  /* El periodo, solo si hay algo más viejo que tres meses. */
+  const viejo = series.some(m => { const p = validos(m)[0]; return p && String(p.fecha).slice(0, 10) < sumaDias(hoyISO(), -91); });
+  if (viejo) {
+    const g = el('div', 'filtros periodo'); g.setAttribute('role', 'group'); g.setAttribute('aria-label', 'Periodo de las gráficas');
+    g.appendChild(el('span', 'periodo-t', 'Gráficas de:'));
+    PERIODOS.forEach(([k, t]) => {
+      const b = el('button', 'filtro', t); b.type = 'button'; b.dataset.v = k; b.setAttribute('aria-pressed', String(k === PERIODO));
+      b.addEventListener('click', () => {
+        PERIODO = k;
+        g.querySelectorAll('.filtro').forEach(o => o.setAttribute('aria-pressed', String(o.dataset.v === k)));
+        DETALLES.forEach(x => pintaGrafica(x.caja, x.m));
+      });
+      g.appendChild(b);
+    });
+    dentro.appendChild(g);
+  }
   series.forEach(m => {
+    const pts = validos(m), u = pts[pts.length - 1];
+    const det = el('details', 'plegable ev-detalle'); det.dataset.plegable = 'ev-' + slugPrueba(m); det.id = 'ev-' + slugPrueba(m);
+    /* La tarjeta. */
+    const t = el('button', 'ev-tarjeta'); t.type = 'button';
+    t.appendChild(el('span', 'ev-n', nombrePrueba(m)));
+    if (u) {
+      const v = el('span', 'ev-v', cifra(u.valor)); v.appendChild(el('small', null, ' sobre ' + cifra(m.maximo || 27)));
+      t.append(v, el('span', 'ev-f', 'Última, ' + dia(u.fecha)), el('span', 'ev-c', frenteAnterior(pts)), chispa(m));
+    } else t.appendChild(el('span', 'ev-f', 'Sin medidas todavía'));
+    /* Sin aria-label: el nombre del botón es lo que pone (la línea va
+       aria-hidden), y así dice lo mismo para quien lo ve y quien lo oye. */
+    t.addEventListener('click', () => { det.open = true; det.scrollIntoView({ block: 'start' }); det.querySelector('summary').focus({ preventScroll: true }); });
+    tarjetas.appendChild(t);
+    /* El detalle, plegado. */
+    const sm = el('summary');
+    sm.append(el('h3', 'g-nombre', nombrePrueba(m)), el('span', 'gs-n', '· ' + pts.length + (pts.length === 1 ? ' medida' : ' medidas')));
+    det.appendChild(sm);
     const fig = document.createElement('figure');
     fig.className = 'grafica';
     try {
-      const pts = (m.puntos || []).filter(p => p && p.valor != null && p.valor !== '');
-      m = Object.assign({}, m, { puntos: pts });
-      /* La cabecera, en tres líneas para que no se mezcle el nombre con
-         la cifra: qué es, qué mide y hacia dónde es mejor; y debajo la
-         última medida con su escala y su fecha. */
+      const mm = Object.assign({}, m, { puntos: pts });
       const cab = document.createElement('figcaption');
-      const nombre = document.createElement('h3');
-      nombre.className = 'g-nombre'; nombre.textContent = nombrePrueba(m);
       const sub = document.createElement('p');
       sub.className = 'g-sub';
       sub.textContent = [nombrePrueba(m) !== m.instrumento ? m.instrumento : null, QUE_MIDE[m.instrumento],
         m.direccion === 'mas_es_mejor' ? 'aquí, más alto es mejor' : 'aquí, más bajo es mejor']
         .filter(Boolean).join(' · ');
-      cab.append(nombre, sub);
-      if (pts.length) {
-        const u = pts[pts.length - 1];
+      cab.appendChild(sub);
+      if (u) {
         const ultimo = document.createElement('p');
         ultimo.className = 'g-ultimo';
         const n = document.createElement('strong'); n.textContent = cifra(u.valor);
@@ -3234,48 +3409,27 @@ function dibujaSeries() {
       fig.appendChild(cab);
       if (!pts.length) {
         fig.appendChild(vacio('Sin medidas todavía.'));
-        dentro.appendChild(fig);
-        return;
+      } else {
+        /* Con una sola medida no hay «cambio» que contar: lo dice la
+           lectura de abajo. */
+        if (pts.length > 1) fig.appendChild(el('p', 'g-cambio', desdeElPrincipio(mm)));
+        const caja = el('div', 'ev-graf');
+        fig.appendChild(caja);
+        DETALLES.push({ caja, m: mm });
+        pintaGrafica(caja, mm);
+        const l = document.createElement('p');
+        l.className = 'apunte';
+        l.textContent = lectura(mm);
+        fig.appendChild(l);
       }
-      /* Con una sola medida no hay «cambio» que contar: lo dice la
-         lectura de abajo. */
-      if (pts.length > 1) {
-        const cambio = document.createElement('p');
-        cambio.className = 'g-cambio';
-        cambio.textContent = desdeElPrincipio(m);
-        fig.appendChild(cambio);
-      }
-      const g = svgSerie(m, $('v-panel').clientWidth - 82);
-      if (g) fig.appendChild(g);
-      /* La leyenda, solo de lo que está dibujado. */
-      const ley = [];
-      if (m.puntos.length > 1 && m.cambio_fiable != null && Number(m.cambio_fiable) > 0)
-        ley.push(['ruido', 'Zona en la que un cambio aún puede ser ruido del cuestionario']);
-      if (m.corte != null) ley.push(['corte', 'Corte orientativo']);
-      if (g && ley.length) {
-        const le = document.createElement('p'); le.className = 'g-leyenda';
-        ley.forEach(([c, t]) => { const sp = document.createElement('span'); const i = document.createElement('i');
-          i.className = c; sp.append(i, t); le.appendChild(sp); });
-        fig.appendChild(le);
-      }
-      const cifras = document.createElement('p');
-      cifras.className = 'apunte g-cifras';
-      /* La escala, siempre: un 12 no dice nada sin saber si es de 27 o de 140. */
-      cifras.textContent = pts.map(p => dia(p.fecha) + ': ' + cifra(p.valor)).join(' · ')
-        + ' · escala de ' + cifra(m.minimo || 0) + ' a ' + cifra(m.maximo || 27)
-        + (m.corte != null ? ' · corte en ' + cifra(m.corte) : '');
-      fig.appendChild(cifras);
-      const l = document.createElement('p');
-      l.className = 'apunte';
-      l.textContent = lectura(m);
-      fig.appendChild(l);
     } catch (e) {
       /* Una serie que no se puede dibujar no se lleva por delante a las
          demás, y no se queda en blanco: lo dice. */
       fig.replaceChildren(vacio('No se ha podido dibujar esta gráfica. Avísame y lo miro.'));
       console.error('progreso', e);
     }
-    dentro.appendChild(fig);
+    det.appendChild(fig);
+    dentro.appendChild(det);
   });
 
   const nota = document.createElement('p');
@@ -3284,6 +3438,45 @@ function dibujaSeries() {
     'y no es una nota ni un diagnóstico. Está aquí porque ver la línea entre los ' +
     'dos ayuda a decidir qué hacemos a continuación.';
   dentro.appendChild(nota);
+  aplicaPlegables();
+}
+/* La gráfica del periodo elegido, su leyenda y la tabla de sus medidas. La
+   zona de ruido se mide siempre desde la primera medida de todas (`_a0`),
+   como la lectura: si no, cambiaría de sitio al cambiar de periodo. */
+function pintaGrafica(caja, m) {
+  caja.innerHTML = '';
+  const pts = enPeriodo(m.puntos);
+  if (!pts.length) {
+    const u = m.puntos[m.puntos.length - 1];
+    caja.appendChild(el('p', 'apunte', 'Ninguna medida en este periodo. La última es del ' + dia(u.fecha) + '.'));
+    return;
+  }
+  const g = svgSerie(Object.assign({}, m, { puntos: pts, _a0: m.puntos[0].valor }), $('v-panel').clientWidth - 82);
+  if (g) caja.appendChild(g);
+  /* La leyenda, solo de lo que está dibujado. */
+  const ley = [];
+  if (pts.length > 1 && m.cambio_fiable != null && Number(m.cambio_fiable) > 0)
+    ley.push(['ruido', 'Zona en la que un cambio aún puede ser ruido del cuestionario']);
+  if (m.corte != null) ley.push(['corte', 'Corte orientativo']);
+  if (g && ley.length) {
+    const le = document.createElement('p'); le.className = 'g-leyenda';
+    ley.forEach(([c, t]) => { const sp = document.createElement('span'); const i = document.createElement('i');
+      i.className = c; sp.append(i, t); le.appendChild(sp); });
+    caja.appendChild(le);
+  }
+  /* Todas sus medidas del periodo, de la más nueva a la más vieja, en una
+     ventana con scroll propio. La escala, siempre: un 12 no dice nada sin
+     saber si es de 27 o de 140. */
+  const v = el('div', 'tabla-ventana'); v.tabIndex = 0; v.setAttribute('role', 'region');
+  v.setAttribute('aria-label', 'Medidas de ' + nombrePrueba(m));
+  const tb = el('table', 'tabla-medidas');
+  const th = el('thead'); const tr0 = el('tr'); tr0.append(el('th', null, 'Fecha'), el('th', null, 'Cifra')); th.appendChild(tr0);
+  const bo = el('tbody');
+  pts.slice().reverse().forEach(p => { const tr = el('tr'); tr.append(el('td', null, dia(p.fecha) + ' ' + String(p.fecha).slice(0, 4)), el('td', null, cifra(p.valor))); bo.appendChild(tr); });
+  tb.append(th, bo); v.appendChild(tb); caja.appendChild(v);
+  caja.appendChild(el('p', 'apunte g-cifras', 'Escala de ' + cifra(m.minimo || 0) + ' a ' + cifra(m.maximo || 27)
+    + (m.corte != null ? ' · corte en ' + cifra(m.corte) : '') + ' · ' + pts.length + (pts.length === 1 ? ' medida' : ' medidas')
+    + (pts.length < m.puntos.length ? ' en este periodo, de ' + m.puntos.length : '') + '.'));
 }
 
 /* --- Rellenar un cuestionario ----------------------------------------

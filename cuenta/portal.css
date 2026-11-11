@@ -539,7 +539,7 @@ h3{font-weight:700}
 
 /* La casilla: lo que hay que hacer lleva un círculo por rellenar; lo
    que hay que firmar, discontinuo; lo hecho, con su tic. */
-#tareas > .fila::before,#hechas > .fila::before{content:"";flex:0 0 auto;width:24px;height:24px;border-radius:50%;
+#tareas > .fila::before,#tareas .gs-cuerpo > .fila::before,#hechas > .fila::before{content:"";flex:0 0 auto;width:24px;height:24px;border-radius:50%;
   border:2px solid var(--accent);align-self:center}
 #tareas > .fila.firmar::before{border-style:dashed}
 #hechas > .fila::before{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 12.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
@@ -1172,8 +1172,8 @@ h3{font-weight:700}
 
 /* Lo que no cuenta («cada vez que ocurra») no lleva el círculo de por
    hacer; la diaria con el apunte de hoy, el círculo con su tic. */
-#tareas > .fila.fr-cada-vez-que-ocurra::before{border-color:transparent}
-#tareas > .fila.hecha-hoy::before{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 12.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
+#tareas > .fila.fr-cada-vez-que-ocurra::before,#tareas .gs-cuerpo > .fila.fr-cada-vez-que-ocurra::before{border-color:transparent}
+#tareas > .fila.hecha-hoy::before,#tareas .gs-cuerpo > .fila.hecha-hoy::before{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 12.5l3.5 3.5 7.5-8' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
 
 /* La semana de una diaria, de lunes a domingo: un punto por día. */
 .semana-puntos{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
@@ -1250,3 +1250,45 @@ h3{font-weight:700}
    texto en negrita: mismo tamaño, en la misma línea que el triángulo. */
 #c-accesos summary{min-height:44px;display:list-item}
 #c-accesos .sum-h{display:inline;font-family:var(--texto);font-size:16.5px;font-weight:700;margin:0}
+
+/* --- 11-11, noche: por tipo, por trimestre y la evolución ordenada -----------
+   Los chips de tipo y de periodo: mismo aspecto, 44 px, el elegido con
+   aria-pressed. */
+.filtros{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px;align-items:center}
+.filtro{font:inherit;font-size:14.5px;font-weight:600;min-height:44px;padding:6px 14px;border-radius:99px;cursor:pointer;
+  border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink-2)}
+.filtro[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-3)}
+.filtro:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.periodo-t{font-size:14.5px;font-weight:600;color:var(--ink-2);margin-right:4px}
+/* Los grupos: un plegable por tipo o por trimestre, con su contador. */
+.grupo-tipo,.grupo-trim{margin:0;border-top:1px solid var(--line)}
+.grupo-tipo > summary,.grupo-trim > summary{color:var(--ink);padding:8px 2px}
+.grupo-tipo .gs-n,.grupo-trim .gs-n,.ev-detalle .gs-n{font-weight:500;font-size:14.5px;color:var(--muted)}
+.grupo-tipo > .gs-cuerpo{border-left:3px solid var(--accent-soft);margin:0 0 10px 4px;padding:0 0 4px 12px}
+.grupo-trim > .grupo-sesion{margin-left:6px}
+.sub-apartado.por-tipo{font-size:15.5px;color:var(--ink-2);margin:18px 0 4px}
+/* La evolución: arriba, una tarjeta por cuestionario. */
+.ev-h{font-size:19px;margin:0 0 10px}
+/* Dos por fila también en el móvil: una debajo de otra, cinco tarjetas
+   eran casi una pantalla y media antes de llegar a nada. */
+.ev-tarjetas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(9.25rem,100%),1fr));gap:10px;margin:0 0 12px}
+.ev-tarjeta{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;font:inherit;cursor:pointer;
+  padding:12px 14px;border:1.5px solid var(--line-strong);border-radius:var(--r-s);background:var(--surface);color:var(--ink);min-height:44px}
+.ev-tarjeta:hover{border-color:var(--accent)}
+.ev-tarjeta:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.ev-n{font-weight:700;font-size:15.5px}
+.ev-v{font-family:var(--estrecha);font-weight:800;font-size:28px;color:var(--accent);line-height:1.1}
+.ev-v small{font-family:var(--texto);font-size:14.5px;font-weight:600;color:var(--ink-2)}
+.ev-f,.ev-c{font-size:14px;color:var(--ink-2)}
+.ev-tarjeta .chispa{display:block;width:100%;max-width:160px;height:26px;margin-top:4px}
+.ev-detalle{border-top:1px solid var(--line);margin:0}
+.ev-detalle > summary .g-nombre{margin:0;font-size:17px}
+.ev-detalle > .grafica{border-bottom:0;margin-bottom:6px}
+/* La tabla de medidas, en su ventana: unas seis filas a la vista. */
+.tabla-ventana{max-height:15.5rem;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--line);
+  border-radius:var(--r-s);margin:10px 0 4px;background:var(--surface)}
+.tabla-ventana:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.tabla-medidas{border-collapse:collapse;width:100%;font-size:15px}
+.tabla-medidas th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-weight:600;padding:7px 12px}
+.tabla-medidas td{padding:7px 12px;border-top:1px solid var(--line)}
+.tabla-medidas td:last-child,.tabla-medidas th:last-child{text-align:right}

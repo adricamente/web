@@ -340,11 +340,31 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-11c';
-const ADR_ACCIONES_NUEVAS = ['mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
+const ADR_VERSION = '2026-11-11d';
+const ADR_ACCIONES_NUEVAS = ['catalogo:grupo', 'mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
                              'precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
                              'instalar', 'instalar_no',
                              'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
+
+/* 11-11, noche: el tipo de cada herramienta, para agruparlas en la cuenta («Calma y
+   momentos difíciles · 4»). Lo dice el catálogo en `grupo`; mientras el
+   catálogo no lo traiga, esta tabla provisional (la misma que la consola,
+   GRUPO_PROVISIONAL en consola.py). Los nombres son de andar por casa a
+   propósito: lo ve el paciente, y no lleva ninguna categoría clínica. */
+const ADR_GRUPOS_HERR = ['calma', 'pensamientos', 'emociones', 'afrontar', 'dia', 'descanso', 'rumbo', 'otras'];
+const ADR_GRUPO_PROVISIONAL = [
+    'respirar-aterrizar' => 'calma', 'bajar-intensidad' => 'calma', 'cortar-atracon' => 'calma', 'diario-panico' => 'calma',
+    'autorregistro' => 'pensamientos', 'reestructuracion' => 'pensamientos', 'guia-modelo-cognitivo' => 'pensamientos',
+    'posponer-preocupacion' => 'pensamientos', 'pu-8-1' => 'pensamientos', 'pu-8-2' => 'pensamientos',
+    'rueda-emociones' => 'emociones', 'pu-5-1' => 'emociones', 'pu-6-1' => 'emociones', 'pu-7-1' => 'emociones',
+    'pu-9-1' => 'emociones', 'pu-9-2' => 'emociones',
+    'experimento-conductual' => 'afrontar', 'pu-10-1' => 'afrontar', 'pu-10-2' => 'afrontar', 'pu-11-1' => 'afrontar',
+    'pu-11-2' => 'afrontar', 'conversacion-dificil' => 'afrontar',
+    'activacion-conductual' => 'dia', 'planificar-semana' => 'dia', 'tarjeta-diaria' => 'dia', 'tarjeta-corta' => 'dia',
+    'reparto-merito' => 'dia', 'dejar-que-cuente' => 'dia',
+    'tarde-y-sueno' => 'descanso', 'dormir-mejor' => 'descanso',
+    'valores' => 'rumbo', 'pu-3-5' => 'rumbo', 'pu-4-1' => 'rumbo', 'pu-4-2' => 'rumbo', 'pu-13-1' => 'rumbo', 'pu-13-2' => 'rumbo',
+];
 
 switch ($a) {
 
@@ -823,7 +843,9 @@ case 'mios': {
                       $fr = in_array($d['frecuencia'] ?? null, ['siempre_a_mano', 'cuando_lo_necesites', 'diaria',
                                                                'cada_vez_que_ocurra', 'una_vez'], true) ? $d['frecuencia'] : null;
                       $out[$d['id']] = ['seccion' => $sec, 'frecuencia' => $fr,
-                          'para_que' => is_string($d['para_que'] ?? null) ? mb_substr($d['para_que'], 0, 240) : null];
+                          'para_que' => is_string($d['para_que'] ?? null) ? mb_substr($d['para_que'], 0, 240) : null,
+                          'grupo' => in_array($d['grupo'] ?? null, ADR_GRUPOS_HERR, true) ? $d['grupo']
+                                     : (ADR_GRUPO_PROVISIONAL[$d['id']] ?? 'otras')];
                   }
                   return (object)$out;
               })(),
