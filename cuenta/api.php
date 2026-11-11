@@ -340,8 +340,8 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-11a';
-const ADR_ACCIONES_NUEVAS = ['asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
+const ADR_VERSION = '2026-11-11b';
+const ADR_ACCIONES_NUEVAS = ['conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
                              'precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
                              'instalar', 'instalar_no',
                              'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
@@ -1183,9 +1183,17 @@ case 'instalar_no': {
    alguien que está en terapia por una estadística de captación sería
    exactamente lo que no tiene que ser esta cuenta.
 
-   Lo marcado va sellado a la clave del Mac, como un mensaje. «Prefiero
-   no decirlo» no manda sobre: ha dicho que no, y un sobre «no quiso»
-   sería mandar algo igual. */
+   Lo marcado va sellado a la clave del Mac, como un mensaje.
+
+   11-11: 21 opciones, mismo sobre (`pregunta: conocido-v2`). Sus claves,
+   en el orden de la tarjeta: instagram, tiktok, conocido, google, ia,
+   google_ia, youtube, facebook, linkedin, doctoralia, directorio, web,
+   profesional, universidad, grupo, neurococos, newsletter, medios, evento,
+   otro y no_dice. Las escribe index.php y las cuenta el Mac: tienen que
+   ser las mismas en los dos sitios, y el apartado f) de privacidad.html
+   las nombra solo de ejemplo. Este servidor no puede comprobarlas: van
+   dentro del sobre sellado. Lo que anuncia es que la tarjeta las tiene
+   (`conocido:21` en `version`). */
 case 'conocido': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
@@ -1205,8 +1213,8 @@ case 'conocido': {
     if ($f['conocido_cerrado'] !== null) adr_json(['ok' => true, 'ya' => true, 'otra_vez' => false]);
     $cierra = $db->prepare('UPDATE pacientes SET conocido_cerrado = ? WHERE cod = ?');
     if ($acc === 'enviar') {
-        /* Quince casillas y un «otro» de 120 caracteres no llegan a 2 kB
-           sellados; 8 kB es margen, no invitación. */
+        /* Veintiuna casillas con sus rótulos y un «otro» de 120 caracteres
+           no llegan a 3 kB sellados; 8 kB es margen, no invitación. */
         $cifrado = adr_deb64($in['cifrado'] ?? null);
         if (!$cifrado || strlen($cifrado) > 8192) adr_json(['error' => 'respuesta no válida'], 400);
         $db->beginTransaction();

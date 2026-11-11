@@ -763,8 +763,9 @@ h3{font-weight:700}
    Arriba de Inicio y hasta contestarla. Llamativa pero no chillona:
    fondo y borde del color de la marca, título grande con su icono.
    Las casillas, con el mismo .opcion de los cuestionarios y 44 px de
-   alto para el dedo, a dos columnas también en el móvil: con los rótulos
-   cortos, la tarjeta entera cabe en una pantalla (unos 600 px a 390).
+   alto para el dedo, a dos columnas también en el móvil. Desde el 11-11
+   son 21 y la tarjeta ya no cabe en una pantalla (unos 940 px a 390): la
+   primera enseña el título y el principio de la lista.
    Desde el 09-11, la del freno va en otra tarjeta, debajo. */
 .caja.conocido{background:var(--accent-soft);border:2px solid var(--accent);padding:16px 14px 12px;margin:0 0 22px}
 .caja.conocido > h2{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:1.5rem;color:var(--accent-3)}
@@ -775,14 +776,30 @@ h3{font-weight:700}
 .cn-opciones{display:grid;grid-template-columns:1fr 1fr;gap:2px 8px}
 .cn-opciones .opcion{font-weight:400;font-size:15.5px;line-height:1.25;margin:0;min-height:44px;padding:6px 6px;gap:9px}
 .cn-opciones .opcion:hover{background:var(--surface)}
-.cn-opciones .cn-otro{grid-column:1 / -1}
-.cn-otro{flex-wrap:wrap;cursor:default}
-.cn-otro > label{margin:0;font-weight:400;font-size:15.5px;cursor:pointer}
-/* height:auto: .opcion input le pondría los 19 px de la casilla. */
-.cn-otro input[type=text]{flex:1 1 10rem;min-width:0;width:auto;height:auto;padding:7px 10px;accent-color:auto;background:var(--surface)}
-/* «Prefiero no decirlo», la última y separada: es otra clase de
-   respuesta, y quita las demás. */
-.cn-opciones .cn-nodice{grid-column:1 / -1;border-top:1px solid var(--borde-campo);margin-top:4px;padding-top:10px;border-radius:0}
+/* 11-11: las 21 de «¿Cómo me conociste?», como botones (chips): dos
+   columnas en el móvil y tres desde 640 px, todos del mismo ancho. Desde
+   640 px, también del mismo alto (grid-auto-rows:1fr): 64 px y la tarjeta
+   en unos 720. En el móvil, no: el rótulo más largo («Me lo recomendó
+   alguien…») pide 81 px a 390 y 132 a 320, y con todos así de altos la
+   tarjeta pasaba de 944 a 1207 px a 390 y de 1183 a 1832 a 320 (medido).
+   Ahí cada fila mide lo que su rótulo más largo, con un mínimo de 52 px
+   para que las cortas se vean iguales entre sí.
+   La casilla se queda a la vista dentro del botón: dice si está marcada
+   también sin color. «Otro» abre debajo su cuadro de texto, a lo ancho. */
+.cn-chips{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cn-chips .opcion.cn-chip{align-items:center;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--surface);
+  padding:6px 8px;gap:7px;font-size:14px;line-height:1.2;overflow-wrap:anywhere;hyphens:auto;min-width:0;min-height:52px}
+.cn-chips .opcion.cn-chip input{width:17px;height:17px}
+.cn-chips .opcion.cn-chip:hover{border-color:var(--accent)}
+.cn-chips .opcion.cn-chip:has(input:checked){border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.cn-chips .opcion.cn-chip:has(input:focus-visible){outline:2.5px solid var(--accent);outline-offset:2px}
+/* En la del freno, «Nada, lo tenía claro» va aparte, a lo ancho y con una
+   raya encima: es otra clase de respuesta y quita las demás. En la de
+   conocido, «Prefiero no decirlo» es un botón más, el último. */
+.cn-opciones:not(.cn-chips) .cn-nodice{grid-column:1 / -1;border-top:1px solid var(--borde-campo);margin-top:4px;padding-top:10px;border-radius:0}
+.cn-otro-caja{grid-column:1 / -1;padding:2px 0 4px}
+.cn-otro-caja label{display:block;font-size:15px;font-weight:600;margin:0 0 4px;color:var(--ink)}
+.cn-otro-caja input[type=text]{width:100%;min-height:44px;padding:8px 10px;background:var(--surface)}
 /* «¿Qué casi te frenó…?» (09-11), su propia tarjeta debajo, con el mismo
    aspecto (revisión legal: cada pregunta, su «Enviar»). El título es una
    frase entera: un punto más pequeño para que no ocupe cuatro renglones
@@ -795,6 +812,7 @@ h3{font-weight:700}
   .caja.conocido{padding:18px 18px 14px}
   .cn-opciones{column-gap:14px}
   .cn-opciones--frases{grid-template-columns:1fr 1fr}
+  .cn-chips{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:1fr}
 }
 .cn-botones{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:10px 0 0}
 .cn-botones .boton{padding:11px 20px}

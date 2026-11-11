@@ -175,35 +175,46 @@ $cuerpo .= <<<'HTML'
         <a href="https://adricamente.com/privacidad.html#conocido" target="_blank" rel="noopener">Cómo lo trato</a></p>
       <form id="f-conocido" novalidate>
         <fieldset>
-          <legend><span class="oculto-visual">¿Cómo me conociste? </span>Puedes marcar varias.</legend>
-          <!-- Rótulos cortos (04-11, conocido-v2): a dos columnas, la
-               tarjeta entera cabe en una pantalla de móvil. Las claves
-               (`value`) son las de siempre. -->
-          <div class="cn-opciones">
-            <label class="opcion"><input type="checkbox" name="cn" value="instagram"> Instagram</label>
-            <!-- 09-11: «facebook», clave nueva, junto a Instagram. Misma pregunta
-                 (conocido-v2), como google_ia e ia el 06-11: una clave más no
-                 cambia lo que significan las demás. -->
-            <label class="opcion"><input type="checkbox" name="cn" value="facebook"> Facebook</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="tiktok"> TikTok</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="youtube"> YouTube</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="google"> Google (búsqueda)</label>
-            <!-- 06-11: «google_ia» e «ia», claves nuevas para quien llega preguntando al modo IA de Google o a ChatGPT. -->
-            <label class="opcion"><input type="checkbox" name="cn" value="google_ia"> Google (modo IA)</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="ia"> ChatGPT u otra IA</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="web"> La web adricamente.com</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="doctoralia"> Doctoralia</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="neurococos"> El centro Neurococos</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="newsletter"> La newsletter</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="conocido"> Alguien que me conoce</label>
-            <label class="opcion"><input type="checkbox" name="cn" value="profesional"> Otro profesional (médico…)</label>
-            <div class="opcion cn-otro">
-              <input type="checkbox" name="cn" value="otro" id="cn-otro">
-              <label for="cn-otro">Otro:</label>
-              <label for="cn-otro-t" class="oculto-visual">Otro: escribe cuál</label>
+          <legend><span class="oculto-visual">¿Cómo me conociste? </span>Marca todas las que encajen.</legend>
+          <!-- 11-11 (Adrián): 21 opciones, una lista PLANA de botones del mismo
+               tamaño, todos a la vista (dos columnas en el móvil, tres en el
+               ordenador), sin grupos ni logotipos, en un orden fijo de más a
+               menos probable, igual para todos. «Otro: ¿cuál?» y «Prefiero no
+               decirlo», siempre al final. Misma pregunta (conocido-v2): las
+               claves de siempre no cambian, solo algunos rótulos, y hay seis
+               nuevas (linkedin, directorio, universidad, grupo, medios,
+               evento). Las claves (`value`) las cuenta el Mac: la lista de
+               aquí y la suya tienen que ser la misma. El servidor no la
+               comprueba, porque no la ve: va dentro del sobre sellado. -->
+          <div class="cn-opciones cn-chips">
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="instagram"> Instagram</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="tiktok"> TikTok</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="conocido"> Me lo recomendó alguien (amigo, familiar, compañero…)</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="google"> Busqué en Google</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="ia"> Le pregunté a ChatGPT u otra IA</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="google_ia"> Me lo recomendó el modo IA de Google</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="youtube"> YouTube</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="facebook"> Facebook</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="linkedin"> LinkedIn</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="doctoralia"> Doctoralia</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="directorio"> Otro directorio de psicólogos</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="web"> Tu web (adricamente.com)</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="profesional"> Mi médico, otro psicólogo u otro profesional</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="universidad"> Mi universidad, máster o colegio profesional</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="grupo"> Un grupo de WhatsApp, Telegram o un foro</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="neurococos"> Neurococos</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="newsletter"> Tu newsletter</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="medios"> Pódcast, radio, prensa o tele</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="evento"> Una charla, taller o evento</label>
+            <label class="opcion cn-chip"><input type="checkbox" name="cn" value="otro" id="cn-otro"> Otro: ¿cuál?</label>
+            <!-- Debajo de «Otro», solo con «Otro» marcado, y entonces obligatorio:
+                 un «Otro» sin texto no dice nada. La pregunta sigue siendo
+                 opcional: «Prefiero no decirlo» no pide nada. -->
+            <div class="cn-otro-caja" id="cn-otro-caja" hidden>
+              <label for="cn-otro-t">Cuéntame dónde, en pocas palabras</label>
               <input type="text" id="cn-otro-t" maxlength="120" autocomplete="off">
             </div>
-            <label class="opcion cn-nodice"><input type="checkbox" name="cn" value="no_dice" id="cn-nodice"> Prefiero no decirlo</label>
+            <label class="opcion cn-chip cn-nodice"><input type="checkbox" name="cn" value="no_dice" id="cn-nodice"> Prefiero no decirlo</label>
           </div>
         </fieldset>
         <p class="cn-botones">
@@ -2457,6 +2468,7 @@ function pintaConocido(c) {
   if (!CN_PENDIENTE) { if ($('cn-gracias').hidden) caja.hidden = true; return; }
   if (!caja.hidden) return;
   $('f-conocido').reset();
+  cnOtroCaja(false);
   $('f-conocido').hidden = false;
   $('cn-para').hidden = false;
   $('cn-gracias').hidden = true;
@@ -2493,18 +2505,18 @@ function pintaFreno(c) {
         if (nombre === 'cn') $('cn-otro-t').value = '';
       } else del.forEach(x => { if (excl.includes(x.value)) x.checked = false; });
     }
+    if (nombre === 'cn') cnOtroCaja(t && t.id === 'cn-otro' && t.checked);
     $(estado).textContent = '';
   });
 });
-/* Quien escribe en «Otro» quiere decir «otro»: no le hacemos marcar la
-   casilla además. Borrar el texto no la desmarca (puede estar corrigiendo).
-   Solo en conocido: el freno no tiene texto. */
-$('cn-otro-t').addEventListener('input', () => {
-  if ($('cn-otro-t').value.trim() && !$('cn-otro').checked) {
-    $('cn-otro').checked = true;
-    $('cn-nodice').checked = false;
-  }
-});
+/* 11-11: el cuadro de «Otro» aparece debajo al marcarlo (y se le da el
+   foco, para escribir sin buscarlo) y se esconde al desmarcarlo. */
+function cnOtroCaja(enfoca) {
+  const si = $('cn-otro').checked;
+  $('cn-otro-caja').hidden = !si;
+  if (si) $('cn-otro-t').setAttribute('aria-required', 'true'); else $('cn-otro-t').removeAttribute('aria-required');
+  if (si && enfoca) $('cn-otro-t').focus();
+}
 $('f-conocido').addEventListener('submit', (ev) => { ev.preventDefault(); cnEnviar(); });
 $('f-freno').addEventListener('submit', (ev) => { ev.preventDefault(); frEnviar(); });
 
@@ -2521,7 +2533,7 @@ async function cnEnviar() {
     return;
   }
   if ($('cn-otro').checked && !otro) {
-    est.textContent = 'Escribe en «Otro» por dónde fue, o desmárcalo.';
+    est.textContent = 'Cuéntame en «Otro» dónde fue, en pocas palabras, o desmárcalo.';
     $('cn-otro-t').focus();
     return;
   }
@@ -2539,6 +2551,8 @@ async function cnEnviar() {
     v: 1, tipo: 'conocido', pregunta: 'conocido-v2', identificada: true, cod_web: miCod, origen: 'cuenta',
     canales: marcadas.map(x => x.value),
     rotulos: marcadas.map(x => x.value === 'otro' ? 'Otro' : x.parentNode.textContent.trim()),
+    /* 11-11: el «otro» solo con su casilla marcada (si la desmarcó, lo
+       escrito se queda en el cuadro escondido y no viaja). */
     otro: $('cn-otro').checked ? otro : null,
     dia: new Date().toLocaleDateString('sv', { timeZone: 'Europe/Madrid' }),
   }, macPublica);
