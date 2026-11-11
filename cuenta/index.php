@@ -449,13 +449,17 @@ $cuerpo .= <<<'HTML'
   <div class="pestana" id="p-mensajes" data-p="mensajes" hidden>
     <h1>Mensajes</h1>
     <section class="caja bloque" id="c-mensajes" aria-label="Escribirme">
-      <div id="hilo" class="hilo" aria-live="polite"></div>
+      <!-- 11-11: la conversación, en su ventana (lo último abajo, junto a
+           donde se escribe), con su propio scroll para no empujar el cuadro
+           de escribir fuera de la pantalla cuando hay muchos. -->
+      <div id="hilo" class="hilo" role="log" aria-label="Nuestra conversación"></div>
       <div class="campo escribir">
         <label for="m-texto">Lo que quieras contarme</label>
-        <p class="pista" id="m-pista"><strong>Este canal no es para urgencias.</strong> Lo leo en mi
-        horario de consulta, no al momento. Si estás en peligro ahora:
-        <strong>024</strong> (atención a la conducta suicida, 24 horas,
-        gratuito) o <strong>112</strong>.</p>
+        <!-- 11-11: siempre, encima del cuadro. Sin «escribiendo…» ni
+             «leído» en ningún lado: nada que meta prisa a ninguno de los dos. -->
+        <p class="pista" id="m-pista"><strong>Esto no es un canal de urgencias:</strong> si estás en
+        peligro ahora, llama al <strong>024</strong> o al <strong>112</strong>. Contesto en horario de
+        consulta.</p>
         <textarea id="m-texto" rows="4" aria-describedby="m-pista"></textarea>
       </div>
       <!-- Si lo que escribe suena a riesgo, esto aparece ANTES de enviar.
@@ -851,6 +855,12 @@ function pestana(p) {
   document.querySelectorAll('#pestanas a').forEach(a => {
     if (a.dataset.p === p) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
+  });
+  /* 11-11: lo que se pintó con la pestaña escondida no se pudo medir: las
+     ventanas de «Mi espacio», y la conversación, que se abre en lo último. */
+  requestAnimationFrame(() => {
+    if (typeof VENTANAS !== 'undefined') VENTANAS.forEach(z => altoVentana(z));
+    if (p === 'mensajes') hiloAlFinal();
   });
 }
 window.addEventListener('hashchange', () => {
@@ -1521,6 +1531,7 @@ function ponBuscador(clave, zona, nombre) {
   if (items.length <= 6) {
     if (b) { b.caja.remove(); delete BUSCA[clave]; }
     zona.classList.remove('con-ventana'); zona.removeAttribute('tabindex'); zona.removeAttribute('role'); zona.removeAttribute('aria-label');
+    zona.style.removeProperty('--alto-ventana'); VENTANAS.delete(zona);
     items.forEach(x => { x.hidden = false; });
     return;
   }
@@ -1544,6 +1555,7 @@ function ponBuscador(clave, zona, nombre) {
      estado «de antes» de cada grupo se vuelve a tomar del repintado. */
   zona.querySelectorAll('details[data-buscando]').forEach(d => { delete d.dataset.buscando; });
   zona.classList.add('con-ventana');
+  VENTANAS.add(zona);
   /* Con su propio nombre: el del apartado ya lo lleva la sección. */
   zona.tabIndex = 0; zona.setAttribute('role', 'region'); zona.setAttribute('aria-label', 'Lista: ' + nombre);
   b.filtra = () => {
@@ -1566,9 +1578,32 @@ function ponBuscador(clave, zona, nombre) {
     });
     b.x.hidden = !b.inp.value;
     b.cuenta.textContent = q ? (n ? n + ' de ' + todos.length : 'Nada con «' + b.inp.value.trim() + '»') : todos.length + ' en total';
+    altoVentana(zona);
   };
   b.filtra();
 }
+
+/* 11-11, 2.ª vuelta: la ventana, de unas cinco filas y media (la media fila
+   cortada ya dice que hay más), medidas con las filas que se ven: en el
+   móvil son más altas y la ventana crece con ellas, hasta el 60 % de la
+   pantalla. Abajo, un degradado mientras quede algo por ver (portal.css).
+   Se vuelve a medir al filtrar, al girar el móvil y al cambiar de pestaña
+   (escondida no mide nada). */
+const VENTANAS = new Set();
+function altoVentana(zona) {
+  if (!zona.classList.contains('con-ventana') || zona.offsetParent === null) return;
+  const altos = [...zona.querySelectorAll('[data-buscar]')].filter(x => !x.hidden && x.offsetParent !== null)
+    .slice(0, 9).map(x => x.getBoundingClientRect().height).filter(h => h > 8).sort((a, b) => a - b);
+  if (!altos.length) return;
+  /* 5,7 y no 5,5: con 5,5 el degradado tapaba casi entera la media fila. */
+  const alto = altos[Math.floor(altos.length / 2)] * 5.7 + 2;
+  zona.style.setProperty('--alto-ventana', Math.round(Math.min(Math.max(alto, 200), window.innerHeight * 0.6)) + 'px');
+}
+let T_VENTANA = null;
+window.addEventListener('resize', () => {
+  clearTimeout(T_VENTANA);
+  T_VENTANA = setTimeout(() => VENTANAS.forEach(z => document.body.contains(z) ? altoVentana(z) : VENTANAS.delete(z)), 150);
+});
 
 /* Lo completado: qué y cuándo, sin puntuación. La puntuación está en
    «Tu evolución»; aquí se ve que lo que mandas llega a algún sitio. */
@@ -1827,9 +1862,14 @@ async function abreMio(m, v) {
   if (!r.ok || !r.j.cifrado) return null;
   try { const x = abrirDelMac(r.j.cifrado, miPublica, privada);
         if (!x) return null;
-        return (x.texto || '') + (x.adjunto ? (x.texto ? '\n' : '') + '📎 ' + x.adjunto : '') || null; }
+        return { texto: x.texto || '', adjunto: x.adjunto || null, tamano: x.adjunto_tamano || null }; }
   catch (_) { return null; }
 }
+function tamanoLegible(n) {
+  if (!n || isNaN(n)) return '';
+  return n < 1024 * 1024 ? Math.max(1, Math.round(n / 1024)) + ' kB' : (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
+}
+const DIA_HILO = (iso) => { const t = new Date(iso); return isNaN(t) ? '' : t.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Madrid' }); };
 async function pintaHilo(ms, v) {
   const caja = $('hilo');
   caja.innerHTML = '';
@@ -1837,8 +1877,12 @@ async function pintaHilo(ms, v) {
     caja.appendChild(vacio('Todavía no hay mensajes. Lo que me escribas aquí lo leo antes de tu próxima sesión.'));
     return;
   }
-  /* El servidor ya los da en orden (del primero al último). */
+  /* El servidor ya los da en orden (del primero al último). Un rótulo
+     por día, para no repetir la fecha en cada burbuja. */
+  let dia = '';
   for (const m of ms) {
+    const dd = DIA_HILO(m.creado);
+    if (dd && dd !== dia) { dia = dd; caja.appendChild(el('p', 'dia-hilo', dd)); }
     const mio = Number(m.direccion) === 1;
     const d = document.createElement('div');
     d.className = 'burbuja' + (mio ? ' mia' : '');
@@ -1847,10 +1891,14 @@ async function pintaHilo(ms, v) {
     quien.textContent = mio ? 'Tú' : 'Adrián';
     const cuerpo = document.createElement('p');
     cuerpo.className = 'cuerpo';
+    let adj = null;
     if (mio) {
       const t = await abreMio(m, v);
-      if (t) cuerpo.textContent = t;
-      else {
+      if (t && (t.texto || t.adjunto)) {
+        cuerpo.textContent = t.texto;
+        if (!t.texto) cuerpo.hidden = true;
+        if (t.adjunto) adj = el('p', 'adjunto', '📎 ' + t.adjunto + (t.tamano ? ' · ' + tamanoLegible(t.tamano) : ''));
+      } else {
         cuerpo.textContent = m.copia_id
           ? 'Mensaje enviado. Se guardó con tu contraseña anterior y ya no se puede releer aquí.'
           : 'Mensaje enviado. Este no se guardó para releerlo aquí.';
@@ -1867,10 +1915,21 @@ async function pintaHilo(ms, v) {
     }
     const f = document.createElement('p');
     f.className = 'cuando';
-    f.textContent = fecha(m.creado) + (hora(m.creado) ? ', ' + hora(m.creado) : '');
-    d.append(quien, cuerpo, f);
+    f.textContent = hora(m.creado) || fecha(m.creado);
+    d.append(quien, cuerpo);
+    if (adj) d.appendChild(adj);
+    d.appendChild(f);
     caja.appendChild(d);
   }
+  hiloAlFinal();
+}
+/* Como un chat: se abre en lo último, sin animación. Si la ventana tiene
+   scroll, tiene que poder enfocarse para moverla con el teclado. */
+function hiloAlFinal() {
+  const caja = $('hilo');
+  if (!caja || caja.offsetParent === null) return;
+  if (caja.scrollHeight > caja.clientHeight + 4) caja.tabIndex = 0; else caja.removeAttribute('tabindex');
+  caja.style.scrollBehavior = 'auto'; caja.scrollTop = caja.scrollHeight; caja.style.scrollBehavior = '';
 }
 
 /* La red de seguridad del mensaje. Si lo que escribe suena a riesgo, la
@@ -1938,7 +1997,8 @@ $('m-enviar').addEventListener('click', async () => {
     /* Y una copia a su propia clave, para poder releerlo (del archivo,
        solo el nombre). */
     const copia = sellarHaciaElMac({ v: 1, tipo: 'mi_mensaje', texto, escrito_en,
-                                     adjunto: adjunto ? adjunto.nombre : null }, miPublica);
+                                     adjunto: adjunto ? adjunto.nombre : null,
+                                     adjunto_tamano: adjunto ? adjunto.tamano : null }, miPublica);
     const r = await api('escribir', { cifrado, copia, adjunto: !!adjunto });
     if (!r.ok) { $('m-estado').textContent = (r.j && r.j.error) ? 'No se ha podido enviar: ' + r.j.error + '.' : 'No se ha podido enviar.'; return; }
     $('m-texto').value = '';

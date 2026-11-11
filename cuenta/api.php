@@ -340,8 +340,8 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-11b';
-const ADR_ACCIONES_NUEVAS = ['conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
+const ADR_VERSION = '2026-11-11c';
+const ADR_ACCIONES_NUEVAS = ['mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
                              'precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
                              'instalar', 'instalar_no',
                              'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
@@ -1559,8 +1559,11 @@ case 'mensaje': {
     $db->prepare("INSERT INTO sobres (cod, direccion, cifrado, para_v, creado, clase)
                   VALUES (?,2,?,?,?,'mensaje')")
        ->execute([$cod, $cifrado, $para_v, adr_ahora()]);
+    /* 11-11: el id, para que la copia que guarda el Mac (la conversación de
+       la ficha) sepa a qué sobre corresponde. No dice nada más. */
+    $id = (int)$db->lastInsertId();
     adr_avisa($db, $ADR, $cod);
-    adr_json(['ok' => true]);
+    adr_json(['ok' => true, 'id' => $id]);
 }
 
 /* Un deber: texto CIFRADO con lo que hay que hacer. «Registra tres
