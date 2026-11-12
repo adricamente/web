@@ -399,7 +399,8 @@ function adr_cita_vispera(array $ADR, PDO $db, array $cita): array {
         $t = $db->prepare("SELECT t.tipo, t.plantilla FROM tareas t JOIN pacientes p ON p.cod = t.cod AND p.activado IS NOT NULL
                            WHERE t.cod = ? AND t.hecho IS NULL AND (t.caduca IS NULL OR t.caduca = '' OR substr(t.caduca, 1, 10) >= ?)");
         $t->execute([$cita['cod'], (new DateTime('now', new DateTimeZone('Europe/Madrid')))->format('Y-m-d')]);
-        $pend = count(array_filter($t->fetchAll(), fn($x) => !adr_es_lectura($x)));
+        /* 12-11: ni una herramienta de «Mis herramientas» (adr_es_consulta). */
+        $pend = count(array_filter($t->fetchAll(), fn($x) => !adr_es_consulta($x)));
     }
     $h = fn($x) => htmlspecialchars((string)$x, ENT_QUOTES);
     $fila = fn($k, $v) => '<tr><td style="padding:9px 0;color:#6C6963;width:92px;vertical-align:top;border-top:1px solid #EEECE7">' . $k

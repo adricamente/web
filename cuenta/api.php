@@ -340,8 +340,8 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-12b';
-const ADR_ACCIONES_NUEVAS = ['tareas:cambiada', 'catalogo:grupo', 'mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
+const ADR_VERSION = '2026-11-12c';
+const ADR_ACCIONES_NUEVAS = ['mios:anteriores', 'herramientas:no_cuentan', 'tareas:cambiada', 'catalogo:grupo', 'mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
                              'precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
                              'instalar', 'instalar_no',
                              'consentimiento_vigente', 'ficha', 'biblioteca', 'interes', 'catalogo:temas'];
@@ -875,6 +875,20 @@ case 'mios': {
                       && (int)$f['para_v'] !== $v && isset($nuevos[$f['titulo']]))));
               })(), 'tareas' => $tareas, 'herramientas_vivas' => $vivas,
               'hechas' => $hechas,
+              /* 12-11: «Tareas anteriores»: lo archivado, para que lo relea
+                 (solo lectura). Título, fechas y cuántos apuntes: lo que el
+                 servidor ya tenía; lo escrito sigue sellado a su clave. */
+              'anteriores' => (function () use ($db, $cod) {
+                  $q = $db->prepare("SELECT t.id, t.titulo, t.tipo, t.plantilla, t.modo, t.para_v, t.creado, t.archivada, t.cifrado,
+                                            (SELECT COUNT(*) FROM entradas e WHERE e.tarea = t.id AND e.borrada = 0) AS apuntes
+                                     FROM tareas t WHERE t.cod = ? AND t.tipo = 'herramienta' AND t.archivada IS NOT NULL
+                                     ORDER BY t.archivada DESC LIMIT 60");
+                  $q->execute([$cod]);
+                  return array_map(fn($x) => ['id' => (int)$x['id'], 'titulo' => $x['titulo'], 'modo' => adr_modo_fila($x),
+                      'herr_id' => adr_herr_id($x), 'para_v' => (int)$x['para_v'], 'creado' => $x['creado'],
+                      'archivada' => $x['archivada'], 'apuntes' => (int)$x['apuntes'],
+                      'cif' => $x['cifrado'] !== null ? hash('crc32b', $x['cifrado']) : null], $q->fetchAll());
+              })(),
               'mensajes' => array_reverse($ms->fetchAll())]);
 }
 
@@ -1941,10 +1955,11 @@ case 'panel_mac': {
                          WHERE direccion = 1 AND recogido IS NULL AND clase <> 'conocido'
                          GROUP BY cod")->fetchAll() as $r) $pend[$r['cod']] = (int)$r['n'];
     $tar = []; $desde = [];
-    foreach ($db->query('SELECT cod, COUNT(*) n, MIN(creado) d FROM tareas
-                         WHERE hecho IS NULL GROUP BY cod')->fetchAll() as $r) {
-        $tar[$r['cod']] = (int)$r['n'];
-        $desde[$r['cod']] = $r['d'];
+    /* 12-11: lo de «Mis herramientas» no está «sin hacer» (adr_es_consulta). */
+    foreach ($db->query('SELECT cod, tipo, plantilla, creado FROM tareas WHERE hecho IS NULL')->fetchAll() as $r) {
+        if (adr_es_consulta($r)) continue;
+        $tar[$r['cod']] = ($tar[$r['cod']] ?? 0) + 1;
+        if (!isset($desde[$r['cod']]) || $r['creado'] < $desde[$r['cod']]) $desde[$r['cod']] = $r['creado'];
     }
     $viejos = [];
     foreach ($db->query('SELECT s.cod, COUNT(*) n FROM sobres s
@@ -2186,7 +2201,10 @@ case 'asignar': {
            ->execute([$cod, mb_substr($titulo ?: 'Herramienta', 0, 80, 'UTF-8'), json_encode($res, JSON_UNESCAPED_UNICODE),
                       adr_ahora(), $in['caduca'] ?? null, $cif, (int)$in['para_v'], $modo]);
         $id = (int)$db->lastInsertId();
-        if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
+        /* 12-11: una herramienta para consultar no es «algo en tu cuenta» que
+           haya que hacer: no manda el correo. */
+        if (($in['avisar'] ?? true) !== false
+            && !adr_es_consulta(['tipo' => 'herramienta', 'plantilla' => json_encode($res)])) adr_avisa($db, $ADR, $cod);
         adr_json(['ok' => true, 'id' => $id, 'sellada' => true]);
     }
     if (($in['tipo'] ?? '') === 'herramienta') {
@@ -2207,7 +2225,8 @@ case 'asignar': {
                       json_encode($plantilla, JSON_UNESCAPED_UNICODE),
                       adr_ahora(), $in['caduca'] ?? null, adr_modo_para($plantilla, $in['modo'] ?? null)]);
         $id = (int)$db->lastInsertId();
-        if (($in['avisar'] ?? true) !== false) adr_avisa($db, $ADR, $cod);
+        if (($in['avisar'] ?? true) !== false
+            && !adr_es_consulta(['tipo' => 'herramienta', 'plantilla' => json_encode($plantilla)])) adr_avisa($db, $ADR, $cod);
         adr_json(['ok' => true, 'id' => $id]);
     }
 
@@ -2268,13 +2287,23 @@ case 'asignar': {
 case 'tarea': {
     $cod = adr_sesion($ADR['secreto']);
     if (!$cod) adr_json(['error' => 'entra primero'], 401);
-    $q = $db->prepare('SELECT id, titulo, plantilla, hecho, tipo, cifrado, para_v, borrador, borrador_v, modo, actualizado
+    $q = $db->prepare('SELECT id, titulo, plantilla, hecho, tipo, cifrado, para_v, borrador, borrador_v, modo, actualizado, archivada
                        FROM tareas WHERE id = ? AND cod = ?');
     $q->execute([(int)($_GET['id'] ?? 0), $cod]);
     $t = $q->fetch();
     if (!$t) adr_json(['error' => 'no existe'], 404);
-    adr_ci_corta($db, $cod, $t);
     $modo = adr_modo_fila($t);
+    /* 12-11: una tarea archivada se puede ABRIR para leer lo que escribió
+       («Tareas anteriores»): lo mismo que ya tenía, sellado a su clave. Las
+       acciones que escriben siguen rechazando lo retirado. */
+    if ($t['archivada'] !== null && $t['tipo'] === 'herramienta') {
+        adr_json(['id' => (int)$t['id'], 'titulo' => $t['titulo'], 'tipo' => 'herramienta', 'archivada' => $t['archivada'],
+                  'plantilla' => json_decode($t['plantilla'], true),
+                  'cifrado' => $t['cifrado'] ? adr_b64($t['cifrado']) : null, 'para_v' => (int)$t['para_v'], 'modo' => $modo,
+                  'actualizado' => $t['actualizado'],
+                  'borrador' => $t['borrador'] ? adr_b64($t['borrador']) : null, 'borrador_v' => (int)($t['borrador_v'] ?? 0)]);
+    }
+    adr_ci_corta($db, $cod, $t);
     /* Un documento vivo o un registro se siguen abriendo después de
        empezarlos: es su gracia. Lo de una vez, no. */
     if ($t['hecho'] === 'retirada' || ($t['hecho'] !== null && $modo === 'una')) adr_json(['error' => 'ya la habías entregado'], 409);
@@ -2422,7 +2451,8 @@ case 'recordatorio': {
     $t = $q->fetch();
     if (!$t) adr_json(['error' => 'no existe'], 404);
     /* Lo que es para consultar no tiene apunte diario que recordar (30-10). */
-    if ($hora !== '' && adr_es_lectura($t)) adr_json(['error' => 'esto es para consultar: no lleva recordatorio'], 400);
+    /* 12-11: ni una herramienta de «Mis herramientas» (adr_es_consulta). */
+    if ($hora !== '' && adr_es_consulta($t)) adr_json(['error' => 'esto es para consultar: no lleva recordatorio'], 400);
     if ($hora === '') {
         $db->prepare('DELETE FROM recordatorios WHERE cod = ? AND tarea = ?')->execute([$cod, $id]);
         adr_json(['ok' => true, 'hora' => null]);
@@ -2683,12 +2713,14 @@ case 'pendientes': {
     /* 04-11: también lo de las cuentas aún sin activar (los cuestionarios
        que el Mac deja antes), con `activada: false`, para que el Mac vea
        que han llegado y no las cuente como «lleva días sin contestar». */
-    $q = $db->query("SELECT t.cod, t.id, t.titulo, t.tipo, t.origen, t.creado, t.recordada,
+    $q = $db->query("SELECT t.cod, t.id, t.titulo, t.tipo, t.origen, t.creado, t.recordada, t.plantilla,
                             (p.activado IS NOT NULL) AS activada
                      FROM tareas t JOIN pacientes p ON p.cod = t.cod
                      WHERE t.hecho IS NULL AND p.cod <> 'hoja'
                      ORDER BY t.cod, t.creado");
-    adr_json(['pendientes' => array_map(function ($f) { $f['activada'] = (bool)$f['activada']; return $f; }, $q->fetchAll())]);
+    /* 12-11: sin lo de «Mis herramientas»: no es algo «sin contestar». */
+    adr_json(['pendientes' => array_values(array_map(function ($f) { $f['activada'] = (bool)$f['activada']; unset($f['plantilla']); return $f; },
+        array_filter($q->fetchAll(), fn($f) => !adr_es_consulta($f))))]);
 }
 
 /* El estado de la instalación, para que el Mac pueda comprobarlo sin

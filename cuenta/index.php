@@ -310,6 +310,8 @@ $cuerpo .= <<<'HTML'
     <section class="caja hoy" id="c-hoy" aria-labelledby="t-hoy" hidden>
       <h2 id="t-hoy">Lo que toca hoy</h2>
       <ul class="hoy-lista" id="hoy-lista"></ul>
+      <p class="hoy-plan" id="hoy-plan" hidden><span>Siempre a mano: tu plan de seguridad.</span>
+        <button class="boton suave" type="button" id="hoy-plan-b">Abrir</button></p>
     </section>
     <p class="aviso-linea" id="aviso-nuevo" hidden><a href="#lo-que-vimos" id="aviso-nuevo-a"></a></p>
 
@@ -379,12 +381,22 @@ $cuerpo .= <<<'HTML'
     <h1>Mi espacio</h1>
     <section class="caja bloque apartado" id="c-tareas" aria-labelledby="t-tareas">
       <h2 tabindex="-1" id="t-tareas">Mis tareas <span class="cuenta" id="cuenta-tareas"></span></h2>
+      <!-- 12-11: un texto fijo bajo cada título (Adrián): qué es cada
+           apartado y, aquí, que son pocas a propósito. -->
+      <p class="apunte bajo-titulo">Lo que acordamos para esta semana. Como mucho dos cosas: mejor poco y hecho que mucho y a medias. Si una semana no puedes, no pasa nada: lo hablamos en la sesión.</p>
       <p class="apunte" id="resumen-tareas"></p>
       <div id="tareas"></div>
       <!-- Lo hecho, plegado y abajo: nunca la lista entera arriba. -->
       <details class="plegable" id="c-hechas" data-plegable="hechas">
         <summary><span id="t-hechas">Hechas</span></summary>
         <div id="hechas"></div>
+      </details>
+      <!-- 12-11: lo archivado, para releerlo: cerrado, sin contar y sin
+           nada que hacer (solo «Ver lo que escribí»). -->
+      <details class="plegable" id="c-anteriores" data-plegable="anteriores" hidden>
+        <summary><span id="t-anteriores">Tareas anteriores</span></summary>
+        <p class="apunte">Las que ya no tienes pautadas, con lo que escribiste. Solo para releer.</p>
+        <div id="anteriores"></div>
       </details>
     </section>
 
@@ -394,7 +406,7 @@ $cuerpo .= <<<'HTML'
          El plan de seguridad, el primero, con el 024 y el 112 a la vista. -->
     <section class="caja bloque apartado" id="c-herramientas" aria-labelledby="t-herr">
       <h2 tabindex="-1" id="t-herr">Mis herramientas</h2>
-      <p class="apunte">Para tenerlas a mano. Ábrelas cuando las necesites: no hay nada que entregar.</p>
+      <p class="apunte bajo-titulo">Para consultar cuando las necesites. No son deberes: no hay que entregarlas ni marcarlas como hechas.</p>
       <div id="herr-zona">
         <div id="herramientas"></div>
         <!-- 04-11: «Para cuando lo necesites»: las pocas herramientas que el
@@ -410,7 +422,7 @@ $cuerpo .= <<<'HTML'
 
     <section class="caja bloque apartado" id="c-sesion" aria-labelledby="t-sesiones">
       <h2 tabindex="-1" id="t-sesiones">Lo que vimos en sesión</h2>
-      <p class="apunte">Para leer: lo que nos llevamos de cada sesión y lo que acordamos. No hay nada que rellenar.</p>
+      <p class="apunte bajo-titulo">Recordatorios de lo que hablamos. Solo para leer.</p>
       <div id="vimos-zona">
         <div id="sesiones" class="sesiones"></div>
         <h3 class="sub-apartado" id="t-docs">Documentos</h3>
@@ -1064,9 +1076,10 @@ async function panel() {
   $('globo-tareas').textContent = n ? String(n) : '';
   $('cuenta-tareas').textContent = n ? '· ' + n + ' para hoy' : '';
   $('resumen').textContent = n ? (n === 1 ? 'Una cosa para hoy.' : n + ' cosas para hoy.') : 'Nada para hoy.';
-  $('resumen-tareas').textContent = n
-    ? 'Empieza por arriba. Lo que no te dé tiempo, sigue aquí mañana.'
-    : (otras.length + deTareas.length ? 'Nada para hoy. Lo que se apunta cuando pasa algo sigue aquí.' : 'Cuando te mande algo, aparecerá aquí.');
+  /* 12-11: el texto fijo de debajo del título ya dice qué es esto; aquí
+     solo se dice algo cuando no hay nada. */
+  $('resumen-tareas').textContent = (n || otras.length + deTareas.length) ? '' : 'Cuando te mande algo, aparecerá aquí.';
+  $('resumen-tareas').hidden = !$('resumen-tareas').textContent;
 
   const ct = $('tareas'); ct.innerHTML = '';
   if (CIP.falta && !CIP.id) {
@@ -1121,6 +1134,7 @@ async function panel() {
   pintaBiblioteca(r.j.biblioteca || [], vivas);
   pintaTemas(r.j.temas);
   pintaHechas(r.j.hechas || [], r.j.historial, r.j.v);
+  pintaAnteriores(r.j.anteriores || []);
   pintaObjetivos(r.j.objetivos, r.j.v);
   const viejos = pintaVimos(docs, deLeer, r.j.v);
   $('reenviando').hidden = (viejos === 0);
@@ -1354,7 +1368,11 @@ function pintaHoy(otras, deTareas) {
             () => abrirTarea(q.id), 'Rellenar');
   const d = deTareas.find(g => g.fr === 'diaria' && !g.hoy && !g.inactiva && !(CIP.falta && g.t.rellenable));
   if (d) li('Tu apunte de hoy: ' + d.titulo, () => abrirHerramienta(d.t.id, d.otras), 'Apuntar');
-  if (PLAN_TAREA || PLAN) li('Tu plan de seguridad, siempre aquí', () => $('b-plan').click(), 'Abrir');
+  /* 12-11: el plan de seguridad es una herramienta, no algo que «toca hoy»:
+     sale debajo de la lista, aparte, siempre a un toque. */
+  const plan = $('hoy-plan');
+  plan.hidden = !(PLAN_TAREA || PLAN);
+  if (!ul.children.length && !plan.hidden) ul.appendChild(el('li', 'hoy-cosa hoy-nada', 'Nada para hoy.'));
   $('c-hoy').hidden = !ul.children.length;
 }
 
@@ -1823,6 +1841,76 @@ async function pintaHechas(hs, meta, v) {
   lista.forEach(h => c.appendChild(
     fila(h.titulo, (h.firma ? 'Firmado el ' : 'Hecho el ') + fecha(h.fecha))));
   aplicaPlegables();
+}
+
+/* --- Tareas anteriores (12-11) ------------------------------------------
+   Lo que Adrián (o el Mac, al dejar como mucho dos) ha archivado: antes
+   desaparecía de la cuenta, y con ello lo que había escrito. Aquí se
+   relee: plegado, sin contar, sin «Apuntar» ni «Enviar». Lo escrito sigue
+   sellado a su clave: se abre en este navegador, como siempre. */
+function esConsultaId(id) {
+  return id === 'plan-seguridad' || id === RUEDA_ID || ((SECC[id] || {}).seccion === 'herramientas');
+}
+function pintaAnteriores(xs) {
+  const c = $('anteriores'); c.innerHTML = '';
+  $('c-anteriores').hidden = !xs.length;
+  $('t-anteriores').textContent = 'Tareas anteriores · ' + xs.length;
+  xs.forEach(t => {
+    const f = fila(t.titulo, 'Archivada el ' + fecha(t.archivada) + (t.apuntes ? ' · ' + t.apuntes + (t.apuntes === 1 ? ' apunte' : ' apuntes') : ''));
+    f.classList.add('anterior');
+    const b = boton('Ver lo que escribí', 'suave', () => abrirAnterior(t));
+    b.setAttribute('aria-label', 'Ver lo que escribí en ' + t.titulo);
+    f.appendChild(b);
+    c.appendChild(f);
+  });
+  aplicaPlegables();
+}
+async function abrirAnterior(t) {
+  const r = await api('tarea&id=' + encodeURIComponent(t.id));
+  if (!r.ok || !r.j.archivada) { await panel(); return; }
+  let def = r.j.plantilla || {};
+  if (r.j.cifrado) {
+    let d = null;
+    if (Number(r.j.para_v) === Number(miV)) { try { d = abrirDelMac(r.j.cifrado, miPublica, privada); } catch (_) {} }
+    if (!d) { $('panel-estado').textContent = 'Esta tarea se está actualizando tras el cambio de contraseña. En unos minutos la tienes.'; return; }
+    def = d;
+  }
+  if (r.j.titulo) def = Object.assign({}, def, { titulo: r.j.titulo });
+  let valores = {};
+  if (r.j.borrador && Number(r.j.borrador_v) === Number(miV)) {
+    try { const g = abrirDelMac(r.j.borrador, miPublica, privada); valores = (g && (g.campos || g)) || {}; } catch (_) {}
+  }
+  HERR = { tarea: null, def, soloLeer: true, valores };
+  montaHerramienta(def, valores, true, 'Tarea anterior · archivada el ' + fecha(r.j.archivada));
+  /* Los apuntes de un registro, en una tabla de solo lectura. */
+  if (r.j.modo === 'registro') {
+    const x = await api('entradas&id=' + encodeURIComponent(t.id));
+    const ents = [];
+    ((x.ok && x.j.entradas) || []).forEach(e => {
+      if (Number(e.para_v) !== Number(miV)) return;
+      try { const d = abrirDelMac(e.cifrado, miPublica, privada); ents.push({ fecha: e.fecha, fila: (d && d.fila) || {} }); } catch (_) {}
+    });
+    /* Las columnas de todas sus tablas que tengan algo escrito, con su rótulo. */
+    const todas = [].concat(...(def.bloques || []).filter(b => b.t === 'tabla').map(b => b.columnas || [])).filter(k => k && k.id);
+    const vistas = new Set();
+    const cols = todas.filter(k => !vistas.has(k.id) && vistas.add(k.id) && ents.some(e => e.fila[k.id] != null && e.fila[k.id] !== ''));
+    const sec = el('section', 'anterior-apuntes');
+    sec.appendChild(el('h2', 'titulo-h', ents.length ? 'Lo que apuntaste · ' + ents.length : 'Sin apuntes'));
+    if (ents.length) {
+      const v = el('div', 'tabla-ventana'); v.tabIndex = 0; v.setAttribute('role', 'region'); v.setAttribute('aria-label', 'Lo que apuntaste');
+      const tabla = el('table', 'tabla-medidas');
+      const th = el('thead'), tr0 = el('tr'); tr0.appendChild(el('th', null, 'Fecha'));
+      cols.forEach(k => tr0.appendChild(el('th', null, k.rotulo || k.id))); th.appendChild(tr0);
+      const bo = el('tbody');
+      ents.forEach(e => {
+        const tr = el('tr'); tr.appendChild(el('td', null, fecha(e.fecha)));
+        cols.forEach(k => tr.appendChild(el('td', null, e.fila[k.id] == null ? '' : String(e.fila[k.id]))));
+        bo.appendChild(tr);
+      });
+      tabla.append(th, bo); v.appendChild(tabla); sec.appendChild(v);
+    }
+    $('h-cuerpo').appendChild(sec);
+  }
 }
 
 /* --- Mis objetivos -----------------------------------------------------
@@ -5658,7 +5746,8 @@ function pintaRegistro(msg) {
     m.appendChild(bs);
     raiz.appendChild(m);
   }
-  raiz.appendChild(cajaRecordatorio());
+  /* 12-11: lo de «Mis herramientas» no lleva recordatorio: no es un deber. */
+  if (!esConsultaId(HERR.def && HERR.def.id)) raiz.appendChild(cajaRecordatorio());
 
   if (HERR.viejas) raiz.appendChild(el('p', 'nota info', HERR.viejas + (HERR.viejas === 1 ? ' apunte anterior' : ' apuntes anteriores') +
     ' al cambio de contraseña se están actualizando. No se ha perdido nada.'));
@@ -5936,6 +6025,7 @@ function buscaPlan(copias, v) {
   $('b-plan').hidden = true;
 }
 $('b-plan').addEventListener('click', () => { if (PLAN_TAREA) abrirHerramienta(PLAN_TAREA); else if (PLAN) abrirCopia(PLAN); });
+$('hoy-plan-b').addEventListener('click', () => $('b-plan').click());
 
 $('c-accesos').addEventListener('toggle', async () => {
   if (!$('c-accesos').open) return;

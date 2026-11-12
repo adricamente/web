@@ -83,6 +83,32 @@ function adr_herr_id(array $t): ?string {
     return is_array($def) && isset($def['id']) ? (string)$def['id'] : null;
 }
 
+/* 12-11 (Adrián): las herramientas son para consultar, no deberes. Una
+   herramienta de «Mis herramientas» (`seccion: herramientas` del
+   catálogo), el plan de seguridad o una lectura no cuenta como pendiente
+   en ningún sitio: ni en el número de cosas por hacer de la víspera, ni en
+   «Antes de la sesión» como «Falta», ni en `pendientes` ni en `panel_mac`
+   (lo que la consola llama «lleva días sin contestar»), ni manda «Tienes
+   algo en tu cuenta» al asignarla, ni recordatorios. Se sigue abriendo y
+   escribiendo en ella como siempre. Se decide al leer la fila, con el
+   catálogo de ahora: vale también para lo ya asignado. */
+function adr_ids_consulta(): array {
+    static $ids = null;
+    if ($ids !== null) return $ids;
+    $ids = [];
+    $A = $GLOBALS['ADR'] ?? null;
+    foreach ((is_array($A) ? (adr_catalogo($A, 'herramientas') ?? []) : []) as $d) {
+        if (is_array($d) && ($d['seccion'] ?? null) === 'herramientas' && is_string($d['id'] ?? null)) $ids[] = $d['id'];
+    }
+    return $ids;
+}
+function adr_es_consulta(array $t): bool {
+    if (($t['tipo'] ?? '') !== 'herramienta') return false;
+    if (adr_es_lectura($t)) return true;
+    $id = adr_herr_id($t);
+    return $id === 'plan-seguridad' || ($id !== null && in_array($id, adr_ids_consulta(), true));
+}
+
 /** Madrid, siempre: «hoy» es el de Adrián y sus pacientes. */
 function adr_madrid(string $cuando = 'now'): DateTimeImmutable {
     return new DateTimeImmutable($cuando, new DateTimeZone('Europe/Madrid'));
@@ -106,9 +132,10 @@ function adr_recordatorios(PDO $db, array $ADR): int {
     $q->execute([$hoy, $hm]);
     $n = 0;
     foreach ($q->fetchAll() as $r) {
-        /* Lo que es para consultar no tiene «apunte de hoy» (30-10). La
-           cuenta no ofrece recordatorio para eso; esto es la red. */
-        if (adr_es_lectura($r)) continue;
+        /* Lo que es para consultar no tiene «apunte de hoy» (30-10; 12-11:
+           tampoco una herramienta de «Mis herramientas»). La cuenta no
+           ofrece recordatorio para eso; esto es la red. */
+        if (adr_es_consulta($r)) continue;
         $limite = adr_madrid($hoy . 'T' . $r['hora'] . ':00')->modify('+3 hours');
         $ya = $db->prepare('SELECT 1 FROM entradas WHERE tarea = ? AND fecha = ? AND borrada = 0');
         $ya->execute([$r['tarea'], $hoy]);
@@ -188,10 +215,13 @@ function adr_actividad(PDO $db, string $cod, DateTimeImmutable $cita): array {
            actualiza»: no sale aquí ni en el «faltan N» de la mañana (30-10). */
         if (adr_es_lectura($x)) continue;
         $modo = adr_modo_fila($x);
+        /* 12-11: una herramienta de «Mis herramientas» nunca «falta» ni sale
+           «aún sin rellenar» o «0 de 7 días»: solo lo que ha hecho con ella. */
+        $consulta = adr_es_consulta($x);
         $caducada = $x['caduca'] && substr((string)$x['caduca'], 0, 10) < adr_hoy();
         if ($x['hecho'] === null) {
-            if (!$caducada) $pendientes[] = ['titulo' => $x['titulo'], 'tipo' => $x['tipo'], 'modo' => $modo,
-                                             'desde' => $x['creado']];
+            if (!$caducada && !$consulta) $pendientes[] = ['titulo' => $x['titulo'], 'tipo' => $x['tipo'], 'modo' => $modo,
+                                                           'desde' => $x['creado']];
             if ($modo === 'una') continue;
         }
         if ($modo === 'registro') {
@@ -201,11 +231,14 @@ function adr_actividad(PDO $db, string $cod, DateTimeImmutable $cita): array {
             $f = array_column($e->fetchAll(), 'fecha');
             $n = $db->prepare("SELECT COUNT(*) AS n FROM entradas WHERE tarea = ? AND borrada = 0 AND fecha >= ? AND fecha <= ?");
             $n->execute([$x['id'], $d0, $d1]);
+            if ($consulta && !$f) continue;
             $registros[] = ['titulo' => $x['titulo'], 'dias' => count($f), 'de' => $dias, 'fechas' => $f,
-                            'entradas' => (int)$n->fetch()['n']];
+                            'entradas' => (int)$n->fetch()['n'], 'consulta' => $consulta];
         } elseif ($modo === 'vivo') {
+            $cambiado = $x['actualizado'] !== null && $x['actualizado'] >= $desde->format('c');
+            if ($consulta && !$cambiado) continue;
             $vivos[] = ['titulo' => $x['titulo'], 'actualizado' => $x['actualizado'],
-                        'cambiado' => $x['actualizado'] !== null && $x['actualizado'] >= $desde->format('c')];
+                        'cambiado' => $cambiado, 'consulta' => $consulta];
         } elseif ($x['hecho'] !== null && $x['hecho'] >= $desde->format('c')) {
             if ($x['tipo'] === 'herramienta') $herr[] = ['titulo' => $x['titulo'], 'hecho' => $x['hecho']];
             else $pruebas[] = ['titulo' => $x['titulo'], 'hecho' => $x['hecho']];

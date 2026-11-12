@@ -1292,3 +1292,16 @@ h3{font-weight:700}
 .tabla-medidas th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-weight:600;padding:7px 12px}
 .tabla-medidas td{padding:7px 12px;border-top:1px solid var(--line)}
 .tabla-medidas td:last-child,.tabla-medidas th:last-child{text-align:right}
+
+/* --- 12-11: menos tareas, herramientas aparte ------------------------
+   El plan de seguridad, debajo de «Lo que toca hoy», aparte: es una
+   herramienta, no algo que toque hacer. */
+.hoy-plan{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px;
+  margin:0;padding:10px 0 0;border-top:1px solid var(--line);max-width:none;color:var(--ink-2)}
+.hoy-plan .boton{min-height:44px}
+.hoy-nada{color:var(--ink-2)}
+.bajo-titulo{color:var(--ink-2)}
+/* «Tareas anteriores»: lo archivado, más apagado y sin círculo de por hacer. */
+.fila.anterior strong{color:var(--ink-2)}
+.anterior-apuntes{margin-top:18px}
+.anterior-apuntes .tabla-medidas td,.anterior-apuntes .tabla-medidas th{text-align:left;vertical-align:top}
