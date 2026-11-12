@@ -1035,6 +1035,12 @@ async function panel() {
   /* Cada herramienta, a su apartado; las repetidas, juntas (una tarjeta). */
   const herrs = todas.filter(t => t.tipo === 'herramienta').concat(vivas)
     .filter(t => t.origen !== 'biblioteca');
+  /* 12-11: lo hecho a medida (una `tarea-libre`, o lo que no está en el
+     catálogo) se abre ANTES de repartir: si no trae nada que rellenar es un
+     recordatorio para leer; si trae campos, una tarea (ver apartadoDe).
+     Suelen ser pocas, y la definición queda en memoria para la nota de la
+     tarjeta. */
+  await Promise.all(herrs.filter(t => !ORDEN[t.id] && (t.herr_id === 'tarea-libre' || !SECC[t.herr_id])).map(defDe));
   const grupos = agrupa(herrs);
   const deTareas = grupos.filter(g => g.ap === 'tareas');
   const deHerr = grupos.filter(g => g.ap === 'herramientas');
@@ -1152,6 +1158,15 @@ const FRECUENCIAS = ['siempre_a_mano', 'cuando_lo_necesites', 'diaria', 'cada_ve
 function apartadoDe(t) {
   const o = ORDEN[t.id] || {};
   if (o.leer === true) return { ap: 'leer', fr: null };
+  /* 12-11, la regla de reserva: mientras el Mac no diga qué es para leer
+     (o si no lo dice de esta), un recordatorio de sesión —una `tarea-libre`
+     o una herramienta hecha a medida SIN nada que rellenar, solo la nota
+     de lo acordado— va a «Lo que vimos» como para leer y nunca cuenta para
+     hoy. Una `tarea-libre` CON campos («Mi tarea de esta semana») sigue
+     siendo una tarea de «una vez», como dice el catálogo. Una definición
+     que no se ha podido abrir no se da por «sin campos»: sigue siendo tarea. */
+  if (!ORDEN[t.id] && t.tipo === 'herramienta' && t.herr_id !== 'plan-seguridad' && !t.lectura
+      && (t.herr_id === 'tarea-libre' || !SECC[t.herr_id]) && sinCampos(DEFS.get(claveDef(t)))) return { ap: 'leer', fr: null };
   const c = SECC[t.herr_id] || null;
   let ap = ['tareas', 'herramientas'].includes(o.seccion) ? o.seccion : (c && c.seccion) || null;
   let fr = FRECUENCIAS.includes(o.frecuencia) ? o.frecuencia : (c && c.frecuencia) || null;
@@ -1406,17 +1421,39 @@ function pintaHerramientas(grupos, copias, v) {
    clave, así que se abre aquí, después de pintar, y se guarda en memoria
    mientras dure la visita. En las repetidas, la de la más reciente:
    «Lo último que acordamos: …». */
+/* La definición abierta de una herramienta, en memoria mientras dure la
+   visita. `cif` es una huella del sobre (cambia si el Mac cambia la nota
+   con `sustituye`), no de lo que dice. null si no se ha podido abrir. */
+const DEFS = new Map(), SELLADAS = new Set();
+const claveDef = (t) => t.id + '@' + t.para_v + '@' + (t.cif || '');
+async function defDe(t) {
+  const k = claveDef(t);
+  if (DEFS.has(k)) return DEFS.get(k);
+  let def = null;
+  try {
+    const r = await api('tarea&id=' + encodeURIComponent(t.id));
+    if (r.ok && r.j.cifrado && Number(r.j.para_v) === Number(miV)) { def = abrirDelMac(r.j.cifrado, miPublica, privada) || null; if (def) SELLADAS.add(k); }
+    else if (r.ok && r.j.plantilla && Array.isArray(r.j.plantilla.bloques)) def = r.j.plantilla;
+  } catch (_) {}
+  DEFS.set(k, def);
+  return def;
+}
+/* Sin nada que rellenar: todos sus bloques son de leer. Una definición que
+   no se ha podido abrir no se da por «sin campos». */
+function sinCampos(def) {
+  if (!def || !Array.isArray(def.bloques)) return false;
+  return def.tipo === 'lectura' || def.bloques.every(b => BLOQUES_LEER.includes(b.t) || b.t === 'fuente');
+}
 const NOTAS = new Map();
 async function notaDe(t) {
-  /* `cif` es una huella del sobre (cambia si el Mac cambia la nota con
-     `sustituye`), no de lo que dice. */
-  const k = t.id + '@' + t.para_v + '@' + (t.cif || '');
+  const k = claveDef(t);
   if (NOTAS.has(k)) return NOTAS.get(k);
   let out = null;
   try {
-    const r = await api('tarea&id=' + encodeURIComponent(t.id));
-    if (r.ok && r.j.cifrado && Number(r.j.para_v) === Number(miV)) {
-      const def = abrirDelMac(r.j.cifrado, miPublica, privada) || {};
+    /* La nota, solo de las selladas (como antes): lo que no va sellado
+       trae su «para qué» del catálogo. */
+    const def = await defDe(t);
+    if (def && SELLADAS.has(k)) {
       const ac = (def.bloques || []).find(esAcordadoB);
       const linea = ac ? String(ac.texto || '').split(/\n|(?<=[.!?])\s+/).map(s => s.trim()).find(Boolean) : null;
       out = { acordado: linea ? recorta(linea, 140) : null, subtitulo: def.subtitulo ? recorta(def.subtitulo, 140) : null };
@@ -1451,9 +1488,16 @@ async function completaNotas(grupos) {
 /* «Lo que vimos en sesión»: los resúmenes, del más nuevo al más antiguo,
    cada uno con los recordatorios de esa sesión; el último abierto y los
    demás plegados. De qué sesión es un recordatorio lo dice el «orden» del
-   Mac (`sesion`); si no lo dice, va con el resumen más cercano en fecha
-   (hasta 4 días) y, si no hay ninguno, en «Otros recordatorios». */
+   Mac (`sesion`); si no lo dice, va con el resumen de fecha igual o justo
+   anterior (ver MARGEN_RESUMEN) y, si no hay ninguno, en «Recordatorios»,
+   al final. */
 function numSesion(titulo) { const m = /sesi[oó]n\s*(?:n\.?º\s*)?(\d+)/i.exec(String(titulo || '')); return m ? Number(m[1]) : null; }
+/* 12-11: de qué sesión es un recordatorio cuando el Mac no lo dice: la del
+   resumen con fecha igual o justo anterior a cuando se mandó, con dos días
+   de margen (el resumen sale al día siguiente de la sesión, y lo acordado
+   se manda ese mismo día) y como mucho 5 semanas atrás; si no hay, a
+   «Recordatorios», al final. */
+const MARGEN_RESUMEN = 2, MAX_DIAS_SESION = 35;
 function pintaVimos(docs, leer, v) {
   let viejos = 0;
   const cs = $('sesiones'); cs.innerHTML = '';
@@ -1470,14 +1514,16 @@ function pintaVimos(docs, leer, v) {
         dest = { s: null, n: o.sesion, fecha: /^\d{4}-\d{2}-\d{2}/.test(String(o.fecha_sesion || '')) ? o.fecha_sesion : g.t.creado, leer: [] };
         grupos.push(dest);
       }
-    } else {
-      let mejor = null;
-      grupos.filter(x => x.s).forEach(x => { const d = dias(x.fecha, g.t.creado); if (d <= 4 && (!mejor || d < mejor.d)) mejor = { x, d }; });
-      dest = mejor ? mejor.x : null;
+    } else if (g.t.creado) {
+      const cuando = String(g.t.creado).slice(0, 10), tope = sumaDias(cuando, MARGEN_RESUMEN), desde = sumaDias(cuando, -MAX_DIAS_SESION);
+      dest = grupos.filter(x => x.s && String(x.fecha).slice(0, 10) <= tope && String(x.fecha).slice(0, 10) >= desde)
+        .sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)) || (b.n || 0) - (a.n || 0))[0] || null;
     }
     (dest ? dest.leer : otros).push(g);
   });
-  grupos.sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)));
+  /* Del más nuevo al más viejo; el mismo día, por número de sesión (10
+     después de 9, que comparando textos iría detrás de 1). */
+  grupos.sort((a, b) => String(b.fecha).slice(0, 10).localeCompare(String(a.fecha).slice(0, 10)) || (b.n ?? -1) - (a.n ?? -1));
   const filaLeer = (g) => {
     const f = fila(g.titulo, 'Para leer');
     f.dataset.buscar = g.titulo;
@@ -1535,7 +1581,7 @@ function pintaVimos(docs, leer, v) {
   if (otros.length) {
     const det = el('details', 'grupo-sesion');
     det.dataset.plegable = 'sesion-otros'; det.open = !grupos.length;
-    const sm = el('summary'); sm.appendChild(el('span', 'gs-t', 'Otros recordatorios')); det.appendChild(sm);
+    const sm = el('summary'); sm.appendChild(el('span', 'gs-t', 'Recordatorios')); det.appendChild(sm);
     const cuerpo = el('div', 'gs-cuerpo');
     otros.forEach(g => cuerpo.appendChild(filaLeer(g)));
     det.appendChild(cuerpo); cs.appendChild(det);

@@ -340,7 +340,7 @@ if (adr_es_el_mac($ADR) && $a !== '' && !in_array($a, ADR_RUTINA, true)) {
 }
 
 /* Súbela con cada parche que toque el portal. */
-const ADR_VERSION = '2026-11-11e';
+const ADR_VERSION = '2026-11-12b';
 const ADR_ACCIONES_NUEVAS = ['tareas:cambiada', 'catalogo:grupo', 'mensaje:id', 'conocido:21', 'asignar:sustituye', 'archivar', 'unir', 'cuenta_de', 'publicar:orden',
                              'precargar', 'version', 'conocido', 'conocidos', 'freno', 'frenos', 'frenos_recogidos',
                              'instalar', 'instalar_no',
