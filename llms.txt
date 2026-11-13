@@ -4,6 +4,17 @@
 
 Todo el contenido divulgativo es información general, con fuentes, y no sustituye una evaluación. En crisis en España: 024 (conducta suicida, 24 h, gratuito) o 112.
 
+Actualizado el 13 de noviembre de 2026.
+
+## A quién no atiendo
+
+- Menores de 18 años.
+- Personas que no viven en España.
+- Urgencias: no es un servicio de urgencias. En crisis, 024 (conducta suicida, 24 h, gratuito) o 112.
+- Peritajes, informes periciales o certificados.
+- Terapia de pareja conjunta: solo terapia individual. La violencia en la pareja, al 016, el 028 o el 112.
+- Se derivan, o se atienden con la supervisión del centro sobre el caso desde el principio: los duelos por suicidio o por una muerte violenta y los que vienen con trauma. Una adicción con consumo activo va antes a un recurso especializado, y un problema de la conducta alimentaria, antes al médico de familia.
+
 ## Sobre la consulta
 
 - [Sobre mí](https://adricamente.com/sobre-mi/): formación, situación profesional verificable y cómo trabajo.
@@ -187,7 +198,7 @@ Todo el contenido divulgativo es información general, con fuentes, y no sustitu
 - [Cambiar o dejar de psicólogo](https://adricamente.com/guias/cambiar-o-dejar-de-psicologo/): Guía completa: cuándo tiene sentido cambiar de psicólogo o dejar la terapia, cómo decírselo, qué pedir al irte y qué contarle al siguiente.
 - [¿Puede un psicólogo contar lo que le cuentas?](https://adricamente.com/guias/puede-un-psicologo-contar-lo-que-le-cuentas/): Guía completa: qué protege el secreto profesional en España, las excepciones que existen de verdad (riesgo grave, menores, un juez), qué pasa si cuentas un delito y qué no es ninguna excepción.
 - [Cómo saber si un psicólogo está colegiado](https://adricamente.com/guias/como-saber-si-un-psicologo-esta-colegiado/): Guía completa: cómo comprobar gratis, en dos minutos, si un psicólogo está colegiado, los 23 colegios de España, qué te dice cada registro público (colegio, REPS, REGCESS) y qué hacer si no aparece.
-- [Psicólogo barato](https://adricamente.com/guias/psicologo-barato/): Guía completa: las formas reales de pagar menos por ir al psicólogo en España (pública, universidades, colegios, seguro, empresa, grupo y renta) y las señales de que algo es demasiado barato.
+- [Cómo pagar menos por el psicólogo](https://adricamente.com/guias/psicologo-barato/): Guía completa: las formas reales de pagar menos por ir al psicólogo en España (pública, universidades, colegios, seguro, empresa, grupo y renta) y las señales de que algo es demasiado barato.
 - [¿Psicólogo o psiquiatra?](https://adricamente.com/guias/psicologo-o-psiquiatra/): Guía completa: a qué puerta llamar primero si tienes ansiedad o depresión, qué hace cada uno, en qué se diferencian y cuándo conviene tener a los dos.
 - [¿Ir al psicólogo realmente ayuda?](https://adricamente.com/guias/ir-al-psicologo-ayuda/): Guía completa: qué dicen los metaanálisis sobre si la terapia funciona, a cuánta gente ayuda y a cuánta no, si puede ir mal y por qué ir no es «para locos».
 - [Dudas sobre ir al psicólogo](https://adricamente.com/guias/dudas-sobre-ir-al-psicologo/): Todas las dudas de antes, durante y después de pedir cita, ordenadas por el momento en que aparecen, con la respuesta corta y el enlace a la larga.
