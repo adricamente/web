@@ -331,7 +331,7 @@
     <loc>https://adricamente.com/guias/autoexigencia/</loc>
     <lastmod>2026-10-28</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-calma-a1400.webp</image:loc></image:image>
-    <image:image><image:loc>https://adricamente.com/fotos/a/libreta-almohada-v480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/pared-luz-a900.webp</image:loc></image:image>
   </url>
   <url>
@@ -429,7 +429,7 @@
     <loc>https://adricamente.com/guias/superar-una-ruptura/</loc>
     <lastmod>2026-11-07</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/ventana-arboles-a1400.webp</image:loc></image:image>
-    <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-blancas-v480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/a/silla-sombras-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/tejados-ciudad-a1400.webp</image:loc></image:image>
   </url>
   <url>
@@ -902,7 +902,7 @@
   </url>
   <url>
     <loc>https://adricamente.com/areas/pareja-y-relaciones/</loc>
-    <lastmod>2026-11-08</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-pareja-mesa-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/p-videollamada-sofa-c1080.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/adrian-primera.webp</image:loc></image:image>
@@ -1782,5 +1782,35 @@
     <image:image><image:loc>https://adricamente.com/fotos/a/dos-tazas-blancas-a1400.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-v480.webp</image:loc></image:image>
     <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-a800.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/areas/pareja-y-relaciones/superar-una-ruptura/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/llaves-puerta-a1200.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/areas/autoestima/perfeccionismo/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/notas-rotulador-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/areas/estado-de-animo/soledad/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/banco-niebla-a480.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/terapia-para-la-ira/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/lago-calma-a900.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
+  </url>
+  <url>
+    <loc>https://adricamente.com/areas/autoestima/sindrome-del-impostor/</loc>
+    <lastmod>2026-11-13</lastmod>
+    <image:image><image:loc>https://adricamente.com/fotos/a/escritorio-noche-a1400.webp</image:loc></image:image>
+    <image:image><image:loc>https://adricamente.com/fotos/adrian-online.webp</image:loc></image:image>
   </url>
 </urlset>
