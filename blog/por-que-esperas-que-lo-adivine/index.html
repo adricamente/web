@@ -195,6 +195,9 @@
   .nl--corta .acepto{margin:12px 0 12px}
   .nl--corta .nl-nota{font-size:13.5px;margin:10px 0 0}
   @media (min-width:561px){.nl--corta form{max-width:520px}}
+  .nl-lista{margin:6px 0 12px;padding-left:1.15em}
+  .nl-lista li{margin:0 0 6px;line-height:1.45}
+  .nl-lista li::marker{color:var(--muted)}
   </style>
 <!-- /nl-css -->
 </head>
@@ -438,8 +441,16 @@
 <!-- nl:blog_final -->
   <section class="nl" data-ubic="blog_final" aria-labelledby="nl-t-blog-final">
     <div class="nl-cuerpo">
-      <p class="nl-t" id="nl-t-blog-final">Una idea útil a la semana, en tu correo</p>
-      <p>Lees una guía entera de noche y al día siguiente no recuerdas qué ibas a probar. Por eso, de una en una: <strong>te llega un correo a la semana</strong>, con una idea y algo pequeño que probar esa semana. Al confirmar tu correo, cuatro hojas en PDF para guardar. No te voy a preguntar nada de lo que te pasa.</p>
+      <p class="nl-t" id="nl-t-blog-final">Gratis: 4 hojas prácticas en PDF y una idea a la semana</p>
+      <p>Al confirmar tu correo te llegan, <strong>gratis</strong>, cuatro hojas en PDF para guardar o imprimir:</p>
+      <ul class="nl-lista">
+        <li><strong>25 errores de pensamiento</strong> (sesgos y distorsiones), cada uno con cómo suena y la pregunta para revisarlo.</li>
+        <li><strong>Doce frases para decir que no</strong>, en el trabajo, la familia, las amistades y la pareja.</li>
+        <li><strong>Para los días sin ganas:</strong> veinticuatro cosas pequeñas con las que empezar.</li>
+        <li><strong>Antes de una primera consulta:</strong> qué comprobar, qué preguntar y cómo empezar a hablar, con quien sea.</li>
+      </ul>
+      <p>Después, <strong>un correo a la semana</strong> con una sola idea y algo pequeño que probar.</p>
+      <p class="apunte nl-nota">No te pregunto nada de lo que te pasa y te das de baja con un clic.</p>
       <form method="POST" target="nl-destino-blog-final" rel="noreferrer" action="https://d6a8aed2.sibforms.com/serve/MUIFAE6KtPWO1ZkcBEcp8pqZIhxRhnXHvsoLxmhoIbMlXWgefRKYIlLqqjS3YB0NSut5B5mv3uJd1cZhEociSktOsg2NNny9H0NW86yRK1NiE8YmAjBtiDi-4KSPXPSiYyrCVl6z19g-bZ50dvpCNIJ_vTGHscu47uInkaasSkE_-t6GORB9zRvku9XuCvS5X-zaIvXH9Gdm9EVfLw=="
             data-umami-event="newsletter" data-umami-event-sitio="final">
         <div class="nl-campos nl-campos--uno">
@@ -455,7 +466,7 @@
           <a href="/privacidad.html">información sobre protección de datos</a>.</span>
         </label>
         <p class="apunte nl-nota" style="margin-top:0">Responsable: Adrián Cuñat Andrés. Para qué: mandarte la newsletter y, alguna vez, información sobre las sesiones. Lo gestiona Brevo, que cuenta qué correos se abren y en qué enlaces se pincha. Puedes acceder a tus datos, corregirlos o borrarlos: <a href="/privacidad.html">privacidad</a>.</p>
-        <button class="boton" type="submit">Apuntarme</button>
+        <button class="boton" type="submit">Quiero las hojas gratis</button>
         <p class="apunte nl-nota">Te llegará un correo para confirmar: sin ese clic no te escribo. Esto no es un canal de ayuda;
         si estás mal ahora mismo, llama al <a href="tel:024">024</a> o al <a href="tel:112">112</a>.</p>
       </form>
