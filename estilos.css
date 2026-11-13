@@ -1565,6 +1565,11 @@ a.tarjeta:hover .mas{color:var(--accent-3);text-decoration:underline;text-underl
 .pie-columnas a{font-size:14.5px;color:var(--muted);text-decoration:none}
 .pie-columnas a:hover{color:var(--accent-2);text-decoration:underline}
 .pie-columnas p{font-size:14px;color:var(--muted);line-height:1.5;margin:0 0 10px}
+/* 13-11: el enlace «Qué significa estar en prácticas» va dentro del párrafo
+   de la identificación. Con el color del texto y sin subrayado no se
+   distingue de lo que lo rodea (axe: link-in-text-block); el de las listas
+   sí puede ir sin él, porque cada renglón es un enlace. */
+.pie-columnas p a{font-size:inherit;text-decoration:underline;text-underline-offset:2px}
 @media (max-width:700px){.pie-columnas{grid-template-columns:1fr 1fr}}
 @media (max-width:440px){.pie-columnas{grid-template-columns:1fr}}
 
