@@ -82,7 +82,7 @@
 
   <link rel="preload" as="font" type="font/woff2" crossorigin
         href="/fuentes/archivo-estrecha-800.woff2">
-  <link rel="stylesheet" href="/estilos.min.css?v=87">
+  <link rel="stylesheet" href="/estilos.min.css?v=88">
 
 
   <script type="application/ld+json">
@@ -265,7 +265,7 @@
       "name": "¿Cuánto me va a costar todo, no una sesión?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "A 30 € la sesión, una frecuencia semanal son unos 120 € al mes y una quincenal, unos 60 €. Cuántas sesiones, no te lo puedo decir antes de conocerte: sobre la tercera, ya evaluado, te doy una estimación de lo tuyo con los números delante, y la revisamos cada cuatro sesiones."
+        "text": "A 30 € la sesión, una frecuencia semanal son unos 120 € al mes y una quincenal, unos 60 €. Cuántas sesiones, no te lo puedo decir antes de conocerte: sobre la tercera, ya evaluado, te doy una estimación de lo tuyo con los números delante."
       }
     },
     {
@@ -289,7 +289,7 @@
       "name": "¿Y si después de unos meses no noto nada?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Se mira a tiempo: la primera revisión es en la cuarta sesión y esa conversación la abro yo. Si no se mueve, cambiamos el plan; si sigue sin moverse, te lo digo y te ayudo a buscar otro sitio."
+        "text": "Dímelo en sesión, con esas palabras. Además, a lo largo del tiempo medimos y miramos juntos si hay mejora o no, con tus cuestionarios en una gráfica."
       }
     },
     {
@@ -605,9 +605,9 @@
         ayudarte. Si no, te oriento a dónde ir.</li>
       <li><strong>Dos o tres sesiones para entenderlo</strong>
         Cuándo empezó, qué lo mantiene hoy y qué has probado ya.</li>
-      <li><strong>Un plan, y revisarlo</strong>
-        Acordamos objetivos. En la cuarta sesión miramos juntos si se
-        mueve, y luego cada cuatro.</li>
+      <li><strong>Un plan, y medir si ayuda</strong>
+        Acordamos objetivos, y a lo largo del tiempo medimos y
+        miramos juntos si hay mejora o no.</li>
     </ol>
     <!-- Aquí irá el vídeo de 40-60 s de la primera sesión cuando esté
          grabado (la maqueta con su hueco está en el historial: commit
@@ -615,6 +615,49 @@
          enseña un vídeo que todavía no existe. -->
     <p class="apunte"><a href="/primera-sesion/">La primera sesión, contada minuto a minuto</a>
     · <a href="/tu-cuenta/">Tu cuenta, con capturas</a></p>
+  </section>
+
+  <!-- ===== Cómo sabrás si te sirve (14-11) ======================
+       Lo pone rueda/portada_texto.py (medir); no se edita aquí. Los
+       iconos y la gráfica, de rueda/dibujos_medir.py. El detalle, con
+       la fuente del olvido, en /como-trabajo/. -->
+  <section class="lisa">
+    <h2>Cómo sabrás si te sirve</h2>
+    <div class="medir-par">
+    <ul class="senales medir-lista">
+      <li><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle pathLength="1" cx="11" cy="13" r="8"/><circle pathLength="1" cx="11" cy="13" r="3.6"/><path pathLength="1" d="M11 13 19.6 4.4M16.4 4.4h3.2v3.2"/></svg><span><strong>Objetivos que se pueden comprobar.</strong> Los elegimos juntos, y
+      también cómo medirlos.</span></li>
+      <li><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path pathLength="1" d="M3.6 19.6h16.8"/><rect pathLength="1" x="4" y="9" width="16" height="6" rx="1"/><path pathLength="1" d="M5 12.6l4-1.6 4 1.4 6-1.8"/></svg><span><strong>Tu evolución, en tu propia gráfica.</strong> Antes de algunas
+      sesiones, un cuestionario corto; en tu cuenta ves si el cambio es real o todavía puede ser ruido.</span></li>
+      <li><svg class="icono" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect pathLength="1" x="5" y="3.5" width="14" height="17" rx="2.2"/><path pathLength="1" d="M8.6 8.4h6.8M8.6 12h6.8M8.6 15.6h4.2"/></svg><span><strong>Un resumen escrito de cada sesión.</strong> De lo que se habla en
+      sesión se olvida mucho. El resumen y tus tareas te esperan en tu cuenta.</span></li>
+    </ul>
+  <figure class="figura anim a-franja pequena">
+    <svg viewBox="0 0 320 148" role="img" aria-labelledby="an-franja-p-t an-franja-p-d" class="dibujo" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <title id="an-franja-p-t">Una gráfica de ejemplo con la franja de ruido</title>
+      <desc id="an-franja-p-d">Ejemplo con datos inventados. Una gráfica sin números, de más malestar arriba a menos malestar abajo, con una franja amarilla en medio: lo que el cuestionario puede variar por ruido. Cuatro medidas se quedan dentro de la franja, donde un cambio todavía puede ser ruido. Desde la última salen dos caminos posibles: si la línea sale de la franja, por arriba o por abajo, es un cambio real.</desc>
+      <path class="m-l" d="M36 14 V126 H300"/>
+      <rect class="m-ruido m-ancho" style="--d:0.1s" x="36" y="58" width="264" height="30" rx="2"/>
+      <text class="m-txt" x="44" y="24">más malestar</text>
+      <text class="m-txt" x="44" y="120">menos malestar</text>
+      <path class="m-a m-dib" pathLength="1" style="--d:.5s;--dur:1.5s" d="M58 72 L88 64 L118 79 L148 69"/>
+      <circle class="m-pa m-pop" style="--d:0.5s" cx="58" cy="72" r="5"/>
+      <circle class="m-pa m-pop" style="--d:0.9s" cx="88" cy="64" r="5"/>
+      <circle class="m-pa m-pop" style="--d:1.3s" cx="118" cy="79" r="5"/>
+      <circle class="m-pa m-pop" style="--d:1.7s" cx="148" cy="69" r="5"/>
+      <path class="m-fant m-ap" style="--d:2.3s" d="M148 69 L178 32"/>
+      <circle class="m-ha m-pop" style="--d:3.1s" cx="178" cy="32" r="4.5"/>
+      <text class="m-txt m-ap" style="--d:3.3s" x="187" y="36">fuera: cambio real</text>
+      <path class="m-fant m-ap" style="--d:2.3s" d="M148 69 L178 112"/>
+      <circle class="m-ha m-pop" style="--d:3.1s" cx="178" cy="112" r="4.5"/>
+      <text class="m-txt m-ap" style="--d:3.3s" x="187" y="116">fuera: cambio real</text>
+      <text class="m-txt m-llano m-ap" style="--d:3.3s" x="300" y="77" text-anchor="end">dentro: puede ser ruido</text>
+      <text class="m-txt" x="300" y="142" text-anchor="end">sesiones</text>
+    </svg>
+    <figcaption>Ejemplo con datos inventados.</figcaption>
+  </figure>
+    </div>
+    <p class="apunte"><a href="/como-trabajo/#como-sabras-si-sirve">Cómo lo mido, con detalle</a></p>
   </section>
 
   <!-- ===== Quién soy ===========================================
@@ -709,7 +752,7 @@
     <script>document.currentScript.parentNode.classList.add('tc-js')</script>
     <div class="tc-texto">
       <h2 id="tc-t">Lo que se mide se puede revisar</h2>
-      <p>Sales de la sesión con tres ideas claras y el martes ya no recuerdas la segunda. Por eso, si después de la media hora gratis decides seguir, te abro una cuenta privada, en el móvil o el ordenador: el resumen de cada sesión, tus ejercicios y, antes de algunas sesiones, un cuestionario corto que ves en una gráfica con su escala. <strong>Con esa gráfica decidimos si seguimos igual o cambiamos algo.</strong></p>
+      <p>Sales de la sesión con tres ideas claras y el martes ya no recuerdas la segunda. Por eso, si después de la media hora gratis decides seguir, te abro una cuenta privada, en el móvil o el ordenador: el resumen de cada sesión, tus ejercicios y, antes de algunas sesiones, un cuestionario corto que ves en una gráfica con su escala. <strong>Con esa gráfica delante, miramos juntos si hay mejora o no.</strong></p>
     </div>
     <div class="tc-mandos">
       <div class="tc-tabs" role="tablist" aria-label="Pantallas de la cuenta">
@@ -775,7 +818,7 @@
   <div class="faq">
     <details>
       <summary>¿Cuánto me va a costar todo, no una sesión?</summary>
-      <p>A 30&nbsp;€ la sesión, una frecuencia semanal son unos <strong>120&nbsp;€ al mes</strong> y una quincenal, unos 60&nbsp;€. Cuántas sesiones, no te lo puedo decir antes de conocerte: sobre la tercera, ya evaluado, te doy una estimación de lo tuyo con los números delante, y la revisamos cada cuatro sesiones.</p>
+      <p>A 30&nbsp;€ la sesión, una frecuencia semanal son unos <strong>120&nbsp;€ al mes</strong> y una quincenal, unos 60&nbsp;€. Cuántas sesiones, no te lo puedo decir antes de conocerte: sobre la tercera, ya evaluado, te doy una estimación de lo tuyo con los números delante.</p>
     </details>
 
     <details>
@@ -790,7 +833,7 @@
 
     <details>
       <summary>¿Y si después de unos meses no noto nada?</summary>
-      <p>Se mira a tiempo: la primera revisión es en la cuarta sesión y esa conversación la abro yo. Si no se mueve, cambiamos el plan; si sigue sin moverse, te lo digo y te ayudo a buscar otro sitio.</p>
+      <p>Dímelo en sesión, con esas palabras. Además, a lo largo del tiempo medimos y miramos juntos si hay mejora o no, con tus cuestionarios en una gráfica.</p>
     </details>
 
     <details>

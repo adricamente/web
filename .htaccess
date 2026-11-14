@@ -163,15 +163,19 @@ AddCharset utf-8 .css .js .xml .txt .json
 #  TikTok y muchas apps abren la web sin decir de dónde viene la
 #  visita: en Umami salía como «directa» (el 85 % del lanzamiento).
 #  Con estos enlaces en cada biografía se sabe cuánta gente llega de
-#  cada red y cuántos de ellos pulsan «Reservar». Llevan a la primera
-#  sesión, que es lo que promete la biografía. 302: son enlaces de
+#  cada red y cuántos de ellos pulsan «Reservar». 302: son enlaces de
 #  campaña, no páginas, y no deben quedarse en la caché de nadie.
+#  14-11: /ig y /tt llevan a la portada, no a /primera-sesion/: es el
+#  único enlace de la biografía y Adrián quiere que abra la web entera.
+#  La canónica de la portada es fija, así que la UTM no la ensucia;
+#  Umami la recoge de la dirección. /dr sigue en la primera sesión:
+#  quien viene de Doctoralia ya ha decidido pedir cita.
 <IfModule mod_rewrite.c>
   RewriteRule ^quien-soy/?$ /sobre-mi/ [R=301,L]
   RewriteRule ^sesiones/?$ /primera-sesion/ [R=301,L]
   RewriteRule ^contact/?$ /contacto/ [R=301,L]
-  RewriteRule ^ig/?$ /primera-sesion/?utm_source=instagram&utm_medium=bio [R=302,L]
-  RewriteRule ^tt/?$ /primera-sesion/?utm_source=tiktok&utm_medium=bio [R=302,L]
+  RewriteRule ^ig/?$ /?utm_source=instagram&utm_medium=bio [R=302,L]
+  RewriteRule ^tt/?$ /?utm_source=tiktok&utm_medium=bio [R=302,L]
   RewriteRule ^dr/?$ /primera-sesion/?utm_source=doctoralia&utm_medium=perfil [R=302,L]
 </IfModule>
 

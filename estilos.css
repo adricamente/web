@@ -4524,6 +4524,51 @@ main{counter-reset:is fs}
 }
 @media print{.anim .dibujo{opacity:1!important;animation:none!important}}
 
+/* --- 16.7 Cómo sabrás si te sirve (14-11) ----------------------------
+   Las cinco láminas de /como-trabajo/#como-sabras-si-sirve y la gráfica
+   pequeña de la portada (rueda/dibujos_medir.py). Las piezas y el disparo
+   son los de 16.6; aquí solo lo que no existía: la franja de ruido, el
+   móvil, la hoja del resumen y sus renglones, y la tarjeta que llega.
+
+   La franja es la amarilla del portal y de la guía de /tu-cuenta/
+   (.leyenda-ej i.ruido): el mismo color que verá el paciente en su cuenta.
+   El estado de base es el final; la animación, una vez, al entrar. */
+.anim .m-ruido{fill:rgba(247,223,114,.55);stroke:none}
+.anim .m-barra{fill:var(--accent-2);stroke:none}
+.anim .m-movil{fill:var(--surface);stroke:var(--ink);stroke-width:2.2}
+.anim .m-hoja{fill:var(--accent-soft);stroke:var(--accent-borde);stroke-width:1.2}
+.anim .m-renglon{stroke:var(--accent-borde);stroke-width:3.4;fill:none}
+.anim .m-txt.m-mini{font-size:9.5px}
+/* Sobre una tarjeta o una hoja el halo del papel se veía como una mancha clara. */
+.anim .m-txt.m-llano{stroke:none}
+@media (min-width:600px){.anim .m-txt.m-mini{font-size:8px}}
+/* Dentro de los pasos de /como-trabajo/ cada lámina va bajo su texto, con
+   menos aire que una figura suelta: es el dibujo de ese punto, no otro. */
+.pasos li > .figura{margin:14px 0 4px}
+.pasos li > .figura .dibujo{max-width:26rem}
+/* Los rótulos de 16.6 bajan a 8,8 en pantallas anchas porque allí el lienzo
+   llega a 34rem. Estas láminas no pasan de 26 y 24: con 8,8 el rótulo
+   quedaría en 11 px de verdad. Con 10 queda en unos 13, como los demás. */
+@media (min-width:600px){
+  .pasos li > .figura .m-txt{font-size:10px}
+  .pasos li > .figura .m-txt.m-mini{font-size:8.6px}
+  .medir-par .figura .m-txt{font-size:10.5px}
+}
+/* La portada: los cuatro puntos con su icono y, al lado en el ordenador,
+   la gráfica pequeña. En el móvil, la gráfica va debajo de los puntos. */
+.medir-lista li{display:grid;grid-template-columns:22px 1fr;gap:0 11px;align-items:start}
+.medir-lista li .icono{color:var(--accent-2);margin-top:2px}
+.medir-par .figura{margin:6px 0 4px}
+.medir-par .figura .dibujo{max-width:24rem}
+@media (min-width:760px){
+  .medir-par{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);gap:0 34px;align-items:center}
+  .medir-par .medir-lista{grid-template-columns:1fr;margin:20px 0 12px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .anim.dibujado .m-llega{animation:a-ap .35s linear var(--d,0s) both,a-llega .7s var(--entra) var(--d,0s) both}
+  @keyframes a-llega{from{transform:translateY(-34px)}to{transform:none}}
+}
+
 /* === 30-10 · Pasada visual (informe /tmp/claude-0/diseno/PASADA_VISUAL.md)
    Medido a 390 px, las páginas que se leen antes de reservar tenían entre
    un 5 y un 8 % de superficie con imagen y tramos de cuatro a seis
