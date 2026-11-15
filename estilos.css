@@ -587,8 +587,14 @@ p strong, li strong, dd strong, .tarjeta strong{
      reserva piden 343 px (medido). Con doce de lado, la marca a 15 px, la
      reserva con diez de relleno, huecos de 8 y el icono a 40 de ancho
      (el alto sigue en 44) quedan 8 px libres, para una fuente de reserva
-     algo más ancha que Archivo. */
-  @media (max-width:359px){
+     algo más ancha que Archivo.
+     16-11: con «1ª sesión gratis (30 min)» (159 px, frente a 115 de «Media
+     hora gratis») esto vale hasta 389 px: a 360 y 375 la reserva no cabía
+     con los rellenos de siempre. Y por debajo de 360 no cabe ni así: la
+     marca se esconde (la cabecera de arriba ya la lleva) y el icono pasa a
+     la derecha, junto a la reserva. Medido a 320, 360, 375 y 390: una línea,
+     sin salirse. */
+  @media (max-width:389px){
     .barra-cita{
       gap:8px;
       padding-left:max(12px,env(safe-area-inset-left));
@@ -598,6 +604,9 @@ p strong, li strong, dd strong, .tarjeta strong{
     .barra-cita .wa{width:40px}
     .barra-cita .wa + .cita{margin-left:0}
     .barra-cita .cita{padding:0 10px}
+  }
+  @media (max-width:359px){
+    .barra-cita .marca-mini{display:none}
   }
 }
 .cabecera .marca{margin:0;flex:0 0 auto;margin-right:auto}
@@ -1376,6 +1385,20 @@ footer p{font-size:13.5px;color:var(--muted);line-height:1.55;max-width:62ch}
    enlace: dos botones ahí arriba repartían la atención en vez de
    sumarla. */
 .boton.grande{font-size:17px;padding:15px 28px}
+
+/* 16-11: los botones de reserva de arriba y de la cinta final dicen
+   «Reservar 1ª sesión gratis (30 min)» (sin la duración, «gratis» no
+   pasa la revisión legal). Son 275 px a 17 px: con los 28 de relleno no
+   caben en el botón de 340 (quedan 282 por dentro, 7 de margen, poco para
+   una fuente de reserva más ancha) y a 360 px de pantalla saltaban a dos
+   líneas. Con 14 de relleno caben a partir de 360; por debajo, a 15 px
+   (242 de texto en 250 por dentro, a 320). Por el sitio y no por una
+   clase: son exactamente los dos enlaces que lo llevan en todas las
+   páginas. */
+.boton[data-umami-event-sitio="arriba"],.boton[data-umami-event-sitio="final"]{padding-left:14px;padding-right:14px}
+@media (max-width:359px){
+  .boton[data-umami-event-sitio="arriba"],.boton[data-umami-event-sitio="final"]{font-size:15px}
+}
 
 /* --- 9.1 bis. La llamada de en medio y la disponibilidad --------
    Aquí había una barra fija con el botón de reserva. Se quitó, y no
