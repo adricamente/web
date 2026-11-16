@@ -1179,6 +1179,20 @@ input::placeholder,textarea::placeholder{color:var(--muted);opacity:1}
   line-height:1.45;
 }
 .acepto input{margin:3px 0 0;accent-color:var(--accent-2);flex:0 0 auto}
+/* 16-11 (informe W46: el único error de la semana fue la casilla sin
+   marcar). La línea de error de las cajas de la newsletter
+   (newsletter.formulario) solo sale cuando se ha intentado enviar sin
+   marcarla: :user-invalid no salta al cargar la página, solo después de
+   tocar el formulario o de pulsar el botón. Sale tras un clic, así que no
+   cuenta como CLS. Sin :has() ni :user-invalid (navegadores viejos) no sale
+   y queda el aviso del propio navegador, que sale siempre. */
+/* Con .nl delante: en las cajas, «.nl p» (margen) y el tamaño de párrafo de
+   la caja le ganaban, y la línea salía a 17,5 px, más grande que la casilla
+   (medido el 16-11). Ahora, el tamaño y el interlineado de .acepto. */
+.acepto-error,.nl .acepto-error{display:none;margin:-8px 0 14px;color:var(--error);font-size:14.5px;font-weight:600;line-height:1.45}
+form:has(.acepto input:user-invalid) .acepto-error,.nl form:has(.acepto input:user-invalid) .acepto-error{display:block}
+.acepto:has(input:user-invalid){color:var(--error)}
+.acepto input:user-invalid{outline:2px solid var(--error);outline-offset:2px}
 
 /* --- 7. Pie de página -------------------------------------------- */
 
